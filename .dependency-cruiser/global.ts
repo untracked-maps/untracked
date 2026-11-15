@@ -1,5 +1,5 @@
 import type { IForbiddenRuleType } from 'dependency-cruiser';
-import { TESTS } from '#dependency-cruiser/shared';
+import { BUILD_TIME_CODE, BUILD_TIME_DEPENDENCIES, TESTS } from '#dependency-cruiser/shared';
 
 export const FORBIDDEN_GLOBAL: IForbiddenRuleType[] = [
   {
@@ -45,7 +45,7 @@ export const FORBIDDEN_GLOBAL: IForbiddenRuleType[] = [
     severity: 'error',
     comment: 'This module depends on a module that cannot be resolved.',
     from: {},
-    to: { couldNotResolve: true, pathNot: '^[$]app/' }
+    to: { couldNotResolve: true, pathNot: ['^[$]app/', '/[$]types$'] }
   },
   {
     name: 'no-duplicate-dep-types',
@@ -66,7 +66,20 @@ export const FORBIDDEN_GLOBAL: IForbiddenRuleType[] = [
     name: 'not-to-dev-dep',
     severity: 'error',
     comment: 'Code shipped to the browser depends on a devDependency. Declare the package in dependencies.',
-    from: { path: '^src/', pathNot: TESTS },
+    from: { path: '^src/', pathNot: [TESTS, ...BUILD_TIME_CODE] },
     to: { dependencyTypes: ['npm-dev'], dependencyTypesNot: ['type-only'], pathNot: ['node_modules/@types/'] }
-  }
+  },
+  ...BUILD_TIME_DEPENDENCIES.map(
+    ({ name, from, allowed }): IForbiddenRuleType => ({
+      name,
+      severity: 'error',
+      comment: `This code only runs at build time, and may use these development dependencies only: ${allowed.join(', ')}.`,
+      from: { path: from, pathNot: TESTS },
+      to: {
+        dependencyTypes: ['npm-dev'],
+        dependencyTypesNot: ['type-only'],
+        pathNot: ['node_modules/@types/', ...allowed.map((dependency) => `node_modules/${dependency}/`)]
+      }
+    })
+  )
 ];

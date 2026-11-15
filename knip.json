@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignoreBinaries": ["dot"],
-  "ignoreDependencies": ["@inlang/plugin-message-format", "svelte"],
+  "ignoreDependencies": ["@inlang/plugin-message-format", "inter-ui", "svelte"],
   "entry": ["src/routes/**/+*.{svelte,ts}!"],
   "project": ["src/**/*.{ts,svelte}!", "!src/libraries/{architecture-docs,base-path,cucumber-usage,i18n}/**!"]
 }

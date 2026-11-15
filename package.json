@@ -73,7 +73,9 @@
     "dependency-cruiser": "18.7.2",
     "fast-check": "4.10.2",
     "folderslint": "1.2.0",
+    "fontnik": "0.7.7",
     "html-validate": "11.18.0",
+    "inter-ui": "4.1.1",
     "jscpd": "5.4.2",
     "knip": "6.44.1",
     "playwright": "1.64.1",
@@ -83,7 +85,8 @@
     "typescript": "6.0.3",
     "vite": "8.3.6",
     "vitest": "5.1.0",
-    "vitest-browser-svelte": "3.1.0"
+    "vitest-browser-svelte": "3.1.0",
+    "woff2-encoder": "2.0.0"
   },
   "packageManager": "pnpm@12.4.2",
   "engines": {

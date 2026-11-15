@@ -16,6 +16,7 @@ export const FORBIDDEN_ROUTES: IForbiddenRuleType[] = [
         '^[.]paraglide/',
         '^[.]svelte-kit/',
         '^[$]app/',
+        '/[$]types$',
         'node_modules/'
       ]
     }

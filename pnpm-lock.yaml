@@ -254,9 +254,15 @@ importers:
       folderslint:
         specifier: 1.2.0
         version: 1.2.0
+      fontnik:
+        specifier: 0.7.7
+        version: 0.7.7
       html-validate:
         specifier: 11.18.0
         version: 11.18.0(vitest@5.1.0)
+      inter-ui:
+        specifier: 4.1.1
+        version: 4.1.1
       jscpd:
         specifier: 5.4.2
         version: 5.4.2
@@ -287,6 +293,9 @@ importers:
       vitest-browser-svelte:
         specifier: 3.1.0
         version: 3.1.0(svelte@5.57.3)(vitest@5.1.0)
+      woff2-encoder:
+        specifier: 2.0.0
+        version: 2.0.0
 
 packages:
 
@@ -2980,6 +2989,9 @@ packages:
     engines: {node: '>=22.18.0'}
     hasBin: true
 
+  d3-queue@3.0.7:
+    resolution: {integrity: sha512-2rs+6pNFKkrJhqe1rg5znw7dKJ7KZr62j9aLZfhondkrnz6U7VRmJj1UGcbD8MRc46c7H8m4SWhab8EalBQrkw==}
+
   data-uri-to-buffer@6.0.2:
     resolution: {integrity: sha512-7hvf7/GW8e86rW0ptuwS3OcBGDjIi6SZva7hCyWC0yYry2cOPmLIjXAUHI6DK2HsnwJd9ifmt57i8eV2n4YNpw==}
     engines: {node: '>= 14'}
@@ -3334,6 +3346,11 @@ packages:
     resolution: {integrity: sha512-NBH69ny3vv0UhZ/6Ifs2ee0nMW6n+XS0q0K9swM2yU+Sx8rzo5ssx13yy5pKy5/t05w1Rf2X2wAiv7LkGeCAGw==}
     hasBin: true
 
+  fontnik@0.7.7:
+    resolution: {integrity: sha512-ksIBy3itR4h8Gr6r7qYjqw+XZANdB0Xr/pCOC53Gx0qe+WTiTjSqVJ54sEzdyCwFPP8E6GuXPaxg7X+taBYpbw==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   formatly@0.11.4:
     resolution: {integrity: sha512-TeCC10lP8KCgoX+Fe5lryILIT0/Dy+nP0OSVnsuB5CwXoLuOdqxCYlPFF1inR8S/zTy1ec7TjhS2TeRKWzzImA==}
     engines: {node: '>=18.14.0'}
@@ -3598,6 +3615,10 @@ packages:
   inquirer@8.2.7:
     resolution: {integrity: sha512-UjOaSel/iddGZJ5xP/Eixh6dY1XghiBw4XK13rCCIJcJfyhhoul/7KhLLUGtebEj6GDYM6Vnx/mVsjx2L/mFIA==}
     engines: {node: '>=12.0.0'}
+
+  inter-ui@4.1.1:
+    resolution: {integrity: sha512-451h0J29HyOmA+JXgSi/6M12tL7ZCZ8arYKZUXiOXTJpJbAKqJvFh3k5SiV3x7tKe0C0KyrKUUiQIvvZ2PQDcA==}
+    engines: {node: '>=16.0.0'}
 
   interpret@3.1.1:
     resolution: {integrity: sha512-6xwYfHbajpoF0xLW+iwLkhwgvLoZDfjYfoFNu8ftMoXINzwuymNLd9u/KmwtdT2GbR+/Cz66otEGEVVUHX9QLQ==}
@@ -5363,6 +5384,10 @@ packages:
     resolution: {integrity: sha512-Tb2FUhB4vUsGQlfSquQLYkApkuPAFQXGFzxWKHHumVz2dK+X1RUm/HnID4+TfIGYJ1kTcwOaCk/buYCEJr6YjQ==}
     engines: {node: '>=20.11'}
     hasBin: true
+
+  woff2-encoder@2.0.0:
+    resolution: {integrity: sha512-wH1rcskczCP5+BJABM88aM3hoEX1VUW6U+Ksx/7bmXvctWGqF+O/YQdC6vWQ7lJS7ny21a0MkAqcZyOP2O8CAg==}
+    engines: {node: '>= 18.x'}
 
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
@@ -8046,6 +8071,8 @@ snapshots:
       semver: 7.8.6
       tinyglobby: 0.2.17
 
+  d3-queue@3.0.7: {}
+
   data-uri-to-buffer@6.0.2: {}
 
   debug@2.6.9(supports-color@11.0.0):
@@ -8441,6 +8468,12 @@ snapshots:
       glob: 7.2.3
       minimist: 1.2.8
 
+  fontnik@0.7.7:
+    dependencies:
+      d3-queue: 3.0.7
+      glob: 7.2.3
+      minimist: 1.2.8
+
   formatly@0.11.4:
     dependencies:
       fd-package-json: 2.0.0
@@ -8710,6 +8743,8 @@ snapshots:
       wrap-ansi: 6.2.0
     transitivePeerDependencies:
       - '@types/node'
+
+  inter-ui@4.1.1: {}
 
   interpret@3.1.1: {}
 
@@ -10325,6 +10360,8 @@ snapshots:
       isexe: 2.0.0
 
   why-is-node-running@3.2.1: {}
+
+  woff2-encoder@2.0.0: {}
 
   wordwrap@1.0.0: {}
 

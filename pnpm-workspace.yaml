@@ -2,6 +2,7 @@ engineStrict: true
 minimumReleaseAge: 14400
 allowBuilds:
   esbuild: true
+  fontnik: false
 trustPolicy: no-downgrade
 verifyDepsBeforeRun: error
 saveExact: true
