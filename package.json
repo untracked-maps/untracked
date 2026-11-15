@@ -31,7 +31,7 @@
     "lint:html": "html-validate \"build/**/*.html\"",
     "lint:spelling": "cspell --no-progress",
     "lint:unused": "knip && knip --production",
-    "prepare": "paraglide-js compile --project ./project.inlang --outdir ./.paraglide --strategy url baseLocale --emit-ts-declarations --silent && svelte-kit sync && prek install",
+    "prepare": "paraglide-js compile --project ./project.inlang --outdir ./.paraglide --strategy url baseLocale --emit-ts-declarations --silent && svelte-kit sync",
     "preview": "vite preview",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

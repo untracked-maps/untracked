@@ -15,10 +15,11 @@ Thank you for wanting to improve Untracked Maps. This guide explains how to get 
 git clone git@github.com:untracked-maps/untracked.git
 cd untracked
 pnpm install
+pnpm exec prek install
 pnpm exec playwright install chromium
 ```
 
-`pnpm install` also installs the git hooks. pnpm refuses package versions published less than ten days ago.
+The second command installs the git hooks that check each commit, each commit message and each push. pnpm refuses package versions published less than ten days ago.
 
 ## Run it
 
