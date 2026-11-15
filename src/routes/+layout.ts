@@ -1,4 +1,5 @@
 import { NEVER, type Observable, of } from 'rxjs';
+import { THEME_STORAGE_KEY } from '#configuration/theme';
 import {
   type ColourScheme,
   chooseTheme,
@@ -16,7 +17,7 @@ type Theme = {
 };
 
 const themeOnThisDevice = (): Theme => {
-  const themeChoice = localThemeChoice(localStorage);
+  const themeChoice = localThemeChoice(localStorage, THEME_STORAGE_KEY);
   return {
     choice: themeChoice.chosenTheme(),
     choose: themeChoice.choose,

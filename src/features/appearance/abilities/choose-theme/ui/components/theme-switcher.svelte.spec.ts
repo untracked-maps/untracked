@@ -32,7 +32,7 @@ describe('theme switcher', () => {
   });
 
   it('shows the document in the dark colour scheme once the visitor chooses the dark theme', async () => {
-    const themeChoice = localThemeChoice(sessionStorage);
+    const themeChoice = localThemeChoice(sessionStorage, 'theme');
     await render(ThemeSwitcher, { choice: themeChoice.chosenTheme(), onChoose: themeChoice.choose });
 
     await page.getByRole('radio', { name: 'Dark' }).click();

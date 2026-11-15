@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { localThemeChoice } from './local-theme-choice';
 import { browserPreferredColourScheme } from './preferred-colour-scheme';
 
+const THEME_KEY = 'theme';
+
 const storageHolding = (kept?: string): Pick<Storage, 'getItem' | 'setItem'> => {
-  const values = new Map<string, string>(kept === undefined ? [] : [['untracked-maps.theme', kept]]);
+  const values = new Map<string, string>(kept === undefined ? [] : [[THEME_KEY, kept]]);
   return {
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value): void => {
@@ -52,23 +54,23 @@ describe('browser preferred colour scheme', () => {
 
 describe('local theme choice', () => {
   it('follows the system on a first visit', async () => {
-    expect(await firstValueFrom(localThemeChoice(storageHolding()).chosenTheme())).toBe('system');
+    expect(await firstValueFrom(localThemeChoice(storageHolding(), THEME_KEY).chosenTheme())).toBe('system');
   });
 
   it('reads a choice kept by an earlier version of the site', async () => {
     const storage = storageHolding('dark');
 
-    expect(await firstValueFrom(localThemeChoice(storage).chosenTheme())).toBe('dark');
+    expect(await firstValueFrom(localThemeChoice(storage, THEME_KEY).chosenTheme())).toBe('dark');
   });
 
   it('follows the system when the kept choice is not a theme', async () => {
     const storage = storageHolding('sepia');
 
-    expect(await firstValueFrom(localThemeChoice(storage).chosenTheme())).toBe('system');
+    expect(await firstValueFrom(localThemeChoice(storage, THEME_KEY).chosenTheme())).toBe('system');
   });
 
   it('is the theme the visitor just chose', async () => {
-    const choice = localThemeChoice(storageHolding());
+    const choice = localThemeChoice(storageHolding(), THEME_KEY);
 
     choice.choose('light');
 
@@ -77,8 +79,8 @@ describe('local theme choice', () => {
 
   it('keeps the chosen theme for a later visit', async () => {
     const storage = storageHolding();
-    localThemeChoice(storage).choose('dark');
+    localThemeChoice(storage, THEME_KEY).choose('dark');
 
-    expect(await firstValueFrom(localThemeChoice(storage).chosenTheme())).toBe('dark');
+    expect(await firstValueFrom(localThemeChoice(storage, THEME_KEY).chosenTheme())).toBe('dark');
   });
 });

@@ -6,16 +6,14 @@ type ThemeChoiceOnDevice = {
   readonly choose: (choice: ThemeChoice) => void;
 };
 
-const THEME_KEY = 'untracked-maps.theme';
-
 const storedChoice = (stored: string | null): ThemeChoice => THEME_CHOICES.find((choice) => choice === stored) ?? 'system';
 
-const localThemeChoice = (storage: Pick<Storage, 'getItem' | 'setItem'>): ThemeChoiceOnDevice => {
-  const chosen$ = new BehaviorSubject(storedChoice(storage.getItem(THEME_KEY)));
+const localThemeChoice = (storage: Pick<Storage, 'getItem' | 'setItem'>, key: string): ThemeChoiceOnDevice => {
+  const chosen$ = new BehaviorSubject(storedChoice(storage.getItem(key)));
   return {
     chosenTheme: () => chosen$.asObservable(),
     choose: (choice: ThemeChoice): void => {
-      storage.setItem(THEME_KEY, choice);
+      storage.setItem(key, choice);
       chosen$.next(choice);
     }
   };
