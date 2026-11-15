@@ -19,7 +19,7 @@
   import MapCanvas from '#features/map/abilities/show-map/ui/components/map-canvas.svelte';
   import { m } from '#i18n/messages';
   import { browser } from '$app/env';
-  import { goto } from '$app/navigation';
+  import { replaceState } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { PageProps } from './$types';
@@ -28,7 +28,7 @@
 
   const glyphsUrl = (origin: string): string => `${origin}${resolve('/')}glyphs/{fontstack}/{range}.pbf`;
 
-  const replaceUrl = (url: string): Promise<void> => goto(url, { shallow: true, replace: true, state: page.state });
+  const replaceUrl = (url: string): Promise<void> => Promise.resolve(replaceState(url, page.state));
 
   const scene: Observable<MapScene<StyleSpecification>> = browser
     ? showMap({ loadBasemap: openFreeMapBasemap(glyphsUrl(location.origin)) })(
