@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
-  import { NEVER, type Observable, ReplaySubject, Subject } from 'rxjs';
+  import { map, NEVER, type Observable, ReplaySubject, Subject } from 'rxjs';
   import { keepViewInUrl, viewInUrl } from '#features/map/abilities/keep-view-in-url/domain/keep-view-in-url';
   import {
     locationFragment,
@@ -15,6 +15,7 @@
   import BasemapOutage from '#features/map/abilities/report-basemap-outage/ui/components/basemap-outage.svelte';
   import { type MapScene, type MapView, showMap } from '#features/map/abilities/show-map/domain/show-map';
   import { openFreeMapBasemap } from '#features/map/abilities/show-map/implementation/openfreemap/load-basemap';
+  import { basemapPalettes } from '#features/map/abilities/show-map/implementation/openfreemap/style/colours';
   import { openMapTilesId } from '#features/map/abilities/show-map/implementation/openfreemap/style/tiles';
   import MapCanvas from '#features/map/abilities/show-map/ui/components/map-canvas.svelte';
   import { m } from '#i18n/messages';
@@ -30,11 +31,16 @@
 
   const replaceUrl = (url: string): Promise<void> => Promise.resolve(replaceState(url, page.state));
 
-  const scene: Observable<MapScene<StyleSpecification>> = browser
-    ? showMap({ loadBasemap: openFreeMapBasemap(glyphsUrl(location.origin)) })(
-        viewInUrl({ readFragment: locationFragment(location) })()
-      )
-    : NEVER;
+  const scene: Observable<MapScene<StyleSpecification>> = $derived(
+    browser
+      ? showMap({
+          loadBasemap: openFreeMapBasemap(
+            glyphsUrl(location.origin),
+            data.theme.colourScheme.pipe(map((scheme) => basemapPalettes[scheme]))
+          )
+        })(viewInUrl({ readFragment: locationFragment(location) })())
+      : NEVER
+  );
 
   const basemap = mapLibreBasemapEvents(openMapTilesId);
 

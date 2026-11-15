@@ -23,5 +23,9 @@
   "privacy_openfreemap_why": "To draw the basemap.",
   "privacy_sees": "What it sees",
   "privacy_title": "Who sees what",
-  "privacy_why": "Why"
+  "privacy_why": "Why",
+  "theme_dark": "Dark",
+  "theme_label": "Theme",
+  "theme_light": "Light",
+  "theme_system": "System"
 }

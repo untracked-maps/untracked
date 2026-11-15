@@ -1,5 +1,5 @@
 import type { ExpressionSpecification, LineLayerSpecification } from '@maplibre/maplibre-gl-style-spec';
-import { colours } from './colours';
+import type { Colour, Palette } from './colours';
 import { exponentialZoom, fadeIn, isNotTunnel, isOneOf, type ZoomRange } from './expressions';
 import { fromTiles } from './tiles';
 
@@ -11,8 +11,8 @@ type WidthStop = {
 type RoadClass = {
   readonly id: string;
   readonly classes: string[];
-  readonly colour: string;
-  readonly casing: string;
+  readonly colour: Colour;
+  readonly casing: Colour;
   readonly widths: readonly WidthStop[];
   readonly minzoom: number;
   readonly casingFade?: ZoomRange;
@@ -24,8 +24,8 @@ const roadClasses: readonly RoadClass[] = [
   {
     id: 'road-minor',
     classes: ['minor', 'service'],
-    colour: colours.road,
-    casing: colours.roadCase,
+    colour: 'road',
+    casing: 'roadCase',
     widths: [
       { zoom: 12, value: 0.4 },
       { zoom: 14, value: 1.6 },
@@ -38,8 +38,8 @@ const roadClasses: readonly RoadClass[] = [
   {
     id: 'road-mid',
     classes: ['tertiary', 'secondary'],
-    colour: colours.road,
-    casing: colours.majorCase,
+    colour: 'road',
+    casing: 'majorCase',
     widths: [
       { zoom: 10, value: 0.6 },
       { zoom: 14, value: 3.2 },
@@ -51,8 +51,8 @@ const roadClasses: readonly RoadClass[] = [
   {
     id: 'road-major',
     classes: ['primary', 'trunk'],
-    colour: colours.road,
-    casing: colours.majorCase,
+    colour: 'road',
+    casing: 'majorCase',
     widths: [
       { zoom: 8, value: 0.6 },
       { zoom: 14, value: 4.6 },
@@ -65,8 +65,8 @@ const roadClasses: readonly RoadClass[] = [
   {
     id: 'road-highway',
     classes: ['motorway'],
-    colour: colours.highway,
-    casing: colours.highwayCase,
+    colour: 'highway',
+    casing: 'highwayCase',
     widths: [
       { zoom: 5, value: 0.7 },
       { zoom: 8, value: 1.2 },
@@ -94,16 +94,17 @@ const casingWidths = (widths: readonly WidthStop[]): ExpressionSpecification =>
 const casingOpacity = (casingFade?: ZoomRange): Pick<NonNullable<LineLayerSpecification['paint']>, 'line-opacity'> =>
   casingFade === undefined ? {} : { 'line-opacity': fadeIn(casingFade) };
 
-const casingLayer = (road: RoadClass): LineLayerSpecification => ({
+const casingLayer = (road: RoadClass, palette: Palette): LineLayerSpecification => ({
   ...roadLine(road, `${road.id}-case`),
-  paint: { 'line-color': road.casing, 'line-width': casingWidths(road.widths), ...casingOpacity(road.casingFade) }
+  paint: { 'line-color': palette[road.casing], 'line-width': casingWidths(road.widths), ...casingOpacity(road.casingFade) }
 });
 
-const roadLayer = (road: RoadClass): LineLayerSpecification => ({
+const roadLayer = (road: RoadClass, palette: Palette): LineLayerSpecification => ({
   ...roadLine(road, road.id),
-  paint: { 'line-color': road.colour, 'line-width': exponentialZoom(road.widths) }
+  paint: { 'line-color': palette[road.colour], 'line-width': exponentialZoom(road.widths) }
 });
 
-const roadLayers: LineLayerSpecification[] = roadClasses.flatMap((road) => [casingLayer(road), roadLayer(road)]);
+const roadLayers = (palette: Palette): LineLayerSpecification[] =>
+  roadClasses.flatMap((road) => [casingLayer(road, palette), roadLayer(road, palette)]);
 
 export { roadLayers };

@@ -27,6 +27,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - The view of the map kept in the address, so that a reload or a shared link opens the same place
 - English and French, at `/` and `/fr`, with a language switcher
 - A banner that suggests the page in the visitor's language, without redirecting
+- A light, a dark or the system theme, kept on the device, for the interface and the map
 - A page for addresses that do not exist
 
 <h2 id="environments">🔗 Environments</h2>

@@ -9,14 +9,25 @@ import { kitBasePath, type Locales, localeUrlPatterns } from '#libraries/base-pa
 
 const PATH_SEPARATOR = /[/\\]/u;
 
+const INLINE_SCRIPT = /<script>(?<script>.*?)<\/script>/su;
+
 const SVELTEKIT_ANNOUNCER_STYLE =
   'position: absolute; left: 0; top: 0; clip: rect(0 0 0 0); clip-path: inset(50%); overflow: hidden; white-space: nowrap; width: 1px; height: 1px';
 
 const sha256 = (text: string): `sha256-${string}` => `sha256-${createHash('sha256').update(text).digest('base64')}`;
 
+const inlineScriptOf = (html: string): string => {
+  const script = INLINE_SCRIPT.exec(html)?.groups?.['script'];
+  if (script === undefined) {
+    throw new Error('src/app.html has no inline script to allow in the Content Security Policy');
+  }
+  return script;
+};
+
 const basePath = process.env['BASE_PATH'] ?? '';
 const locales: Locales = JSON.parse(readFileSync('./project.inlang/settings.json', 'utf8'));
 const urlPatterns = localeUrlPatterns(basePath, locales);
+const themeScript = inlineScriptOf(readFileSync('./src/app.html', 'utf8'));
 
 const config: ViteUserConfig = defineConfig({
   plugins: [
@@ -30,7 +41,7 @@ const config: ViteUserConfig = defineConfig({
         mode: 'hash',
         directives: {
           'default-src': ['self'],
-          'script-src': ['self'],
+          'script-src': ['self', sha256(themeScript)],
           'style-src': ['self'],
           'style-src-attr': ['unsafe-hashes', sha256(SVELTEKIT_ANNOUNCER_STYLE)],
           'img-src': ['self', 'data:'],

@@ -1,6 +1,7 @@
 import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
 import { boundaryLayers } from './style/boundaries';
 import { buildingLayers } from './style/buildings';
+import type { Palette } from './style/colours';
 import { houseNumberLayers } from './style/house-numbers';
 import { landLayers } from './style/land';
 import { pedestrianAreaLayers, pedestrianWayLayers } from './style/pedestrian';
@@ -11,22 +12,22 @@ import { roadLayers } from './style/roads';
 import { openMapTilesId, openMapTilesSource } from './style/tiles';
 import { waterLayers } from './style/water';
 
-const basemapStyle = (glyphs: string): StyleSpecification => ({
+const basemapStyle = (glyphs: string, palette: Palette): StyleSpecification => ({
   version: 8,
   glyphs,
   sources: { [openMapTilesId]: openMapTilesSource },
   layers: [
-    ...landLayers,
-    ...waterLayers,
-    ...pedestrianAreaLayers,
-    ...buildingLayers,
-    ...pedestrianWayLayers,
-    ...roadLayers,
-    ...railLayers,
-    ...boundaryLayers,
-    ...roadNameLayers,
-    ...placeLayers,
-    ...houseNumberLayers
+    ...landLayers(palette),
+    ...waterLayers(palette),
+    ...pedestrianAreaLayers(palette),
+    ...buildingLayers(palette),
+    ...pedestrianWayLayers(palette),
+    ...roadLayers(palette),
+    ...railLayers(palette),
+    ...boundaryLayers(palette),
+    ...roadNameLayers(palette),
+    ...placeLayers(palette),
+    ...houseNumberLayers(palette)
   ]
 });
 

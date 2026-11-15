@@ -23,5 +23,9 @@
   "privacy_openfreemap_why": "Pour dessiner le fond de carte.",
   "privacy_sees": "Ce qu’il voit",
   "privacy_title": "Qui voit quoi",
-  "privacy_why": "Pourquoi"
+  "privacy_why": "Pourquoi",
+  "theme_dark": "Sombre",
+  "theme_label": "Thème",
+  "theme_light": "Clair",
+  "theme_system": "Système"
 }

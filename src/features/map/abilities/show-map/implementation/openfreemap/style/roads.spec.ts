@@ -1,8 +1,10 @@
 import type { StylePropertySpecification } from '@maplibre/maplibre-gl-style-spec';
 import { normalizePropertyExpression } from '@maplibre/maplibre-gl-style-spec';
 import { describe, expect, it } from 'vitest';
-import { colours } from './colours';
+import { basemapPalettes } from './colours';
 import { roadLayers } from './roads';
+
+const LIGHT = basemapPalettes.light;
 
 const LINE_WIDTH: StylePropertySpecification = {
   type: 'number',
@@ -11,14 +13,15 @@ const LINE_WIDTH: StylePropertySpecification = {
   transition: true
 };
 
-const roadLayer = (id: string): (typeof roadLayers)[number] | undefined => roadLayers.find((layer) => layer.id === id);
+const roadLayer = (id: string): ReturnType<typeof roadLayers>[number] | undefined =>
+  roadLayers(LIGHT).find((layer) => layer.id === id);
 
 const widthAt = (id: string, zoom: number): unknown =>
   normalizePropertyExpression(roadLayer(id)?.paint?.['line-width'] ?? 0, 'line-width', LINE_WIDTH).evaluate({ zoom });
 
 describe('road layers', () => {
   it('draws each road class over its casing, from the smallest to motorways', () => {
-    expect(roadLayers.map(({ id }) => id)).toStrictEqual([
+    expect(roadLayers(LIGHT).map(({ id }) => id)).toStrictEqual([
       'road-minor-case',
       'road-minor',
       'road-mid-case',
@@ -58,7 +61,7 @@ describe('road layers', () => {
   });
 
   it('paints motorways amber', () => {
-    expect(roadLayer('road-highway')).toHaveProperty(['paint', 'line-color'], colours.highway);
+    expect(roadLayer('road-highway')).toHaveProperty(['paint', 'line-color'], LIGHT.highway);
   });
 
   it('rounds road ends', () => {

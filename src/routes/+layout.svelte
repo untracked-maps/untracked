@@ -1,5 +1,6 @@
 <script lang="ts">
   import { of } from 'rxjs';
+  import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
   import { suggestLanguage } from '#features/languages/abilities/suggest-language/domain/suggest-language';
   import { localDismissal } from '#features/languages/abilities/suggest-language/implementation/browser/local-dismissal';
   import { browserPreferredLanguages } from '#features/languages/abilities/suggest-language/implementation/browser/preferred-languages';
@@ -11,7 +12,7 @@
   import { page } from '$app/state';
   import type { LayoutProps } from './$types';
 
-  const { children }: LayoutProps = $props();
+  const { children, data }: LayoutProps = $props();
 
   const hrefFor = (locale: Locale): string => localizeHref(page.url.pathname, { locale });
 
@@ -61,6 +62,7 @@
 
 <footer>
   <a href={localizeHref(resolve('/privacy'))}>{m.privacy_title()}</a>
+  <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
 </footer>
 
 <style>
@@ -80,6 +82,10 @@
     inset-block-end: 0;
     inset-inline-start: 0;
     z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    align-items: center;
     padding: 0.25rem 0.5rem;
   }
 
