@@ -1,0 +1,14 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "app_description": "Des cartes basées sur OpenStreetMap qui ne vous pistent pas.",
+  "app_name": "Untracked Maps",
+  "hello_world": "Bonjour le monde !",
+  "language_name": "Français",
+  "language_suggestion": "Cette page existe en français.",
+  "language_suggestion_dismiss": "Fermer",
+  "language_suggestion_label": "Suggestion de langue",
+  "language_suggestion_link": "La lire en français",
+  "language_switcher_label": "Langue",
+  "not_found_home_link": "Retour à l’accueil",
+  "not_found_title": "Page introuvable"
+}

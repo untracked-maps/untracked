@@ -1,0 +1,14 @@
+engineStrict: true
+minimumReleaseAge: 14400
+allowBuilds:
+  esbuild: true
+trustPolicy: no-downgrade
+verifyDepsBeforeRun: error
+saveExact: true
+strictPeerDependencies: true
+trustPolicyExclude:
+  - chokidar@4.0.3
+  - chromium-bidi@157.0.8090-0
+peerDependencyRules:
+  allowedVersions:
+    "@puppeteer/browsers>proxy-agent": "6"

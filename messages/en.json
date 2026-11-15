@@ -1,0 +1,14 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "app_description": "Maps based on OpenStreetMap that do not track you.",
+  "app_name": "Untracked Maps",
+  "hello_world": "Hello World!",
+  "language_name": "English",
+  "language_suggestion": "This page is available in English.",
+  "language_suggestion_dismiss": "Dismiss",
+  "language_suggestion_label": "Language suggestion",
+  "language_suggestion_link": "Read it in English",
+  "language_switcher_label": "Language",
+  "not_found_home_link": "Back to the home page",
+  "not_found_title": "Page not found"
+}

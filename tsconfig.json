@@ -1,0 +1,22 @@
+{
+  "extends": "$app/tsconfig",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "erasableSyntaxOnly": true,
+    "isolatedDeclarations": true,
+    "allowJs": false,
+    "checkJs": false,
+    "declaration": true
+  },
+  "include": ["src", "tests", "*.config.ts", ".dependency-cruiser.ts", ".dependency-cruiser"]
+}
