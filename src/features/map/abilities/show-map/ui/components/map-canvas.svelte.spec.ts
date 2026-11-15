@@ -1,6 +1,6 @@
 import { getWorkerUrl, type Map as MapLibreMap, type StyleSpecification } from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-import { of, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
@@ -23,6 +23,14 @@ const drawnMap = async (): Promise<MapLibreMap> => {
   await render(MapCanvas, { scene: PARIS_SCENE, label: 'Map', onMap: onStyleLoaded });
   return promise;
 };
+
+const noteOverlay = (map: MapLibreMap): Observable<never> =>
+  new Observable(() => {
+    const note = document.createElement('p');
+    note.textContent = 'Drawn by an overlay';
+    map.getContainer().after(note);
+    return (): void => note.remove();
+  });
 
 describe('map canvas', () => {
   it('draws the map in a region named after its label', async () => {
@@ -74,5 +82,19 @@ describe('map canvas', () => {
     await unmount();
 
     expect(scene.observed).toBe(false);
+  });
+
+  it('lets overlays draw on the map', async () => {
+    await render(MapCanvas, { scene: PARIS_SCENE, label: 'Map', overlays: [noteOverlay] });
+
+    await expect.element(page.getByText('Drawn by an overlay')).toBeVisible();
+  });
+
+  it('removes what overlays drew once unmounted', async () => {
+    const { unmount } = await render(MapCanvas, { scene: PARIS_SCENE, label: 'Map', overlays: [noteOverlay] });
+
+    await unmount();
+
+    await expect.element(page.getByText('Drawn by an overlay')).not.toBeInTheDocument();
   });
 });

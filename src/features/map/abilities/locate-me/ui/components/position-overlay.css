@@ -1,0 +1,12 @@
+.locate-me-position {
+  box-sizing: border-box;
+  display: block;
+  inline-size: 18px;
+  block-size: 18px;
+  background: rgb(42 91 215);
+  border: 2.5px solid white;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 7px rgb(42 91 215 / 14%),
+    0 1px 3px rgb(0 0 0 / 30%);
+}

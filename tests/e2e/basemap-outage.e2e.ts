@@ -26,15 +26,15 @@ test.describe('when OpenFreeMap refuses every request', () => {
   test('tells the visitor that the map background is not responding', async ({ page }) => {
     await page.goto('./');
 
-    await expect(page.getByRole('status')).toHaveText(OUTAGE_MESSAGE);
+    await expect(page.getByRole('status').filter({ hasText: OUTAGE_MESSAGE })).toBeVisible();
   });
 
   test('tells the visitor in French under /fr', async ({ page }) => {
     await page.goto('fr');
 
-    await expect(page.getByRole('status')).toHaveText(
-      'Le fond de carte ne répond pas pour le moment : rues et noms peuvent manquer.'
-    );
+    const message = 'Le fond de carte ne répond pas pour le moment : rues et noms peuvent manquer.';
+
+    await expect(page.getByRole('status').filter({ hasText: message })).toBeVisible();
   });
 
   test('has no detectable accessibility violation with the message shown', async ({ page }) => {
@@ -55,7 +55,7 @@ test.describe('when OpenFreeMap stops serving tiles, then serves them again', ()
   test('tells the visitor once tiles keep failing', async ({ page }) => {
     await page.goto('./');
 
-    await expect(page.getByRole('status')).toHaveText(OUTAGE_MESSAGE);
+    await expect(page.getByRole('status').filter({ hasText: OUTAGE_MESSAGE })).toBeVisible();
   });
 
   test('withdraws the message once tiles load again', async ({ page }) => {
@@ -66,6 +66,6 @@ test.describe('when OpenFreeMap stops serving tiles, then serves them again', ()
 
     await page.getByRole('region', { name: 'Map' }).press('-');
 
-    await expect(page.getByRole('status')).toHaveText('');
+    await expect(page.getByText(OUTAGE_MESSAGE)).toHaveCount(0);
   });
 });
