@@ -42,7 +42,9 @@
 
 <BasemapOutage {outage} />
 
-<LocateButton status={located} onLocate={locate} />
+{#if browser}
+  <LocateButton status={located} onLocate={locate} />
+{/if}
 
 <style>
   h1 {
