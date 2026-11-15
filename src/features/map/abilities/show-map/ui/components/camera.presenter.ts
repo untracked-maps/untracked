@@ -5,6 +5,13 @@ type Camera = {
   readonly zoom: number;
 };
 
+type LngLat = {
+  readonly lng: number;
+  readonly lat: number;
+};
+
 const cameraOf = ({ center, zoom }: MapView): Camera => ({ center: [center.longitude, center.latitude], zoom });
 
-export { cameraOf };
+const viewOf = ({ lng, lat }: LngLat, zoom: number): MapView => ({ center: { longitude: lng, latitude: lat }, zoom });
+
+export { cameraOf, viewOf };

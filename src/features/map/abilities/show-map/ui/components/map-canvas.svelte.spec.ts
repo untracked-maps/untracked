@@ -31,6 +31,14 @@ const noteOverlay = (map: MapLibreMap): Observable<never> =>
     map.getContainer().after(note);
     return (): void => note.remove();
   });
+const BEYOND_THE_ANTIMERIDIAN: MapView = { center: { longitude: 190, latitude: 0 }, zoom: 3 };
+const DECIMALS = 6;
+
+const viewToldFor = async (view: MapView): Promise<MapView> => {
+  const { promise, resolve } = Promise.withResolvers<MapView>();
+  await render(MapCanvas, { scene: of({ basemap: BASEMAP, view }), label: 'Map', onViewChange: resolve });
+  return promise;
+};
 
 describe('map canvas', () => {
   it('draws the map in a region named after its label', async () => {
@@ -62,7 +70,9 @@ describe('map canvas', () => {
 
     expect(getWorkerUrl()).toBe(workerUrl);
   });
+});
 
+describe('map canvas once unmounted', () => {
   it('removes the map once unmounted', async () => {
     const { promise, resolve } = Promise.withResolvers<boolean>();
     const onRemoved = (map: MapLibreMap): void => {
@@ -83,7 +93,9 @@ describe('map canvas', () => {
 
     expect(scene.observed).toBe(false);
   });
+});
 
+describe('map canvas overlays', () => {
   it('lets overlays draw on the map', async () => {
     await render(MapCanvas, { scene: PARIS_SCENE, label: 'Map', overlays: [noteOverlay] });
 
@@ -96,5 +108,25 @@ describe('map canvas', () => {
     await unmount();
 
     await expect.element(page.getByText('Drawn by an overlay')).not.toBeInTheDocument();
+  });
+});
+
+describe('map canvas moves', () => {
+  it('tells the zoom the map stands on once it has moved', async () => {
+    const view = await viewToldFor(PARIS);
+
+    expect(view.zoom).toBe(13);
+  });
+
+  it('tells the centre the map stands on once it has moved', async () => {
+    const { center } = await viewToldFor(PARIS);
+
+    expect([center.longitude.toFixed(DECIMALS), center.latitude.toFixed(DECIMALS)]).toEqual(['2.352200', '48.856600']);
+  });
+
+  it('tells a longitude within the antimeridian once the map has moved beyond it', async () => {
+    const { center } = await viewToldFor(BEYOND_THE_ANTIMERIDIAN);
+
+    expect(center.longitude.toFixed(DECIMALS)).toBe('-170.000000');
   });
 });

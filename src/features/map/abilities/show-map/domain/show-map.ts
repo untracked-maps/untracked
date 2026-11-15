@@ -1,4 +1,4 @@
-import { map, type Observable } from 'rxjs';
+import { combineLatest, defaultIfEmpty, EMPTY, map, type Observable } from 'rxjs';
 
 type Coordinates = {
   readonly longitude: number;
@@ -25,7 +25,9 @@ const PARIS: MapView = { center: { longitude: 2.3522, latitude: 48.8566 }, zoom:
 
 const showMap =
   <Basemap>({ loadBasemap }: ShowMapPorts<Basemap>) =>
-  (): Observable<MapScene<Basemap>> =>
-    loadBasemap().pipe(map((basemap) => ({ basemap, view: PARIS })));
+  (requestedView$: Observable<MapView> = EMPTY): Observable<MapScene<Basemap>> =>
+    combineLatest([loadBasemap(), requestedView$.pipe(defaultIfEmpty(PARIS))]).pipe(
+      map(([basemap, view]) => ({ basemap, view }))
+    );
 
 export { type LoadBasemap, type MapScene, type MapView, showMap };

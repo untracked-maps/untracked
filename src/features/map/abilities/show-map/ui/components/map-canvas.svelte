@@ -3,8 +3,8 @@
   import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
   import 'maplibre-gl/dist/maplibre-gl.css';
   import { merge, type Observable } from 'rxjs';
-  import type { MapScene } from '../../domain/show-map';
-  import { cameraOf } from './camera.presenter';
+  import type { MapScene, MapView } from '../../domain/show-map';
+  import { cameraOf, viewOf } from './camera.presenter';
 
   type MapOverlay = (map: MapLibreMap) => Observable<unknown>;
 
@@ -12,15 +12,17 @@
     readonly scene: Observable<MapScene<StyleSpecification>>;
     readonly label: string;
     readonly onMap?: (map: MapLibreMap) => void;
+    readonly onViewChange?: (view: MapView) => void;
     readonly overlays?: readonly MapOverlay[];
   };
 
-  const { scene, label, onMap, overlays = [] }: Props = $props();
+  const { scene, label, onMap, onViewChange, overlays = [] }: Props = $props();
 
   const mountMap = (container: HTMLElement): (() => void) => {
     setWorkerUrl(workerUrl);
     const map = new MapLibreMap({ container, locale: { 'Map.Title': label } });
     onMap?.(map);
+    map.on('moveend', () => onViewChange?.(viewOf(map.getCenter().wrap(), map.getZoom())));
     const subscription = scene.subscribe(({ basemap, view }) => {
       const { center, zoom } = cameraOf(view);
       map.setStyle(basemap);
