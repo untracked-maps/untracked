@@ -87,7 +87,8 @@ jobs:
             GPL-3.0-only, GPL-3.0-or-later, AGPL-3.0-only, AGPL-3.0-or-later
           allow-dependencies-licenses: >-
             pkg:npm/sentry, pkg:npm/npm, pkg:npm/argparse, pkg:npm/caniuse-lite, pkg:npm/spdx-exceptions,
-            pkg:npm/%40cspell/dict-django, pkg:npm/%40cspell/dict-en-common-misspellings
+            pkg:npm/%40cspell/dict-django, pkg:npm/%40cspell/dict-en-common-misspellings,
+            pkg:npm/normalize-package-data
 
   links:
     name: Links
