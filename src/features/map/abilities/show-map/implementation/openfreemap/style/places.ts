@@ -1,5 +1,5 @@
 import type { ExpressionSpecification, SymbolLayerSpecification } from '@maplibre/maplibre-gl-style-spec';
-import { colours } from './colours';
+import type { Palette } from './colours';
 import { exponentialZoom, isOneOf, localName } from './expressions';
 import { fonts } from './fonts';
 import { fromTiles } from './tiles';
@@ -49,7 +49,7 @@ const cityTextSize: ExpressionSpecification = [
   ])
 ];
 
-const neighbourhoods: SymbolLayerSpecification = {
+const neighbourhoods = (palette: Palette): SymbolLayerSpecification => ({
   id: 'place-small',
   type: 'symbol',
   ...fromTiles('place'),
@@ -67,10 +67,10 @@ const neighbourhoods: SymbolLayerSpecification = {
     'text-letter-spacing': 0.06,
     'text-max-width': 7
   },
-  paint: { 'text-color': colours.labelSoft, 'text-halo-color': colours.placeHalo, 'text-halo-width': 1.4 }
-};
+  paint: { 'text-color': palette.labelSoft, 'text-halo-color': palette.placeHalo, 'text-halo-width': 1.4 }
+});
 
-const towns: SymbolLayerSpecification = {
+const towns = (palette: Palette): SymbolLayerSpecification => ({
   id: 'place-town',
   type: 'symbol',
   ...fromTiles('place'),
@@ -87,19 +87,23 @@ const towns: SymbolLayerSpecification = {
     ]),
     ...wideViewPlacement
   },
-  paint: { 'text-color': colours.label, 'text-halo-color': colours.halo, 'text-halo-width': 1.6 }
-};
+  paint: { 'text-color': palette.label, 'text-halo-color': palette.halo, 'text-halo-width': 1.6 }
+});
 
-const cities: SymbolLayerSpecification = {
+const cities = (palette: Palette): SymbolLayerSpecification => ({
   id: 'place-city',
   type: 'symbol',
   ...fromTiles('place'),
   maxzoom: 13,
   filter: ['==', ['get', 'class'], 'city'],
   layout: { 'text-field': localName, 'text-font': fonts.bold, 'text-size': cityTextSize, ...wideViewPlacement },
-  paint: { 'text-color': colours.label, 'text-halo-color': colours.halo, 'text-halo-width': 2 }
-};
+  paint: { 'text-color': palette.label, 'text-halo-color': palette.halo, 'text-halo-width': 2 }
+});
 
-const placeLayers: SymbolLayerSpecification[] = [neighbourhoods, towns, cities];
+const placeLayers = (palette: Palette): SymbolLayerSpecification[] => [
+  neighbourhoods(palette),
+  towns(palette),
+  cities(palette)
+];
 
 export { placeLayers };

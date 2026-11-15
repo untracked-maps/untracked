@@ -1,9 +1,9 @@
 import type { LineLayerSpecification } from '@maplibre/maplibre-gl-style-spec';
-import { colours } from './colours';
+import type { Palette } from './colours';
 import { exponentialZoom, isNotTunnel } from './expressions';
 import { fromTiles } from './tiles';
 
-const railLayers: LineLayerSpecification[] = [
+const railLayers = (palette: Palette): LineLayerSpecification[] => [
   {
     id: 'rail',
     type: 'line',
@@ -11,7 +11,7 @@ const railLayers: LineLayerSpecification[] = [
     minzoom: 12,
     filter: ['all', ['==', ['get', 'class'], 'rail'], isNotTunnel],
     paint: {
-      'line-color': colours.rail,
+      'line-color': palette.rail,
       'line-width': exponentialZoom([
         { zoom: 12, value: 0.8 },
         { zoom: 18, value: 2.5 }

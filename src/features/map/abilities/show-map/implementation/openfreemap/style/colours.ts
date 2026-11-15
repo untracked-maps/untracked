@@ -25,7 +25,9 @@ type Colour =
   | 'water'
   | 'wood';
 
-const colours: Readonly<Record<Colour, string>> = {
+type Palette = Readonly<Record<Colour, string>>;
+
+const lightPalette: Palette = {
   border: '#A58BB8',
   building: '#EFE8D3',
   buildingEdge: '#E6DEC6',
@@ -53,4 +55,34 @@ const colours: Readonly<Record<Colour, string>> = {
   wood: '#C7E3BC'
 };
 
-export { colours };
+const darkPalette: Palette = {
+  border: '#9C88C9',
+  building: '#2A2E34',
+  buildingEdge: '#33373E',
+  cityBorder: '#4A4E55',
+  halo: 'rgba(22,24,28,0.9)',
+  highway: '#465A78',
+  highwayCase: '#33435A',
+  houseNumber: '#6F757C',
+  label: '#E6E8EB',
+  labelSoft: '#8A9097',
+  land: '#1E2126',
+  landAlt: '#22262B',
+  landFar: '#2C343A',
+  majorCase: '#31353C',
+  majorRoadLabel: '#9AA0A6',
+  park: '#1F2D26',
+  path: '#4A4F57',
+  pedestrian: '#262A30',
+  placeHalo: 'rgba(22,24,28,0.9)',
+  rail: '#474B52',
+  road: '#3A3F47',
+  roadCase: '#2B2F35',
+  roadLabel: '#A3A8AE',
+  water: '#14304C',
+  wood: '#1D2A23'
+};
+
+const basemapPalettes: Readonly<Record<'light' | 'dark', Palette>> = { light: lightPalette, dark: darkPalette };
+
+export { basemapPalettes, type Colour, type Palette };

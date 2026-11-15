@@ -47,4 +47,12 @@ describe('show map', () => {
       expectObservable(scene$).toBe('--s|', { s: { basemap: 'basemap', view: EIFFEL_TOWER } });
     });
   });
+
+  it('shows each new basemap of the provider in the same view', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      const scene$ = showMap({ loadBasemap: () => cold('l-d', { l: 'light', d: 'dark' }) })();
+
+      expectObservable(scene$).toBe('l-d', { l: { basemap: 'light', view: PARIS }, d: { basemap: 'dark', view: PARIS } });
+    });
+  });
 });

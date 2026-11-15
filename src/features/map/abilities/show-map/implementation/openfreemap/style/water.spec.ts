@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { colours } from './colours';
+import { basemapPalettes } from './colours';
 import { waterLayers } from './water';
+
+const LIGHT = basemapPalettes.light;
 
 describe('water layers', () => {
   it('fills water bodies before drawing waterways', () => {
-    expect(waterLayers.map(({ id }) => id)).toStrictEqual(['water', 'waterway']);
+    expect(waterLayers(LIGHT).map(({ id }) => id)).toStrictEqual(['water', 'waterway']);
   });
 
   it('draws waterways in the water colour', () => {
-    expect(waterLayers[1]).toHaveProperty(['paint', 'line-color'], colours.water);
+    expect(waterLayers(LIGHT)[1]).toHaveProperty(['paint', 'line-color'], LIGHT.water);
   });
 });

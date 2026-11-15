@@ -1,17 +1,17 @@
 import type { FillLayerSpecification, LineLayerSpecification } from '@maplibre/maplibre-gl-style-spec';
-import { colours } from './colours';
+import type { Palette } from './colours';
 import { fadeIn, linearZoom } from './expressions';
 import { fromTiles } from './tiles';
 
-const buildingLayers: (FillLayerSpecification | LineLayerSpecification)[] = [
+const buildingLayers = (palette: Palette): (FillLayerSpecification | LineLayerSpecification)[] => [
   {
     id: 'building',
     type: 'fill',
     ...fromTiles('building'),
     minzoom: 14,
     paint: {
-      'fill-color': colours.building,
-      'fill-outline-color': colours.buildingEdge,
+      'fill-color': palette.building,
+      'fill-outline-color': palette.buildingEdge,
       'fill-opacity': fadeIn({ from: 14, to: 15 })
     }
   },
@@ -21,7 +21,7 @@ const buildingLayers: (FillLayerSpecification | LineLayerSpecification)[] = [
     ...fromTiles('building'),
     minzoom: 16,
     paint: {
-      'line-color': colours.buildingEdge,
+      'line-color': palette.buildingEdge,
       'line-width': 0.5,
       'line-opacity': linearZoom([
         { zoom: 16, value: 0 },

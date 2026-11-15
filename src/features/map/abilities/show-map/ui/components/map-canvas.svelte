@@ -2,9 +2,9 @@
   import { Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
   import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
   import 'maplibre-gl/dist/maplibre-gl.css';
-  import { merge, type Observable } from 'rxjs';
+  import { merge, type Observable, tap } from 'rxjs';
   import type { MapScene, MapView } from '../../domain/show-map';
-  import { cameraOf, viewOf } from './camera.presenter';
+  import { camerasOf, viewOf } from './camera.presenter';
 
   type MapOverlay = (map: MapLibreMap) => Observable<unknown>;
 
@@ -23,11 +23,12 @@
     const map = new MapLibreMap({ container, locale: { 'Map.Title': label } });
     onMap?.(map);
     map.on('moveend', () => onViewChange?.(viewOf(map.getCenter().wrap(), map.getZoom())));
-    const subscription = scene.subscribe(({ basemap, view }) => {
-      const { center, zoom } = cameraOf(view);
-      map.setStyle(basemap);
-      map.jumpTo({ center: [...center], zoom });
-    });
+    const subscription = scene
+      .pipe(
+        tap(({ basemap }) => map.setStyle(basemap)),
+        camerasOf
+      )
+      .subscribe(({ center, zoom }) => map.jumpTo({ center: [...center], zoom }));
     const overlaid = merge(...overlays.map((overlay) => overlay(map))).subscribe();
     return (): void => {
       subscription.unsubscribe();

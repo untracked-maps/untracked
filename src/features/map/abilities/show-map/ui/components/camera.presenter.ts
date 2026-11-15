@@ -1,4 +1,5 @@
-import type { MapView } from '../../domain/show-map';
+import { distinctUntilChanged, map, type Observable } from 'rxjs';
+import type { MapScene, MapView } from '../../domain/show-map';
 
 type Camera = {
   readonly center: readonly [number, number];
@@ -14,4 +15,11 @@ const cameraOf = ({ center, zoom }: MapView): Camera => ({ center: [center.longi
 
 const viewOf = ({ lng, lat }: LngLat, zoom: number): MapView => ({ center: { longitude: lng, latitude: lat }, zoom });
 
-export { cameraOf, viewOf };
+const camerasOf = <Basemap>(scene$: Observable<MapScene<Basemap>>): Observable<Camera> =>
+  scene$.pipe(
+    map(({ view }) => view),
+    distinctUntilChanged(),
+    map(cameraOf)
+  );
+
+export { camerasOf, viewOf };
