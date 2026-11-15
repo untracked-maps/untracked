@@ -1,0 +1,12 @@
+`vi.$method($arguments)` as $call where {
+  $method <: or {
+    `fn`,
+    `mock`,
+    `doMock`,
+    `spyOn`,
+    `stubGlobal`,
+    `stubEnv`,
+    `hoisted`
+  },
+  register_diagnostic(span=$call, message="No mock or spy: pass a fake for the port and observe the returned values.")
+}

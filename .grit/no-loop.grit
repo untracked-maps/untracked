@@ -1,0 +1,7 @@
+or {
+  JsForStatement(),
+  JsForInStatement(),
+  JsForOfStatement(),
+  JsWhileStatement(),
+  JsDoWhileStatement()
+} as $loop where { register_diagnostic(span=$loop, message="No imperative loop: use map, filter, reduce or an RxJS operator.") }

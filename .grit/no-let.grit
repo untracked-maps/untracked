@@ -1,0 +1,4 @@
+JsVariableDeclaration() as $declaration where {
+  $declaration <: r"let\b.*",
+  register_diagnostic(span=$declaration, message="No let: declare values with const and derive new ones instead of reassigning.")
+}

@@ -1,0 +1,9 @@
+{
+  "path": ["src", "tests"],
+  "pattern": "**/*.{ts,svelte}",
+  "minTokens": 50,
+  "threshold": 0,
+  "reporters": ["console"],
+  "gitignore": true,
+  "absolute": false
+}

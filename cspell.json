@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "fr",
+  "import": ["@cspell/dict-fr-fr/cspell-ext.json"],
+  "files": ["messages/fr.json"],
+  "ignoreRegExpList": ["^\\s*\"[$a-z_]+\":", "https?://\\S+"],
+  "words": ["Maps", "OpenStreetMap", "Untracked"]
+}

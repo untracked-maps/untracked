@@ -1,0 +1,25 @@
+{
+  "rules": [
+    ".grit",
+    ".dependency-cruiser",
+    ".github/actions/*",
+    ".github/workflows",
+    ".vscode",
+    "docs/adr",
+    "messages",
+    "project.inlang",
+    "static",
+    "tests/e2e",
+    "src/routes/**",
+    "src/configuration/**",
+    "src/libraries/*/**",
+    "src/features/*/domain/**",
+    "src/features/*/implementation/*/**",
+    "src/features/*/ui/components/**",
+    "src/features/*/ui/pages/**",
+    "src/features/*/abilities/*/domain/**",
+    "src/features/*/abilities/*/implementation/*/**",
+    "src/features/*/abilities/*/ui/components/**",
+    "src/features/*/abilities/*/ui/pages/**"
+  ]
+}

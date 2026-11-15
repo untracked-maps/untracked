@@ -1,0 +1,4 @@
+or {
+  JsClassDeclaration(),
+  JsClassExpression()
+} as $class where { register_diagnostic(span=$class, message="No class: compose small pure functions over immutable values.") }

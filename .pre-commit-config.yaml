@@ -1,0 +1,115 @@
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+default_stages: [pre-commit, pre-push]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--enforce-all]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: check-yaml
+        exclude: ^pnpm-lock\.yaml$
+      - id: check-json
+      - id: check-case-conflict
+      - id: check-symlinks
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: forbid-submodules
+  - repo: https://github.com/rhysd/actionlint
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
+    hooks:
+      - id: actionlint
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: 06a39750ec31860bb44f2acf67182c40016cd1e7 # frozen: v1.32.0
+    hooks:
+      - id: zizmor
+        args: [--offline, --persona=pedantic]
+  - repo: https://github.com/crate-ci/typos
+    rev: 4c8b7f51ca60df14e3c5ca82770dfbbe6c3dae85 # frozen: v1.52.0
+    hooks:
+      - id: typos
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # frozen: v8.30.1
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/lycheeverse/lychee
+    rev: 2bba271688c1abb1503097a064e6c3bc1d1b6a9b # frozen: lychee-v0.24.2
+    hooks:
+      - id: lychee
+        args: [--no-progress, --offline, --include-fragments]
+        types: [markdown]
+  - repo: local
+    hooks:
+      - id: biome
+        name: biome
+        entry: pnpm exec biome check --write --error-on-warnings --no-errors-on-unmatched --files-ignore-unknown=true
+        language: system
+        types: [text]
+      - id: svelte-check
+        name: svelte-check
+        entry: pnpm check
+        language: system
+        pass_filenames: false
+        types_or: [ts, svelte]
+      - id: architecture
+        name: architecture
+        entry: pnpm lint:architecture
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: no-generated-code-in-src
+        name: no generated code in src
+        entry: pnpm lint:generated
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: duplication
+        name: jscpd
+        entry: pnpm lint:duplication
+        language: system
+        pass_filenames: false
+        types_or: [ts, svelte]
+      - id: spelling
+        name: cspell
+        entry: pnpm lint:spelling
+        language: system
+        pass_filenames: false
+        files: ^messages/
+      - id: knip
+        name: knip
+        entry: pnpm lint:unused
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: vitest
+        name: vitest
+        entry: pnpm test:coverage
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+      - id: cucumber
+        name: cucumber
+        entry: pnpm test:cucumber
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+      - id: pnpm-audit
+        name: pnpm audit
+        entry: pnpm audit --prod
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+      - id: commitlint
+        name: conventional commit message
+        entry: pnpm exec commitlint --edit
+        language: system
+        stages: [commit-msg]

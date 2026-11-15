@@ -1,0 +1,8 @@
+{
+  "default": {
+    "import": ["src/features/**/*.steps.ts"],
+    "paths": ["src/features/**/*.ability.md"],
+    "format": ["progress"],
+    "formatOptions": { "snippetInterface": "synchronous" }
+  }
+}

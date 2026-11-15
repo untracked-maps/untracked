@@ -1,0 +1,7 @@
+or {
+  `it($title, $callback)`,
+  `test($title, $callback)`
+} as $test where {
+  $callback <: r"(?s).*\bexpect\b.*\bexpect\b.*",
+  register_diagnostic(span=$test, message="One assertion per test: split it into one test per behaviour.")
+}
