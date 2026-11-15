@@ -60,6 +60,7 @@ pnpm preview
 | `pnpm test:lighthouse`                                 | Audits the built site; on Ubuntu, prefix with `CHROME_PATH=/usr/bin/google-chrome` |
 | `pnpm test:lighthouse:en`                              | The English pages only, audited by an English browser                              |
 | `pnpm test:lighthouse:fr`                              | The French pages only, audited by a French browser                                 |
+| `pnpm test:lighthouse:quick`                           | Every page, with one run instead of three                                          |
 | `pnpm exec prek run --all-files --hook-stage pre-push` | Runs every hook on every file, tests included                                      |
 
 ## Branches

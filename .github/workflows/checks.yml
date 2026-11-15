@@ -143,17 +143,45 @@ jobs:
         env:
           BASE_PATH: /untracked
 
-  lighthouse:
-    name: Lighthouse
+  lighthouse-page:
+    name: Lighthouse (${{ matrix.page }})
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - page: /
+            accept-lang: en
+          - page: /privacy
+            accept-lang: en
+          - page: /fr
+            accept-lang: fr-FR,fr
+          - page: /fr/privacy
+            accept-lang: fr-FR,fr
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
       - run: pnpm build
-      - run: pnpm test:lighthouse
+      - run: >-
+          pnpm exec lhci autorun --collect.url="http://localhost:4174$PAGE"
+          --collect.settings.chromeFlags="--headless=new --accept-lang=$ACCEPT_LANG"
+        env:
+          PAGE: ${{ matrix.page }}
+          ACCEPT_LANG: ${{ matrix.accept-lang }}
+
+  lighthouse:
+    name: Lighthouse
+    if: always()
+    needs: lighthouse-page
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: test "$RESULT" = success
+        env:
+          RESULT: ${{ needs.lighthouse-page.result }}
 
   secrets:
     name: Secrets
