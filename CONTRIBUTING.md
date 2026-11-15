@@ -62,7 +62,7 @@ pnpm preview
 
 ## Branches
 
-Work on a branch named after the change's [Conventional Commits](https://www.conventionalcommits.org) type, such as `feat/search-places` or `fix/language-switcher`, with one change per pull request.
+Work on a branch named after the change's [Conventional Commits](https://www.conventionalcommits.org) type, such as `feat/search-places` or `fix/language-switcher`, with one change per pull request. GitHub refuses any other name: only `main` and branches starting with `build/`, `chore/`, `ci/`, `docs/`, `feat/`, `fix/`, `perf/`, `refactor/`, `revert/`, `style/`, `test/` or `renovate/` can be created. These branches require signed commits and a linear history; force pushes stay allowed, to rebase them.
 
 ## Commits
 
