@@ -2,6 +2,7 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "app_description": "Des cartes basées sur OpenStreetMap qui ne vous pistent pas.",
   "app_name": "Untracked Maps",
+  "basemap_outage": "Le fond de carte ne répond pas pour le moment : rues et noms peuvent manquer.",
   "language_name": "Français",
   "language_suggestion": "Cette page existe en français.",
   "language_suggestion_dismiss": "Fermer",

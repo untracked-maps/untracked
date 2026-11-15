@@ -22,6 +22,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 
 - A map of Paris on an OpenStreetMap basemap from [OpenFreeMap](https://openfreemap.org), drawn with [MapLibre](https://maplibre.org)
 - A page that says who sees what: every external service the browser calls, what it sees and why
+- A message when the basemap does not respond, withdrawn as soon as tiles load again
 - English and French, at `/` and `/fr`, with a language switcher
 - A banner that suggests the page in the visitor's language, without redirecting
 - A page for addresses that do not exist
