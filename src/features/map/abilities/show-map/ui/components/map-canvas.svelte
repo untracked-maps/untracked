@@ -2,17 +2,20 @@
   import { Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
   import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
   import 'maplibre-gl/dist/maplibre-gl.css';
-  import type { Observable } from 'rxjs';
+  import { merge, type Observable } from 'rxjs';
   import type { MapScene } from '../../domain/show-map';
   import { cameraOf } from './camera.presenter';
+
+  type MapOverlay = (map: MapLibreMap) => Observable<unknown>;
 
   type Props = {
     readonly scene: Observable<MapScene<StyleSpecification>>;
     readonly label: string;
     readonly onMap?: (map: MapLibreMap) => void;
+    readonly overlays?: readonly MapOverlay[];
   };
 
-  const { scene, label, onMap }: Props = $props();
+  const { scene, label, onMap, overlays = [] }: Props = $props();
 
   const mountMap = (container: HTMLElement): (() => void) => {
     setWorkerUrl(workerUrl);
@@ -23,8 +26,10 @@
       map.setStyle(basemap);
       map.jumpTo({ center: [...center], zoom });
     });
+    const overlaid = merge(...overlays.map((overlay) => overlay(map))).subscribe();
     return (): void => {
       subscription.unsubscribe();
+      overlaid.unsubscribe();
       map.remove();
     };
   };

@@ -1,11 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, type Route, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { refuseOpenFreeMap } from './openfreemap';
 
-const refuse = (route: Route): Promise<void> => route.abort();
-
-test.beforeEach(async ({ page }) => {
-  await page.route('https://tiles.openfreemap.org/**', refuse);
-});
+test.beforeEach(refuseOpenFreeMap);
 
 test('shows the map at the root', async ({ page }) => {
   await page.goto('./');

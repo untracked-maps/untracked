@@ -54,6 +54,7 @@
     "@commitlint/types": "21.2.3",
     "@cspell/dict-fr-fr": "2.3.2",
     "@cucumber/cucumber": "13.3.0",
+    "@faker-js/faker": "10.6.0",
     "@inlang/paraglide-js": "2.29.3",
     "@inlang/plugin-message-format": "4.6.0",
     "@j178/prek": "0.5.10",
