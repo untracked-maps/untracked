@@ -17,7 +17,7 @@
 
 <h1>{m.app_name()}</h1>
 
-<MapCanvas {scene} />
+<MapCanvas {scene} label={m.map_label()} />
 
 <style>
   h1 {

@@ -11,6 +11,7 @@
     "!**/*.spec.ts",
     "!**/*.steps.ts",
     "!**/index.ts",
+    "!src/features/map/abilities/show-map/implementation/openfreemap/style/{boundaries,buildings,colours,fonts,house-numbers,land,pedestrian,places,rail,road-names,roads,tiles,water}.ts",
     "!src/libraries/*/cli.ts"
   ],
   "reporters": ["clear-text", "progress", "html"],

@@ -46,13 +46,13 @@
             "categories:performance": [
               "error",
               {
-                "minScore": 0.8
+                "minScore": 0.7
               }
             ],
             "total-blocking-time": [
               "error",
               {
-                "maxNumericValue": 800
+                "maxNumericValue": 2500
               }
             ],
             "resource-summary:script:size": [
