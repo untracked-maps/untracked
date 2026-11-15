@@ -19,6 +19,7 @@ MapLibre draws the labels of the map with glyphs: signed distance fields of a fo
 
 - The build renders the glyphs on each run, in about 11 seconds for the whole build on 2026-11-15; they weigh 12 MB, as in the previous app.
 - `fontnik`'s binaries cover Linux and macOS on x64 and arm64; another platform would compile it from source.
+- Dependency review cannot classify two of these licences, so both packages are listed as exceptions in `security.yml`: `fontnik` is under BSD-3-Clause but declares it in the deprecated `licenses` field, and Inter is under the SIL Open Font License 1.1, which lets the font be bundled with software under any licence, the AGPL included.
 
 ## Alternatives considered
 

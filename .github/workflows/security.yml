@@ -88,7 +88,7 @@ jobs:
           allow-dependencies-licenses: >-
             pkg:npm/sentry, pkg:npm/npm, pkg:npm/argparse, pkg:npm/caniuse-lite, pkg:npm/spdx-exceptions,
             pkg:npm/%40cspell/dict-django, pkg:npm/%40cspell/dict-en-common-misspellings,
-            pkg:npm/normalize-package-data
+            pkg:npm/normalize-package-data, pkg:npm/fontnik, pkg:npm/inter-ui
 
   links:
     name: Links
