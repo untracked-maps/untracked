@@ -14,7 +14,7 @@ The same checks must run before each commit, before each push and in CI. husky w
 - On push: the same, plus Vitest with its coverage thresholds, Cucumber and `pnpm audit`.
 - On the commit message: commitlint with the conventional configuration, a header of at most 72 characters, a body that says why, wrapped at 72 characters, and no scope but `deps` for Renovate and `release` for semantic-release. Renovate's commits carry a body for that reason.
 - Remote hooks are pinned by commit hash with a `# frozen: vX.Y.Z` annotation, updated with `prek update --freeze --cooldown-days 10`.
-- CI runs `prek run --all-files`.
+- CI runs the same checks, each in its own job so that they run in parallel: lint, types, architecture, the remaining hooks through `prek run --all-files`, commit messages, unit tests, scenarios, build with its documentation and HTML validation, end-to-end tests at the root and under a base path, Lighthouse and secrets. Composite actions share the installation of pnpm and of Chromium; caches keep the pnpm store, Chromium, prek's hooks and Stryker's incremental results. Each job builds the site itself rather than waiting for a shared build, which takes seconds.
 
 ## Consequences
 

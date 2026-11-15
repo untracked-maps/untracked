@@ -77,7 +77,7 @@ Work on a branch named after the change's [Conventional Commits](https://www.con
 3. Put every text shown in `messages/`, in every language.
 4. When the change picks a library, a protocol or a rule, or sets aside a plausible alternative, record it in an ADR in [`docs/adr`](docs/adr).
 5. Run every check: `pnpm exec prek run --all-files --hook-stage pre-push`, then `pnpm test:e2e`.
-6. Open a pull request against `main`. The `code`, `test` and `secrets` jobs must be green.
+6. Open a pull request against `main`. Every job of the `Checks` and `Security` workflows must be green: `main` requires them.
 
 Use whatever tools you like, AI included. You are responsible for what you submit and must understand it; the same checks and the same review apply, whatever helped write it.
 
