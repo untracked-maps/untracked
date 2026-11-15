@@ -23,7 +23,7 @@ Untracked Maps is a static map web app. The [README](README.md) says what it doe
 - Functional style: no classes, no mutable state, no imperative loops; small pure named functions. The GritQL plugins in `.grit/` enforce no class, no `let` and no loop.
 - An ability's use case is a function from its ports and input streams to its output streams, in its `domain` ([ADR-007](docs/adr/ADR-007-abilities-are-rxjs-stream-functions.md)). No store, no global state.
 - Routes are the only place where features meet and where adapters are passed to abilities ([ADR-008](docs/adr/ADR-008-composition-in-routes.md)).
-- The Content Security Policy in `vite.config.ts` allows only the site itself: a feature that calls an external service adds it to `connect-src` ([ADR-018](docs/adr/ADR-018-security-checks.md)).
+- The Content Security Policy in `vite.config.ts` allows only the site itself: a feature that calls an external service adds it to `connect-src` ([ADR-018](docs/adr/ADR-018-security-checks.md)), and to the "Who sees what" page, with what it sees and why ([ADR-021](docs/adr/ADR-021-maplibre-and-the-openfreemap-basemap.md)).
 - Every displayed text is a message in `messages/<locale>.json`, called through `m.<key>()` ([ADR-009](docs/adr/ADR-009-translations-with-paraglide-and-the-locale-in-the-url.md)).
 - No comments in code or configuration; the reasoning goes in the commit message or an ADR. The one exception is the version annotation next to a pinned hash: `# frozen: vX.Y.Z` in `.pre-commit-config.yaml` and `# vX.Y.Z` after a `uses:` SHA.
 

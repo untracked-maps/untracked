@@ -7,6 +7,7 @@
   import { m } from '#i18n/messages';
   import { getLocale, type Locale, locales, localizeHref } from '#i18n/runtime';
   import { browser } from '$app/env';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { LayoutProps } from './$types';
 
@@ -32,31 +33,56 @@
   <meta name="description" content={m.app_description()} />
 </svelte:head>
 
-<LanguageSuggestion {suggestion} {hrefFor} onDismiss={dismiss} />
+<div class="above-map">
+  <LanguageSuggestion {suggestion} {hrefFor} onDismiss={dismiss} />
 
-<nav aria-label={m.language_switcher_label()}>
-  <ul>
-    {#each locales as locale (locale)}
-      <li>
-        <a
-          href={hrefFor(locale)}
-          hreflang={locale}
-          lang={locale}
-          aria-current={locale === getLocale() ? 'page' : undefined}
-          data-sveltekit-reload
-        >
-          {m.language_name({}, { locale })}
-        </a>
-      </li>
-    {/each}
-  </ul>
-</nav>
+  <nav aria-label={m.language_switcher_label()}>
+    <ul>
+      {#each locales as locale (locale)}
+        <li>
+          <a
+            href={hrefFor(locale)}
+            hreflang={locale}
+            lang={locale}
+            aria-current={locale === getLocale() ? 'page' : undefined}
+            data-sveltekit-reload
+          >
+            {m.language_name({}, { locale })}
+          </a>
+        </li>
+      {/each}
+    </ul>
+  </nav>
+</div>
 
 <main>
   {@render children()}
 </main>
 
+<footer>
+  <a href={localizeHref(resolve('/privacy'))}>{m.privacy_title()}</a>
+</footer>
+
 <style>
+  .above-map {
+    position: relative;
+    z-index: 1;
+  }
+
+  nav,
+  footer {
+    inline-size: fit-content;
+    background: Canvas;
+  }
+
+  footer {
+    position: fixed;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    z-index: 1;
+    padding: 0.25rem 0.5rem;
+  }
+
   nav ul {
     display: flex;
     gap: 0.5rem;

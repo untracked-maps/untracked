@@ -15,7 +15,7 @@ test.describe('with a French browser', () => {
 
     await page.getByRole('link', { name: 'La lire en français' }).click();
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Bonjour le monde !');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
   });
 
   test('suggests nothing on the French page', async ({ page }) => {
