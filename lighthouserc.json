@@ -1,17 +1,14 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "./build",
-      "url": ["/", "/fr.html", "/privacy.html", "/fr/privacy.html"],
       "numberOfRuns": 3,
-      "settings": {
-        "chromeFlags": "--headless=new"
-      }
+      "startServerCommand": "pnpm preview --port 4174 --strictPort",
+      "startServerReadyPattern": "Local"
     },
     "assert": {
       "assertMatrix": [
         {
-          "matchingUrlPattern": "^http://[^/]+/(?:fr[.]html)?$",
+          "matchingUrlPattern": "^http://[^/]+/(?:fr)?$",
           "assertions": {
             "categories:accessibility": [
               "error",
@@ -64,7 +61,7 @@
           }
         },
         {
-          "matchingUrlPattern": "^http://[^/]+/(?!(?:fr[.]html)?$)",
+          "matchingUrlPattern": "^http://[^/]+/(?!(?:fr)?$)",
           "assertions": {
             "categories:performance": [
               "error",

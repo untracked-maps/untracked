@@ -12,6 +12,7 @@ Lighthouse CI held every page to the same budget: a performance score of at leas
 - Pages that show the map, `/` and `/fr`, have their own budget, set from the measures of the CI runner, where it is enforced, with a margin: a score of at least 0.70, a Total Blocking Time of at most 2,500 ms and at most 350 kB of script. The weight of the script, the same on every machine, is the reliable guard against a regression.
 - Every other page keeps the strict budget, and `/privacy` in both languages is now audited, so that a page without the map stays light.
 - The other assertions, accessibility, best practices, SEO, LCP and CLS, are the same for every page.
+- Lighthouse audits the addresses visitors use, `/fr` rather than the file `fr.html`, served by `vite preview` as GitHub Pages serves them: SvelteKit's router knows no `/fr.html` route, so the audit of the file measured a page no visitor sees. Each page is audited by a browser in its own language, through Chrome's `--accept-lang`, one run per language: on `/fr`, an English browser is offered the English page by a banner that, shown after the scripts, becomes the largest content of the page; that case is tested end to end rather than held to the budget of the page's own audience.
 
 ## Consequences
 
