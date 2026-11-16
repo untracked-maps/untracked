@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/untracked-maps/untracked/compare/v1.2.0...v1.3.0) (2026-11-16)
+
+
+### Features
+
+* give the interface the look of the previous app ([595d584](https://github.com/untracked-maps/untracked/commit/595d584aacb0e334deeb6b79e0c0fd000728790c))
+
 # [1.2.0](https://github.com/untracked-maps/untracked/compare/v1.1.0...v1.2.0) (2026-11-15)
 
 

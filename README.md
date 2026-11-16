@@ -1,6 +1,6 @@
 # Untracked Maps
 
-Current version: 1.2.0
+Current version: 1.3.0
 
 <h2 id="about">🪧 About</h2>
 
