@@ -13,7 +13,7 @@ const mapType = (page: Page): Locator => page.getByRole('dialog', { name: 'Map t
 
 const openStartedApp = async (page: Page, view = ''): Promise<void> => {
   await page.goto(`./${view}`);
-  await page.getByRole('button', { name: 'Show my position' }).waitFor();
+  await page.getByRole('button', { name: 'Show my position', disabled: false }).waitFor();
   await page.getByRole('button', { name: 'Map type' }).click();
 };
 

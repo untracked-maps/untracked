@@ -15,7 +15,7 @@ const theme = (page: Page, name: string): Locator =>
 
 const openStartedApp = async (page: Page): Promise<void> => {
   await page.goto('./');
-  await page.getByRole('button', { name: 'Show my position' }).waitFor();
+  await page.getByRole('button', { name: 'Show my position', disabled: false }).waitFor();
 };
 
 const chooseTheme = async (page: Page, name: string): Promise<void> => {

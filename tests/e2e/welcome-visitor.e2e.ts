@@ -41,7 +41,7 @@ test('does not welcome the visitor again after a reload', async ({ page }) => {
   await page.getByRole('button', { name: 'Got it' }).click();
 
   await page.reload();
-  await page.getByRole('button', { name: 'Show my position' }).waitFor();
+  await page.getByRole('button', { name: 'Show my position', disabled: false }).waitFor();
 
   await expect(welcome(page)).toBeHidden();
 });
