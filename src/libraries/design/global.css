@@ -1,0 +1,80 @@
+@import "./tokens.css";
+
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("inter-ui/web-latin/Inter-Regular-subset.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("inter-ui/web-latin/Inter-SemiBold-subset.woff2") format("woff2");
+}
+
+html {
+  color: var(--text);
+  background: var(--page);
+  font-family: var(--font-ui);
+  font-size: 100%;
+  line-height: var(--line-height-body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-size: var(--font-size-body);
+}
+
+h1,
+h2 {
+  margin-block: 0 var(--space-2);
+  font-weight: var(--font-weight-strong);
+  line-height: var(--line-height-tight);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--font-size-title);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--font-size-lead);
+}
+
+p {
+  margin-block: 0 var(--space-3);
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 0.18em;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    scroll-behavior: auto;
+    transition-duration: 0s;
+    animation-duration: 0s;
+    animation-iteration-count: 1;
+  }
+}

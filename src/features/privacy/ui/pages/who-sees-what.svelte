@@ -1,5 +1,6 @@
 <script lang="ts">
   import { m } from '#i18n/messages';
+  import '#libraries/design/tokens.css';
 </script>
 
 <h1>{m.privacy_title()}</h1>
@@ -14,3 +15,27 @@
     <dd>{m.privacy_openfreemap_why()}</dd>
   </dl>
 </section>
+
+<style>
+  section {
+    padding-block-start: var(--space-4);
+    margin-block-start: var(--space-4);
+    border-block-start: 1px solid var(--line);
+  }
+
+  dl {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+  }
+
+  dt {
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-strong);
+    color: var(--text-muted);
+  }
+
+  dd {
+    margin: 0 0 var(--space-2);
+  }
+</style>

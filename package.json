@@ -15,7 +15,9 @@
     "#features/*": "./src/features/*.ts",
     "#features/*.svelte": "./src/features/*.svelte",
     "#i18n/*": "./.paraglide/*.js",
-    "#libraries/*": "./src/libraries/*.ts"
+    "#libraries/*": "./src/libraries/*.ts",
+    "#libraries/*.css": "./src/libraries/*.css",
+    "#libraries/*.svelte": "./src/libraries/*.svelte"
   },
   "scripts": {
     "build": "vite build",
