@@ -11,6 +11,8 @@ Untracked Maps is a static map web app. The [README](README.md) says what it doe
 
 `pnpm exec prek run --all-files --hook-stage pre-push` runs every check, tests included. Commits run the fast checks; pushes add Vitest, Cucumber and `pnpm audit`; CI runs them all, plus the end-to-end tests and Lighthouse.
 
+While working, run the fast checks on what you touch: `pnpm check`, Biome, and `pnpm exec vitest run <paths>`. Run the slow ones once, at the end of a change, to validate it: the end-to-end tests, `pnpm test:mutation:incremental` and `pnpm test:lighthouse:quick`; CI runs the full Lighthouse audit. When one fails, fix it, rerun that check, then the whole set once more.
+
 - **Architecture**: dependency-cruiser and folderslint enforce [ADR-006](docs/adr/ADR-006-features-and-abilities-on-a-hexagonal-core.md). Features never import each other; abilities never import each other; domains import only themselves and `rxjs`. No barrel file: modules are imported directly, through the `#features/*` subpath imports from routes. Do not add a package exception to `.dependency-cruiser.ts` without a reason in the commit.
 - **Types**: strict TypeScript 6 with the extra flags of `tsconfig.json`; `svelte-check` fails on warnings. Everything exported has an explicit type; no `enum` or `namespace`. No `any`, no `as` casts but `as const`, no `!`: Biome enforces all three.
 - **Generated code** never goes in `src`: `pnpm lint:generated` fails when git ignores any file under `src`, on every commit and in CI after the build. Tools write their output at the root, in a hidden folder, as SvelteKit and Paraglide do.

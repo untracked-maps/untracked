@@ -42,6 +42,7 @@
     "test:lighthouse:fr": "lhci autorun --collect.url=http://localhost:4174/fr --collect.url=http://localhost:4174/fr/privacy --collect.settings.chromeFlags='--headless=new --accept-lang=fr-FR,fr'",
     "test:lighthouse:quick": "pnpm test:lighthouse:en --collect.numberOfRuns=1 && pnpm test:lighthouse:fr --collect.numberOfRuns=1",
     "test:mutation": "stryker run",
+    "test:mutation:incremental": "stryker run --incremental",
     "test:watch": "vitest"
   },
   "dependencies": {
