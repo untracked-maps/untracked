@@ -1,0 +1,43 @@
+[data-kind] {
+  --kind-colour: rgb(107 113 120);
+}
+
+[data-kind="restaurant"],
+[data-kind="cafe"],
+[data-kind="bar"],
+[data-kind="bakery"] {
+  --kind-colour: rgb(232 116 47);
+}
+
+[data-kind="supermarket"],
+[data-kind="bookshop"],
+[data-kind="florist"],
+[data-kind="department-store"],
+[data-kind="hairdresser"],
+[data-kind="beauty-salon"] {
+  --kind-colour: rgb(65 105 216);
+}
+
+[data-kind="museum"],
+[data-kind="cinema"],
+[data-kind="theatre"],
+[data-kind="library"],
+[data-kind="attraction"],
+[data-kind="monument"],
+[data-kind="place-of-worship"] {
+  --kind-colour: rgb(18 145 158);
+}
+
+[data-kind="park"],
+[data-kind="garden"] {
+  --kind-colour: rgb(62 142 82);
+}
+
+[data-kind="pharmacy"],
+[data-kind="hospital"] {
+  --kind-colour: rgb(216 74 69);
+}
+
+[data-kind="hotel"] {
+  --kind-colour: rgb(154 85 160);
+}

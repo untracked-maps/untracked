@@ -1,6 +1,5 @@
-import { defer, map, type Observable } from 'rxjs';
-import { type Coordinates, PLACE_KINDS, type Place, type PlaceKind } from '../../../../domain/place';
-import type { LoadPlaces } from '../../domain/search-places';
+import { defer, map, shareReplay } from 'rxjs';
+import { type Coordinates, type LoadPlaces, PLACE_KINDS, type Place, type PlaceKind } from '../../domain/place';
 
 type FetchFile = (url: string) => Promise<Response>;
 
@@ -39,9 +38,9 @@ const contentOf = async (response: Response): Promise<unknown> => {
   return await response.json();
 };
 
-const prerenderedPlaces =
-  (fetchFile: FetchFile, url: string): LoadPlaces =>
-  (): Observable<readonly Place[]> =>
-    defer(async () => contentOf(await fetchFile(url))).pipe(map(placesIn));
+const prerenderedPlaces = (fetchFile: FetchFile, url: string): LoadPlaces => {
+  const places$ = defer(async () => contentOf(await fetchFile(url))).pipe(map(placesIn), shareReplay(1));
+  return () => places$;
+};
 
 export { prerenderedPlaces };

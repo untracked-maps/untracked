@@ -4,8 +4,6 @@
   import { WELCOME_STORAGE_KEY } from '#configuration/welcome';
   import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
   import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
-  import { BASEMAPS, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
-  import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
   import BasemapSwitcher from '#features/map/abilities/choose-basemap/ui/components/basemap-switcher.svelte';
   import SatelliteCredit from '#features/map/abilities/choose-basemap/ui/components/satellite-credit.svelte';
   import { keepViewInUrl, viewInUrl } from '#features/map/abilities/keep-view-in-url/domain/keep-view-in-url';
@@ -20,7 +18,6 @@
   import { reportBasemapOutage } from '#features/map/abilities/report-basemap-outage/domain/report-basemap-outage';
   import { mapLibreBasemapEvents } from '#features/map/abilities/report-basemap-outage/implementation/maplibre/basemap-events';
   import BasemapOutage from '#features/map/abilities/report-basemap-outage/ui/components/basemap-outage.svelte';
-  import { showBikeLanes } from '#features/map/abilities/show-bike-lanes/domain/show-bike-lanes';
   import BikeLanesCredit from '#features/map/abilities/show-bike-lanes/ui/components/bike-lanes-credit.svelte';
   import { loadBikeLanesLayers } from '#features/map/abilities/show-bike-lanes/ui/components/bike-lanes-overlay';
   import { type MapScene, type MapView, showMap } from '#features/map/abilities/show-map/domain/show-map';
@@ -32,11 +29,8 @@
   import MapCredit from '#features/map/abilities/show-map/ui/components/map-credit.svelte';
   import ZoomButtons from '#features/map/abilities/show-map/ui/components/zoom-buttons.svelte';
   import { type ZoomStep, zoomOverlay } from '#features/map/abilities/show-map/ui/components/zoom-overlay';
-  import { showTransitLines } from '#features/map/abilities/show-transit-lines/domain/show-transit-lines';
-  import { idfmTransitLines } from '#features/map/abilities/show-transit-lines/implementation/idfm/idfm-transit-lines';
   import TransitLinesCredit from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-credit.svelte';
   import { loadTransitLinesLayers } from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-overlay';
-  import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
   import { layersOverlay } from '#features/map/ui/components/layers-on-map';
   import { type Coordinates, inspectPoint } from '#features/places/abilities/inspect-point/domain/inspect-point';
   import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
@@ -49,13 +43,19 @@
   import { type RecentPlace, recentSearches } from '#features/search/abilities/recent-searches/domain/recent-searches';
   import { localRecents } from '#features/search/abilities/recent-searches/implementation/browser/local-recents';
   import RecentSearches from '#features/search/abilities/recent-searches/ui/components/recent-searches.svelte';
+  import { namedKind } from '#features/search/abilities/search-by-type/domain/named-kind';
+  import { searchByType } from '#features/search/abilities/search-by-type/domain/search-by-type';
+  import { lazyKindWords } from '#features/search/abilities/search-by-type/implementation/lazy/lazy-kind-words';
+  import KindNamed from '#features/search/abilities/search-by-type/ui/components/kind-named.svelte';
+  import { kindPlacesOverlay } from '#features/search/abilities/search-by-type/ui/components/kind-places-overlay';
+  import KindSearch from '#features/search/abilities/search-by-type/ui/components/kind-search.svelte';
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
   import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
-  import { prerenderedPlaces } from '#features/search/abilities/search-places/implementation/prerendered/prerendered-places';
   import { chosenPlaceOverlay } from '#features/search/abilities/search-places/ui/components/chosen-place-overlay';
   import type { SearchPanel } from '#features/search/abilities/search-places/ui/components/combobox.presenter';
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
-  import type { Place } from '#features/search/domain/place';
+  import type { Place, PlaceKind } from '#features/search/domain/place';
+  import { prerenderedPlaces } from '#features/search/implementation/prerendered/prerendered-places';
   import { m } from '#i18n/messages';
   import Checkbox from '#libraries/design/checkbox.svelte';
   import FieldGroup from '#libraries/design/field-group.svelte';
@@ -77,32 +77,11 @@
 
   const replaceUrl = (url: string): Promise<void> => Promise.resolve(replaceState(url, page.state));
 
-  const keptChoice = <Value>(key: string, values: readonly [Value, ...Value[]]): KeptOnDevice<Value> =>
-    browser ? keptOnDevice(localStorage, key, values) : keptInMemory(values);
+  const layers = $derived(data.layers);
 
-  const SHOWN_OR_HIDDEN = [false, true] as const;
+  const transitLinesShown = $derived(layers.transitLinesShown);
 
-  const basemapChoice = keptChoice('untracked-maps.basemap', BASEMAPS);
-
-  const transitLinesChoice = keptChoice('untracked-maps.transit-lines', SHOWN_OR_HIDDEN);
-
-  const bikeLanesChoice = keptChoice('untracked-maps.bike-lanes', SHOWN_OR_HIDDEN);
-
-  const transitLinesShown = transitLinesChoice.kept();
-
-  const bikeLanesShown = bikeLanesChoice.kept();
-
-  const satelliteImagery = chooseBasemap({
-    chosenBasemap: basemapChoice.kept,
-    loadSatelliteImagery: ignOrthophotos
-  })();
-
-  const transitLines = showTransitLines({
-    shownTransitLines: transitLinesChoice.kept,
-    loadTransitLines: idfmTransitLines((url) => fetch(url))
-  })();
-
-  const bikeLanes = $derived(showBikeLanes({ shownBikeLanes: bikeLanesChoice.kept })(data.theme.colourScheme));
+  const bikeLanesShown = $derived(layers.bikeLanesShown);
 
   const scene: Observable<MapScene<StyleSpecification>> = $derived(
     browser
@@ -110,7 +89,7 @@
           loadBasemap: openFreeMapBasemap(
             { glyphs: glyphsUrl(location.origin), sprite: spriteUrl(location.origin) },
             data.theme.colourScheme.pipe(map((scheme) => basemapPalettes[scheme])),
-            satelliteImagery
+            layers.satelliteImagery
           )
         })(viewInUrl({ readFragment: locationFragment(location) })())
       : NEVER
@@ -132,18 +111,27 @@
 
   const views = new ReplaySubject<MapView>(1);
 
-  const searchWakes = new Subject<void>();
+  const searchWakes = new ReplaySubject<void>(1);
 
-  const searchQueries = new Subject<string>();
+  const searchQueries = new ReplaySubject<string>(1);
 
   const chosenPlaces = new Subject<RecentPlace>();
 
   const clearedRecents = new Subject<void>();
 
-  const searchState = searchPlaces({
-    loadPlaces: prerenderedPlaces((url) => fetch(url), resolve('/data/places.json')),
-    indexPlaces: miniSearchIndex
-  })({ wake: searchWakes, query: searchQueries, mapView: views });
+  const loadPlaces = prerenderedPlaces((url) => fetch(url), resolve('/data/places.json'));
+
+  const searchInputs = { wake: searchWakes, query: searchQueries };
+
+  const searchState = searchPlaces({ loadPlaces, indexPlaces: miniSearchIndex })({ ...searchInputs, mapView: views });
+
+  const kindChoices = new Subject<PlaceKind | undefined>();
+
+  const kindSearch = searchByType({ loadPlaces })({ chosen: kindChoices, mapView: views });
+
+  const kindNamed = namedKind({ loadKindFinder: lazyKindWords })(searchInputs);
+
+  const chooseKind = (kind?: PlaceKind): void => kindChoices.next(kind);
 
   const wakeSearch = (): void => searchWakes.next();
 
@@ -200,10 +188,16 @@
 
 <div class="top">
   <SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser}>
+    {#snippet lead(panel)}
+      <KindNamed named={kindNamed} onChoose={chooseKind} onClear={(): void => panel.settle('')} />
+    {/snippet}
     {#snippet suggestions(panel)}
       <RecentSearches {recents} onChoose={chooseRecent(panel)} onClear={clearRecents(panel)} />
     {/snippet}
   </SearchPlaces>
+  <div class="kinds">
+    <KindSearch search={kindSearch} onChoose={chooseKind} onChoosePlace={choosePlace} ready={browser} />
+  </div>
   <SpotCard spot={inspectedSpot} onClose={dismissSpot} />
   <LanguageSuggestion
     suggestion={data.languageSuggestion.suggestion}
@@ -219,10 +213,11 @@
   onViewChange={keepView}
   overlays={[
     positionOverlay(located),
+    kindPlacesOverlay(kindSearch),
     chosenPlaceOverlay(chosenPlaces),
     zoomOverlay(zooms),
-    layersOverlay(transitLines, loadTransitLinesLayers),
-    layersOverlay(bikeLanes, loadBikeLanesLayers),
+    layersOverlay(layers.transitLinesOnMap, loadTransitLinesLayers),
+    layersOverlay(layers.bikeLanesOnMap, loadBikeLanesLayers),
     inspectedSpotOverlay(inspectedSpot, { onInspect: inspect, onDismiss: dismissSpot })
   ]}
 />
@@ -240,9 +235,9 @@
   </div>
   <div class="credit">
     <MapCredit>
-      <SatelliteCredit basemap={basemapChoice.kept()} />
-      <TransitLinesCredit shown={transitLinesShown} />
-      <BikeLanesCredit shown={bikeLanesShown} />
+      <SatelliteCredit basemap={layers.basemap.kept()} />
+      <TransitLinesCredit shown={layers.transitLinesShown} />
+      <BikeLanesCredit shown={layers.bikeLanesShown} />
     </MapCredit>
   </div>
   <div class="controls">
@@ -250,15 +245,20 @@
       {#snippet icon()}
         <LayersIcon />
       {/snippet}
-      <BasemapSwitcher basemap={basemapChoice.kept()} onChoose={basemapChoice.keep} />
+      <BasemapSwitcher basemap={layers.basemap.kept()} onChoose={layers.basemap.keep} />
       <FieldGroup legend={m.overlays_label()}>
         <Checkbox
           label={m.transit_lines()}
           hint={m.transit_lines_hint()}
           checked={$transitLinesShown}
-          onToggle={transitLinesChoice.keep}
+          onToggle={layers.transitLines.keep}
         />
-        <Checkbox label={m.bike_lanes()} hint={m.bike_lanes_hint()} checked={$bikeLanesShown} onToggle={bikeLanesChoice.keep} />
+        <Checkbox
+          label={m.bike_lanes()}
+          hint={m.bike_lanes_hint()}
+          checked={$bikeLanesShown}
+          onToggle={layers.bikeLanes.keep}
+        />
       </FieldGroup>
       <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
     </PopoverButton>
@@ -284,6 +284,18 @@
     gap: var(--space-3);
     justify-items: start;
     margin-block-end: auto;
+  }
+
+  .top > :global(search),
+  .kinds {
+    grid-area: 1 / 1;
+    align-self: start;
+  }
+
+  .kinds {
+    display: grid;
+    inline-size: 100%;
+    margin-block-start: calc(var(--control-size) + var(--space-3));
   }
 
   .corner {

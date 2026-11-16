@@ -15,9 +15,7 @@ import {
   timer,
   withLatestFrom
 } from 'rxjs';
-import type { Coordinates, Place } from '../../../domain/place';
-
-type LoadPlaces = () => Observable<readonly Place[]>;
+import type { Coordinates, LoadPlaces, Place } from '../../../domain/place';
 
 type FindPlaces = (query: string, reference: Coordinates) => readonly Place[];
 
@@ -106,4 +104,4 @@ const searchPlaces =
     return merge(index$.pipe(ignoreElements()), states$).pipe(share());
   };
 
-export { type FindPlaces, type IndexPlaces, type LoadPlaces, type SearchState, searchPlaces };
+export { type FindPlaces, type IndexPlaces, type SearchState, searchPlaces };

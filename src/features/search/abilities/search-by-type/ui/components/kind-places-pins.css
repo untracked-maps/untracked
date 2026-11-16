@@ -1,0 +1,10 @@
+.search-by-type-pin {
+  box-sizing: border-box;
+  display: block;
+  inline-size: 18px;
+  block-size: 18px;
+  background: var(--kind-colour);
+  border: 3px solid rgb(255 255 255);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 40%);
+}

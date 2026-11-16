@@ -1,6 +1,6 @@
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import type { Place } from '../../../../domain/place';
+import type { Place } from '../../domain/place';
 import { prerenderedPlaces } from './prerendered-places';
 
 const LOUVRE: Place = {
@@ -65,5 +65,27 @@ describe('prerendered places', () => {
     };
 
     expect(() => prerenderedPlaces(refusing, '/data/places.json')()).not.toThrow();
+  });
+
+  it('asks for the file once, however often the places are loaded', async () => {
+    const asked: string[] = [];
+    const load = prerenderedPlaces((url) => {
+      asked.push(url);
+      return serving([LOUVRE])(url);
+    }, '/data/places.json');
+
+    await lastValueFrom(load());
+    await lastValueFrom(load());
+
+    expect(asked).toEqual(['/data/places.json']);
+  });
+
+  it('asks for the file again after it could not be served', async () => {
+    const statuses = [500, 200];
+    const load = prerenderedPlaces((url) => serving([LOUVRE], statuses.shift())(url), '/data/places.json');
+
+    await lastValueFrom(load()).catch(() => []);
+
+    expect(await lastValueFrom(load())).toEqual([LOUVRE]);
   });
 });

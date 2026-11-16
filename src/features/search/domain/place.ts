@@ -1,3 +1,5 @@
+import type { Observable } from 'rxjs';
+
 const PLACE_KINDS = [
   'attraction',
   'bakery',
@@ -43,4 +45,6 @@ type Place = {
   readonly fame: number;
 };
 
-export { type Coordinates, PLACE_KINDS, type Place, type PlaceKind };
+type LoadPlaces = () => Observable<readonly Place[]>;
+
+export { type Coordinates, type LoadPlaces, PLACE_KINDS, type Place, type PlaceKind };

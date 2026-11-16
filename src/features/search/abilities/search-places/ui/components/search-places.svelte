@@ -29,11 +29,12 @@
     readonly onWake: () => void;
     readonly onQuery: (query: string) => void;
     readonly onChoose: (place: Place) => void;
+    readonly lead?: Snippet<[SearchPanel]>;
     readonly suggestions?: Snippet<[SearchPanel]>;
     readonly ready?: boolean;
   };
 
-  const { state, onWake, onQuery, onChoose, suggestions, ready = true }: Props = $props();
+  const { state, onWake, onQuery, onChoose, lead, suggestions, ready = true }: Props = $props();
 
   const uid = $props.id();
 
@@ -158,6 +159,11 @@
       onclick={open}
     />
   </span>
+  {#if $combobox.open && lead !== undefined}
+    <div class="lead" {@attach hostedIn}>
+      {@render lead({ settle, focusField })}
+    </div>
+  {/if}
   {#if offersSuggestions($combobox) && suggestions !== undefined}
     <div class="suggestions" {@attach hostedIn}>
       {@render suggestions({ settle, focusField })}
@@ -239,6 +245,7 @@
     opacity: 1;
   }
 
+  .lead,
   .suggestions,
   [role="listbox"] {
     max-block-size: 60dvh;
@@ -248,6 +255,7 @@
     border-block-start: 1px solid var(--line);
   }
 
+  .lead:not(:has(> :global(*))),
   .suggestions:not(:has(> :global(*))) {
     display: none;
   }

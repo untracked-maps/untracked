@@ -1,5 +1,7 @@
+import { kilometresBetween } from '../../../domain/distance';
 import type { Coordinates, Place, PlaceKind } from '../../../domain/place';
-import { normalised, significantWordCountOf } from './words';
+import { normalised } from '../../../domain/text';
+import { significantWordCountOf } from './words';
 
 type Candidate = {
   readonly place: Place;
@@ -63,25 +65,9 @@ const FAR_PENALTY_PER_KILOMETRE = 0.04;
 
 const FAR_PENALTY_LIMIT = 20;
 
-const METRES_PER_DEGREE_OF_LONGITUDE_AT_THE_EQUATOR = 111_320;
-
-const METRES_PER_DEGREE_OF_LATITUDE = 110_540;
-
-const METRES_PER_KILOMETRE = 1000;
-
-const HALF_TURN_IN_DEGREES = 180;
-
 const STRONG_TEXT = 0.7;
 
 const STRONG_COVER = 0.5;
-
-const kilometresBetween = (from: Coordinates, to: Coordinates): number =>
-  Math.hypot(
-    (to.longitude - from.longitude) *
-      METRES_PER_DEGREE_OF_LONGITUDE_AT_THE_EQUATOR *
-      Math.cos((from.latitude * Math.PI) / HALF_TURN_IN_DEGREES),
-    (to.latitude - from.latitude) * METRES_PER_DEGREE_OF_LATITUDE
-  ) / METRES_PER_KILOMETRE;
 
 const textOf = (qualities: readonly number[]): number =>
   qualities.reduce((sum, quality) => sum + quality, 0) / qualities.length;
