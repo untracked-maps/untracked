@@ -1,3 +1,19 @@
+# [1.6.0](https://github.com/untracked-maps/untracked/compare/v1.5.0...v1.6.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* preload the interface font to stop the welcome card shifting ([d02d314](https://github.com/untracked-maps/untracked/commit/d02d31414cffa4e20f1ff3dfa83bb438b0871426))
+
+
+### Features
+
+* add a satellite view, transit lines and bike lanes ([c909ac7](https://github.com/untracked-maps/untracked/commit/c909ac7f67778278be328271bd7252ee20bf58a4))
+* lay the map page out as the previous app did ([65a8d84](https://github.com/untracked-maps/untracked/commit/65a8d8454a0e4aa1a70d6a790bf0ac64471b4cb5))
+* open the search panel at once, with the recent searches ([236b4ad](https://github.com/untracked-maps/untracked/commit/236b4ad125446a780202526a94ec7bc02dda07c4))
+* search the nearest places of a kind, with category chips ([e7aaf73](https://github.com/untracked-maps/untracked/commit/e7aaf73ecc03767e4abca61e4c79f8c5c600f370))
+* show the address of a spot clicked on the map ([daa3a0e](https://github.com/untracked-maps/untracked/commit/daa3a0e5ea61f1529cf095b9581a50dc53d237e0))
+
 # [1.5.0](https://github.com/untracked-maps/untracked/compare/v1.4.0...v1.5.0) (2026-11-16)
 
 
