@@ -113,6 +113,7 @@ jobs:
       - uses: ./.github/actions/setup
       - run: sudo apt-get install --yes --no-install-recommends graphviz
       - run: pnpm build
+      - run: pnpm test:size
       - run: pnpm docs:build
       - run: pnpm lint:html
       - run: pnpm lint:generated

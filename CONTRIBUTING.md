@@ -58,6 +58,7 @@ pnpm preview
 | `pnpm test:e2e`                                        | Builds the site and runs the end-to-end tests                                      |
 | `pnpm test:mutation`                                   | Runs mutation testing                                                              |
 | `pnpm test:mutation:incremental`                       | Same, retesting only the mutants whose code or tests changed since the last run    |
+| `pnpm test:size`                                       | Checks the weight of MapLibre and of the app, after `pnpm build`                   |
 | `pnpm test:lighthouse`                                 | Audits the built site; on Ubuntu, prefix with `CHROME_PATH=/usr/bin/google-chrome` |
 | `pnpm test:lighthouse:en`                              | The English pages only, audited by an English browser                              |
 | `pnpm test:lighthouse:fr`                              | The French pages only, audited by a French browser                                 |

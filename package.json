@@ -45,6 +45,7 @@
     "test:lighthouse:quick": "pnpm test:lighthouse:en --collect.numberOfRuns=1 && pnpm test:lighthouse:fr --collect.numberOfRuns=1",
     "test:mutation": "stryker run",
     "test:mutation:incremental": "stryker run --incremental",
+    "test:size": "size-limit",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -72,6 +73,7 @@
     "@semantic-release/changelog": "7.0.0",
     "@semantic-release/exec": "7.1.0",
     "@semantic-release/git": "11.0.1",
+    "@size-limit/file": "14.3.0",
     "@stryker-mutator/core": "10.1.1",
     "@stryker-mutator/typescript-checker": "10.1.1",
     "@stryker-mutator/vitest-runner": "10.1.1",
@@ -91,6 +93,7 @@
     "knip": "6.44.1",
     "playwright": "1.64.1",
     "semantic-release": "25.0.9",
+    "size-limit": "14.3.0",
     "svelte-check": "4.7.8",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
