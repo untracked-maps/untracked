@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/untracked-maps/untracked/compare/v1.3.0...v1.4.0) (2026-11-16)
+
+
+### Features
+
+* search a place by its name ([bd559bf](https://github.com/untracked-maps/untracked/commit/bd559bf24586332781668c35a020f2f8eafeacc2))
+
 # [1.3.0](https://github.com/untracked-maps/untracked/compare/v1.2.0...v1.3.0) (2026-11-16)
 
 
