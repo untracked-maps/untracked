@@ -36,7 +36,12 @@ const config: ViteUserConfig = defineConfig({
           'style-src-attr': ['unsafe-hashes', sha256(SVELTEKIT_ANNOUNCER_STYLE)],
           'img-src': ['self', 'data:'],
           'font-src': ['self'],
-          'connect-src': ['self', 'https://tiles.openfreemap.org'],
+          'connect-src': [
+            'self',
+            'https://tiles.openfreemap.org',
+            'https://data.geopf.fr',
+            'https://data.iledefrance-mobilites.fr'
+          ],
           'manifest-src': ['self'],
           'worker-src': ['self'],
           'object-src': ['none'],

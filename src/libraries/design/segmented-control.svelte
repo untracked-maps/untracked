@@ -1,4 +1,5 @@
 <script lang="ts" generics="T extends string">
+  import FieldGroup from './field-group.svelte';
   import './tokens.css';
 
   type Props = {
@@ -12,8 +13,7 @@
   const { legend, name, options, selected, onSelect }: Props = $props();
 </script>
 
-<fieldset>
-  <legend>{legend}</legend>
+<FieldGroup {legend} layout="row">
   <div class="segments">
     {#each options as option (option.value)}
       <label>
@@ -28,28 +28,9 @@
       </label>
     {/each}
   </div>
-</fieldset>
+</FieldGroup>
 
 <style>
-  fieldset {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-3);
-    align-items: center;
-    justify-content: space-between;
-    min-inline-size: 0;
-    padding: 0;
-    margin: 0;
-    border: 0;
-  }
-
-  legend {
-    float: inline-start;
-    padding: 0;
-    font-size: var(--font-size-meta);
-    font-weight: var(--font-weight-strong);
-  }
-
   .segments {
     display: flex;
     gap: 2px;

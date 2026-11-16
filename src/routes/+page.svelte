@@ -4,6 +4,10 @@
   import { WELCOME_STORAGE_KEY } from '#configuration/welcome';
   import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
   import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
+  import { BASEMAPS, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
+  import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
+  import BasemapSwitcher from '#features/map/abilities/choose-basemap/ui/components/basemap-switcher.svelte';
+  import SatelliteCredit from '#features/map/abilities/choose-basemap/ui/components/satellite-credit.svelte';
   import { keepViewInUrl, viewInUrl } from '#features/map/abilities/keep-view-in-url/domain/keep-view-in-url';
   import {
     locationFragment,
@@ -16,6 +20,9 @@
   import { reportBasemapOutage } from '#features/map/abilities/report-basemap-outage/domain/report-basemap-outage';
   import { mapLibreBasemapEvents } from '#features/map/abilities/report-basemap-outage/implementation/maplibre/basemap-events';
   import BasemapOutage from '#features/map/abilities/report-basemap-outage/ui/components/basemap-outage.svelte';
+  import { showBikeLanes } from '#features/map/abilities/show-bike-lanes/domain/show-bike-lanes';
+  import BikeLanesCredit from '#features/map/abilities/show-bike-lanes/ui/components/bike-lanes-credit.svelte';
+  import { loadBikeLanesLayers } from '#features/map/abilities/show-bike-lanes/ui/components/bike-lanes-overlay';
   import { type MapScene, type MapView, showMap } from '#features/map/abilities/show-map/domain/show-map';
   import { openFreeMapBasemap } from '#features/map/abilities/show-map/implementation/openfreemap/load-basemap';
   import { basemapPalettes } from '#features/map/abilities/show-map/implementation/openfreemap/style/colours';
@@ -25,6 +32,12 @@
   import MapCredit from '#features/map/abilities/show-map/ui/components/map-credit.svelte';
   import ZoomButtons from '#features/map/abilities/show-map/ui/components/zoom-buttons.svelte';
   import { type ZoomStep, zoomOverlay } from '#features/map/abilities/show-map/ui/components/zoom-overlay';
+  import { showTransitLines } from '#features/map/abilities/show-transit-lines/domain/show-transit-lines';
+  import { idfmTransitLines } from '#features/map/abilities/show-transit-lines/implementation/idfm/idfm-transit-lines';
+  import TransitLinesCredit from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-credit.svelte';
+  import { loadTransitLinesLayers } from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-overlay';
+  import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
+  import { layersOverlay } from '#features/map/ui/components/layers-on-map';
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
@@ -39,6 +52,8 @@
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
   import type { Place } from '#features/search/domain/place';
   import { m } from '#i18n/messages';
+  import Checkbox from '#libraries/design/checkbox.svelte';
+  import FieldGroup from '#libraries/design/field-group.svelte';
   import LayersIcon from '#libraries/design/layers-icon.svelte';
   import PopoverButton from '#libraries/design/popover-button.svelte';
   import '#libraries/design/tokens.css';
@@ -57,12 +72,40 @@
 
   const replaceUrl = (url: string): Promise<void> => Promise.resolve(replaceState(url, page.state));
 
+  const keptChoice = <Value>(key: string, values: readonly [Value, ...Value[]]): KeptOnDevice<Value> =>
+    browser ? keptOnDevice(localStorage, key, values) : keptInMemory(values);
+
+  const SHOWN_OR_HIDDEN = [false, true] as const;
+
+  const basemapChoice = keptChoice('untracked-maps.basemap', BASEMAPS);
+
+  const transitLinesChoice = keptChoice('untracked-maps.transit-lines', SHOWN_OR_HIDDEN);
+
+  const bikeLanesChoice = keptChoice('untracked-maps.bike-lanes', SHOWN_OR_HIDDEN);
+
+  const transitLinesShown = transitLinesChoice.kept();
+
+  const bikeLanesShown = bikeLanesChoice.kept();
+
+  const satelliteImagery = chooseBasemap({
+    chosenBasemap: basemapChoice.kept,
+    loadSatelliteImagery: ignOrthophotos
+  })();
+
+  const transitLines = showTransitLines({
+    shownTransitLines: transitLinesChoice.kept,
+    loadTransitLines: idfmTransitLines((url) => fetch(url))
+  })();
+
+  const bikeLanes = $derived(showBikeLanes({ shownBikeLanes: bikeLanesChoice.kept })(data.theme.colourScheme));
+
   const scene: Observable<MapScene<StyleSpecification>> = $derived(
     browser
       ? showMap({
           loadBasemap: openFreeMapBasemap(
             { glyphs: glyphsUrl(location.origin), sprite: spriteUrl(location.origin) },
-            data.theme.colourScheme.pipe(map((scheme) => basemapPalettes[scheme]))
+            data.theme.colourScheme.pipe(map((scheme) => basemapPalettes[scheme])),
+            satelliteImagery
           )
         })(viewInUrl({ readFragment: locationFragment(location) })())
       : NEVER
@@ -161,7 +204,13 @@
   label={m.map_label()}
   onMap={basemap.watch}
   onViewChange={keepView}
-  overlays={[positionOverlay(located), chosenPlaceOverlay(chosenPlaces), zoomOverlay(zooms)]}
+  overlays={[
+    positionOverlay(located),
+    chosenPlaceOverlay(chosenPlaces),
+    zoomOverlay(zooms),
+    layersOverlay(transitLines, loadTransitLinesLayers),
+    layersOverlay(bikeLanes, loadBikeLanesLayers)
+  ]}
 />
 
 <BasemapOutage {outage} />
@@ -171,13 +220,27 @@
     <WelcomeCard {welcome} privacyHref={localizeHref(resolve('/(content)/privacy'))} onAcknowledge={acknowledge} />
   </div>
   <div class="credit">
-    <MapCredit />
+    <MapCredit>
+      <SatelliteCredit basemap={basemapChoice.kept()} />
+      <TransitLinesCredit shown={transitLinesShown} />
+      <BikeLanesCredit shown={bikeLanesShown} />
+    </MapCredit>
   </div>
   <div class="controls">
     <PopoverButton label={m.layers_label()}>
       {#snippet icon()}
         <LayersIcon />
       {/snippet}
+      <BasemapSwitcher basemap={basemapChoice.kept()} onChoose={basemapChoice.keep} />
+      <FieldGroup legend={m.overlays_label()}>
+        <Checkbox
+          label={m.transit_lines()}
+          hint={m.transit_lines_hint()}
+          checked={$transitLinesShown}
+          onToggle={transitLinesChoice.keep}
+        />
+        <Checkbox label={m.bike_lanes()} hint={m.bike_lanes_hint()} checked={$bikeLanesShown} onToggle={bikeLanesChoice.keep} />
+      </FieldGroup>
       <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
     </PopoverButton>
     <ZoomButtons onZoom={zoom} ready={browser} />

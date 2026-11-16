@@ -42,6 +42,18 @@
         <small>{m.about_openfreemap()}</small>
       </a>
     </li>
+    <li>
+      <a class="item" href="https://geoservices.ign.fr" rel="external">
+        <span>IGN Géoplateforme</span>
+        <small>{m.about_ign()}</small>
+      </a>
+    </li>
+    <li>
+      <a class="item" href="https://data.iledefrance-mobilites.fr" rel="external">
+        <span>Île-de-France Mobilités</span>
+        <small>{m.about_idfm()}</small>
+      </a>
+    </li>
   </ul>
 </section>
 

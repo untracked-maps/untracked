@@ -31,6 +31,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - English and French, at `/` and `/fr`, with a language switcher
 - A banner that suggests the page in the visitor's language, without redirecting
 - A light, a dark or the system theme, kept on the device, for the interface and the map
+- A satellite view from the aerial photos of [IGN](https://geoservices.ign.fr/bdortho), with the labels of the map on top, and the transit lines of Île-de-France from [Île-de-France Mobilités](https://data.iledefrance-mobilites.fr) and the bike lanes of France, from OpenStreetMap through IGN, as layers; each kept on the device, and fetched only once turned on
 - Round buttons over the map, as in the first version: map type with the theme, zoom, position, and an "About" dialog with privacy, sources, help, languages and credits
 - A page for addresses that do not exist
 

@@ -1,6 +1,6 @@
 import { validateStyleMin } from '@maplibre/maplibre-gl-style-spec';
 import { describe, expect, it } from 'vitest';
-import { basemapStyle } from './basemap-style';
+import { type BasemapImagery, basemapStyle } from './basemap-style';
 import { basemapPalettes } from './style/colours';
 
 const GLYPHS = 'https://untracked.test/fonts/{fontstack}/{range}.pbf';
@@ -12,6 +12,11 @@ const ASSETS = { glyphs: GLYPHS, sprite: SPRITE };
 const LIGHT = basemapPalettes.light;
 
 const DARK = basemapPalettes.dark;
+
+const IMAGERY: BasemapImagery = {
+  sources: { photos: { type: 'raster', tiles: ['https://photos.test/{z}/{x}/{y}.jpg'] } },
+  layers: [{ id: 'photos', type: 'raster', source: 'photos' }]
+};
 
 const OPENFREEMAP_LINK = /<a href=[^>]*https:\/\/openfreemap\.org[^>]*>OpenFreeMap<\/a>/u;
 
@@ -88,5 +93,23 @@ describe('basemap style', () => {
       'place-city',
       'housenumber'
     ]);
+  });
+});
+
+describe('basemap style with imagery', () => {
+  it('draws the imagery it is given from its own source', () => {
+    expect(basemapStyle(ASSETS, LIGHT, IMAGERY).sources).toHaveProperty(['photos', 'type'], 'raster');
+  });
+
+  it('draws the imagery it is given over the shapes and under the labels', () => {
+    expect(
+      basemapStyle(ASSETS, LIGHT, IMAGERY)
+        .layers.map(({ id }) => id)
+        .slice(23, 26)
+    ).toStrictEqual(['boundary-city', 'photos', 'road-name-major']);
+  });
+
+  it('is a valid MapLibre style with imagery', () => {
+    expect(validateStyleMin(basemapStyle(ASSETS, LIGHT, IMAGERY))).toStrictEqual([]);
   });
 });

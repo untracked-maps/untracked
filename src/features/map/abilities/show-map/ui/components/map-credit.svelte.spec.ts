@@ -1,3 +1,4 @@
+import { createRawSnippet } from 'svelte';
 import { describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
@@ -24,5 +25,12 @@ describe('map credit', () => {
     await expect
       .element(page.getByRole('link', { name: '© OpenMapTiles' }))
       .toHaveAttribute('href', 'https://openmaptiles.org');
+  });
+
+  it('adds the credits of what else the map shows', async () => {
+    const children = createRawSnippet(() => ({ render: (): string => '<a href="https://example.org">© Example</a>' }));
+    await render(MapCredit, { children });
+
+    await expect.element(page.getByRole('link', { name: '© Example' })).toBeVisible();
   });
 });

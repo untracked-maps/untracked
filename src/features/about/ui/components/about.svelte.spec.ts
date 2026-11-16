@@ -6,7 +6,8 @@ import About from './about.svelte';
 
 const languages = createRawSnippet(() => ({ render: (): string => '<nav aria-label="Language"></nav>' }));
 
-const EVERY_SOURCE = /\(ODbL\) · OpenFreeMap · © OpenMapTiles/u;
+const EVERY_SOURCE =
+  /\(ODbL\) · OpenFreeMap · © OpenMapTiles · Orthophotos © IGN – BD ORTHO®, Géoplateforme · Transit lines © Île-de-France Mobilités \(Licence Ouverte 2[.]0\) · Bike lanes from OpenStreetMap \(January 2024\), served by IGN/u;
 
 const props = { privacyHref: '/privacy', languages };
 
@@ -41,6 +42,22 @@ describe('about sources and help', () => {
     await expect
       .element(page.getByRole('link', { name: 'OpenFreeMap The basemap' }))
       .toHaveAttribute('href', 'https://openfreemap.org');
+  });
+
+  it('names IGN as the source of the satellite photos and the bike lanes', async () => {
+    await render(About, props);
+
+    await expect
+      .element(page.getByRole('link', { name: 'IGN Géoplateforme Satellite photos and bike lanes, when you show them' }))
+      .toHaveAttribute('href', 'https://geoservices.ign.fr');
+  });
+
+  it('names Île-de-France Mobilités as the source of the transit lines', async () => {
+    await render(About, props);
+
+    await expect
+      .element(page.getByRole('link', { name: 'Île-de-France Mobilités Transit lines of Île-de-France, when you show them' }))
+      .toHaveAttribute('href', 'https://data.iledefrance-mobilites.fr');
   });
 
   it('leads to the page of OpenStreetMap that explains how to report a mistake', async () => {

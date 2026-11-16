@@ -22,4 +22,20 @@ describe('the OpenFreeMap basemap', () => {
       });
     });
   });
+
+  it('draws the imagery it is given, under the labels', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      const imagery = { sources: {}, layers: [{ id: 'photos', type: 'raster', source: 'photos' }] } as const;
+      const basemap$ = openFreeMapBasemap(
+        ASSETS,
+        cold('l', { l: basemapPalettes.light }),
+        cold('n-i', { n: undefined, i: imagery })
+      )();
+
+      expectObservable(basemap$).toBe('n-i', {
+        n: basemapStyle(ASSETS, basemapPalettes.light),
+        i: basemapStyle(ASSETS, basemapPalettes.light, imagery)
+      });
+    });
+  });
 });

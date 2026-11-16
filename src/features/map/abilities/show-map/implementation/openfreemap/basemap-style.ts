@@ -1,4 +1,4 @@
-import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
+import type { LayerSpecification, SourceSpecification, StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
 import { boundaryLayers } from './style/boundaries';
 import { buildingLayers } from './style/buildings';
 import type { Palette } from './style/colours';
@@ -18,11 +18,22 @@ type BasemapAssets = {
   readonly sprite: string;
 };
 
-const basemapStyle = ({ glyphs, sprite }: BasemapAssets, palette: Palette): StyleSpecification => ({
+type BasemapImagery = {
+  readonly sources: Readonly<Record<string, SourceSpecification>>;
+  readonly layers: readonly LayerSpecification[];
+};
+
+const NO_IMAGERY: BasemapImagery = { sources: {}, layers: [] };
+
+const basemapStyle = (
+  { glyphs, sprite }: BasemapAssets,
+  palette: Palette,
+  imagery: BasemapImagery = NO_IMAGERY
+): StyleSpecification => ({
   version: 8,
   glyphs,
   sprite,
-  sources: { [openMapTilesId]: openMapTilesSource },
+  sources: { [openMapTilesId]: openMapTilesSource, ...imagery.sources },
   layers: [
     ...landLayers(palette),
     ...waterLayers(palette),
@@ -32,6 +43,7 @@ const basemapStyle = ({ glyphs, sprite }: BasemapAssets, palette: Palette): Styl
     ...roadLayers(palette),
     ...railLayers(palette),
     ...boundaryLayers(palette),
+    ...imagery.layers,
     ...roadNameLayers(palette),
     ...stationLayers(palette),
     ...placeLayers(palette),
@@ -39,4 +51,4 @@ const basemapStyle = ({ glyphs, sprite }: BasemapAssets, palette: Palette): Styl
   ]
 });
 
-export { type BasemapAssets, basemapStyle };
+export { type BasemapAssets, type BasemapImagery, basemapStyle };
