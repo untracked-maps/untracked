@@ -6,6 +6,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig, type ViteUserConfig } from 'vitest/config';
 import { THEME_BEFORE_FIRST_PAINT } from '#configuration/theme';
+import { WELCOME_BEFORE_FIRST_PAINT } from '#configuration/welcome';
 import { kitBasePath, type Locales, localeUrlPatterns } from '#libraries/base-path/base-path';
 
 const PATH_SEPARATOR = /[/\\]/u;
@@ -30,7 +31,7 @@ const config: ViteUserConfig = defineConfig({
         mode: 'hash',
         directives: {
           'default-src': ['self'],
-          'script-src': ['self', sha256(THEME_BEFORE_FIRST_PAINT)],
+          'script-src': ['self', sha256(THEME_BEFORE_FIRST_PAINT), sha256(WELCOME_BEFORE_FIRST_PAINT)],
           'style-src': ['self'],
           'style-src-attr': ['unsafe-hashes', sha256(SVELTEKIT_ANNOUNCER_STYLE)],
           'img-src': ['self', 'data:'],

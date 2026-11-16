@@ -64,7 +64,7 @@ test.describe('when OpenFreeMap stops serving tiles, then serves them again', ()
     await page.unroute(TILES);
     await page.route(TILES, answerWithEmptyTiles);
 
-    await page.getByRole('region', { name: 'Map' }).press('-');
+    await page.getByRole('region', { name: 'Map', exact: true }).press('-');
 
     await expect(page.getByText(OUTAGE_MESSAGE)).toHaveCount(0);
   });

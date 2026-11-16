@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
-  import { map, NEVER, type Observable, ReplaySubject, Subject } from 'rxjs';
+  import { map, NEVER, type Observable, of, ReplaySubject, Subject } from 'rxjs';
+  import { WELCOME_STORAGE_KEY } from '#configuration/welcome';
+  import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
+  import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
   import { keepViewInUrl, viewInUrl } from '#features/map/abilities/keep-view-in-url/domain/keep-view-in-url';
   import {
     locationFragment,
@@ -19,6 +22,12 @@
   import { basemapSpriteName } from '#features/map/abilities/show-map/implementation/openfreemap/style/sprite';
   import { openMapTilesId } from '#features/map/abilities/show-map/implementation/openfreemap/style/tiles';
   import MapCanvas from '#features/map/abilities/show-map/ui/components/map-canvas.svelte';
+  import MapCredit from '#features/map/abilities/show-map/ui/components/map-credit.svelte';
+  import ZoomButtons from '#features/map/abilities/show-map/ui/components/zoom-buttons.svelte';
+  import { type ZoomStep, zoomOverlay } from '#features/map/abilities/show-map/ui/components/zoom-overlay';
+  import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
+  import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
+  import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
   import type { Place } from '#features/search/abilities/search-places/domain/place';
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
   import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
@@ -26,6 +35,10 @@
   import { chosenPlaceOverlay } from '#features/search/abilities/search-places/ui/components/chosen-place-overlay';
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
   import { m } from '#i18n/messages';
+  import LayersIcon from '#libraries/design/layers-icon.svelte';
+  import PopoverButton from '#libraries/design/popover-button.svelte';
+  import '#libraries/design/tokens.css';
+  import { localizeHref } from '#i18n/runtime';
   import { browser } from '$app/env';
   import { replaceState } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -61,6 +74,10 @@
 
   const locate = (): void => locateRequests.next();
 
+  const zooms = new Subject<ZoomStep>();
+
+  const zoom = (step: ZoomStep): void => zooms.next(step);
+
   const views = new ReplaySubject<MapView>(1);
 
   const searchWakes = new Subject<void>();
@@ -86,25 +103,54 @@
   });
 
   const keepView = (view: MapView): void => views.next(view);
+
+  const acknowledgement = browser ? localAcknowledgement(localStorage, WELCOME_STORAGE_KEY) : undefined;
+
+  const welcome: Observable<boolean> =
+    acknowledgement === undefined ? of(true) : welcomeVisitor({ acknowledged: acknowledgement.acknowledged })();
+
+  const acknowledge = (): void => acknowledgement?.acknowledge();
 </script>
 
 <h1>{m.app_name()}</h1>
 
-<SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser} />
+<div class="top">
+  <SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser} />
+  <LanguageSuggestion
+    suggestion={data.languageSuggestion.suggestion}
+    path={page.url.pathname}
+    onDismiss={data.languageSuggestion.dismiss}
+  />
+</div>
 
 <MapCanvas
   {scene}
   label={m.map_label()}
   onMap={basemap.watch}
   onViewChange={keepView}
-  overlays={[positionOverlay(located), chosenPlaceOverlay(chosenPlaces)]}
+  overlays={[positionOverlay(located), chosenPlaceOverlay(chosenPlaces), zoomOverlay(zooms)]}
 />
 
 <BasemapOutage {outage} />
 
-{#if browser}
-  <LocateButton status={located} onLocate={locate} />
-{/if}
+<div class="corner">
+  <div class="welcome">
+    <WelcomeCard {welcome} privacyHref={localizeHref(resolve('/(content)/privacy'))} onAcknowledge={acknowledge} />
+  </div>
+  <div class="credit">
+    <MapCredit />
+  </div>
+  <div class="controls">
+    <PopoverButton label={m.layers_label()}>
+      {#snippet icon()}
+        <LayersIcon />
+      {/snippet}
+      <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
+    </PopoverButton>
+    <ZoomButtons onZoom={zoom} ready={browser} />
+    <LocateButton status={located} onLocate={locate} ready={browser} />
+  </div>
+</div>
 
 <style>
   h1 {
@@ -114,5 +160,58 @@
     overflow: hidden;
     white-space: nowrap;
     clip-path: inset(50%);
+  }
+
+  .top {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    margin-block-end: auto;
+  }
+
+  .corner {
+    display: grid;
+    grid-template-areas:
+      "welcome welcome"
+      "credit controls";
+    grid-template-columns: 1fr auto;
+    gap: var(--space-3);
+    align-items: end;
+  }
+
+  .welcome {
+    display: flex;
+    grid-area: welcome;
+    justify-content: flex-end;
+  }
+
+  .welcome:empty {
+    display: none;
+  }
+
+  .credit {
+    display: flex;
+    grid-area: credit;
+    margin-block-end: calc(-1 * (var(--control-size) + var(--space-3)));
+  }
+
+  .controls {
+    display: grid;
+    grid-area: controls;
+    gap: var(--space-3);
+    justify-items: end;
+  }
+
+  @media (width >= 700px) {
+    .corner {
+      grid-template-areas: "credit welcome controls";
+      grid-template-columns: auto 1fr auto;
+    }
+
+    .welcome {
+      margin-block-end: calc(-1 * (var(--control-size) + var(--space-3)));
+    }
   }
 </style>

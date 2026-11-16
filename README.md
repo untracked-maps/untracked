@@ -26,9 +26,11 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - A search by name over about two thousand places of a fake Paris generated at build time, typos and beginnings of words included, that flies the map to the place chosen
 - A button that centres the map on the visitor's position, for now a fake one drawn at build time
 - The view of the map kept in the address, so that a reload or a shared link opens the same place
+- A card that welcomes a first visit, says the map does not track the visitor and links to who sees what, never shown again once acknowledged
 - English and French, at `/` and `/fr`, with a language switcher
 - A banner that suggests the page in the visitor's language, without redirecting
 - A light, a dark or the system theme, kept on the device, for the interface and the map
+- Round buttons over the map, as in the first version: map type with the theme, zoom, position, and an "About" dialog with privacy, sources, help, languages and credits
 - A page for addresses that do not exist
 
 <h2 id="environments">🔗 Environments</h2>

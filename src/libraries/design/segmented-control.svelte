@@ -36,6 +36,7 @@
     flex-wrap: wrap;
     gap: var(--space-1) var(--space-3);
     align-items: center;
+    justify-content: space-between;
     min-inline-size: 0;
     padding: 0;
     margin: 0;

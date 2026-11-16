@@ -7,15 +7,9 @@ import AppFrame from './app-frame.svelte';
 const text = (content: string): ReturnType<typeof createRawSnippet> =>
   createRawSnippet(() => ({ render: (): string => `<p>${content}</p>` }));
 
-const props = { top: text('Top'), children: text('Content'), bottom: text('Bottom') };
+const props = { children: text('Content'), bottom: text('Bottom') };
 
 describe('app frame', () => {
-  it('shows the top of the frame', async () => {
-    await render(AppFrame, props);
-
-    await expect.element(page.getByText('Top')).toBeVisible();
-  });
-
   it('puts the content in the main landmark', async () => {
     await render(AppFrame, props);
 
@@ -26,5 +20,11 @@ describe('app frame', () => {
     await render(AppFrame, props);
 
     await expect.element(page.getByRole('contentinfo')).toHaveTextContent('Bottom');
+  });
+
+  it('keeps the bottom on the inline end, where the round buttons stack', async () => {
+    await render(AppFrame, props);
+
+    await expect.element(page.getByRole('contentinfo')).toHaveStyle({ justifyContent: 'flex-end' });
   });
 });

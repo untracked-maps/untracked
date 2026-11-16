@@ -13,7 +13,7 @@ type ChooseThemePorts = {
   readonly preferredColourScheme: PreferredColourScheme;
 };
 
-const THEME_CHOICES: readonly ThemeChoice[] = ['light', 'dark', 'system'];
+const THEME_CHOICES: readonly ThemeChoice[] = ['system', 'light', 'dark'];
 
 const displayedScheme = (choice: ThemeChoice, preferred: ColourScheme): ColourScheme =>
   choice === 'system' ? preferred : choice;

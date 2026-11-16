@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
   import { m } from '#i18n/messages';
-  import { isLocale, type Locale } from '#i18n/runtime';
+  import { isLocale, localizeHref } from '#i18n/runtime';
   import Button from '#libraries/design/button.svelte';
   import ButtonLink from '#libraries/design/button-link.svelte';
   import Floating from '#libraries/design/floating.svelte';
@@ -9,11 +9,11 @@
 
   type Props = {
     readonly suggestion: Observable<string | undefined>;
-    readonly hrefFor: (locale: Locale) => string;
+    readonly path: string;
     readonly onDismiss: () => void;
   };
 
-  const { suggestion, hrefFor, onDismiss }: Props = $props();
+  const { suggestion, path, onDismiss }: Props = $props();
 </script>
 
 {#if isLocale($suggestion)}
@@ -22,7 +22,7 @@
     <Floating>
       <p>{m.language_suggestion({}, { locale })}</p>
       <div class="actions">
-        <ButtonLink href={hrefFor(locale)} hreflang={locale} reload>
+        <ButtonLink href={localizeHref(path, { locale })} hreflang={locale} reload>
           {m.language_suggestion_link({}, { locale })}
         </ButtonLink>
         <Button onclick={onDismiss}>{m.language_suggestion_dismiss({}, { locale })}</Button>

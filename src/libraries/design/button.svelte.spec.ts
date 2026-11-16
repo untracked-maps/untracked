@@ -26,4 +26,16 @@ describe('button', () => {
 
     expect(presses).toEqual(['pressed']);
   });
+
+  it('stands out softly by default', async () => {
+    await render(Button, { children, onclick: () => undefined });
+
+    await expect.element(page.getByRole('button')).toHaveStyle({ backgroundColor: 'rgb(245, 248, 255)' });
+  });
+
+  it('stands out strongly when it is the main action', async () => {
+    await render(Button, { children, onclick: () => undefined, tone: 'strong' });
+
+    await expect.element(page.getByRole('button')).toHaveStyle({ backgroundColor: 'rgb(42, 91, 215)' });
+  });
 });

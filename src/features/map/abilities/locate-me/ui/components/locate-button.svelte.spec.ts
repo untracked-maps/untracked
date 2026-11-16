@@ -15,6 +15,18 @@ describe('locate button', () => {
     await expect.element(page.getByRole('button', { name: 'Show my position' })).toBeVisible();
   });
 
+  it('can be pressed once ready', async () => {
+    await render(LocateButton, { status: NEVER, onLocate: () => undefined });
+
+    await expect.element(page.getByRole('button', { name: 'Show my position' })).toBeEnabled();
+  });
+
+  it('cannot be pressed until the app is ready', async () => {
+    await render(LocateButton, { status: NEVER, onLocate: () => undefined, ready: false });
+
+    await expect.element(page.getByRole('button', { name: 'Show my position' })).toBeDisabled();
+  });
+
   it('says nothing before the visitor asks', async () => {
     await render(LocateButton, { status: NEVER, onLocate: () => undefined });
 

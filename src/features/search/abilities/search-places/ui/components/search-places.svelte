@@ -141,7 +141,6 @@
     display: grid;
     gap: var(--space-2);
     inline-size: min(27.5rem, 100%);
-    margin-block-end: auto;
     pointer-events: auto;
   }
 

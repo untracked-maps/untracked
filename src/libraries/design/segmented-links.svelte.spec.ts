@@ -15,6 +15,12 @@ describe('segmented links', () => {
     await expect.element(page.getByRole('navigation', { name: 'Language' })).toBeVisible();
   });
 
+  it('shows the name of its navigation', async () => {
+    await render(SegmentedLinks, { label: 'Language', links });
+
+    await expect.element(page.getByText('Language')).toBeVisible();
+  });
+
   it('leads each link to its address', async () => {
     await render(SegmentedLinks, { label: 'Language', links });
 

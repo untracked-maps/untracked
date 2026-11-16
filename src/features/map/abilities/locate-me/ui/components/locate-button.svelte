@@ -9,9 +9,10 @@
   type Props = {
     readonly status: Observable<LocateMeStatus>;
     readonly onLocate: () => void;
+    readonly ready?: boolean;
   };
 
-  const { status, onLocate }: Props = $props();
+  const { status, onLocate, ready = true }: Props = $props();
 
   const MESSAGES: Readonly<Record<LocateMeStatus['kind'], () => string>> = {
     locating: m.locate_me_locating,
@@ -27,7 +28,7 @@
       {MESSAGES[$status.kind]()}
     {/if}
   </p>
-  <IconButton label={m.locate_me()} onclick={onLocate}><LocateIcon /></IconButton>
+  <IconButton label={m.locate_me()} onclick={onLocate} disabled={!ready}><LocateIcon /></IconButton>
 </div>
 
 <style>

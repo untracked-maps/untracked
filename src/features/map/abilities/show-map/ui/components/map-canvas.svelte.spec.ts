@@ -65,6 +65,12 @@ describe('map canvas', () => {
     expect(map.getCenter().toArray()).toStrictEqual([2.3522, 48.8566]);
   });
 
+  it('leaves the credits to the app rather than to MapLibre', async () => {
+    await drawnMap();
+
+    await expect.element(page.getByText('MapLibre')).not.toBeInTheDocument();
+  });
+
   it('runs MapLibre in the worker file served by the site', async () => {
     await render(MapCanvas, { scene: PARIS_SCENE, label: 'Map' });
 

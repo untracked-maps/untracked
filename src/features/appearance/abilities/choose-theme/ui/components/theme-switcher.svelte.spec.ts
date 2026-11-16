@@ -22,7 +22,7 @@ describe('theme switcher', () => {
   it('leaves the other themes unchecked', async () => {
     await render(ThemeSwitcher, { choice: of<ThemeChoice>('dark'), onChoose: () => undefined });
 
-    await expect.element(page.getByRole('radio', { name: 'System' })).not.toBeChecked();
+    await expect.element(page.getByRole('radio', { name: 'Auto' })).not.toBeChecked();
   });
 
   it('marks the document with the chosen theme', async () => {

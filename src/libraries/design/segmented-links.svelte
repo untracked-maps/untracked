@@ -15,9 +15,12 @@
   };
 
   const { label, links, reload = false }: Props = $props();
+
+  const uid = $props.id();
 </script>
 
-<nav aria-label={label}>
+<nav aria-labelledby="{uid}-label">
+  <span id="{uid}-label">{label}</span>
   <ul>
     {#each links as { href, text, current, lang } (href)}
       <li>
@@ -31,35 +34,50 @@
 
 <style>
   nav {
-    position: relative;
-    padding: var(--space-1);
-    pointer-events: auto;
-    background: var(--surface);
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-float);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  span {
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-strong);
   }
 
   ul {
     display: flex;
-    gap: var(--space-1);
-    padding: 0;
+    gap: 2px;
+    padding: 2px;
     margin: 0;
     list-style: none;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-full);
   }
 
   a {
     display: inline-flex;
     align-items: center;
-    min-block-size: var(--control-height);
-    padding-inline: var(--space-4);
+    min-block-size: var(--segment-height);
+    padding-inline: var(--space-3);
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-strong);
     color: var(--text);
     text-decoration: none;
     border-radius: var(--radius-full);
   }
 
   a[aria-current="page"] {
-    font-weight: var(--font-weight-strong);
-    color: var(--accent);
-    background: var(--accent-soft);
+    color: var(--text-on-accent);
+    background: var(--accent-strong);
+  }
+
+  @media (forced-colors: active) {
+    a[aria-current="page"] {
+      color: SelectedItemText;
+      forced-color-adjust: none;
+      background: SelectedItem;
+    }
   }
 </style>

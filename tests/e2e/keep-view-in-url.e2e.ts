@@ -22,18 +22,18 @@ test('keeps the view in the URL of the French page', async ({ page }) => {
 test('opens a shared link on its view, and keeps the view once zoomed in', async ({ page }) => {
   await page.goto('./#map=15/48.85837/2.29448');
 
-  await page.getByRole('region', { name: 'Map' }).press('Equal');
+  await page.getByRole('region', { name: 'Map', exact: true }).press('Equal');
 
   await expect(page).toHaveURL(EIFFEL_TOWER_AT_16);
 });
 
 test('reopens the same view after a reload', async ({ page }) => {
   await page.goto('./#map=15/48.85837/2.29448');
-  await page.getByRole('region', { name: 'Map' }).press('Equal');
+  await page.getByRole('region', { name: 'Map', exact: true }).press('Equal');
   await page.waitForURL(EIFFEL_TOWER_AT_16);
 
   await page.reload();
-  await page.getByRole('region', { name: 'Map' }).press('Equal');
+  await page.getByRole('region', { name: 'Map', exact: true }).press('Equal');
 
   await expect(page).toHaveURL(EIFFEL_TOWER_AT_17);
 });

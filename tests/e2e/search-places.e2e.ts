@@ -70,7 +70,7 @@ test('loads the places once the search field gets the focus', async ({ page }) =
   await page.goto('./');
   const loading = page.waitForRequest(PLACES_FILE);
 
-  await searchField(page).focus();
+  await page.getByRole('combobox', { name: 'Search a place', disabled: false }).focus();
 
   await expect(loading).resolves.toBeDefined();
 });

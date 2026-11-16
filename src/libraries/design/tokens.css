@@ -42,7 +42,6 @@
   --control-height: 2.5rem;
   --control-size: 3rem;
   --reading-width: 40rem;
-  --map-credit-height: 2.25rem;
 }
 
 @media (width >= 700px) {
