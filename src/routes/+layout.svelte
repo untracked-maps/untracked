@@ -7,6 +7,11 @@
   import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
   import { m } from '#i18n/messages';
   import { getLocale, type Locale, locales, localizeHref } from '#i18n/runtime';
+  import AppFrame from '#libraries/design/app-frame.svelte';
+  import Floating from '#libraries/design/floating.svelte';
+  import '#libraries/design/global.css';
+  import LockIcon from '#libraries/design/lock-icon.svelte';
+  import SegmentedLinks from '#libraries/design/segmented-links.svelte';
   import { browser } from '$app/env';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
@@ -15,6 +20,15 @@
   const { children, data }: LayoutProps = $props();
 
   const hrefFor = (locale: Locale): string => localizeHref(page.url.pathname, { locale });
+
+  const languageLinks = $derived(
+    locales.map((locale) => ({
+      href: hrefFor(locale),
+      lang: locale,
+      text: m.language_name({}, { locale }),
+      current: locale === getLocale()
+    }))
+  );
 
   const dismissal = browser ? localDismissal(localStorage) : undefined;
 
@@ -34,72 +48,39 @@
   <meta name="description" content={m.app_description()} />
 </svelte:head>
 
-<div class="above-map">
-  <LanguageSuggestion {suggestion} {hrefFor} onDismiss={dismiss} />
+<AppFrame>
+  {#snippet top()}
+    <SegmentedLinks label={m.language_switcher_label()} links={languageLinks} reload />
+    <LanguageSuggestion {suggestion} {hrefFor} onDismiss={dismiss} />
+  {/snippet}
 
-  <nav aria-label={m.language_switcher_label()}>
-    <ul>
-      {#each locales as locale (locale)}
-        <li>
-          <a
-            href={hrefFor(locale)}
-            hreflang={locale}
-            lang={locale}
-            aria-current={locale === getLocale() ? 'page' : undefined}
-            data-sveltekit-reload
-          >
-            {m.language_name({}, { locale })}
-          </a>
-        </li>
-      {/each}
-    </ul>
-  </nav>
-</div>
-
-<main>
   {@render children()}
-</main>
 
-<footer>
-  <a href={localizeHref(resolve('/privacy'))}>{m.privacy_title()}</a>
-  <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
-</footer>
+  {#snippet bottom()}
+    <Floating>
+      <div class="settings">
+        <a class="privacy" href={localizeHref(resolve('/privacy'))}><LockIcon />{m.privacy_title()}</a>
+        <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
+      </div>
+    </Floating>
+  {/snippet}
+</AppFrame>
 
 <style>
-  .above-map {
-    position: relative;
-    z-index: 1;
-  }
-
-  nav,
-  footer {
-    inline-size: fit-content;
-    background: Canvas;
-  }
-
-  footer {
-    position: fixed;
-    inset-block-end: 0;
-    inset-inline-start: 0;
-    z-index: 1;
+  .settings {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 1rem;
+    flex-wrap: wrap-reverse;
+    gap: var(--space-2) var(--space-4);
     align-items: center;
-    padding: 0.25rem 0.5rem;
   }
 
-  nav ul {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0;
-    list-style: none;
-  }
-
-  nav a {
-    display: inline-block;
-    min-inline-size: 24px;
-    min-block-size: 24px;
-    padding: 0.25rem 0.5rem;
+  .privacy {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+    min-block-size: 1.5rem;
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-strong);
+    text-decoration: none;
   }
 </style>

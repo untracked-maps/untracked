@@ -1,6 +1,9 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
   import { m } from '#i18n/messages';
+  import IconButton from '#libraries/design/icon-button.svelte';
+  import LocateIcon from '#libraries/design/locate-icon.svelte';
+  import '#libraries/design/tokens.css';
   import type { LocateMeStatus } from '../../domain/locate-me';
 
   type Props = {
@@ -24,51 +27,32 @@
       {MESSAGES[$status.kind]()}
     {/if}
   </p>
-  <button type="button" aria-label={m.locate_me()} onclick={onLocate}>
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 4 11l7 2 2 7z" /></svg>
-  </button>
+  <IconButton label={m.locate_me()} onclick={onLocate}><LocateIcon /></IconButton>
 </div>
 
 <style>
   div {
-    position: fixed;
-    inset-block-end: 3rem;
-    inset-inline-end: 0.75rem;
-    z-index: 1;
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-2);
     align-items: center;
     justify-content: flex-end;
-    max-inline-size: calc(100% - 1.5rem);
   }
 
   p {
-    padding: 0.25rem 0.5rem;
+    position: relative;
+    max-inline-size: 22rem;
+    padding: var(--space-2) var(--space-3);
     margin: 0;
-    background: Canvas;
+    font-size: var(--font-size-meta);
+    color: var(--text);
+    pointer-events: auto;
+    background: var(--surface);
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-float);
   }
 
   p:empty {
     padding: 0;
-  }
-
-  button {
-    display: grid;
-    flex-shrink: 0;
-    place-items: center;
-    inline-size: 48px;
-    block-size: 48px;
-    padding: 0;
-    color: ButtonText;
-    cursor: pointer;
-    background: ButtonFace;
-    border: 1px solid ButtonBorder;
-    border-radius: 50%;
-  }
-
-  svg {
-    inline-size: 22px;
-    block-size: 22px;
-    fill: currentcolor;
+    box-shadow: none;
   }
 </style>

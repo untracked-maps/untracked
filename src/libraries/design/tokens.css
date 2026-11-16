@@ -1,0 +1,52 @@
+:root {
+  --surface: light-dark(rgb(255 255 255), rgb(28 31 36));
+  --surface-sunken: light-dark(rgb(243 243 245), rgb(42 46 53));
+  --surface-translucent: color-mix(in srgb, var(--surface) 88%, transparent);
+  --surface-inverse: light-dark(rgb(31 32 35), rgb(236 238 241));
+  --page: light-dark(rgb(244 239 223), rgb(30 33 38));
+  --text: light-dark(rgb(28 29 31), rgb(236 238 241));
+  --text-muted: light-dark(rgb(103 107 114), rgb(154 160 167));
+  --text-on-accent: rgb(255 255 255);
+  --text-on-inverse: light-dark(rgb(255 255 255), rgb(28 29 31));
+  --line: light-dark(rgb(236 236 238), rgb(48 52 59));
+  --accent: light-dark(rgb(42 91 215), rgb(107 155 255));
+  --accent-strong: light-dark(rgb(42 91 215), rgb(58 111 224));
+  --accent-soft: light-dark(rgb(245 248 255), rgb(31 40 54));
+  --focus: var(--accent);
+  --shadow-edge: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 6%));
+  --shadow-near: light-dark(rgb(0 0 0 / 8%), rgb(0 0 0 / 50%));
+  --shadow-far: light-dark(rgb(0 0 0 / 8%), rgb(0 0 0 / 40%));
+  --shadow-float: 0 0 0 0.5px var(--shadow-edge), 0 2px 6px var(--shadow-near), 0 8px 24px var(--shadow-far);
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-strong: 600;
+  --font-size-small: 0.78125rem;
+  --font-size-meta: 0.84375rem;
+  --font-size-body: 0.9375rem;
+  --font-size-lead: 1.0625rem;
+  --font-size-title: 1.5rem;
+  --line-height-body: 1.45;
+  --line-height-tight: 1.2;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --gutter: 1rem;
+  --edge: 0.75rem;
+  --radius-s: 0.75rem;
+  --radius-m: 1rem;
+  --radius-l: 1.25rem;
+  --radius-full: 999px;
+  --segment-height: 2rem;
+  --control-height: 2.5rem;
+  --control-size: 3rem;
+  --reading-width: 40rem;
+  --map-credit-height: 2.25rem;
+}
+
+@media (width >= 700px) {
+  :root {
+    --edge: 1rem;
+  }
+}
