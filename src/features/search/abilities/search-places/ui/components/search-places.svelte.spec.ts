@@ -2,7 +2,7 @@ import { firstValueFrom, type Observable, of, ReplaySubject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { type Locator, page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import type { SearchState } from '../../domain/search-places';
 import SearchPlaces from './search-places.svelte';
 
@@ -139,6 +139,12 @@ describe('search results', () => {
     await expect.element(page.getByRole('status')).toHaveTextContent('2 places found.');
   });
 
+  it('announce how many places are found without showing it over the list', async () => {
+    await typedIn(of(FOUND));
+
+    await expect.element(page.getByRole('status')).toHaveStyle({ clipPath: 'inset(50%)' });
+  });
+
   it('announce a single place found', async () => {
     await typedIn(of({ kind: 'found', query: 'louvre', places: [LOUVRE] }));
 
@@ -163,6 +169,12 @@ describe('search status', () => {
     await typedIn(of({ kind: 'unavailable' }));
 
     await expect.element(page.getByRole('status')).toHaveTextContent('Search is not available right now. Try again later.');
+  });
+
+  it('shows what it tells under the field', async () => {
+    await typedIn(of({ kind: 'not-found', query: 'zzz' }));
+
+    await expect.element(page.getByRole('status')).toBeVisible();
   });
 
   it('says nothing while the query is too short', async () => {

@@ -1,4 +1,4 @@
-import type { Coordinates, Place } from './place';
+import type { Coordinates, Place } from '../../../domain/place';
 import { type Candidate, rankedOf, strongFirst } from './ranking';
 import { type FindWord, type WordMatch, wordMatches } from './word-matches';
 import { queryWordsOf } from './words';

@@ -1,6 +1,6 @@
 import { firstValueFrom } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import { miniSearchIndex } from './minisearch-index';
 
 const HERE = { longitude: 2.35, latitude: 48.85 };

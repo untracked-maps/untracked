@@ -1,4 +1,4 @@
-import type { Coordinates, Place, PlaceKind } from './place';
+import type { Coordinates, Place, PlaceKind } from '../../../domain/place';
 import { normalised, significantWordCountOf } from './words';
 
 type Candidate = {

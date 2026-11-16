@@ -1,4 +1,4 @@
-import type { Place } from './place';
+import type { Place } from '../../../domain/place';
 import { typosBetween } from './typos';
 
 type Tolerance = {

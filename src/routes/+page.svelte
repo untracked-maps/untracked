@@ -28,12 +28,16 @@
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
-  import type { Place } from '#features/search/abilities/search-places/domain/place';
+  import { type RecentPlace, recentSearches } from '#features/search/abilities/recent-searches/domain/recent-searches';
+  import { localRecents } from '#features/search/abilities/recent-searches/implementation/browser/local-recents';
+  import RecentSearches from '#features/search/abilities/recent-searches/ui/components/recent-searches.svelte';
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
   import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
   import { prerenderedPlaces } from '#features/search/abilities/search-places/implementation/prerendered/prerendered-places';
   import { chosenPlaceOverlay } from '#features/search/abilities/search-places/ui/components/chosen-place-overlay';
+  import type { SearchPanel } from '#features/search/abilities/search-places/ui/components/combobox.presenter';
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
+  import type { Place } from '#features/search/domain/place';
   import { m } from '#i18n/messages';
   import LayersIcon from '#libraries/design/layers-icon.svelte';
   import PopoverButton from '#libraries/design/popover-button.svelte';
@@ -84,7 +88,9 @@
 
   const searchQueries = new Subject<string>();
 
-  const chosenPlaces = new Subject<Place>();
+  const chosenPlaces = new Subject<RecentPlace>();
+
+  const clearedRecents = new Subject<void>();
 
   const searchState = searchPlaces({
     loadPlaces: prerenderedPlaces((url) => fetch(url), resolve('/data/places.json')),
@@ -96,6 +102,29 @@
   const search = (query: string): void => searchQueries.next(query);
 
   const choosePlace = (place: Place): void => chosenPlaces.next(place);
+
+  const recents = browser
+    ? recentSearches(localRecents(localStorage))({ chosen: chosenPlaces, cleared: clearedRecents })
+    : of([]);
+
+  const chooseRecent =
+    ({ settle }: SearchPanel) =>
+    (recent: RecentPlace): void => {
+      settle(recent.name);
+      chosenPlaces.next(recent);
+    };
+
+  const clearRecents =
+    ({ focusField }: SearchPanel) =>
+    (): void => {
+      focusField();
+      clearedRecents.next();
+    };
+
+  $effect(() => {
+    const subscription = recents.subscribe();
+    return (): void => subscription.unsubscribe();
+  });
 
   $effect(() => {
     const subscription = keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views).subscribe();
@@ -115,7 +144,11 @@
 <h1>{m.app_name()}</h1>
 
 <div class="top">
-  <SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser} />
+  <SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser}>
+    {#snippet suggestions(panel)}
+      <RecentSearches {recents} onChoose={chooseRecent(panel)} onClear={clearRecents(panel)} />
+    {/snippet}
+  </SearchPlaces>
   <LanguageSuggestion
     suggestion={data.languageSuggestion.suggestion}
     path={page.url.pathname}

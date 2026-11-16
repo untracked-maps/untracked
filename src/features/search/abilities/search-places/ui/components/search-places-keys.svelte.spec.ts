@@ -2,7 +2,7 @@ import { firstValueFrom, type Observable, of, ReplaySubject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import type { SearchState } from '../../domain/search-places';
 import SearchPlaces from './search-places.svelte';
 
@@ -16,6 +16,8 @@ const ORSAY: Place = {
 };
 
 const FLEURS: Place = { ...ORSAY, id: 'orsay-fleurs', name: 'Orsay Fleurs', kind: 'florist', fame: 0 };
+
+const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
 const MUSEUM = /Musée d'Orsay/u;
 
@@ -161,5 +163,36 @@ describe('search pointer', () => {
     await userEvent.tab();
 
     await expect.element(page.getByRole('combobox')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('gives each place offered its own id', async () => {
+    await shownWithOrsay();
+
+    const ids = page
+      .getByRole('option')
+      .elements()
+      .map((option) => option.id);
+
+    expect(new Set(ids).size).toBe(2);
+  });
+
+  it('highlights the place the keys point at', async () => {
+    await shownWithOrsay();
+    await userEvent.hover(page.getByRole('combobox'));
+    await userEvent.keyboard('{ArrowDown}');
+
+    const row = page.getByRole('option', { selected: true }).element().firstElementChild ?? document.body;
+
+    expect(getComputedStyle(row).backgroundColor).not.toBe(TRANSPARENT);
+  });
+
+  it('leaves the other places plain', async () => {
+    await shownWithOrsay();
+    await userEvent.hover(page.getByRole('combobox'));
+    await userEvent.keyboard('{ArrowDown}');
+
+    const row = page.getByRole('option', { selected: false }).element().firstElementChild ?? document.body;
+
+    expect(getComputedStyle(row).backgroundColor).toBe(TRANSPARENT);
   });
 });

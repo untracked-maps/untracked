@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import type { Lookup } from '../../domain/word-matches';
 import { wordFinderOf } from './word-finder';
 

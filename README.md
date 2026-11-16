@@ -24,6 +24,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - A page that says who sees what: every external service the browser calls, what it sees and why
 - A message when the basemap does not respond, withdrawn as soon as tiles load again
 - A search by name over about two thousand places of a fake Paris generated at build time, typos and beginnings of words included, that flies the map to the place chosen
+- The last eight places chosen, kept on the device and offered as soon as the search field gets the focus, until the visitor clears them
 - A button that centres the map on the visitor's position, for now a fake one drawn at build time
 - The view of the map kept in the address, so that a reload or a shared link opens the same place
 - A card that welcomes a first visit, says the map does not track the visitor and links to who sees what, never shown again once acknowledged

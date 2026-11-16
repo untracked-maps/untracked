@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Coordinates, Place } from './place';
+import type { Coordinates, Place } from '../../../domain/place';
 import { rankedOf, strongFirst } from './ranking';
 
 type Ranked = ReturnType<ReturnType<typeof rankedOf>>;

@@ -41,6 +41,8 @@
   "privacy_sees": "Ce qu’il voit",
   "privacy_title": "Qui voit quoi",
   "privacy_why": "Pourquoi",
+  "recent_searches_clear": "Effacer",
+  "recent_searches_title": "Récents",
   "search_places_details": "{kind} · {address}",
   "search_places_found_many": "{count} lieux trouvés.",
   "search_places_found_one": "1 lieu trouvé.",

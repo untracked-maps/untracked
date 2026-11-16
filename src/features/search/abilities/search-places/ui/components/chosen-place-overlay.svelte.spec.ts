@@ -3,7 +3,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { BehaviorSubject, type Observable, Subject } from 'rxjs';
 import { describe, expect, it, onTestFinished } from 'vitest';
 import { page } from 'vitest/browser';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import { chosenPlaceOverlay } from './chosen-place-overlay';
 
 const ORSAY: Place = {

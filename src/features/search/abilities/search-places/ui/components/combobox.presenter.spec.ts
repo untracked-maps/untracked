@@ -1,8 +1,17 @@
 import { BehaviorSubject, firstValueFrom, from, lastValueFrom, NEVER, of, ReplaySubject, Subject, take } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import type { SearchState } from '../../domain/search-places';
-import { activePlaceOf, type Combobox, type ComboboxEvent, comboboxOf, isExpanded, optionsOf } from './combobox.presenter';
+import {
+  activePlaceOf,
+  type Combobox,
+  type ComboboxEvent,
+  comboboxOf,
+  isExpanded,
+  OPEN,
+  offersSuggestions,
+  optionsOf
+} from './combobox.presenter';
 
 const place = (id: string): Place => ({
   id,
@@ -112,15 +121,15 @@ describe('combobox once closed', () => {
   });
 
   it('shows the name of the chosen place', async () => {
-    expect((await comboboxAfter(FOUND, [TYPED, { kind: 'chosen', place: SECOND }])).text).toBe('Place second');
+    expect((await comboboxAfter(FOUND, [TYPED, { kind: 'chosen', text: SECOND.name }])).text).toBe('Place second');
   });
 
   it('closes once a place is chosen', async () => {
-    expect(isExpanded(await comboboxAfter(FOUND, [TYPED, { kind: 'chosen', place: SECOND }]))).toBe(false);
+    expect(isExpanded(await comboboxAfter(FOUND, [TYPED, { kind: 'chosen', text: SECOND.name }]))).toBe(false);
   });
 
   it('has no active option once a place is chosen', async () => {
-    expect(activePlaceOf(await comboboxAfter(FOUND, [TYPED, DOWN, { kind: 'chosen', place: SECOND }]))).toBeUndefined();
+    expect(activePlaceOf(await comboboxAfter(FOUND, [TYPED, DOWN, { kind: 'chosen', text: SECOND.name }]))).toBeUndefined();
   });
 });
 
@@ -136,5 +145,37 @@ describe('combobox when new places are found', () => {
     states.next(FOUND);
 
     expect(activePlaceOf(await firstValueFrom(latest))).toBeUndefined();
+  });
+});
+
+describe('combobox once the field gets the focus', () => {
+  it('opens at once', async () => {
+    expect((await comboboxAfter({ kind: 'idle' }, [OPEN])).open).toBe(true);
+  });
+
+  it('stays collapsed while nothing is found', async () => {
+    expect(isExpanded(await comboboxAfter({ kind: 'idle' }, [OPEN]))).toBe(false);
+  });
+
+  it('keeps the active option', async () => {
+    expect(activePlaceOf(await comboboxAfter(FOUND, [TYPED, DOWN, OPEN]))).toBe(FIRST);
+  });
+
+  it('expands again on the places found before', async () => {
+    expect(isExpanded(await comboboxAfter(FOUND, [TYPED, { kind: 'closed' }, OPEN]))).toBe(true);
+  });
+});
+
+describe('combobox suggestions', () => {
+  it('are offered while the field is open and nothing is searched', async () => {
+    expect(offersSuggestions(await comboboxAfter({ kind: 'idle' }, [OPEN]))).toBe(true);
+  });
+
+  it('are not offered while the field is closed', async () => {
+    expect(offersSuggestions(await comboboxAfter({ kind: 'idle' }, []))).toBe(false);
+  });
+
+  it('give way to the search once the visitor types', async () => {
+    expect(offersSuggestions(await comboboxAfter({ kind: 'searching', query: 'place' }, [OPEN, TYPED]))).toBe(false);
   });
 });

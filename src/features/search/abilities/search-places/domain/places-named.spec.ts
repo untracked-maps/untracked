@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Coordinates, Place } from './place';
+import type { Coordinates, Place } from '../../../domain/place';
 import { placesNamed } from './places-named';
 import type { FindWord, Lookup, WordHit } from './word-matches';
 import { indexedWordsOf } from './words';

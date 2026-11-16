@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Place } from './place';
+import type { Place } from '../../../domain/place';
 import { type FindWord, type Lookup, type WordHit, wordMatches } from './word-matches';
 
 const LOUVRE: Place = {

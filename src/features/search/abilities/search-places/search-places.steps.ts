@@ -3,8 +3,8 @@ import { Given, Then, When, type World } from '@cucumber/cucumber';
 import { firstValueFrom, NEVER, type Observable, of, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { fakeParis } from '#libraries/fake-paris/fake-paris';
+import type { Place } from '../../domain/place';
 import { viewOfChosenPlace } from './domain/chosen-place';
-import type { Place } from './domain/place';
 import { type FindPlaces, type SearchState, searchPlaces } from './domain/search-places';
 import { miniSearchIndex } from './implementation/minisearch/minisearch-index';
 

@@ -1,5 +1,5 @@
 import { map, merge, type Observable, scan, startWith } from 'rxjs';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import type { SearchState } from '../../domain/search-places';
 
 type Combobox = {
@@ -10,20 +10,30 @@ type Combobox = {
 };
 
 type ComboboxEvent =
+  | { readonly kind: 'opened' }
   | { readonly kind: 'typed'; readonly text: string }
   | { readonly kind: 'moved'; readonly step: 1 | -1 }
-  | { readonly kind: 'chosen'; readonly place: Place }
+  | { readonly kind: 'chosen'; readonly text: string }
   | { readonly kind: 'closed' };
+
+type SearchPanel = {
+  readonly settle: (text: string) => void;
+  readonly focusField: () => void;
+};
 
 type Searched = { readonly kind: 'searched'; readonly state: SearchState };
 
 const NO_OPTION = -1;
+
+const OPEN: ComboboxEvent = { kind: 'opened' };
 
 const CLOSE: ComboboxEvent = { kind: 'closed' };
 
 const CLOSED: Combobox = { text: '', open: false, active: NO_OPTION, state: { kind: 'idle' } };
 
 const optionsOf = ({ state }: Combobox): readonly Place[] => (state.kind === 'found' ? state.places : []);
+
+const offersSuggestions = ({ open, state }: Combobox): boolean => open && state.kind === 'idle';
 
 const isExpanded = (combobox: Combobox): boolean => combobox.open && optionsOf(combobox).length > 0;
 
@@ -52,7 +62,10 @@ const next = (combobox: Combobox, event: ComboboxEvent | Searched): Combobox => 
   if (event.kind === 'moved') {
     return moved(combobox, event.step);
   }
-  const text = event.kind === 'chosen' ? event.place.name : combobox.text;
+  if (event.kind === 'opened') {
+    return { ...combobox, open: true };
+  }
+  const text = event.kind === 'chosen' ? event.text : combobox.text;
   return { ...combobox, text, open: false, active: NO_OPTION };
 };
 
@@ -61,4 +74,15 @@ const searched = (state: SearchState): Searched => ({ kind: 'searched', state })
 const comboboxOf = (state$: Observable<SearchState>, event$: Observable<ComboboxEvent>): Observable<Combobox> =>
   merge(state$.pipe(map(searched)), event$).pipe(scan(next, CLOSED), startWith(CLOSED));
 
-export { activePlaceOf, CLOSE, type Combobox, type ComboboxEvent, comboboxOf, isExpanded, optionsOf };
+export {
+  activePlaceOf,
+  CLOSE,
+  type Combobox,
+  type ComboboxEvent,
+  comboboxOf,
+  isExpanded,
+  OPEN,
+  offersSuggestions,
+  optionsOf,
+  type SearchPanel
+};

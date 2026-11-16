@@ -1,4 +1,4 @@
-import type { Coordinates, Place } from '../../domain/place';
+import type { Coordinates, Place } from '../../../../domain/place';
 import { placesNamed } from '../../domain/places-named';
 import type { FindPlaces } from '../../domain/search-places';
 import { wordFinderOf } from './word-finder';

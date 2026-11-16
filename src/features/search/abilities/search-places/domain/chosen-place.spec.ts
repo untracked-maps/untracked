@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import type { Place } from '../../../domain/place';
 import { viewOfChosenPlace } from './chosen-place';
-import type { Place } from './place';
 
 const LOUVRE: Place = {
   id: 'musee-du-louvre',

@@ -15,7 +15,7 @@ import {
   timer,
   withLatestFrom
 } from 'rxjs';
-import type { Coordinates, Place } from './place';
+import type { Coordinates, Place } from '../../../domain/place';
 
 type LoadPlaces = () => Observable<readonly Place[]>;
 

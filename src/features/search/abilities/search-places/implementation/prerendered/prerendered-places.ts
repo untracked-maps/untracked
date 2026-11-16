@@ -1,5 +1,5 @@
 import { defer, map, type Observable } from 'rxjs';
-import { type Coordinates, PLACE_KINDS, type Place, type PlaceKind } from '../../domain/place';
+import { type Coordinates, PLACE_KINDS, type Place, type PlaceKind } from '../../../../domain/place';
 import type { LoadPlaces } from '../../domain/search-places';
 
 type FetchFile = (url: string) => Promise<Response>;

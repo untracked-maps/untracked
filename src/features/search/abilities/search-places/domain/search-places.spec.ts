@@ -1,7 +1,7 @@
 import { type Observable, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
-import type { Coordinates, Place } from './place';
+import type { Coordinates, Place } from '../../../domain/place';
 import { type FindPlaces, type IndexPlaces, type LoadPlaces, type SearchState, searchPlaces } from './search-places';
 import { normalised } from './words';
 

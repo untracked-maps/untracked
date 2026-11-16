@@ -1,4 +1,6 @@
-import type { Coordinates, Place } from './place';
+import type { Coordinates, Place } from '../../../domain/place';
+
+type ShownPlace = Pick<Place, 'name' | 'coordinates'>;
 
 type PlaceView = {
   readonly center: Coordinates;
@@ -7,9 +9,9 @@ type PlaceView = {
 
 const PLACE_ZOOM = 16.5;
 
-const viewOfChosenPlace = ({ coordinates }: Place, zoom: number): PlaceView => ({
+const viewOfChosenPlace = ({ coordinates }: ShownPlace, zoom: number): PlaceView => ({
   center: coordinates,
   zoom: Math.max(zoom, PLACE_ZOOM)
 });
 
-export { viewOfChosenPlace };
+export { type ShownPlace, viewOfChosenPlace };

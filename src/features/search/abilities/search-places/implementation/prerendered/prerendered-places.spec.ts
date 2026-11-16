@@ -1,6 +1,6 @@
 import { firstValueFrom } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import type { Place } from '../../domain/place';
+import type { Place } from '../../../../domain/place';
 import { prerenderedPlaces } from './prerendered-places';
 
 const LOUVRE: Place = {
