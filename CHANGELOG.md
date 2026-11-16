@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/untracked-maps/untracked/compare/v1.6.0...v1.7.0) (2026-11-16)
+
+
+### Features
+
+* find addresses and streets in the search field ([9f9973b](https://github.com/untracked-maps/untracked/commit/9f9973b65ef088bd3baef903353bdf37aff48e8c))
+
 # [1.6.0](https://github.com/untracked-maps/untracked/compare/v1.5.0...v1.6.0) (2026-11-16)
 
 
