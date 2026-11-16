@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
-  import { map, NEVER, type Observable, of, ReplaySubject, Subject } from 'rxjs';
+  import { map, merge, NEVER, type Observable, of, ReplaySubject, Subject } from 'rxjs';
   import { WELCOME_STORAGE_KEY } from '#configuration/welcome';
   import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
   import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
@@ -38,6 +38,11 @@
   import { loadTransitLinesLayers } from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-overlay';
   import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
   import { layersOverlay } from '#features/map/ui/components/layers-on-map';
+  import { type Coordinates, inspectPoint } from '#features/places/abilities/inspect-point/domain/inspect-point';
+  import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
+  import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
+  import { inspectedSpotOverlay } from '#features/places/abilities/inspect-point/ui/components/inspected-spot-overlay';
+  import SpotCard from '#features/places/abilities/inspect-point/ui/components/spot-card.svelte';
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
@@ -165,16 +170,23 @@
     };
 
   $effect(() => {
-    const subscription = recents.subscribe();
-    return (): void => subscription.unsubscribe();
-  });
-
-  $effect(() => {
-    const subscription = keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views).subscribe();
+    const subscription = merge(recents, keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views)).subscribe();
     return (): void => subscription.unsubscribe();
   });
 
   const keepView = (view: MapView): void => views.next(view);
+
+  const inspections = new Subject<Coordinates>();
+
+  const dismissals = new Subject<void>();
+
+  const inspectedSpot = inspectPoint({
+    reverseGeocode: nearestAddress(prerenderedAddresses((url) => fetch(url), resolve('/data/addresses.json')))
+  })({ inspected: inspections, dismissed: dismissals });
+
+  const inspect = (spot: Coordinates): void => inspections.next(spot);
+
+  const dismissSpot = (): void => dismissals.next();
 
   const acknowledgement = browser ? localAcknowledgement(localStorage, WELCOME_STORAGE_KEY) : undefined;
 
@@ -192,6 +204,7 @@
       <RecentSearches {recents} onChoose={chooseRecent(panel)} onClear={clearRecents(panel)} />
     {/snippet}
   </SearchPlaces>
+  <SpotCard spot={inspectedSpot} onClose={dismissSpot} />
   <LanguageSuggestion
     suggestion={data.languageSuggestion.suggestion}
     path={page.url.pathname}
@@ -209,7 +222,8 @@
     chosenPlaceOverlay(chosenPlaces),
     zoomOverlay(zooms),
     layersOverlay(transitLines, loadTransitLinesLayers),
-    layersOverlay(bikeLanes, loadBikeLanesLayers)
+    layersOverlay(bikeLanes, loadBikeLanesLayers),
+    inspectedSpotOverlay(inspectedSpot, { onInspect: inspect, onDismiss: dismissSpot })
   ]}
 />
 
@@ -217,7 +231,12 @@
 
 <div class="corner">
   <div class="welcome">
-    <WelcomeCard {welcome} privacyHref={localizeHref(resolve('/(content)/privacy'))} onAcknowledge={acknowledge} />
+    <WelcomeCard
+      {welcome}
+      privacyHref={localizeHref(resolve('/(content)/privacy'))}
+      onAcknowledge={acknowledge}
+      ready={browser}
+    />
   </div>
   <div class="credit">
     <MapCredit>

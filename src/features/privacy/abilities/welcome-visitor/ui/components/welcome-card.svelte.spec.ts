@@ -7,7 +7,7 @@ import WelcomeCard from './welcome-card.svelte';
 
 const LEARN_MORE = /^Learn more:/u;
 
-const props = { welcome: of(true), privacyHref: '/privacy', onAcknowledge: (): void => undefined };
+const props = { welcome: of(true), privacyHref: '/privacy', onAcknowledge: (): void => undefined, ready: true };
 
 describe('welcome card', () => {
   it('is a region named by its title', async () => {
@@ -49,10 +49,21 @@ describe('welcome card', () => {
   it('disappears once acknowledged', async () => {
     const acknowledged = new BehaviorSubject(false);
     const welcome = welcomeVisitor({ acknowledged: () => acknowledged })();
-    await render(WelcomeCard, { welcome, privacyHref: '/privacy', onAcknowledge: (): void => acknowledged.next(true) });
+    await render(WelcomeCard, {
+      welcome,
+      privacyHref: '/privacy',
+      onAcknowledge: (): void => acknowledged.next(true),
+      ready: true
+    });
 
     await page.getByRole('button', { name: 'Got it' }).click();
 
     await expect.element(page.getByRole('region')).not.toBeInTheDocument();
+  });
+
+  it('keeps its acknowledgement unavailable until the page can answer it', async () => {
+    await render(WelcomeCard, { ...props, ready: false });
+
+    await expect.element(page.getByRole('button', { name: 'Got it' })).toBeDisabled();
   });
 });

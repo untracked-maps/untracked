@@ -30,4 +30,28 @@ describe('button link', () => {
 
     await expect.element(page.getByRole('link', { name: 'Read it in French' })).toHaveAttribute('data-sveltekit-reload', '');
   });
+
+  it('leaves the site as an external link when asked', async () => {
+    await render(ButtonLink, { children, href: 'https://www.openstreetmap.org', external: true });
+
+    await expect.element(page.getByRole('link', { name: 'Read it in French' })).toHaveAttribute('rel', 'external');
+  });
+
+  it('stays within the site by default', async () => {
+    await render(ButtonLink, { children, href: '/fr' });
+
+    await expect.element(page.getByRole('link', { name: 'Read it in French' })).not.toHaveAttribute('rel');
+  });
+
+  it('stands out strongly by default', async () => {
+    await render(ButtonLink, { children, href: '/fr' });
+
+    await expect.element(page.getByRole('link')).toHaveStyle({ backgroundColor: 'rgb(42, 91, 215)' });
+  });
+
+  it('stands out softly when asked', async () => {
+    await render(ButtonLink, { children, href: '/fr', tone: 'soft' });
+
+    await expect.element(page.getByRole('link')).toHaveStyle({ backgroundColor: 'rgb(245, 248, 255)' });
+  });
 });

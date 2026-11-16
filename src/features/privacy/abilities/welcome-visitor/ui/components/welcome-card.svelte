@@ -10,9 +10,10 @@
     readonly welcome: Observable<boolean>;
     readonly privacyHref: string;
     readonly onAcknowledge: () => void;
+    readonly ready: boolean;
   };
 
-  const { welcome, privacyHref, onAcknowledge }: Props = $props();
+  const { welcome, privacyHref, onAcknowledge, ready }: Props = $props();
 
   const uid = $props.id();
 </script>
@@ -29,7 +30,7 @@
       </ul>
       <div class="actions">
         <p class="more">{m.welcome_learn_more()} <a href={privacyHref}>{m.privacy_title()}</a></p>
-        <Button tone="strong" onclick={onAcknowledge}>{m.welcome_acknowledge()}</Button>
+        <Button tone="strong" onclick={onAcknowledge} disabled={!ready}>{m.welcome_acknowledge()}</Button>
       </div>
     </Floating>
   </section>

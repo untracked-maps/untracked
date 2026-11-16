@@ -1,0 +1,32 @@
+.inspect-point-spot {
+  display: block;
+  inline-size: 30px;
+  block-size: 32px;
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 30%));
+}
+
+.inspect-point-spot::before {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 3px;
+  box-sizing: border-box;
+  inline-size: 24px;
+  block-size: 24px;
+  content: "";
+  background: rgb(217 58 47);
+  border: 2px solid white;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+}
+
+.inspect-point-spot::after {
+  position: absolute;
+  inset-block-start: 9px;
+  inset-inline-start: 10px;
+  box-sizing: border-box;
+  inline-size: 10px;
+  block-size: 10px;
+  content: "";
+  background: white;
+  border-radius: 50%;
+}

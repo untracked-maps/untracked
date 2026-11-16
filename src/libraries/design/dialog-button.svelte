@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import CloseIcon from './close-icon.svelte';
+  import CloseButton from './close-button.svelte';
   import IconButton from './icon-button.svelte';
   import './tokens.css';
 
@@ -33,7 +33,7 @@
         <p id="{uid}-description">{description}</p>
       {/if}
     </hgroup>
-    <button type="button" class="close" aria-label={closeLabel} commandfor="{uid}-dialog" command="close"><CloseIcon /></button>
+    <CloseButton label={closeLabel} closes="{uid}-dialog" />
   </div>
   <div class="content">
     {@render children()}
@@ -75,20 +75,6 @@
     margin: var(--space-1) 0 0;
     font-size: var(--font-size-meta);
     color: var(--text-muted);
-  }
-
-  .close {
-    display: grid;
-    flex-shrink: 0;
-    place-items: center;
-    inline-size: 2rem;
-    block-size: 2rem;
-    padding: 0;
-    color: var(--text-muted);
-    cursor: pointer;
-    background: var(--surface-sunken);
-    border: 0;
-    border-radius: 50%;
   }
 
   .content {

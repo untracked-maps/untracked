@@ -38,4 +38,10 @@ describe('button', () => {
 
     await expect.element(page.getByRole('button')).toHaveStyle({ backgroundColor: 'rgb(42, 91, 215)' });
   });
+
+  it('can wait, unavailable, until it can answer', async () => {
+    await render(Button, { children, onclick: () => undefined, disabled: true });
+
+    await expect.element(page.getByRole('button', { name: 'Dismiss' })).toBeDisabled();
+  });
 });

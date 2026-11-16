@@ -6,12 +6,13 @@
     readonly children: Snippet;
     readonly onclick: () => void;
     readonly tone?: 'soft' | 'strong';
+    readonly disabled?: boolean;
   };
 
-  const { children, onclick, tone = 'soft' }: Props = $props();
+  const { children, onclick, tone = 'soft', disabled = false }: Props = $props();
 </script>
 
-<button type="button" class={tone} {onclick}>{@render children()}</button>
+<button type="button" class={tone} {onclick} {disabled}>{@render children()}</button>
 
 <style>
   button {
