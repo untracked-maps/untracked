@@ -172,6 +172,13 @@ jobs:
         env:
           PAGE: ${{ matrix.page }}
           ACCEPT_LANG: ${{ matrix.accept-lang }}
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lighthouse-${{ strategy.job-index }}
+          path: .lighthouseci
+          retention-days: 7
+          include-hidden-files: true
 
   lighthouse:
     name: Lighthouse
