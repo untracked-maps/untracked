@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/untracked-maps/untracked/compare/v1.4.0...v1.5.0) (2026-11-16)
+
+
+### Features
+
+* show metro and train stations on the map ([26bd652](https://github.com/untracked-maps/untracked/commit/26bd652e436bedc7eb78debd3bc41a84d437aaa7))
+
 # [1.4.0](https://github.com/untracked-maps/untracked/compare/v1.3.0...v1.4.0) (2026-11-16)
 
 
