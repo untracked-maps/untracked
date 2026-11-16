@@ -1,4 +1,4 @@
-import { normalised, wordsIn } from '../../../domain/text';
+import { normalised, wordsIn } from './text';
 
 const ELISION = /\b(?<letter>[a-z]) (?=[a-z0-9])/gu;
 
@@ -39,4 +39,4 @@ const indexedWordsOf = (name: string): readonly string[] => {
   return [...new Set([...wordsIn(words), ...wordsIn(words.replace(ELISION, '$<letter>'))])];
 };
 
-export { indexedWordsOf, queryWordsOf, significantWordCountOf };
+export { indexedWordsOf, isSignificant, queryWordsOf, significantWordCountOf };

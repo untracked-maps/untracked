@@ -85,7 +85,7 @@ test('searches in French under /fr', async ({ page }) => {
 
 test('has no detectable accessibility violation with places listed', async ({ page }) => {
   await searchFor(page, 'louvre');
-  await page.getByRole('listbox', { name: 'Places found' }).waitFor();
+  await page.getByRole('listbox', { name: 'Places and addresses found' }).waitFor();
 
   const { violations } = await new AxeBuilder({ page }).analyze();
 

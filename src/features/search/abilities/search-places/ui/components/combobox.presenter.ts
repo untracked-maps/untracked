@@ -1,5 +1,5 @@
 import { map, merge, type Observable, scan, startWith } from 'rxjs';
-import type { Place } from '../../../../domain/place';
+import type { Found } from '../../../../domain/found';
 import type { SearchState } from '../../domain/search-places';
 
 type Combobox = {
@@ -31,13 +31,13 @@ const CLOSE: ComboboxEvent = { kind: 'closed' };
 
 const CLOSED: Combobox = { text: '', open: false, active: NO_OPTION, state: { kind: 'idle' } };
 
-const optionsOf = ({ state }: Combobox): readonly Place[] => (state.kind === 'found' ? state.places : []);
+const optionsOf = ({ state }: Combobox): readonly Found[] => (state.kind === 'found' ? state.places : []);
 
 const offersSuggestions = ({ open, state }: Combobox): boolean => open && state.kind === 'idle';
 
 const isExpanded = (combobox: Combobox): boolean => combobox.open && optionsOf(combobox).length > 0;
 
-const activePlaceOf = (combobox: Combobox): Place | undefined =>
+const activePlaceOf = (combobox: Combobox): Found | undefined =>
   isExpanded(combobox) ? optionsOf(combobox)[combobox.active] : undefined;
 
 const firstFor = (step: 1 | -1, count: number): number => (step === 1 ? 0 : count - 1);

@@ -8,7 +8,15 @@ import type { BasemapImagery } from '#features/map/abilities/show-map/implementa
 import { showTransitLines, type TransitLine } from '#features/map/abilities/show-transit-lines/domain/show-transit-lines';
 import { idfmTransitLines } from '#features/map/abilities/show-transit-lines/implementation/idfm/idfm-transit-lines';
 import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
+import { findAddress } from '#features/search/abilities/find-address/domain/find-address';
+import { lazyAddressBook } from '#features/search/abilities/find-address/implementation/lazy/lazy-address-book';
+import { prerenderedAddressBook } from '#features/search/abilities/find-address/implementation/prerendered/prerendered-address-book';
+import type { IndexPlaces } from '#features/search/abilities/search-places/domain/search-places';
+import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
+import type { LoadPlaces } from '#features/search/domain/place';
+import { prerenderedPlaces } from '#features/search/implementation/prerendered/prerendered-places';
 import { browser } from '$app/env';
+import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
 
 type MapLayers = {
@@ -22,18 +30,40 @@ type MapLayers = {
   readonly bikeLanesOnMap: Observable<ColourScheme | undefined>;
 };
 
+type SearchSources = {
+  readonly loadPlaces: LoadPlaces;
+  readonly indexPlaces: IndexPlaces;
+};
+
 const SHOWN_OR_HIDDEN = [false, true] as const;
 
 const keptChoice = <Value>(key: string, values: readonly [Value, ...Value[]]): KeptOnDevice<Value> =>
   browser ? keptOnDevice(localStorage, key, values) : keptInMemory(values);
 
-export const load: PageLoad = async ({ data, parent }): Promise<{ readonly position: Located; readonly layers: MapLayers }> => {
+const fetchFile = (url: string): Promise<Response> => fetch(url);
+
+const searchSources = (): SearchSources => {
+  const withAddresses = findAddress({
+    loadAddresses: prerenderedAddressBook(fetchFile, resolve('/data/addresses.json')),
+    indexAddresses: lazyAddressBook
+  });
+  return {
+    loadPlaces: prerenderedPlaces(fetchFile, resolve('/data/places.json')),
+    indexPlaces: (places) => withAddresses(miniSearchIndex(places))
+  };
+};
+
+export const load: PageLoad = async ({
+  data,
+  parent
+}): Promise<{ readonly position: Located; readonly layers: MapLayers; readonly search: SearchSources }> => {
   const { theme } = await parent();
   const basemap = keptChoice('untracked-maps.basemap', BASEMAPS);
   const transitLines = keptChoice('untracked-maps.transit-lines', SHOWN_OR_HIDDEN);
   const bikeLanes = keptChoice('untracked-maps.bike-lanes', SHOWN_OR_HIDDEN);
   return {
     ...data,
+    search: searchSources(),
     layers: {
       basemap,
       transitLines,

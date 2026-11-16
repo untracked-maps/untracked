@@ -108,7 +108,7 @@ test('loads the places once for both searches', async ({ page }) => {
   const requested = placesFilesRequested(page);
   await page.goto('./#map=14/48.8566/2.3522');
   await searchField(page).fill('louvre');
-  await page.getByRole('listbox', { name: 'Places found' }).waitFor();
+  await page.getByRole('listbox', { name: 'Places and addresses found' }).waitFor();
   await searchField(page).press('Escape');
 
   await chip(page, 'Bakeries').click();

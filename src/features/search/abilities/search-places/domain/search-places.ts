@@ -15,9 +15,10 @@ import {
   timer,
   withLatestFrom
 } from 'rxjs';
+import type { FindFound, Found } from '../../../domain/found';
 import type { Coordinates, LoadPlaces, Place } from '../../../domain/place';
 
-type FindPlaces = (query: string, reference: Coordinates) => readonly Place[];
+type FindPlaces = FindFound;
 
 type IndexPlaces = (places: readonly Place[]) => Observable<FindPlaces>;
 
@@ -35,7 +36,7 @@ type SearchPlacesInputs = {
 type SearchState =
   | { readonly kind: 'idle' }
   | { readonly kind: 'searching'; readonly query: string }
-  | { readonly kind: 'found'; readonly query: string; readonly places: readonly Place[] }
+  | { readonly kind: 'found'; readonly query: string; readonly places: readonly Found[] }
   | { readonly kind: 'not-found'; readonly query: string }
   | { readonly kind: 'unavailable' };
 

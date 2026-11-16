@@ -1,7 +1,7 @@
 import SearchableMap from 'minisearch/SearchableMap';
 import type { Place } from '../../../../domain/place';
+import { indexedWordsOf } from '../../../../domain/words';
 import type { FindWord, Lookup, WordHit } from '../../domain/word-matches';
-import { indexedWordsOf } from '../../domain/words';
 
 type Entry = readonly [string, readonly Place[]];
 

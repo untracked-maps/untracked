@@ -1,4 +1,5 @@
 import { defer, type Observable, of } from 'rxjs';
+import { ADDRESS_KINDS, type AddressKind } from '../../../../domain/found';
 import { type Coordinates, PLACE_KINDS, type PlaceKind } from '../../../../domain/place';
 import type { RecentPlace, RecentPlaces, StoredRecents, StoreRecents } from '../../domain/recent-searches';
 
@@ -15,9 +16,9 @@ type Fields = Readonly<Record<string, unknown>>;
 
 const isObject = (value: unknown): value is Fields => typeof value === 'object' && value !== null;
 
-const KINDS: readonly unknown[] = PLACE_KINDS;
+const KINDS: readonly unknown[] = [...PLACE_KINDS, ...ADDRESS_KINDS];
 
-const isPlaceKind = (value: unknown): value is PlaceKind => KINDS.includes(value);
+const isKnownKind = (value: unknown): value is PlaceKind | AddressKind => KINDS.includes(value);
 
 const isCoordinates = (value: unknown): value is Coordinates =>
   isObject(value) && typeof value['longitude'] === 'number' && typeof value['latitude'] === 'number';
@@ -26,7 +27,7 @@ const hasTexts = (value: Fields): boolean =>
   typeof value['id'] === 'string' && typeof value['name'] === 'string' && typeof value['address'] === 'string';
 
 const isRecentPlace = (value: unknown): value is RecentPlace =>
-  isObject(value) && hasTexts(value) && isPlaceKind(value['kind']) && isCoordinates(value['coordinates']);
+  isObject(value) && hasTexts(value) && isKnownKind(value['kind']) && isCoordinates(value['coordinates']);
 
 const parsed = (text: string | null): unknown => {
   try {

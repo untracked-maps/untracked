@@ -1,7 +1,7 @@
 import type { Coordinates, Place } from '../../../domain/place';
+import { queryWordsOf } from '../../../domain/words';
 import { type Candidate, rankedOf, strongFirst } from './ranking';
 import { type FindWord, type WordMatch, wordMatches } from './word-matches';
-import { queryWordsOf } from './words';
 
 const MOST_PLACES = 7;
 

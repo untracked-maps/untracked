@@ -15,9 +15,9 @@ import {
   switchMap,
   take
 } from 'rxjs';
-import type { Place } from '../../../domain/place';
+import type { Found } from '../../../domain/found';
 
-type RecentPlace = Pick<Place, 'id' | 'name' | 'kind' | 'address' | 'coordinates'>;
+type RecentPlace = Pick<Found, 'id' | 'name' | 'kind' | 'address' | 'coordinates'>;
 
 type RecentPlaces = readonly RecentPlace[];
 

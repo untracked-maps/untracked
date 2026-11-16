@@ -23,4 +23,8 @@ describe('view of a chosen place', () => {
   it('keeps a closer zoom', () => {
     expect(viewOfChosenPlace(LOUVRE, 18).zoom).toBe(18);
   });
+
+  it('shows the whole of an arrondissement, however close the map is', () => {
+    expect(viewOfChosenPlace({ ...LOUVRE, kind: 'district' }, 18).zoom).toBe(14);
+  });
 });

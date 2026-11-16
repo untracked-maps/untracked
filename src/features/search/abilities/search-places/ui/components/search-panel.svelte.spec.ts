@@ -39,7 +39,7 @@ const shownWith = async (state: Observable<SearchState> = IDLE): Promise<ReplayS
   return queries;
 };
 
-const field = (): Locator => page.getByRole('combobox', { name: 'Search a place' });
+const field = (): Locator => page.getByRole('combobox', { name: 'Search a place or an address' });
 
 const panel = (): Locator => page.getByRole('region', { name: 'Suggestions' });
 

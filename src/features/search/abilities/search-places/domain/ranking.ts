@@ -1,7 +1,8 @@
 import { kilometresBetween } from '../../../domain/distance';
 import type { Coordinates, Place, PlaceKind } from '../../../domain/place';
 import { normalised } from '../../../domain/text';
-import { significantWordCountOf } from './words';
+import { textMatchOf } from '../../../domain/text-match';
+import { significantWordCountOf } from '../../../domain/words';
 
 type Candidate = {
   readonly place: Place;
@@ -49,10 +50,6 @@ const WHOLE_NAME = 0.15;
 
 const NAME_START = 0.08;
 
-const SURE_TEXT = 0.6;
-
-const COVERED_TEXT = 0.4;
-
 const FAME_WEIGHT = 0.6;
 
 const FULL_EXCUSE_FAME = 70;
@@ -64,16 +61,6 @@ const NEAR_PENALTY_LIMIT = 25;
 const FAR_PENALTY_PER_KILOMETRE = 0.04;
 
 const FAR_PENALTY_LIMIT = 20;
-
-const STRONG_TEXT = 0.7;
-
-const STRONG_COVER = 0.5;
-
-const textOf = (qualities: readonly number[]): number =>
-  qualities.reduce((sum, quality) => sum + quality, 0) / qualities.length;
-
-const coverOf = (qualities: readonly number[], place: Place): number =>
-  Math.min(1, qualities.length / significantWordCountOf(place.name));
 
 const startOf = (query: string, place: Place): number => {
   const name = normalised(place.name);
@@ -96,17 +83,16 @@ const distancePenaltyOf = (place: Place, reference: Coordinates): number => {
 const rankedOf =
   (query: string, reference: Coordinates) =>
   ({ place, qualities }: Candidate): Ranked => {
-    const text = textOf(qualities);
-    const cover = coverOf(qualities, place);
+    const match = textMatchOf(qualities, significantWordCountOf(place.name));
     return {
       place,
       score:
-        PERCENT * text * (SURE_TEXT + COVERED_TEXT * cover) +
+        PERCENT * match.score +
         PERCENT * startOf(query, place) +
         FAME_WEIGHT * place.fame +
         (KIND_BONUSES[place.kind] ?? 0) -
         distancePenaltyOf(place, reference),
-      strong: text >= STRONG_TEXT && cover >= STRONG_COVER
+      strong: match.strong
     };
   };
 

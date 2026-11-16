@@ -2,6 +2,7 @@ import { firstValueFrom, type Observable, of, ReplaySubject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { type Locator, page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
+import type { Found } from '../../../../domain/found';
 import type { Place } from '../../../../domain/place';
 import type { SearchState } from '../../domain/search-places';
 import SearchPlaces from './search-places.svelte';
@@ -25,7 +26,7 @@ const FOUND: SearchState = { kind: 'found', query: 'louvre', places: [LOUVRE, HO
 
 type Seen = {
   readonly queries: ReplaySubject<string>;
-  readonly chosen: ReplaySubject<Place>;
+  readonly chosen: ReplaySubject<Found>;
   readonly woken: ReplaySubject<true>;
 };
 
@@ -35,12 +36,12 @@ const shown = async (state: Observable<SearchState>): Promise<Seen> => {
     state,
     onWake: () => seen.woken.next(true),
     onQuery: (query: string) => seen.queries.next(query),
-    onChoose: (place: Place) => seen.chosen.next(place)
+    onChoose: (place: Found) => seen.chosen.next(place)
   });
   return seen;
 };
 
-const field = (): Locator => page.getByRole('combobox', { name: 'Search a place' });
+const field = (): Locator => page.getByRole('combobox', { name: 'Search a place or an address' });
 
 const typedIn = async (state: Observable<SearchState>, text = 'louvre'): Promise<Seen> => {
   const seen = await shown(state);
@@ -76,7 +77,7 @@ describe('search field', () => {
   it('hints at what to type', async () => {
     await shown(of({ kind: 'idle' }));
 
-    await expect.element(field()).toHaveAttribute('placeholder', 'Search a place');
+    await expect.element(field()).toHaveAttribute('placeholder', 'Search a place or an address');
   });
 
   it('is collapsed before the visitor types', async () => {
@@ -130,13 +131,13 @@ describe('search results', () => {
   it('are listed under a name', async () => {
     await typedIn(of(FOUND));
 
-    await expect.element(page.getByRole('listbox', { name: 'Places found' })).toBeVisible();
+    await expect.element(page.getByRole('listbox', { name: 'Places and addresses found' })).toBeVisible();
   });
 
   it('announce how many places are found', async () => {
     await typedIn(of(FOUND));
 
-    await expect.element(page.getByRole('status')).toHaveTextContent('2 places found.');
+    await expect.element(page.getByRole('status')).toHaveTextContent('2 results found.');
   });
 
   it('announce how many places are found without showing it over the list', async () => {
@@ -148,7 +149,7 @@ describe('search results', () => {
   it('announce a single place found', async () => {
     await typedIn(of({ kind: 'found', query: 'louvre', places: [LOUVRE] }));
 
-    await expect.element(page.getByRole('status')).toHaveTextContent('1 place found.');
+    await expect.element(page.getByRole('status')).toHaveTextContent('1 result found.');
   });
 });
 

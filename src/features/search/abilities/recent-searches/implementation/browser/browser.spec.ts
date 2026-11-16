@@ -80,6 +80,12 @@ describe('local recent searches kept by another version', () => {
   it('skip a place of an unknown kind', async () => {
     expect(await readFrom(storedWith([{ ...LOUVRE, kind: 'volcano' }]))).toEqual([]);
   });
+
+  it('keep an address', async () => {
+    const address = { ...LOUVRE, id: 'address-75001-12-rue-de-rivoli', name: '12 Rue de Rivoli', kind: 'address' };
+
+    expect(await readFrom(storedWith([address]))).toEqual([address]);
+  });
 });
 
 describe('local recent searches kept without coordinates', () => {

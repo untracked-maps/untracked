@@ -30,7 +30,7 @@ const shownWith = async (state: typeof SEARCHING | typeof IDLE): Promise<void> =
 
 type Found = ReturnType<typeof page.getByRole>;
 
-const field = (): Found => page.getByRole('combobox', { name: 'Search a place' });
+const field = (): Found => page.getByRole('combobox', { name: 'Search a place or an address' });
 
 const leadButton = (): Found => page.getByRole('button', { name: 'Bakeries near you' });
 

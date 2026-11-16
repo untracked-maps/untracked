@@ -1,13 +1,14 @@
 <script lang="ts">
   import PinIcon from '#libraries/design/pin-icon.svelte';
   import SearchIcon from '#libraries/design/search-icon.svelte';
+  import SignpostIcon from '#libraries/design/signpost-icon.svelte';
   import Suggestion from '#libraries/design/suggestion.svelte';
   import '#libraries/design/tokens.css';
   import { type Observable, Subject } from 'rxjs';
   import type { Snippet } from 'svelte';
   import { on } from 'svelte/events';
   import { m } from '#i18n/messages';
-  import type { Place } from '../../../../domain/place';
+  import { type Found, isAddress } from '../../../../domain/found';
   import { detailsOf } from '../../../../ui/components/kind-labels';
   import type { SearchState } from '../../domain/search-places';
   import {
@@ -28,7 +29,7 @@
     readonly state: Observable<SearchState>;
     readonly onWake: () => void;
     readonly onQuery: (query: string) => void;
-    readonly onChoose: (place: Place) => void;
+    readonly onChoose: (place: Found) => void;
     readonly lead?: Snippet<[SearchPanel]>;
     readonly suggestions?: Snippet<[SearchPanel]>;
     readonly ready?: boolean;
@@ -61,7 +62,7 @@
     onQuery(text);
   };
 
-  const choose = (place: Place): void => {
+  const choose = (place: Found): void => {
     settle(place.name);
     onChoose(place);
   };
@@ -128,7 +129,7 @@
   };
 
   const pick =
-    (place: Place) =>
+    (place: Found) =>
     (event: MouseEvent): void => {
       event.preventDefault();
       choose(place);
@@ -180,7 +181,11 @@
       >
         <Suggestion name={place.name} details={detailsOf(place)} active={index === $combobox.active}>
           {#snippet icon()}
-            <PinIcon />
+            {#if isAddress(place)}
+              <SignpostIcon />
+            {:else}
+              <PinIcon />
+            {/if}
           {/snippet}
         </Suggestion>
       </div>

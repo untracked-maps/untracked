@@ -50,12 +50,10 @@
   import { kindPlacesOverlay } from '#features/search/abilities/search-by-type/ui/components/kind-places-overlay';
   import KindSearch from '#features/search/abilities/search-by-type/ui/components/kind-search.svelte';
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
-  import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
   import { chosenPlaceOverlay } from '#features/search/abilities/search-places/ui/components/chosen-place-overlay';
   import type { SearchPanel } from '#features/search/abilities/search-places/ui/components/combobox.presenter';
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
-  import type { Place, PlaceKind } from '#features/search/domain/place';
-  import { prerenderedPlaces } from '#features/search/implementation/prerendered/prerendered-places';
+  import type { PlaceKind } from '#features/search/domain/place';
   import { m } from '#i18n/messages';
   import Checkbox from '#libraries/design/checkbox.svelte';
   import FieldGroup from '#libraries/design/field-group.svelte';
@@ -119,15 +117,13 @@
 
   const clearedRecents = new Subject<void>();
 
-  const loadPlaces = prerenderedPlaces((url) => fetch(url), resolve('/data/places.json'));
-
   const searchInputs = { wake: searchWakes, query: searchQueries };
 
-  const searchState = searchPlaces({ loadPlaces, indexPlaces: miniSearchIndex })({ ...searchInputs, mapView: views });
+  const searchState = $derived(searchPlaces(data.search)({ ...searchInputs, mapView: views }));
 
   const kindChoices = new Subject<PlaceKind | undefined>();
 
-  const kindSearch = searchByType({ loadPlaces })({ chosen: kindChoices, mapView: views });
+  const kindSearch = $derived(searchByType(data.search)({ chosen: kindChoices, mapView: views }));
 
   const kindNamed = namedKind({ loadKindFinder: lazyKindWords })(searchInputs);
 
@@ -137,7 +133,7 @@
 
   const search = (query: string): void => searchQueries.next(query);
 
-  const choosePlace = (place: Place): void => chosenPlaces.next(place);
+  const choosePlace = (place: RecentPlace): void => chosenPlaces.next(place);
 
   const recents = browser
     ? recentSearches(localRecents(localStorage))({ chosen: chosenPlaces, cleared: clearedRecents })

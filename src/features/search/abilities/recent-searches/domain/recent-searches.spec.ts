@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Place } from '../../../domain/place';
 import { type RecentPlace, type RecentPlaces, recentSearches, type StoreRecents } from './recent-searches';
 
-const placeNamed = (name: string): RecentPlace => ({
+const placeNamed = (name: string): RecentPlace & Pick<Place, 'kind'> => ({
   id: name.toLowerCase(),
   name,
   kind: 'museum',

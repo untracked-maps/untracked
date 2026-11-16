@@ -2,6 +2,7 @@ import { firstValueFrom, type Observable, of, ReplaySubject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
+import type { Found } from '../../../../domain/found';
 import type { Place } from '../../../../domain/place';
 import type { SearchState } from '../../domain/search-places';
 import SearchPlaces from './search-places.svelte';
@@ -27,7 +28,7 @@ const FOUND: Observable<SearchState> = of({ kind: 'found', query: 'orsay', place
 
 type Seen = {
   readonly queries: ReplaySubject<string>;
-  readonly chosen: ReplaySubject<Place>;
+  readonly chosen: ReplaySubject<Found>;
 };
 
 const shownWithOrsay = async (): Promise<Seen> => {
@@ -36,7 +37,7 @@ const shownWithOrsay = async (): Promise<Seen> => {
     state: FOUND,
     onWake: () => undefined,
     onQuery: (query: string) => seen.queries.next(query),
-    onChoose: (place: Place) => seen.chosen.next(place)
+    onChoose: (place: Found) => seen.chosen.next(place)
   });
   await page.getByRole('combobox').fill('orsay');
   return seen;

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { Coordinates, Place } from '../../../domain/place';
+import { indexedWordsOf } from '../../../domain/words';
 import { placesNamed } from './places-named';
 import type { FindWord, Lookup, WordHit } from './word-matches';
-import { indexedWordsOf } from './words';
 
 const CENTRE: Coordinates = { longitude: 2.3522, latitude: 48.8566 };
 
