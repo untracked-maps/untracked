@@ -3,6 +3,7 @@ minimumReleaseAge: 14400
 allowBuilds:
   esbuild: true
   fontnik: false
+  sharp: false
 trustPolicy: no-downgrade
 verifyDepsBeforeRun: error
 saveExact: true

@@ -5,6 +5,10 @@ import { basemapPalettes } from './style/colours';
 
 const GLYPHS = 'https://untracked.test/fonts/{fontstack}/{range}.pbf';
 
+const SPRITE = 'https://untracked.test/sprites/basemap';
+
+const ASSETS = { glyphs: GLYPHS, sprite: SPRITE };
+
 const LIGHT = basemapPalettes.light;
 
 const DARK = basemapPalettes.dark;
@@ -13,41 +17,45 @@ const OPENFREEMAP_LINK = /<a href=[^>]*https:\/\/openfreemap\.org[^>]*>OpenFreeM
 
 describe('basemap style', () => {
   it('is a valid MapLibre style', () => {
-    expect(validateStyleMin(basemapStyle(GLYPHS, LIGHT))).toStrictEqual([]);
+    expect(validateStyleMin(basemapStyle(ASSETS, LIGHT))).toStrictEqual([]);
   });
 
   it('is a valid MapLibre style in the dark palette', () => {
-    expect(validateStyleMin(basemapStyle(GLYPHS, DARK))).toStrictEqual([]);
+    expect(validateStyleMin(basemapStyle(ASSETS, DARK))).toStrictEqual([]);
   });
 
   it('paints the land in the given palette', () => {
-    expect(basemapStyle(GLYPHS, DARK).layers[0]).toHaveProperty(['paint', 'background-color', 6], DARK.land);
+    expect(basemapStyle(ASSETS, DARK).layers[0]).toHaveProperty(['paint', 'background-color', 6], DARK.land);
   });
 
   it('draws the same layers in every palette', () => {
-    expect(basemapStyle(GLYPHS, DARK).layers.map(({ id }) => id)).toStrictEqual(
-      basemapStyle(GLYPHS, LIGHT).layers.map(({ id }) => id)
+    expect(basemapStyle(ASSETS, DARK).layers.map(({ id }) => id)).toStrictEqual(
+      basemapStyle(ASSETS, LIGHT).layers.map(({ id }) => id)
     );
   });
 
   it('loads its glyphs from the given URL template', () => {
-    expect(basemapStyle(GLYPHS, LIGHT).glyphs).toBe(GLYPHS);
+    expect(basemapStyle(ASSETS, LIGHT).glyphs).toBe(GLYPHS);
+  });
+
+  it('loads its icons from the given sprite URL', () => {
+    expect(basemapStyle(ASSETS, LIGHT).sprite).toBe(SPRITE);
   });
 
   it('draws from the OpenFreeMap planet tiles', () => {
-    expect(basemapStyle(GLYPHS, LIGHT).sources).toHaveProperty(['openmaptiles', 'url'], 'https://tiles.openfreemap.org/planet');
+    expect(basemapStyle(ASSETS, LIGHT).sources).toHaveProperty(['openmaptiles', 'url'], 'https://tiles.openfreemap.org/planet');
   });
 
   it('links to OpenFreeMap in its attribution', () => {
-    expect(JSON.stringify(basemapStyle(GLYPHS, LIGHT).sources)).toMatch(OPENFREEMAP_LINK);
+    expect(JSON.stringify(basemapStyle(ASSETS, LIGHT).sources)).toMatch(OPENFREEMAP_LINK);
   });
 
   it('has no source other than OpenMapTiles', () => {
-    expect(Object.keys(basemapStyle(GLYPHS, LIGHT).sources)).toStrictEqual(['openmaptiles']);
+    expect(Object.keys(basemapStyle(ASSETS, LIGHT).sources)).toStrictEqual(['openmaptiles']);
   });
 
   it('stacks the basemap layers from the land up to the house numbers', () => {
-    expect(basemapStyle(GLYPHS, LIGHT).layers.map(({ id }) => id)).toStrictEqual([
+    expect(basemapStyle(ASSETS, LIGHT).layers.map(({ id }) => id)).toStrictEqual([
       'land',
       'landuse-alt',
       'landuse-green',
@@ -74,6 +82,7 @@ describe('basemap style', () => {
       'boundary-city',
       'road-name-major',
       'road-name',
+      'station',
       'place-small',
       'place-town',
       'place-city',

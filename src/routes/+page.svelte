@@ -16,6 +16,7 @@
   import { type MapScene, type MapView, showMap } from '#features/map/abilities/show-map/domain/show-map';
   import { openFreeMapBasemap } from '#features/map/abilities/show-map/implementation/openfreemap/load-basemap';
   import { basemapPalettes } from '#features/map/abilities/show-map/implementation/openfreemap/style/colours';
+  import { basemapSpriteName } from '#features/map/abilities/show-map/implementation/openfreemap/style/sprite';
   import { openMapTilesId } from '#features/map/abilities/show-map/implementation/openfreemap/style/tiles';
   import MapCanvas from '#features/map/abilities/show-map/ui/components/map-canvas.svelte';
   import type { Place } from '#features/search/abilities/search-places/domain/place';
@@ -35,13 +36,15 @@
 
   const glyphsUrl = (origin: string): string => `${origin}${resolve('/')}glyphs/{fontstack}/{range}.pbf`;
 
+  const spriteUrl = (origin: string): string => `${origin}${resolve('/')}sprites/${basemapSpriteName}`;
+
   const replaceUrl = (url: string): Promise<void> => Promise.resolve(replaceState(url, page.state));
 
   const scene: Observable<MapScene<StyleSpecification>> = $derived(
     browser
       ? showMap({
           loadBasemap: openFreeMapBasemap(
-            glyphsUrl(location.origin),
+            { glyphs: glyphsUrl(location.origin), sprite: spriteUrl(location.origin) },
             data.theme.colourScheme.pipe(map((scheme) => basemapPalettes[scheme]))
           )
         })(viewInUrl({ readFragment: locationFragment(location) })())

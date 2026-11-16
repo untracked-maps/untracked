@@ -30,6 +30,11 @@ export const BUILD_TIME_DEPENDENCIES: readonly {
     allowed: ['fontnik', 'woff2-encoder', 'inter-ui']
   },
   {
+    name: 'map-sprite-dependencies',
+    from: '^src/libraries/map-sprite/',
+    allowed: ['@basemaps/sprites']
+  },
+  {
     name: 'prerendered-endpoints-dependencies',
     from: '^src/routes/.+/[+]server[.]ts$',
     allowed: ['@sveltejs/kit']

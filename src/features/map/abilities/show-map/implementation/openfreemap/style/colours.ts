@@ -22,6 +22,7 @@ type Colour =
   | 'road'
   | 'roadCase'
   | 'roadLabel'
+  | 'stationLabel'
   | 'water'
   | 'wood';
 
@@ -51,6 +52,7 @@ const lightPalette: Palette = {
   road: '#CBD1D1',
   roadCase: '#CCD1D1',
   roadLabel: '#6A6E73',
+  stationLabel: '#2B4793',
   water: '#ABD4F2',
   wood: '#C7E3BC'
 };
@@ -79,6 +81,7 @@ const darkPalette: Palette = {
   road: '#3A3F47',
   roadCase: '#2B2F35',
   roadLabel: '#A3A8AE',
+  stationLabel: '#9DB2F2',
   water: '#14304C',
   wood: '#1D2A23'
 };
