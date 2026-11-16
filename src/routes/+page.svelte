@@ -18,6 +18,12 @@
   import { basemapPalettes } from '#features/map/abilities/show-map/implementation/openfreemap/style/colours';
   import { openMapTilesId } from '#features/map/abilities/show-map/implementation/openfreemap/style/tiles';
   import MapCanvas from '#features/map/abilities/show-map/ui/components/map-canvas.svelte';
+  import type { Place } from '#features/search/abilities/search-places/domain/place';
+  import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
+  import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
+  import { prerenderedPlaces } from '#features/search/abilities/search-places/implementation/prerendered/prerendered-places';
+  import { chosenPlaceOverlay } from '#features/search/abilities/search-places/ui/components/chosen-place-overlay';
+  import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
   import { m } from '#i18n/messages';
   import { browser } from '$app/env';
   import { replaceState } from '$app/navigation';
@@ -54,6 +60,23 @@
 
   const views = new ReplaySubject<MapView>(1);
 
+  const searchWakes = new Subject<void>();
+
+  const searchQueries = new Subject<string>();
+
+  const chosenPlaces = new Subject<Place>();
+
+  const searchState = searchPlaces({
+    loadPlaces: prerenderedPlaces((url) => fetch(url), resolve('/data/places.json')),
+    indexPlaces: miniSearchIndex
+  })({ wake: searchWakes, query: searchQueries, mapView: views });
+
+  const wakeSearch = (): void => searchWakes.next();
+
+  const search = (query: string): void => searchQueries.next(query);
+
+  const choosePlace = (place: Place): void => chosenPlaces.next(place);
+
   $effect(() => {
     const subscription = keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views).subscribe();
     return (): void => subscription.unsubscribe();
@@ -64,7 +87,15 @@
 
 <h1>{m.app_name()}</h1>
 
-<MapCanvas {scene} label={m.map_label()} onMap={basemap.watch} onViewChange={keepView} overlays={[positionOverlay(located)]} />
+<SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser} />
+
+<MapCanvas
+  {scene}
+  label={m.map_label()}
+  onMap={basemap.watch}
+  onViewChange={keepView}
+  overlays={[positionOverlay(located), chosenPlaceOverlay(chosenPlaces)]}
+/>
 
 <BasemapOutage {outage} />
 

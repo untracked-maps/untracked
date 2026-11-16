@@ -20,6 +20,11 @@ export const BUILD_TIME_DEPENDENCIES: readonly {
     allowed: ['@faker-js/faker']
   },
   {
+    name: 'fake-paris-dependencies',
+    from: '^src/libraries/fake-paris/',
+    allowed: ['@faker-js/faker']
+  },
+  {
     name: 'map-glyphs-dependencies',
     from: '^src/libraries/map-glyphs/',
     allowed: ['fontnik', 'woff2-encoder', 'inter-ui']

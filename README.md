@@ -23,6 +23,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - A map of Paris on an OpenStreetMap basemap from [OpenFreeMap](https://openfreemap.org), drawn with [MapLibre](https://maplibre.org)
 - A page that says who sees what: every external service the browser calls, what it sees and why
 - A message when the basemap does not respond, withdrawn as soon as tiles load again
+- A search by name over about two thousand places of a fake Paris generated at build time, typos and beginnings of words included, that flies the map to the place chosen
 - A button that centres the map on the visitor's position, for now a fake one drawn at build time
 - The view of the map kept in the address, so that a reload or a shared link opens the same place
 - English and French, at `/` and `/fr`, with a language switcher

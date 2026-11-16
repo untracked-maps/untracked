@@ -1,0 +1,290 @@
+[
+  {
+    "id": "tour-eiffel",
+    "name": "Tour Eiffel",
+    "kind": "attraction",
+    "address": "5 avenue Anatole France, 75007 Paris",
+    "coordinates": { "longitude": 2.29448, "latitude": 48.85826 },
+    "fame": 99
+  },
+  {
+    "id": "musee-du-louvre",
+    "name": "Musée du Louvre",
+    "kind": "museum",
+    "address": "Rue de Rivoli, 75001 Paris",
+    "coordinates": { "longitude": 2.33764, "latitude": 48.86061 },
+    "fame": 98
+  },
+  {
+    "id": "notre-dame-de-paris",
+    "name": "Cathédrale Notre-Dame de Paris",
+    "kind": "place-of-worship",
+    "address": "6 parvis Notre-Dame, 75004 Paris",
+    "coordinates": { "longitude": 2.34992, "latitude": 48.85297 },
+    "fame": 97
+  },
+  {
+    "id": "arc-de-triomphe",
+    "name": "Arc de Triomphe",
+    "kind": "monument",
+    "address": "Place Charles de Gaulle, 75008 Paris",
+    "coordinates": { "longitude": 2.29504, "latitude": 48.8738 },
+    "fame": 93
+  },
+  {
+    "id": "sacre-coeur",
+    "name": "Basilique du Sacré-Cœur",
+    "kind": "place-of-worship",
+    "address": "35 rue du Chevalier de la Barre, 75018 Paris",
+    "coordinates": { "longitude": 2.34306, "latitude": 48.88671 },
+    "fame": 92
+  },
+  {
+    "id": "musee-d-orsay",
+    "name": "Musée d'Orsay",
+    "kind": "museum",
+    "address": "1 rue de la Légion d'Honneur, 75007 Paris",
+    "coordinates": { "longitude": 2.32656, "latitude": 48.86 },
+    "fame": 90
+  },
+  {
+    "id": "palais-de-l-elysee",
+    "name": "Palais de l'Élysée",
+    "kind": "monument",
+    "address": "55 rue du Faubourg Saint-Honoré, 75008 Paris",
+    "coordinates": { "longitude": 2.31659, "latitude": 48.87041 },
+    "fame": 88
+  },
+  {
+    "id": "centre-pompidou",
+    "name": "Centre Pompidou",
+    "kind": "museum",
+    "address": "Place Georges-Pompidou, 75004 Paris",
+    "coordinates": { "longitude": 2.35222, "latitude": 48.86064 },
+    "fame": 88
+  },
+  {
+    "id": "opera-garnier",
+    "name": "Opéra Garnier",
+    "kind": "theatre",
+    "address": "8 rue Scribe, 75009 Paris",
+    "coordinates": { "longitude": 2.33165, "latitude": 48.87197 },
+    "fame": 86
+  },
+  {
+    "id": "grand-palais",
+    "name": "Grand Palais",
+    "kind": "attraction",
+    "address": "3 avenue du Général Eisenhower, 75008 Paris",
+    "coordinates": { "longitude": 2.31248, "latitude": 48.86613 },
+    "fame": 85
+  },
+  {
+    "id": "pantheon",
+    "name": "Panthéon",
+    "kind": "monument",
+    "address": "Place du Panthéon, 75005 Paris",
+    "coordinates": { "longitude": 2.34619, "latitude": 48.84622 },
+    "fame": 85
+  },
+  {
+    "id": "invalides",
+    "name": "Hôtel des Invalides",
+    "kind": "monument",
+    "address": "129 rue de Grenelle, 75007 Paris",
+    "coordinates": { "longitude": 2.31253, "latitude": 48.85663 },
+    "fame": 84
+  },
+  {
+    "id": "jardin-du-luxembourg",
+    "name": "Jardin du Luxembourg",
+    "kind": "garden",
+    "address": "Rue de Médicis, 75006 Paris",
+    "coordinates": { "longitude": 2.33716, "latitude": 48.84622 },
+    "fame": 84
+  },
+  {
+    "id": "gare-du-nord",
+    "name": "Gare du Nord",
+    "kind": "station",
+    "address": "18 rue de Dunkerque, 75010 Paris",
+    "coordinates": { "longitude": 2.35533, "latitude": 48.88094 },
+    "fame": 82
+  },
+  {
+    "id": "pere-lachaise",
+    "name": "Cimetière du Père-Lachaise",
+    "kind": "attraction",
+    "address": "16 rue du Repos, 75020 Paris",
+    "coordinates": { "longitude": 2.39333, "latitude": 48.86139 },
+    "fame": 82
+  },
+  {
+    "id": "gare-de-lyon",
+    "name": "Gare de Lyon",
+    "kind": "station",
+    "address": "Place Louis-Armand, 75012 Paris",
+    "coordinates": { "longitude": 2.37301, "latitude": 48.84434 },
+    "fame": 80
+  },
+  {
+    "id": "sainte-chapelle",
+    "name": "Sainte-Chapelle",
+    "kind": "place-of-worship",
+    "address": "10 boulevard du Palais, 75001 Paris",
+    "coordinates": { "longitude": 2.34503, "latitude": 48.85544 },
+    "fame": 80
+  },
+  {
+    "id": "moulin-rouge",
+    "name": "Moulin Rouge",
+    "kind": "theatre",
+    "address": "82 boulevard de Clichy, 75018 Paris",
+    "coordinates": { "longitude": 2.33233, "latitude": 48.88411 },
+    "fame": 80
+  },
+  {
+    "id": "gare-montparnasse",
+    "name": "Gare Montparnasse",
+    "kind": "station",
+    "address": "17 boulevard de Vaugirard, 75015 Paris",
+    "coordinates": { "longitude": 2.32122, "latitude": 48.84122 },
+    "fame": 78
+  },
+  {
+    "id": "gare-saint-lazare",
+    "name": "Gare Saint-Lazare",
+    "kind": "station",
+    "address": "13 rue d'Amsterdam, 75008 Paris",
+    "coordinates": { "longitude": 2.32528, "latitude": 48.87631 },
+    "fame": 78
+  },
+  {
+    "id": "galeries-lafayette",
+    "name": "Galeries Lafayette",
+    "kind": "department-store",
+    "address": "40 boulevard Haussmann, 75009 Paris",
+    "coordinates": { "longitude": 2.33199, "latitude": 48.87357 },
+    "fame": 78
+  },
+  {
+    "id": "gare-de-l-est",
+    "name": "Gare de l'Est",
+    "kind": "station",
+    "address": "Place du 11 Novembre 1918, 75010 Paris",
+    "coordinates": { "longitude": 2.35904, "latitude": 48.87675 },
+    "fame": 75
+  },
+  {
+    "id": "buttes-chaumont",
+    "name": "Parc des Buttes-Chaumont",
+    "kind": "park",
+    "address": "1 rue Botzaris, 75019 Paris",
+    "coordinates": { "longitude": 2.38278, "latitude": 48.88094 },
+    "fame": 75
+  },
+  {
+    "id": "chatelet-les-halles",
+    "name": "Châtelet-Les Halles",
+    "kind": "station",
+    "address": "Rue Pierre Lescot, 75001 Paris",
+    "coordinates": { "longitude": 2.34698, "latitude": 48.86197 },
+    "fame": 72
+  },
+  {
+    "id": "musee-rodin",
+    "name": "Musée Rodin",
+    "kind": "museum",
+    "address": "77 rue de Varenne, 75007 Paris",
+    "coordinates": { "longitude": 2.31586, "latitude": 48.85531 },
+    "fame": 72
+  },
+  {
+    "id": "gare-d-austerlitz",
+    "name": "Gare d'Austerlitz",
+    "kind": "station",
+    "address": "85 quai d'Austerlitz, 75013 Paris",
+    "coordinates": { "longitude": 2.36547, "latitude": 48.84199 },
+    "fame": 70
+  },
+  {
+    "id": "cafe-de-flore",
+    "name": "Café de Flore",
+    "kind": "cafe",
+    "address": "172 boulevard Saint-Germain, 75006 Paris",
+    "coordinates": { "longitude": 2.33263, "latitude": 48.85404 },
+    "fame": 70
+  },
+  {
+    "id": "bibliotheque-francois-mitterrand",
+    "name": "Bibliothèque François-Mitterrand",
+    "kind": "library",
+    "address": "Quai François Mauriac, 75013 Paris",
+    "coordinates": { "longitude": 2.37594, "latitude": 48.83359 },
+    "fame": 70
+  },
+  {
+    "id": "elysee-beaute",
+    "name": "Élysée Beauté",
+    "kind": "beauty-salon",
+    "address": "21 rue de la Verrerie, 75004 Paris",
+    "coordinates": { "longitude": 2.35356, "latitude": 48.85799 },
+    "fame": 0
+  },
+  {
+    "id": "parking-tour-eiffel",
+    "name": "Parking Tour Eiffel",
+    "kind": "parking",
+    "address": "1 quai Branly, 75007 Paris",
+    "coordinates": { "longitude": 2.29312, "latitude": 48.85939 },
+    "fame": 0
+  },
+  {
+    "id": "hotel-du-louvre",
+    "name": "Hôtel du Louvre",
+    "kind": "hotel",
+    "address": "Place André Malraux, 75001 Paris",
+    "coordinates": { "longitude": 2.33598, "latitude": 48.86375 },
+    "fame": 12
+  },
+  {
+    "id": "pharmacie-gare-de-lyon",
+    "name": "Pharmacie de la Gare de Lyon",
+    "kind": "pharmacy",
+    "address": "193 rue de Bercy, 75012 Paris",
+    "coordinates": { "longitude": 2.37192, "latitude": 48.84534 },
+    "fame": 0
+  },
+  {
+    "id": "boulangerie-du-pantheon",
+    "name": "Boulangerie du Panthéon",
+    "kind": "bakery",
+    "address": "12 rue Soufflot, 75005 Paris",
+    "coordinates": { "longitude": 2.34488, "latitude": 48.84677 },
+    "fame": 0
+  },
+  {
+    "id": "notre-dame-de-lorette",
+    "name": "Église Notre-Dame-de-Lorette",
+    "kind": "place-of-worship",
+    "address": "18 bis rue de Châteaudun, 75009 Paris",
+    "coordinates": { "longitude": 2.33847, "latitude": 48.87619 },
+    "fame": 30
+  },
+  {
+    "id": "orsay-fleurs",
+    "name": "Orsay Fleurs",
+    "kind": "florist",
+    "address": "8 rue de Lille, 75007 Paris",
+    "coordinates": { "longitude": 2.33102, "latitude": 48.85817 },
+    "fame": 0
+  },
+  {
+    "id": "grand-cafe-du-palais",
+    "name": "Grand Café du Palais",
+    "kind": "cafe",
+    "address": "4 boulevard du Palais, 75004 Paris",
+    "coordinates": { "longitude": 2.34622, "latitude": 48.85619 },
+    "fame": 0
+  }
+]
