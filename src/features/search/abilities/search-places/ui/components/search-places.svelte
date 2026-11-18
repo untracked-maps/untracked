@@ -1,4 +1,5 @@
 <script lang="ts">
+  import CloseIcon from '#libraries/design/close-icon.svelte';
   import PinIcon from '#libraries/design/pin-icon.svelte';
   import SearchIcon from '#libraries/design/search-icon.svelte';
   import SignpostIcon from '#libraries/design/signpost-icon.svelte';
@@ -60,6 +61,11 @@
     focusField();
     events.next({ kind: 'chosen', text });
     onQuery(text);
+  };
+
+  const clear = (): void => {
+    focusField();
+    typeText('');
   };
 
   const choose = (place: Found): void => {
@@ -159,6 +165,11 @@
       onfocus={wake}
       onclick={open}
     />
+    {#if $combobox.text !== ''}
+      <button type="button" class="clear" tabindex="-1" aria-label={m.search_places_clear()} onclick={clear}>
+        <CloseIcon />
+      </button>
+    {/if}
   </span>
   {#if $combobox.open && lead !== undefined}
     <div class="lead" {@attach hostedIn}>
@@ -227,7 +238,7 @@
 
   .field {
     display: grid;
-    grid-template-columns: var(--control-size) minmax(0, 1fr);
+    grid-template-columns: var(--control-size) minmax(0, 1fr) auto;
     align-items: center;
     justify-items: center;
     color: var(--text-muted);
@@ -243,6 +254,19 @@
     outline: none;
     background: none;
     border: 0;
+  }
+
+  .clear {
+    display: grid;
+    place-items: center;
+    inline-size: 2.875rem;
+    block-size: 2.875rem;
+    padding: 0;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: 0;
+    border-radius: 50%;
   }
 
   input::placeholder {

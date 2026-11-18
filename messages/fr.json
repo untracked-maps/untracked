@@ -105,6 +105,7 @@
   "search_by_type_none_near": "Aucun lieu de ce type près du centre de la carte. Déplacez la carte et réessayez.",
   "search_by_type_searching": "Recherche…",
   "search_by_type_unavailable": "Cette liste n’est pas disponible pour le moment. Réessayez plus tard.",
+  "search_places_clear": "Effacer la recherche",
   "search_places_details": "{kind} · {address}",
   "search_places_found_many": "{count} résultats trouvés.",
   "search_places_found_one": "1 résultat trouvé.",

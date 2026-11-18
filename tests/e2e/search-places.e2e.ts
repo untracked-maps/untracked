@@ -91,3 +91,20 @@ test('has no detectable accessibility violation with places listed', async ({ pa
 
   expect(violations).toEqual([]);
 });
+
+test('clears the search with its button', async ({ page }) => {
+  await searchFor(page, 'grand palais');
+
+  await page.getByRole('button', { name: 'Clear the search' }).click();
+
+  await expect(searchField(page)).toHaveValue('');
+});
+
+test('keeps the cleared search accessible', async ({ page }) => {
+  await searchFor(page, 'grand palais');
+  await page.getByRole('button', { name: 'Clear the search' }).waitFor();
+
+  const { violations } = await new AxeBuilder({ page }).analyze();
+
+  expect(violations).toEqual([]);
+});
