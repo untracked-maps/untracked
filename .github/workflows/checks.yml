@@ -83,12 +83,14 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f
+      options: --user 1001
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - uses: ./.github/actions/playwright
       - run: pnpm test:coverage
 
   scenarios:
@@ -122,24 +124,28 @@ jobs:
     name: End-to-end
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f
+      options: --user 1001
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - uses: ./.github/actions/playwright
       - run: pnpm test:e2e
 
   end-to-end-base-path:
     name: End-to-end (base path)
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f
+      options: --user 1001
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup
-      - uses: ./.github/actions/playwright
       - run: pnpm test:e2e
         env:
           BASE_PATH: /untracked
