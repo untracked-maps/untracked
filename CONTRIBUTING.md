@@ -67,12 +67,11 @@ pnpm preview
 
 ## Branches
 
-Work on a branch named after the change's [Conventional Commits](https://www.conventionalcommits.org) type, such as `feat/search-places` or `fix/language-switcher`, with one change per pull request. GitHub refuses any other name: only `main` and branches starting with `build/`, `chore/`, `ci/`, `docs/`, `feat/`, `fix/`, `perf/`, `refactor/`, `revert/`, `style/`, `test/` or `renovate/` can be created. These branches require signed commits and a linear history; force pushes stay allowed, to rebase them.
+Work on a branch named after the change's [Conventional Commits](https://www.conventionalcommits.org) type, such as `feat/search-places` or `fix/language-switcher`, with one change per pull request. GitHub refuses any other name: only `main` and branches starting with `build/`, `chore/`, `ci/`, `docs/`, `feat/`, `fix/`, `perf/`, `refactor/`, `revert/`, `style/`, `test/` or `renovate/` can be created. These branches require a linear history; force pushes stay allowed, to rebase them.
 
 ## Commits
 
 - Write each commit message as a Conventional Commit: a lower-case subject without a final period, a header of at most 72 characters, and a body that says why, wrapped at 72 characters. Scopes are reserved for `deps` (Renovate) and `release` (semantic-release). The messages decide the next version: a `fix` releases a patch, a `feat` a minor version.
-- Sign your commits ([how](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits)). The merge keeps your commits as they are, so they must carry your own signature.
 - The hooks check each commit, each commit message and each push. Never bypass them with `--no-verify`.
 
 ## Propose a change
@@ -88,7 +87,7 @@ Use whatever tools you like, AI included. You are responsible for what you submi
 
 ## Merging
 
-Pull requests are merged by fast-forward from a local clone rather than with GitHub's button, whose rebase merge recreates the commits without their signatures:
+Pull requests are merged by fast-forward from a local clone:
 
 ```bash
 git switch feat/something
