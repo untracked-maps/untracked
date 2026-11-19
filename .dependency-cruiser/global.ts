@@ -1,7 +1,24 @@
 import type { IForbiddenRuleType } from 'dependency-cruiser';
+import { BROWSER_TESTS_TO_MIGRATE } from '#dependency-cruiser/browser-tests-to-migrate';
 import { BUILD_TIME_CODE, BUILD_TIME_DEPENDENCIES, TESTS } from '#dependency-cruiser/shared';
 
 export const FORBIDDEN_GLOBAL: IForbiddenRuleType[] = [
+  {
+    name: 'no-browser-in-unit-tests',
+    severity: 'error',
+    comment:
+      'Unit tests run in Node: a real browser belongs to the Playwright end-to-end tests only. Use a DOM emulated by Vitest instead of its browser mode (#32).',
+    from: { path: '^(?:src/|vite[.]config[.]ts$)', pathNot: BROWSER_TESTS_TO_MIGRATE },
+    to: {
+      path: [
+        'node_modules/vitest/browser/',
+        'node_modules/vitest-browser-[^/]+/',
+        'node_modules/@vitest/browser[^/]*/',
+        'node_modules/playwright(?:-core)?/',
+        'node_modules/@playwright/'
+      ]
+    }
+  },
   {
     name: 'no-circular',
     severity: 'error',
