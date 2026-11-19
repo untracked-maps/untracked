@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/untracked-maps/untracked/compare/v1.7.0...v1.8.0) (2026-11-19)
+
+
+### Features
+
+* clear the search with a button in the field ([#21](https://github.com/untracked-maps/untracked/issues/21)) ([c28727d](https://github.com/untracked-maps/untracked/commit/c28727d3477f0512af7b7b2a7f8ac8455e34f367))
+
 # [1.7.0](https://github.com/untracked-maps/untracked/compare/v1.6.0...v1.7.0) (2026-11-16)
 
 
