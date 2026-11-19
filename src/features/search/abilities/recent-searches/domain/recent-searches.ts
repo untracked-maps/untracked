@@ -33,9 +33,15 @@ type RecentSearchesPorts = {
 type RecentSearchesInputs = {
   readonly chosen: Observable<RecentPlace>;
   readonly cleared: Observable<void>;
+  readonly restored: Observable<void>;
 };
 
-type Change = (recents: RecentPlaces) => RecentPlaces;
+type Kept = {
+  readonly recents: RecentPlaces;
+  readonly cleared: RecentPlaces;
+};
+
+type Change = (kept: Kept) => Kept;
 
 const MOST_RECENT = 8;
 
@@ -51,10 +57,17 @@ const latest = (recents: RecentPlaces): RecentPlaces => recents.slice(0, MOST_RE
 
 const remember =
   (place: RecentPlace): Change =>
-  (recents): RecentPlaces =>
-    latest([recentOf(place), ...recents.filter(({ id }) => id !== place.id)]);
+  ({ recents, cleared }): Kept => ({
+    recents: latest([recentOf(place), ...recents.filter(({ id }) => id !== place.id)]),
+    cleared
+  });
 
-const forget: Change = () => [];
+const forget: Change = ({ recents }) => ({ recents: [], cleared: recents });
+
+const restore: Change = ({ recents, cleared }) => ({
+  recents: latest([...recents, ...cleared.filter(({ id }) => recents.every((recent) => recent.id !== id))]),
+  cleared: []
+});
 
 const storedWith =
   (storeRecents: StoreRecents) =>
@@ -67,8 +80,10 @@ const storedWith =
       of(recents)
     );
 
-const changesOf = ({ chosen, cleared }: RecentSearchesInputs): Observable<Change> =>
-  merge(chosen.pipe(map(remember)), cleared.pipe(map(() => forget)));
+const keptFrom = (recents: RecentPlaces): Kept => ({ recents, cleared: [] });
+
+const changesOf = ({ chosen, cleared, restored }: RecentSearchesInputs): Observable<Change> =>
+  merge(chosen.pipe(map(remember)), cleared.pipe(map(() => forget)), restored.pipe(map(() => restore)));
 
 const recentSearches =
   ({ storedRecents, storeRecents }: RecentSearchesPorts) =>
@@ -78,7 +93,8 @@ const recentSearches =
       map(latest),
       switchMap((stored) =>
         changesOf(inputs).pipe(
-          scan((recents, change) => change(recents), stored),
+          scan((kept, change) => change(kept), keptFrom(stored)),
+          map(({ recents }) => recents),
           concatMap(storedWith(storeRecents)),
           startWith(stored)
         )

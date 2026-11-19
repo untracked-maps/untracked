@@ -55,6 +55,24 @@
 - And the visitor comes back later
 - Then there is no recent search
 
+## Rule: The visitor can take a clearing back
+
+### Scenario: The visitor takes the clearing back
+
+- Given the recent searches "Musée du Louvre, Tour Eiffel" on this device
+- When the visitor clears the recent searches
+- And the visitor takes the clearing back
+- And the visitor comes back later
+- Then the recent searches are "Musée du Louvre, Tour Eiffel"
+
+### Scenario: The visitor chooses a place before taking the clearing back
+
+- Given the recent searches "Musée du Louvre, Tour Eiffel" on this device
+- When the visitor clears the recent searches
+- And the visitor chooses "Panthéon"
+- And the visitor takes the clearing back
+- Then the recent searches are "Panthéon, Musée du Louvre, Tour Eiffel"
+
 ## Rule: The recent searches work on a device that cannot keep them
 
 ### Scenario: The device refuses to store them
