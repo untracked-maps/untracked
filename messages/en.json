@@ -105,6 +105,7 @@
   "search_by_type_none_near": "No such place near the centre of the map. Move the map and try again.",
   "search_by_type_searching": "Searching…",
   "search_by_type_unavailable": "This list is not available right now. Try again later.",
+  "search_places_clear": "Clear the search",
   "search_places_details": "{kind} · {address}",
   "search_places_found_many": "{count} results found.",
   "search_places_found_one": "1 result found.",
