@@ -2,6 +2,7 @@
   import type { Observable } from 'rxjs';
   import { on } from 'svelte/events';
   import { m } from '#i18n/messages';
+  import BottomSheet from '#libraries/design/bottom-sheet.svelte';
   import ButtonLink from '#libraries/design/button-link.svelte';
   import CloseButton from '#libraries/design/close-button.svelte';
   import Floating from '#libraries/design/floating.svelte';
@@ -13,9 +14,10 @@
   type Props = {
     readonly spot: Observable<InspectedSpot>;
     readonly onClose: () => void;
+    readonly onSheetHeight?: (height: number) => void;
   };
 
-  const { spot, onClose }: Props = $props();
+  const { spot, onClose, onSheetHeight }: Props = $props();
 
   const uid = $props.id();
 
@@ -32,22 +34,32 @@
 
 <div class="spot" aria-live="polite">
   {#if card !== undefined}
-    <section aria-labelledby="{uid}-title" {@attach closesOnEscape}>
-      <Floating>
-        <div class="heading">
-          <hgroup>
-            <h2 id="{uid}-title">{card.title}</h2>
-            <p>{card.subtitle}</p>
-          </hgroup>
-          <CloseButton label={m.inspect_point_close()} onclick={onClose} />
-        </div>
-        <ButtonLink href={card.reportHref} external tone="soft"><WarningIcon />{m.inspect_point_report()}</ButtonLink>
-        <p class="contribute">
-          {m.inspect_point_missing()}
-          <a href={card.reportHref} rel="external">{m.inspect_point_report_on_openstreetmap()}</a>{m.inspect_point_free_map()}
-        </p>
-      </Floating>
-    </section>
+    <BottomSheet
+      subject={card.reportHref}
+      growLabel={m.sheet_grow()}
+      reduceLabel={m.sheet_reduce()}
+      {onClose}
+      onHeight={onSheetHeight}
+    >
+      <section aria-labelledby="{uid}-title" {@attach closesOnEscape}>
+        <Floating>
+          <div class="heading">
+            <hgroup>
+              <h2 id="{uid}-title">{card.title}</h2>
+              <p>{card.subtitle}</p>
+            </hgroup>
+            <CloseButton label={m.inspect_point_close()} onclick={onClose} />
+          </div>
+          <div data-sheet-actions>
+            <ButtonLink href={card.reportHref} external tone="soft"><WarningIcon />{m.inspect_point_report()}</ButtonLink>
+          </div>
+          <p class="contribute">
+            {m.inspect_point_missing()}
+            <a href={card.reportHref} rel="external">{m.inspect_point_report_on_openstreetmap()}</a>{m.inspect_point_free_map()}
+          </p>
+        </Floating>
+      </section>
+    </BottomSheet>
   {/if}
 </div>
 
@@ -99,5 +111,15 @@
 
   a {
     font-weight: var(--font-weight-strong);
+  }
+
+  @media (width <= 699px) and (orientation: portrait), (width <= 559px) {
+    .spot {
+      position: absolute;
+    }
+
+    section {
+      max-inline-size: none;
+    }
   }
 </style>

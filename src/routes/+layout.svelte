@@ -11,7 +11,9 @@
   import { page } from '$app/state';
   import type { LayoutProps } from './$types';
 
-  const { children }: LayoutProps = $props();
+  const { children, data }: LayoutProps = $props();
+
+  const sheetHeight = $derived(data.sheets.height);
 
   const hrefFor = (locale: Locale): string => localizeHref(page.url.pathname, { locale });
 
@@ -30,7 +32,7 @@
   <meta name="description" content={m.app_description()} />
 </svelte:head>
 
-<AppFrame>
+<AppFrame sheetHeight={$sheetHeight}>
   {@render children()}
 
   {#snippet bottom()}

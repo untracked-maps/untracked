@@ -1,4 +1,5 @@
 <script lang="ts">
+  import BottomSheet from '#libraries/design/bottom-sheet.svelte';
   import CloseIcon from '#libraries/design/close-icon.svelte';
   import Suggestion from '#libraries/design/suggestion.svelte';
   import '#libraries/design/tokens.css';
@@ -18,9 +19,11 @@
     readonly onChoose: (kind?: PlaceKind) => void;
     readonly onChoosePlace: (place: Place) => void;
     readonly ready?: boolean;
+    readonly covered?: boolean;
+    readonly onSheetHeight?: (height: number) => void;
   };
 
-  const { search, onChoose, onChoosePlace, ready = true }: Props = $props();
+  const { search, onChoose, onChoosePlace, ready = true, covered = false, onSheetHeight }: Props = $props();
 
   const uid = $props.id();
 
@@ -71,36 +74,46 @@
       </li>
     {/each}
   </ul>
-  <section
-    class={['places', shownKind !== undefined && 'open']}
-    aria-labelledby={shownKind === undefined ? undefined : `${uid}-title`}
-    {@attach closedOnEscape}
+  <BottomSheet
+    opening="peek"
+    subject={shownKind}
+    open={shownKind !== undefined}
+    {covered}
+    growLabel={m.sheet_grow()}
+    reduceLabel={m.sheet_reduce()}
+    onHeight={onSheetHeight}
   >
-    {#if shownKind !== undefined}
-      <div class="heading">
-        <h2 id="{uid}-title">{pluralOf(shownKind)}</h2>
-        <button type="button" class="close" aria-label={m.search_by_type_close()} onclick={close(shownKind)}>
-          <CloseIcon />
-        </button>
-      </div>
-    {/if}
-    <p role="status">{statusOf($search)}</p>
-    {#if $search.status === 'found'}
-      <ul>
-        {#each $search.places as place (place.id)}
-          <li>
-            <button type="button" class="place" onclick={choose($search.placeKind, place)}>
-              <Suggestion name={place.name} details={detailsOf(place)}>
-                {#snippet icon()}
-                  <KindDot kind={place.kind} />
-                {/snippet}
-              </Suggestion>
-            </button>
-          </li>
-        {/each}
-      </ul>
-    {/if}
-  </section>
+    <section
+      class={['places', shownKind !== undefined && 'open']}
+      aria-labelledby={shownKind === undefined ? undefined : `${uid}-title`}
+      {@attach closedOnEscape}
+    >
+      {#if shownKind !== undefined}
+        <div class="heading">
+          <h2 id="{uid}-title">{pluralOf(shownKind)}</h2>
+          <button type="button" class="close" aria-label={m.search_by_type_close()} onclick={close(shownKind)}>
+            <CloseIcon />
+          </button>
+        </div>
+      {/if}
+      <p role="status">{statusOf($search)}</p>
+      {#if $search.status === 'found'}
+        <ul>
+          {#each $search.places as place (place.id)}
+            <li>
+              <button type="button" class="place" onclick={choose($search.placeKind, place)}>
+                <Suggestion name={place.name} details={detailsOf(place)}>
+                  {#snippet icon()}
+                    <KindDot kind={place.kind} />
+                  {/snippet}
+                </Suggestion>
+              </button>
+            </li>
+          {/each}
+        </ul>
+      {/if}
+    </section>
+  </BottomSheet>
 </div>
 
 <style>
@@ -222,6 +235,20 @@
 
   p:empty {
     padding: 0;
+  }
+
+  @media (width <= 699px) and (orientation: portrait), (width <= 559px) {
+    .places.open {
+      overflow: visible;
+      background: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .places ul {
+      max-block-size: none;
+      overflow: visible;
+    }
   }
 
   @media (width >= 700px) {

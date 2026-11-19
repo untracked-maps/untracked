@@ -143,6 +143,8 @@
   "search_places_places": "Places and addresses found",
   "search_places_searching": "Searching…",
   "search_places_unavailable": "Search is not available right now. Try again later.",
+  "sheet_grow": "Enlarge the sheet",
+  "sheet_reduce": "Reduce the sheet",
   "theme_dark": "Dark",
   "theme_label": "Theme",
   "theme_light": "Light",

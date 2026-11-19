@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
-  import { map, merge, NEVER, type Observable, of, ReplaySubject, Subject } from 'rxjs';
+  import { BehaviorSubject, combineLatest, map, merge, NEVER, type Observable, of, ReplaySubject, Subject, tap } from 'rxjs';
   import { WELCOME_STORAGE_KEY } from '#configuration/welcome';
   import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
   import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
@@ -153,8 +153,21 @@
       clearedRecents.next();
     };
 
+  const spotSheet = new BehaviorSubject(0);
+
+  const listSheet = new BehaviorSubject(0);
+
+  const sheetShown = combineLatest([spotSheet, listSheet]).pipe(
+    map((heights) => Math.max(...heights)),
+    tap((height) => data.sheets.show(height))
+  );
+
   $effect(() => {
-    const subscription = merge(recents, keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views)).subscribe();
+    const subscription = merge(
+      recents,
+      sheetShown,
+      keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views)
+    ).subscribe();
     return (): void => subscription.unsubscribe();
   });
 
@@ -178,11 +191,17 @@
     acknowledgement === undefined ? of(true) : welcomeVisitor({ acknowledged: acknowledgement.acknowledged })();
 
   const acknowledge = (): void => acknowledgement?.acknowledge();
+
+  const welcomeShown: Observable<boolean> = $derived(
+    combineLatest([welcome, inspectedSpot, kindSearch]).pipe(
+      map(([welcomed, spot, list]) => welcomed && spot.kind === 'none' && list.status === 'closed')
+    )
+  );
 </script>
 
 <h1>{m.app_name()}</h1>
 
-<div class="top">
+<div class="top" data-sheet-top>
   <SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser}>
     {#snippet lead(panel)}
       <KindNamed named={kindNamed} onChoose={chooseKind} onClear={(): void => panel.settle('')} />
@@ -192,9 +211,16 @@
     {/snippet}
   </SearchPlaces>
   <div class="kinds">
-    <KindSearch search={kindSearch} onChoose={chooseKind} onChoosePlace={choosePlace} ready={browser} />
+    <KindSearch
+      search={kindSearch}
+      onChoose={chooseKind}
+      onChoosePlace={choosePlace}
+      ready={browser}
+      covered={$inspectedSpot.kind !== 'none'}
+      onSheetHeight={(height: number): void => listSheet.next(height)}
+    />
   </div>
-  <SpotCard spot={inspectedSpot} onClose={dismissSpot} />
+  <SpotCard spot={inspectedSpot} onClose={dismissSpot} onSheetHeight={(height: number): void => spotSheet.next(height)} />
   <LanguageSuggestion
     suggestion={data.languageSuggestion.suggestion}
     path={page.url.pathname}
@@ -218,48 +244,50 @@
   ]}
 />
 
-<BasemapOutage {outage} />
+<div class="afloat">
+  <BasemapOutage {outage} />
 
-<div class="corner">
-  <div class="welcome">
-    <WelcomeCard
-      {welcome}
-      privacyHref={localizeHref(resolve('/(content)/privacy'))}
-      onAcknowledge={acknowledge}
-      ready={browser}
-    />
-  </div>
-  <div class="credit">
-    <MapCredit>
-      <SatelliteCredit basemap={layers.basemap.kept()} />
-      <TransitLinesCredit shown={layers.transitLinesShown} />
-      <BikeLanesCredit shown={layers.bikeLanesShown} />
-    </MapCredit>
-  </div>
-  <div class="controls">
-    <PopoverButton label={m.layers_label()}>
-      {#snippet icon()}
-        <LayersIcon />
-      {/snippet}
-      <BasemapSwitcher basemap={layers.basemap.kept()} onChoose={layers.basemap.keep} />
-      <FieldGroup legend={m.overlays_label()}>
-        <Checkbox
-          label={m.transit_lines()}
-          hint={m.transit_lines_hint()}
-          checked={$transitLinesShown}
-          onToggle={layers.transitLines.keep}
-        />
-        <Checkbox
-          label={m.bike_lanes()}
-          hint={m.bike_lanes_hint()}
-          checked={$bikeLanesShown}
-          onToggle={layers.bikeLanes.keep}
-        />
-      </FieldGroup>
-      <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
-    </PopoverButton>
-    <ZoomButtons onZoom={zoom} ready={browser} />
-    <LocateButton status={located} onLocate={locate} ready={browser} />
+  <div class="corner">
+    <div class="welcome">
+      <WelcomeCard
+        welcome={welcomeShown}
+        privacyHref={localizeHref(resolve('/(content)/privacy'))}
+        onAcknowledge={acknowledge}
+        ready={browser}
+      />
+    </div>
+    <div class="credit">
+      <MapCredit>
+        <SatelliteCredit basemap={layers.basemap.kept()} />
+        <TransitLinesCredit shown={layers.transitLinesShown} />
+        <BikeLanesCredit shown={layers.bikeLanesShown} />
+      </MapCredit>
+    </div>
+    <div class="controls" data-sheet-stack>
+      <PopoverButton label={m.layers_label()}>
+        {#snippet icon()}
+          <LayersIcon />
+        {/snippet}
+        <BasemapSwitcher basemap={layers.basemap.kept()} onChoose={layers.basemap.keep} />
+        <FieldGroup legend={m.overlays_label()}>
+          <Checkbox
+            label={m.transit_lines()}
+            hint={m.transit_lines_hint()}
+            checked={$transitLinesShown}
+            onToggle={layers.transitLines.keep}
+          />
+          <Checkbox
+            label={m.bike_lanes()}
+            hint={m.bike_lanes_hint()}
+            checked={$bikeLanesShown}
+            onToggle={layers.bikeLanes.keep}
+          />
+        </FieldGroup>
+        <ThemeSwitcher choice={data.theme.choice} onChoose={data.theme.choose} />
+      </PopoverButton>
+      <ZoomButtons onZoom={zoom} ready={browser} />
+      <LocateButton status={located} onLocate={locate} ready={browser} />
+    </div>
   </div>
 </div>
 
@@ -294,6 +322,14 @@
     margin-block-start: calc(var(--control-size) + var(--space-3));
   }
 
+  .afloat {
+    display: grid;
+    visibility: var(--floats);
+    gap: var(--space-3);
+    translate: 0 calc(var(--lift) * -1px);
+    transition: translate 0.2s ease;
+  }
+
   .corner {
     display: grid;
     grid-template-areas:
@@ -322,6 +358,7 @@
 
   .controls {
     display: grid;
+    visibility: var(--floats);
     grid-area: controls;
     gap: var(--space-3);
     justify-items: end;

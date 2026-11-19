@@ -1,18 +1,42 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import { type FloatMeasures, floatLift } from './float-lift';
   import './tokens.css';
 
   type Props = {
     readonly children: Snippet;
     readonly bottom: Snippet;
+    readonly sheetHeight?: number;
   };
 
-  const { children, bottom }: Props = $props();
+  const { children, bottom, sheetHeight = 0 }: Props = $props();
+
+  const boxesOf = (frame: HTMLElement, selector: string): readonly DOMRect[] =>
+    [...frame.querySelectorAll(selector)].map((element) => element.getBoundingClientRect());
+
+  const measuresOf = (frame: HTMLElement, height: number): FloatMeasures => {
+    const stack = boxesOf(frame, '[data-sheet-stack]');
+    return {
+      sheetHeight: height,
+      stackHeight: Math.max(...stack.map(({ bottom: end }) => end)) - Math.min(...stack.map(({ top }) => top)),
+      viewportHeight: innerHeight,
+      topBarBottom: Math.max(0, ...boxesOf(frame, '[data-sheet-top]').map(({ bottom: end }) => end)),
+      inset: Number.parseFloat(getComputedStyle(frame).paddingBlockEnd)
+    };
+  };
+
+  const lifted =
+    (height: number) =>
+    (frame: HTMLElement): void => {
+      const { offset, hidden } = floatLift(measuresOf(frame, height));
+      frame.style.setProperty('--lift', `${offset}`);
+      frame.toggleAttribute('data-floats-hidden', hidden);
+    };
 </script>
 
-<div class="frame">
+<div class="frame" {@attach lifted(sheetHeight)}>
   <main>{@render children()}</main>
-  <footer>{@render bottom()}</footer>
+  <footer data-sheet-stack>{@render bottom()}</footer>
 </div>
 
 <style>
@@ -27,6 +51,10 @@
     pointer-events: none;
   }
 
+  .frame:global([data-floats-hidden]) {
+    --floats: hidden;
+  }
+
   main {
     z-index: 1;
     display: flex;
@@ -38,8 +66,11 @@
   footer {
     z-index: 2;
     display: flex;
+    visibility: var(--floats);
     gap: var(--space-3);
     align-items: flex-end;
     justify-content: flex-end;
+    translate: 0 calc(var(--lift) * -1px);
+    transition: translate 0.2s ease;
   }
 </style>
