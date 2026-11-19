@@ -162,11 +162,7 @@
 
   .places {
     display: grid;
-    overflow: clip;
     pointer-events: auto;
-    background: var(--surface);
-    border-radius: var(--radius-l);
-    box-shadow: var(--shadow-float);
   }
 
   .heading {
@@ -183,11 +179,8 @@
   }
 
   .places ul {
-    max-block-size: 30dvh;
     padding: 0 0 var(--space-2);
     margin: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
     list-style: none;
   }
 
@@ -239,29 +232,20 @@
     clip-path: inset(50%);
   }
 
-  @media (width <= 699px) and (orientation: portrait), (width <= 559px) {
-    .places {
-      overflow: visible;
-      background: none;
-      border-radius: 0;
-      box-shadow: none;
-    }
-
-    .places ul {
-      max-block-size: none;
-      overflow: visible;
-    }
-  }
-
-  @media (width >= 700px) {
-    .places ul {
-      max-block-size: 50dvh;
+  @media (width >= 700px), (width >= 560px) and (orientation: landscape) {
+    .kind-search {
+      inline-size: auto;
     }
 
     .kinds {
-      flex-wrap: wrap;
-      padding: 0;
+      padding: var(--space-1) 0;
       margin: 0;
+    }
+  }
+
+  @media (width >= 900px) {
+    .kinds {
+      flex-wrap: wrap;
       overflow: visible;
       mask-image: none;
     }

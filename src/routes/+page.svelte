@@ -322,6 +322,27 @@
     margin-block-start: calc(var(--control-size) + var(--space-3));
   }
 
+  @media (width >= 700px), (width >= 560px) and (orientation: landscape) {
+    .top {
+      grid-template-columns: min(25rem, 58vw - 1rem) minmax(0, 1fr);
+      column-gap: var(--space-3);
+    }
+
+    .top > :global(*) {
+      grid-column: 1;
+    }
+
+    .kinds {
+      grid-area: 1 / 2;
+      align-self: center;
+      margin-block-start: 0;
+    }
+
+    :global(main:has([data-sheet-open])) .afloat {
+      margin-inline-start: calc(min(25rem, 58vw - 1rem) + var(--space-4));
+    }
+  }
+
   .afloat {
     display: grid;
     visibility: var(--floats);

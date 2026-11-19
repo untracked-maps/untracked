@@ -45,14 +45,14 @@ describe('card of the places of a kind, on a large screen', () => {
     await page.viewport(1280, 800);
     await shown();
 
-    expect(shadowOf(page.getByRole('region', { name: 'Pharmacies' }).element())).not.toBe('none');
+    expect(shadowOf(page.getByRole('region', { name: 'Pharmacies' }).element().closest('.sheet'))).not.toBe('none');
   });
 
   it('is not drawn while nothing is shown', async () => {
     await page.viewport(1280, 800);
     await shown({ status: 'closed' });
 
-    expect(shadowOf(page.getByRole('status').element().parentElement)).toBe('none');
+    expect(document.querySelector('.sheet')).toBeNull();
   });
 });
 

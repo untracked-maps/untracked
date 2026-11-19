@@ -120,6 +120,7 @@
 
 <div
   class={['sheet', isDragged($sheet) && 'dragged', $sheet.closing && 'closing', covered && 'covered', height === 0 && 'shut']}
+  data-sheet-open={!covered || undefined}
   {@attach sized(height)}
 >
   <div
@@ -238,9 +239,45 @@
 
     .content :global(.floating) {
       padding-block-start: 0;
-      background: none;
-      border-radius: 0;
-      box-shadow: none;
+    }
+  }
+
+  @media (width >= 700px), (width >= 560px) and (orientation: landscape) {
+    .sheet {
+      position: fixed;
+      inset-block-start: calc(var(--edge) + var(--control-size) + var(--space-4));
+      inset-inline-start: var(--edge);
+      z-index: 1;
+      box-sizing: border-box;
+      inline-size: min(25rem, 58vw - 1rem);
+      max-block-size: calc(100dvh - 2 * var(--edge) - var(--control-size) - var(--space-4));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      color: var(--text);
+      background: var(--surface);
+      border-radius: var(--radius-l);
+      box-shadow: var(--shadow-float);
+      animation: panel-in 280ms cubic-bezier(0.2, 0.9, 0.25, 1);
+    }
+
+    .covered {
+      display: none;
+    }
+    .content :global(.floating) {
+      padding: 1.125rem 1.375rem 1.375rem;
+    }
+  }
+
+  .content :global(.floating) {
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      translate: 0 -6px;
     }
   }
 
