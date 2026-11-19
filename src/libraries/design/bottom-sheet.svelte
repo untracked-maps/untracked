@@ -55,8 +55,6 @@
 
   const height = $derived(open ? sheetHeight($sheet) : 0);
 
-  const blockSize = $derived(`${height}px`);
-
   const reopen = (stop: SheetStop, _content: unknown): void => events.next(sheetOpened(stop));
 
   const heightOnPhone = (visible: number): number => (matchMedia(PHONE).matches ? visible : 0);
@@ -117,6 +115,11 @@
     }
   };
 
+  const sized =
+    (pixels: number) =>
+    (element: HTMLElement): void =>
+      element.style.setProperty('--sheet-height', `${pixels}px`);
+
   const unscrolled =
     (scrolls: boolean) =>
     (scroller: HTMLElement): void => {
@@ -128,7 +131,7 @@
 
 <div
   class={['sheet', isDragged($sheet) && 'dragged', $sheet.closing && 'closing', covered && 'covered', height === 0 && 'shut']}
-  style:--sheet-height={blockSize}
+  {@attach sized(height)}
 >
   <div
     class={['scroller', $sheet.stop === 'full' && 'scrolls']}
