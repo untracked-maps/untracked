@@ -72,7 +72,6 @@ Work on a branch named after the change's [Conventional Commits](https://www.con
 ## Commits
 
 - Write each commit message as a Conventional Commit: a lower-case subject without a final period, a header of at most 72 characters, and a body that says why, wrapped at 72 characters. Scopes are reserved for `deps` (Renovate) and `release` (semantic-release). The messages decide the next version: a `fix` releases a patch, a `feat` a minor version.
-- Sign your commits ([how](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits)). The merge keeps your commits as they are, so they must carry your own signature.
 - The hooks check each commit, each commit message and each push. Never bypass them with `--no-verify`.
 
 ## Propose a change
@@ -88,7 +87,7 @@ Use whatever tools you like, AI included. You are responsible for what you submi
 
 ## Merging
 
-Pull requests are merged by fast-forward from a local clone rather than with GitHub's button, whose rebase merge recreates the commits without their signatures:
+Pull requests are merged by fast-forward from a local clone:
 
 ```bash
 git switch feat/something
