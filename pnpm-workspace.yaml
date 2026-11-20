@@ -11,6 +11,7 @@ strictPeerDependencies: true
 trustPolicyExclude:
   - chokidar@4.0.3
   - chromium-bidi@157.0.8090-0
+  - undici-types@6.21.0
 peerDependencyRules:
   allowedVersions:
     "@puppeteer/browsers>proxy-agent": "6"

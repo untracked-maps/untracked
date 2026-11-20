@@ -38,12 +38,6 @@ repos:
     rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # frozen: v8.30.1
     hooks:
       - id: gitleaks
-  - repo: https://github.com/lycheeverse/lychee
-    rev: 2bba271688c1abb1503097a064e6c3bc1d1b6a9b # frozen: lychee-v0.24.2
-    hooks:
-      - id: lychee
-        args: [--no-progress, --offline, --include-fragments]
-        types: [markdown]
   - repo: local
     hooks:
       - id: biome
@@ -87,6 +81,12 @@ repos:
         language: system
         pass_filenames: false
         files: ^messages/
+      - id: links
+        name: links between Markdown files
+        entry: pnpm lint:links
+        language: system
+        pass_filenames: false
+        types: [markdown]
       - id: knip
         name: knip
         entry: pnpm lint:unused

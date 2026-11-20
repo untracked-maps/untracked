@@ -2,7 +2,7 @@
 
 Current version: 1.11.0
 
-<h2 id="about">🪧 About</h2>
+## 🪧 About
 
 Welcome to Untracked Maps, a map of the world built on [OpenStreetMap](https://www.openstreetmap.org) and open data, that does not track you: no account, no analytics, nothing kept about who looks at what.\
 The app runs entirely in your browser, from a static site: it reads existing open data and services directly, and nothing passes through a server of ours.\
@@ -10,15 +10,15 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 
 ## 📑 Table of contents
 
-- 🪧 [About](#about)
-- ✨ [Features](#features)
-- 🔗 [Environments](#environments)
-- 📚 [Documentation](#documentation)
-- 📦 [Content](#content)
-- 🤗 [Contributing](#contributing)
-- 📝 [License](#license)
+- 🪧 [About](#-about)
+- ✨ [Features](#-features)
+- 🔗 [Environments](#-environments)
+- 📚 [Documentation](#-documentation)
+- 📦 [Content](#-content)
+- 🤗 [Contributing](#-contributing)
+- 📝 [License](#-license)
 
-<h2 id="features">✨ Features</h2>
+## ✨ Features
 
 - A map of Paris on an OpenStreetMap basemap from [OpenFreeMap](https://openfreemap.org), drawn with [MapLibre](https://maplibre.org)
 - A page that says who sees what: every external service the browser calls, what it sees and why
@@ -40,7 +40,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - Round buttons over the map, as in the first version: map type with the theme, zoom, position, and an "About" dialog with privacy, sources, help, languages and credits
 - A page for addresses that do not exist
 
-<h2 id="environments">🔗 Environments</h2>
+## 🔗 Environments
 
 | Environment | URL                                         |
 | ----------- | ------------------------------------------- |
@@ -48,7 +48,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 
 Every release is published to GitHub Pages, with its documentation under `/docs`.
 
-<h2 id="documentation">📚 Documentation</h2>
+## 📚 Documentation
 
 - **Architecture**: the dependency graph, the dependency rules and the allowed folders, generated from the code at each release, under [`/docs`](https://untracked-maps.github.io/untracked/docs/) of the site.
 - **Features**: the scenarios of every ability, generated from the Gherkin files at each release, under [`/docs/features.html`](https://untracked-maps.github.io/untracked/docs/features.html) of the site.
@@ -56,7 +56,7 @@ Every release is published to GitHub Pages, with its documentation under `/docs`
 - **Security**: the [security policy](SECURITY.md) explains how to report a vulnerability privately.
 - **Rules of the code**: [`AGENTS.md`](AGENTS.md) lists the rules the code and the tests follow, for people as much as for coding agents.
 
-<h2 id="content">📦 Content</h2>
+## 📦 Content
 
 - [src](src): the source of the web app, built with [SvelteKit](https://svelte.dev/docs/kit) as a static site.
   - [routes](src/routes): the pages, where features are put together.
@@ -68,11 +68,11 @@ Every release is published to GitHub Pages, with its documentation under `/docs`
 - [docs/adr](docs/adr): the architecture decision records.
 - [.github](.github): the workflows that check, release and publish the app.
 
-<h2 id="contributing">🤗 Contributing</h2>
+## 🤗 Contributing
 
 Bugs, questions and ideas are welcome as [issues](https://github.com/untracked-maps/untracked/issues).\
 To work on the project, read the [contributing guide](CONTRIBUTING.md): it explains how to get the project, run it locally and propose a change.
 
-<h2 id="license">📝 License</h2>
+## 📝 License
 
 [AGPL-3.0-only](LICENSE)

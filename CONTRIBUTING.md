@@ -29,14 +29,14 @@ Open the repository in an editor that reads [Dev Containers](https://containers.
 
 The setup reaches these hosts; allow them rather than install anything by hand:
 
-| Hosts                                                                                                                                     | For                                                |
-| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `registry.npmjs.org`                                                                                                                      | the dependencies                                   |
-| `github.com`, `codeload.github.com`, `raw.githubusercontent.com`, `objects.githubusercontent.com`, `release-assets.githubusercontent.com` | the hooks' repositories, cargo-binstall and lychee |
-| `go.dev`, `dl.google.com`, `proxy.golang.org`, `sum.golang.org`                                                                           | Go, for actionlint and gitleaks                    |
-| `releases.astral.sh`, `pypi.org`, `files.pythonhosted.org`                                                                                | uv and Python, for zizmor and typos                |
-| `cdn.playwright.dev`, `playwright.download.prss.microsoft.com`                                                                            | Playwright's Chromium                              |
-| `nodejs.org`                                                                                                                              | Node.js 24, where it is missing                    |
+| Hosts                                                                                                                                     | For                                 |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `registry.npmjs.org`                                                                                                                      | the dependencies                    |
+| `github.com`, `codeload.github.com`, `raw.githubusercontent.com`, `objects.githubusercontent.com`, `release-assets.githubusercontent.com` | the hooks' repositories             |
+| `go.dev`, `dl.google.com`, `proxy.golang.org`, `sum.golang.org`                                                                           | Go, for actionlint and gitleaks     |
+| `releases.astral.sh`, `pypi.org`, `files.pythonhosted.org`                                                                                | uv and Python, for zizmor and typos |
+| `cdn.playwright.dev`, `playwright.download.prss.microsoft.com`                                                                            | Playwright's Chromium               |
+| `nodejs.org`                                                                                                                              | Node.js 24, where it is missing     |
 
 ### In Claude Code's cloud sessions
 

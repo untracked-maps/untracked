@@ -17,7 +17,7 @@ While working, run the fast checks on what you touch: `pnpm check`, Biome, and `
 - **Types**: strict TypeScript 6 with the extra flags of `tsconfig.json`; `svelte-check` fails on warnings. Everything exported has an explicit type; no `enum` or `namespace`. No `any`, no `as` casts but `as const`, no `!`: Biome enforces all three.
 - **Generated code** never goes in `src`: `pnpm lint:generated` fails when git ignores any file under `src`, on every commit and in CI after the build. Tools write their output at the root, in a hidden folder, as SvelteKit and Paraglide do.
 - **Tests**: 100 % coverage, every mutant killed, tests in random order, no retry.
-- **Other checks** ([ADR-019](docs/adr/ADR-019-deterministic-checks-beyond-linting.md)): every message translated in every locale, French spelling with cspell, no duplicated code with jscpd, valid HTML with html-validate, no broken link with lychee, no unused Cucumber step.
+- **Other checks** ([ADR-019](docs/adr/ADR-019-deterministic-checks-beyond-linting.md)): every message translated in every locale, French spelling with cspell, no duplicated code with jscpd, valid HTML with html-validate, no broken link (between Markdown files with remark-validate-links at each commit, to other sites with lychee every week), no unused Cucumber step.
 - **Biome** lints and formats; **knip** fails on unused files, exports and dependencies; **typos** checks spelling, except in French files.
 
 ## Writing code
