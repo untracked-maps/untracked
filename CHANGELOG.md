@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/untracked-maps/untracked/compare/v1.8.0...v1.9.0) (2026-11-20)
+
+
+### Features
+
+* show lists and spots in a bottom sheet on phones ([#22](https://github.com/untracked-maps/untracked/issues/22)) ([1dce957](https://github.com/untracked-maps/untracked/commit/1dce9578d41dc631b56baf53e406eaa07498f01e))
+
 # [1.8.0](https://github.com/untracked-maps/untracked/compare/v1.7.0...v1.8.0) (2026-11-19)
 
 
