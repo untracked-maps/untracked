@@ -26,6 +26,10 @@ Five abilities' scenarios and two adapters' acceptance tests read the fake Paris
 - Its `tests-read-only-their-own-json` rule lets a test read only the JSON files of its own folder, the data it tests, never a data set shared with other tests. The check of the translations, which reads every locale, is the one exception, named in the rule.
 - A rule that needs many inputs, such as "at most seven places", says how many in its step, which builds them.
 
+## Update, 2026-11-20: the trace of a failing component test is kept
+
+Component tests failed now and then on a local push, each time a click followed by an assertion on what it caused, and never twice the same way; no run reproduced them on demand. Vitest now keeps Playwright's trace of a failing component test, in `.vitest/traces`, outside `src`, and CI keeps those traces for seven days, so that the next failure shows where the click landed instead of being retried.
+
 ## Update, 2026-11-20: the pointer is parked before each component test
 
 Component tests failed now and then, in the full suite only. Playwright has one mouse per page, and the test files run one after another in that page's frames: the pointer stayed where a previous test clicked, and a component drawn under it took its `:hover` style. The suggestion's hover shares the active background, so "blends in the panel otherwise" failed three runs out of four on one branch, and a deliberate hover reproduced the same error. Before each component test, `vitest.browser-setup.ts` now calls a Vitest browser command, `parkPointer`, declared in `vite.config.ts`, which moves Playwright's mouse outside the page; the same branch then passed four runs out of four. The module augmentation that types the command needs an `interface`, so Biome's `useConsistentTypeDefinitions` is off for that file only.

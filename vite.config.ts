@@ -85,6 +85,7 @@ const config: ViteUserConfig = defineConfig({
             enabled: true,
             provider: playwright(),
             instances: [{ browser: 'chromium', headless: true }],
+            trace: { mode: 'retain-on-failure', tracesDir: '.vitest/traces' },
             commands: { parkPointer }
           },
           include: ['src/**/*.svelte.spec.ts'],

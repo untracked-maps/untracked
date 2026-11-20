@@ -32,3 +32,4 @@ reports
 coverage
 .idea
 .cucumber
+.vitest
