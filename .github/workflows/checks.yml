@@ -167,6 +167,10 @@ jobs:
           - page: /fr/privacy
             accept-lang: fr-FR,fr
     steps:
+      - name: Measure each commit once, never on a rerun
+        run: test "$ATTEMPT" = 1
+        env:
+          ATTEMPT: ${{ github.run_attempt }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -178,7 +182,7 @@ jobs:
         env:
           PAGE: ${{ matrix.page }}
           ACCEPT_LANG: ${{ matrix.accept-lang }}
-      - if: failure()
+      - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: lighthouse-${{ strategy.job-index }}

@@ -33,3 +33,14 @@ Lighthouse measures the script of a page as one sum, so every ability added to t
 - "The rest of the app" counts every chunk of the build but MapLibre's and its worker, including the code loaded on first use, so code moved out of the first load still counts.
 - MapLibre's worker, 147 kB compressed, is loaded alongside the map and runs off the main thread; it is outside both budgets.
 - Lighthouse's script assertion on the map pages becomes the sum of both, 500 kB, as a coarse guard; the other pages keep their strict budget.
+
+## Update, 2026-11-20: wider budgets for the map pages, and one measure per commit
+
+On 2026-11-19, the bottom sheet (#22) failed the `/fr` audit twice on the CI runner. Its three runs gave a Total Blocking Time of 2,559, 2,634 and 3,733 ms, then 2,507, 2,655 and 8,242 ms, and a performance score of 0.71, 0.71 and 0.54, then 0.71, 0.71 and 0.57. Lighthouse's benchmark index of the runner went from 1,540 to 2,573 across these runs, and the slowest runners gave the outliers. The first failure was rerun without any change and passed; the second was fixed by building the sheet only once a kind is chosen. The map pages stand at the edge of both budgets, and each ability shown on the map will push them further while the app is being built.
+
+- **The owner widened the two measures that depend on the machine**, for the map pages only: a Total Blocking Time of at most **3,500 ms**, and a performance score of at least **0.60**. They stay a guard against an aberrant page, not against every regression.
+- **The weight of the script stays the strict guard**, unchanged: 300 kB for MapLibre and 200 kB for the rest of the app with size-limit, 500 kB in Lighthouse. It is the same on every machine.
+- **A commit is measured once.** A Lighthouse audit is never rerun to make it pass: the job fails when `github.run_attempt` is above 1. A failure is fixed in a new commit, or the budget is revised here, with the measures.
+- **The reports are always kept**, for seven days, whether the audit passes or fails, so that a budget is revised from the measures of the runner rather than from memory.
+
+A regression of the Total Blocking Time of up to about 1,000 ms that adds no script now passes CI; the review of each pull request has to catch it.
