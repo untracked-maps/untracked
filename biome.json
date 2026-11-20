@@ -659,6 +659,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["vitest.browser-setup.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useConsistentTypeDefinitions": "off"
+          }
+        }
+      }
     }
   ],
   "plugins": [

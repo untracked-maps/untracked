@@ -5,6 +5,7 @@ import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig, type ViteUserConfig } from 'vitest/config';
+import type { BrowserCommand } from 'vitest/node';
 import { THEME_BEFORE_FIRST_PAINT } from '#configuration/theme';
 import { WELCOME_BEFORE_FIRST_PAINT } from '#configuration/welcome';
 import { kitBasePath, type Locales, localeUrlPatterns } from '#libraries/base-path/base-path';
@@ -19,6 +20,12 @@ const sha256 = (text: string): `sha256-${string}` => `sha256-${createHash('sha25
 const basePath = process.env['BASE_PATH'] ?? '';
 const locales: Locales = JSON.parse(readFileSync('./project.inlang/settings.json', 'utf8'));
 const urlPatterns = localeUrlPatterns(basePath, locales);
+const OUTSIDE_THE_PAGE = -1;
+
+const parkPointer: BrowserCommand<[]> = async ({ page }) => {
+  await page.mouse.move(OUTSIDE_THE_PAGE, OUTSIDE_THE_PAGE);
+};
+
 const config: ViteUserConfig = defineConfig({
   plugins: [
     sveltekit({
@@ -77,9 +84,11 @@ const config: ViteUserConfig = defineConfig({
           browser: {
             enabled: true,
             provider: playwright(),
-            instances: [{ browser: 'chromium', headless: true }]
+            instances: [{ browser: 'chromium', headless: true }],
+            commands: { parkPointer }
           },
-          include: ['src/**/*.svelte.spec.ts']
+          include: ['src/**/*.svelte.spec.ts'],
+          setupFiles: ['./vitest.browser-setup.ts']
         }
       },
       {
