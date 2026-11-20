@@ -79,6 +79,27 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
+  abilities:
+    name: Abilities
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Warn when a change touches several abilities
+        run: |
+          abilities=$(git diff --name-only "$BASE_SHA...$HEAD_SHA" | grep -oE '^src/features/[^/]+/abilities/[^/]+' | sort -u | paste -sd ' ' -)
+          count=$(printf '%s' "$abilities" | wc -w)
+          if [ "$count" -gt 1 ]; then
+            echo "::warning title=Several abilities::One pull request per ability is the rule (ADR-039); this one touches $count: $abilities"
+          fi
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-24.04

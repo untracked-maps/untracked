@@ -7,6 +7,10 @@ export const ENTRY_POINTS: string[] = [
   '^[^/]+[.]config[.]ts$'
 ];
 
+export const DOMAIN_PACKAGES: readonly string[] = ['rxjs'];
+
+export const DOMAIN_PACKAGE_PATHS: readonly string[] = DOMAIN_PACKAGES.map((name) => `node_modules/${name}/`);
+
 export const LIBRARY_DEPENDENCIES: Readonly<Record<string, readonly string[]>> = {};
 
 export const BUILD_TIME_DEPENDENCIES: readonly {

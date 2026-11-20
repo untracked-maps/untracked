@@ -57,3 +57,7 @@ Tests are exempt from the layer rules.
 - **`keys/`, `injection/`, `query/`, `presenter/` and `ui/shared/` folders** from la Cartographie nationale: la Coop does without them on a larger code base, and `ui/shared/` couples abilities.
 - **A feature's `index.ts` as a public API for other features**, as la Coop allows through anti-corruption ports: rejected, so that features only meet in routes.
 - **An `index.ts` re-exporting each feature, ability and layer**, as la Coop does: chosen first, then dropped on 2026-11-15. Importing one name from such a barrel file makes Vite fetch and transform every file it re-exports, which slows the dev server and the tests ([Vite performance guide](https://vite.dev/guide/performance)), and the cost grows with each ability. Modules are imported directly, and Biome's `noBarrelFile` and `noReExportAll` forbid barrels. The boundaries do not rest on `index.ts` files but on dependency-cruiser's rules.
+
+## Update, 2026-11-20: libraries that implement a standard
+
+Rule 4 now allows, besides `rxjs`, the libraries that implement a standard, listed by name in `DOMAIN_PACKAGES` in `.dependency-cruiser.ts`, so that a domain never rewrites a standard ([ADR-039](ADR-039-standards-first-and-their-libraries-in-the-domain.md)). Any other package in a domain stays an error.

@@ -1,20 +1,24 @@
 import type { IForbiddenRuleType } from 'dependency-cruiser';
-import { TESTS } from '#dependency-cruiser/shared';
+import { DOMAIN_PACKAGE_PATHS, TESTS } from '#dependency-cruiser/shared';
 
 export const FORBIDDEN_LAYERS: IForbiddenRuleType[] = [
   {
     name: 'pure-feature-domain',
     severity: 'error',
-    comment: 'The feature domain is pure TypeScript: it depends only on itself and on rxjs.',
+    comment:
+      'The feature domain depends only on itself and on the packages of DOMAIN_PACKAGES: rxjs and the libraries that implement a standard.',
     from: { path: '^src/features/([^/]+)/domain/', pathNot: TESTS },
-    to: { pathNot: ['^src/features/$1/domain/', 'node_modules/rxjs/'] }
+    to: { pathNot: ['^src/features/$1/domain/', ...DOMAIN_PACKAGE_PATHS] }
   },
   {
     name: 'pure-ability-domain',
     severity: 'error',
-    comment: 'The ability domain is pure TypeScript: it depends only on itself, on the feature domain and on rxjs.',
+    comment:
+      'The ability domain depends only on itself, on the feature domain and on the packages of DOMAIN_PACKAGES: rxjs and the libraries that implement a standard.',
     from: { path: '^src/features/([^/]+)/abilities/([^/]+)/domain/', pathNot: TESTS },
-    to: { pathNot: ['^src/features/$1/abilities/$2/domain/', '^src/features/$1/domain/', 'node_modules/rxjs/'] }
+    to: {
+      pathNot: ['^src/features/$1/abilities/$2/domain/', '^src/features/$1/domain/', ...DOMAIN_PACKAGE_PATHS]
+    }
   },
   {
     name: 'feature-implementation-dependencies',
