@@ -143,6 +143,8 @@
   "search_places_places": "Lieux et adresses trouvés",
   "search_places_searching": "Recherche…",
   "search_places_unavailable": "La recherche n’est pas disponible pour le moment. Réessayez plus tard.",
+  "sheet_grow": "Agrandir la fiche",
+  "sheet_reduce": "Réduire la fiche",
   "theme_dark": "Sombre",
   "theme_label": "Thème",
   "theme_light": "Clair",

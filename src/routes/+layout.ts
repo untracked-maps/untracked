@@ -1,4 +1,4 @@
-import { NEVER, type Observable, of } from 'rxjs';
+import { BehaviorSubject, NEVER, type Observable, of } from 'rxjs';
 import { THEME_STORAGE_KEY } from '#configuration/theme';
 import {
   type ColourScheme,
@@ -52,9 +52,24 @@ const languageSuggestionWhilePrerendering: LanguageSuggestion = { suggestion: of
 
 const themeWhilePrerendering: Theme = { choice: of('system'), choose: () => undefined, colourScheme: NEVER };
 
+type BottomSheets = {
+  readonly height: Observable<number>;
+  readonly show: (height: number) => void;
+};
+
+const bottomSheets = (): BottomSheets => {
+  const heights = new BehaviorSubject(0);
+  return { height: heights, show: (height) => heights.next(height) };
+};
+
 export const prerender = true;
 
-export const load: LayoutLoad = (): { readonly theme: Theme; readonly languageSuggestion: LanguageSuggestion } => ({
+export const load: LayoutLoad = (): {
+  readonly theme: Theme;
+  readonly languageSuggestion: LanguageSuggestion;
+  readonly sheets: BottomSheets;
+} => ({
+  sheets: bottomSheets(),
   theme: browser ? themeOnThisDevice() : themeWhilePrerendering,
   languageSuggestion: browser ? languageSuggestionOnThisDevice() : languageSuggestionWhilePrerendering
 });

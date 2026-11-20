@@ -40,14 +40,16 @@ const hubertButton = (): HTMLElement | SVGElement => page.getByRole('button', { 
 
 const shadowOf = (element: Element | null | undefined): string => (element ? getComputedStyle(element).boxShadow : '');
 
-describe('card of the places of a kind', () => {
+describe('card of the places of a kind, on a large screen', () => {
   it('is drawn while a kind is shown', async () => {
+    await page.viewport(1280, 800);
     await shown();
 
     expect(shadowOf(page.getByRole('region', { name: 'Pharmacies' }).element())).not.toBe('none');
   });
 
   it('is not drawn while nothing is shown', async () => {
+    await page.viewport(1280, 800);
     await shown({ status: 'closed' });
 
     expect(shadowOf(page.getByRole('status').element().parentElement)).toBe('none');

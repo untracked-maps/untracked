@@ -62,7 +62,9 @@ describe('spot card, as shown', () => {
   it('announces the spot inspected', async () => {
     await render(SpotCard, props);
 
-    await expect.element(page.getByRole('region').element().parentElement).toHaveAttribute('aria-live', 'polite');
+    await expect
+      .element(page.getByRole('region').element().closest<HTMLElement>('.spot'))
+      .toHaveAttribute('aria-live', 'polite');
   });
 });
 

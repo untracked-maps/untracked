@@ -9,6 +9,7 @@
   --text-on-accent: rgb(255 255 255);
   --text-on-inverse: light-dark(rgb(255 255 255), rgb(28 29 31));
   --line: light-dark(rgb(236 236 238), rgb(48 52 59));
+  --grip: light-dark(rgb(216 216 220), rgb(74 79 87));
   --accent: light-dark(rgb(42 91 215), rgb(107 155 255));
   --accent-strong: light-dark(rgb(42 91 215), rgb(58 111 224));
   --accent-soft: light-dark(rgb(245 248 255), rgb(31 40 54));
@@ -42,6 +43,8 @@
   --control-height: 2.5rem;
   --control-size: 3rem;
   --reading-width: 40rem;
+  --lift: 0;
+  --floats: visible;
 }
 
 @media (width >= 700px) {
