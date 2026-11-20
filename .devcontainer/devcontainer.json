@@ -1,0 +1,11 @@
+{
+  "name": "Untracked Maps",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-trixie@sha256:375f1ba34dab874ae487acb0b2bb3e9fd1b67fe3ea6e80c16e35713487f47c6a",
+  "onCreateCommand": "sudo corepack enable pnpm",
+  "postCreateCommand": ".devcontainer/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["svelte.svelte-vscode", "biomejs.biome"]
+    }
+  }
+}

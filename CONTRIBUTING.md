@@ -9,17 +9,47 @@ Thank you for wanting to improve Untracked Maps. This guide explains how to get 
 - [Graphviz](https://graphviz.org), only to generate the architecture documentation.
 - A system [Chrome](https://www.google.com/chrome/), only to run Lighthouse on Ubuntu, whose AppArmor profile refuses the sandbox of Playwright's Chromium.
 
+The git hooks need nothing more: prek installs their tools itself.
+
 ## Get the project
 
 ```bash
 git clone git@github.com:untracked-maps/untracked.git
 cd untracked
-pnpm install
-pnpm exec prek install
-pnpm exec playwright install chromium
+.devcontainer/setup.sh
 ```
 
-The second command installs the git hooks that check each commit, each commit message and each push. pnpm refuses package versions published less than ten days ago.
+The setup installs the locked dependencies, the git hooks that check each commit, each commit message and each push, with the tools they run, and Playwright's Chromium with its system libraries, which may ask for `sudo`. pnpm refuses package versions published less than ten days ago. prek installs each hook at the version `.pre-commit-config.yaml` pins, with its own toolchain, Go included: never install a hook's tool by hand.
+
+### In a Dev Container
+
+Open the repository in an editor that reads [Dev Containers](https://containers.dev), such as VS Code, a JetBrains IDE or GitHub Codespaces: `.devcontainer/devcontainer.json` builds an environment with Node.js 24 and pnpm, then runs the setup. CI builds the same container and runs the commit hooks inside it.
+
+### Behind a filtered network
+
+The setup reaches these hosts; allow them rather than install anything by hand:
+
+| Hosts                                                                                                                                     | For                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `registry.npmjs.org`                                                                                                                      | the dependencies                                   |
+| `github.com`, `codeload.github.com`, `raw.githubusercontent.com`, `objects.githubusercontent.com`, `release-assets.githubusercontent.com` | the hooks' repositories, cargo-binstall and lychee |
+| `go.dev`, `dl.google.com`, `proxy.golang.org`, `sum.golang.org`                                                                           | Go, for actionlint and gitleaks                    |
+| `releases.astral.sh`, `pypi.org`, `files.pythonhosted.org`                                                                                | uv and Python, for zizmor and typos                |
+| `cdn.playwright.dev`, `playwright.download.prss.microsoft.com`                                                                            | Playwright's Chromium                              |
+| `nodejs.org`                                                                                                                              | Node.js 24, where it is missing                    |
+
+### In Claude Code's cloud sessions
+
+`.claude/settings.json` runs the setup at the start of each cloud session. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com` and `releases.astral.sh` to the allowed domains, and give this setup script, which installs Node.js 24 in front of the image's Node.js 22:
+
+```bash
+curl -fsSL https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt | grep -oE 'node-v24[.0-9]+-linux-x64[.]tar[.]xz' | head -n 1 | xargs -I {} curl -fsSL -o /tmp/node.tar.xz https://nodejs.org/dist/latest-v24.x/{}
+mkdir -p /opt/node24 && tar -xJf /tmp/node.tar.xz -C /opt/node24 --strip-components=1
+ln -sf /opt/node24/bin/node /opt/node24/bin/npm /opt/node24/bin/npx /opt/node24/bin/corepack /usr/local/bin/
+corepack enable pnpm
+```
+
+If a hook still fails to install, report the host the session refused: it belongs in the list above.
 
 ## Run it
 
