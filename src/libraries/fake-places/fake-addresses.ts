@@ -1,7 +1,7 @@
 import { addressPartsOf } from './address-parts';
-import ARRONDISSEMENTS_FILE from './arrondissements.json' with { type: 'json' };
-import { fakeParis } from './fake-paris';
 import type { FakePlace } from './fake-place';
+import { fakePlaces } from './fake-places';
+import type { FakeDistrictOfZone, FakeZone } from './fake-zone';
 
 type FakeCoordinates = FakePlace['coordinates'];
 
@@ -25,8 +25,6 @@ type FakeDistrict = {
 
 type FakeAddress = FakeStreetAddress | FakeDistrict;
 
-const CITY = 'Paris';
-
 const streetAddressOf = ({ address, coordinates }: FakePlace): readonly FakeStreetAddress[] =>
   addressPartsOf(address).map(
     ({ number, street, postcode, city }): FakeStreetAddress =>
@@ -35,17 +33,19 @@ const streetAddressOf = ({ address, coordinates }: FakePlace): readonly FakeStre
         : { kind: 'address', address, number, street, postcode, city, coordinates }
   );
 
-const districtOf = ({ name, postcode, coordinates }: (typeof ARRONDISSEMENTS_FILE)[number]): FakeDistrict => ({
-  kind: 'district',
-  name,
-  postcode,
-  city: CITY,
-  coordinates
-});
+const districtOf =
+  (city: string) =>
+  ({ name, postcode, coordinates }: FakeDistrictOfZone): FakeDistrict => ({
+    kind: 'district',
+    name,
+    postcode,
+    city,
+    coordinates
+  });
 
-const fakeAddresses = (): readonly FakeAddress[] => [
-  ...fakeParis().flatMap(streetAddressOf),
-  ...ARRONDISSEMENTS_FILE.map(districtOf)
+const fakeAddresses = (zone: FakeZone): readonly FakeAddress[] => [
+  ...fakePlaces(zone).flatMap(streetAddressOf),
+  ...zone.districts.map(districtOf(zone.city))
 ];
 
 export { fakeAddresses };

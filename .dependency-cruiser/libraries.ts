@@ -1,5 +1,5 @@
 import type { IForbiddenRuleType } from 'dependency-cruiser';
-import { LIBRARY_DEPENDENCIES } from '#dependency-cruiser/shared';
+import { LIBRARY_DEPENDENCIES, TESTS } from '#dependency-cruiser/shared';
 
 export const FORBIDDEN_LIBRARIES: IForbiddenRuleType[] = [
   {
@@ -30,5 +30,13 @@ export const FORBIDDEN_LIBRARIES: IForbiddenRuleType[] = [
       pathNot: Object.keys(LIBRARY_DEPENDENCIES).map((library) => `^src/libraries/${library}/`)
     },
     to: { path: '^src/libraries/', pathNot: '^src/libraries/$1/' }
+  },
+  {
+    name: 'fake-places-generator-knows-no-zone',
+    severity: 'error',
+    comment:
+      'The fake places generator receives its zone from the configuration: it never reaches a zone itself, so that no zone is a default.',
+    from: { path: '^src/libraries/fake-places/', pathNot: ['^src/libraries/fake-places/zones/', TESTS] },
+    to: { path: '^src/libraries/fake-places/zones/' }
   }
 ];

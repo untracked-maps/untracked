@@ -38,3 +38,12 @@ A real adapter of `LoadPlaces` will read places from a data project ([ADR-001](A
 ## Update, 2026-11-20: no test reads the fake Paris
 
 The abilities' scenarios and the adapters' acceptance tests no longer read the fake Paris: each writes its own places and addresses ([ADR-012](ADR-012-testing-strategy.md)), and dependency-cruiser forbids any test but the library's own to import it. A change of Faker's French data now shows in the library's tests only, and no longer changes what the visitor's scenarios mean.
+
+## Update, 2026-11-20: the zone of the fake places is a setting
+
+The source of real places is still not chosen, and the places need not lie in Paris: the generator now works in any zone. The library becomes `src/libraries/fake-places`.
+
+- **A zone describes where places are generated**: the prefix of their ids, the city, Faker's locales, the bounds, the postcodes, the landmarks and the districts. `fakePlaces(zone)` and `fakeAddresses(zone)` require it, without a default.
+- **Paris is one zone among others**, `zones/paris/paris.ts`, with its landmarks and its twenty arrondissements. The places it generates are the same, byte for byte, as before.
+- **The configuration chooses the zone**, `src/configuration/fake-zone.ts`, and the prerendered endpoints pass it to the generator. dependency-cruiser's `fake-places-generator-knows-no-zone` rule forbids the generator to reach a zone itself.
+- A one-line address keeps the French order, number, street, postcode and city, until addresses are shaped after a standard.

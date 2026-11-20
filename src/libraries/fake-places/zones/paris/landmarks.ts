@@ -1,4 +1,4 @@
-import { type FakePlace, isFakePlaceKind } from './fake-place';
+import { type FakePlace, isFakePlaceKind } from '../../fake-place';
 import LANDMARKS_FILE from './landmarks.json' with { type: 'json' };
 
 type Landmark = (typeof LANDMARKS_FILE)[number];

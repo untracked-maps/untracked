@@ -1,8 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { fakeAddresses } from './fake-addresses';
-import { fakeParis } from './fake-paris';
+import { fakePlaces } from './fake-places';
+import type { FakeZone } from './fake-zone';
+import { PARIS } from './zones/paris/paris';
 
-const ADDRESSES = fakeAddresses();
+const ADDRESSES = fakeAddresses(PARIS);
+
+const SAINT_MALO: FakeZone = {
+  ...PARIS,
+  city: 'Saint-Malo',
+  districts: [{ name: 'Intra-Muros', postcode: '35400', coordinates: { longitude: -2.025, latitude: 48.649 } }]
+};
 
 describe('fake addresses', () => {
   it('start with the address of the first place, in parts', () => {
@@ -29,20 +37,20 @@ describe('fake addresses', () => {
   });
 
   it('hold the address of every place', () => {
-    expect(ADDRESSES.filter(({ kind }) => kind !== 'district')).toHaveLength(fakeParis().length);
+    expect(ADDRESSES.filter(({ kind }) => kind !== 'district')).toHaveLength(fakePlaces(PARIS).length);
   });
 
-  it('end with the twenty arrondissements', () => {
-    expect(ADDRESSES.filter(({ kind }) => kind === 'district')).toHaveLength(20);
+  it('end with the districts of their zone', () => {
+    expect(ADDRESSES.filter(({ kind }) => kind === 'district')).toHaveLength(PARIS.districts.length);
   });
 
-  it('give an arrondissement its name, postcode and centre', () => {
-    expect(ADDRESSES.at(-9)).toEqual({
+  it('place a district in the city of its zone', () => {
+    expect(fakeAddresses(SAINT_MALO).at(-1)).toEqual({
       kind: 'district',
-      name: 'Paris 12e Arrondissement',
-      postcode: '75012',
-      city: 'Paris',
-      coordinates: { longitude: 2.421_33, latitude: 48.834_97 }
+      name: 'Intra-Muros',
+      postcode: '35400',
+      city: 'Saint-Malo',
+      coordinates: { longitude: -2.025, latitude: 48.649 }
     });
   });
 });

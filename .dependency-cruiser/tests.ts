@@ -7,8 +7,8 @@ export const FORBIDDEN_TESTS: IForbiddenRuleType[] = [
     severity: 'error',
     comment:
       'A test writes its own inputs, to show the case it tests: it never reads the fake places or Faker, which only their own library tests.',
-    from: { path: TESTS, pathNot: '^src/libraries/fake-paris/' },
-    to: { path: ['^src/libraries/fake-paris/', 'node_modules/@faker-js/'] }
+    from: { path: TESTS, pathNot: '^src/libraries/fake-places/' },
+    to: { path: ['^src/libraries/fake-places/', 'node_modules/@faker-js/'] }
   },
   {
     name: 'tests-read-only-their-own-json',

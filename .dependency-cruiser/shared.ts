@@ -24,8 +24,8 @@ export const BUILD_TIME_DEPENDENCIES: readonly {
     allowed: ['@faker-js/faker']
   },
   {
-    name: 'fake-paris-dependencies',
-    from: '^src/libraries/fake-paris/',
+    name: 'fake-places-dependencies',
+    from: '^src/libraries/fake-places/',
     allowed: ['@faker-js/faker']
   },
   {
