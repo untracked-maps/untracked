@@ -29,3 +29,13 @@ A contributor working in Claude Code's cloud sessions met exactly that: neither 
 - **mise to pin Node.js, pnpm and Go**: a second tool beside prek, which already installs the hooks' toolchains, and nothing for Playwright's system libraries.
 - **The whole setup in the cloud environment's setup script**: cached, but run apart from the repository, and kept outside it, in each contributor's settings.
 - **An instruction in `AGENTS.md` to run the setup**: nothing Claude-specific in the repository, but it rests on the agent following it.
+
+## Update, 2026-11-20: Node.js 24 first in cloud sessions
+
+Checked in a fresh cloud session by a contributor, the setup failed at once: the setup script linked Node.js 24 into `/usr/local/bin`, which comes after `/opt/node22/bin` in the sessions' `PATH`, so the hook found Node.js 22. The setup script also needed Playwright's hosts, and the cloud settings refuse a line longer than 200 bytes.
+
+- The setup script installs Node.js 24 in `/opt/node24`, after checking its checksum, in lines under 80 characters.
+- `.claude/cloud-session.sh`, run by the `SessionStart` hook, puts `/opt/node24/bin` first in the `PATH` of the setup and, through `CLAUDE_ENV_FILE`, of every later command of the session, git hooks included.
+- The contributing guide lists Playwright's hosts among those to allow.
+
+Checked in a container that starts from Node.js 22 first in the `PATH`, as root, as the sessions do: the setup completes, and the next command finds Node.js 24 and pnpm.

@@ -40,13 +40,18 @@ The setup reaches these hosts; allow them rather than install anything by hand:
 
 ### In Claude Code's cloud sessions
 
-`.claude/settings.json` runs the setup at the start of each cloud session. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com` and `releases.astral.sh` to the allowed domains, and give this setup script, which installs Node.js 24 in front of the image's Node.js 22:
+`.claude/cloud-session.sh` runs at the start of each cloud session: it puts Node.js 24 in front of the image's Node.js 22, for the whole session, then runs the setup. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com`, `releases.astral.sh`, `cdn.playwright.dev` and `playwright.download.prss.microsoft.com` to the allowed domains, and give this setup script, which installs Node.js 24 in `/opt/node24` after checking its checksum:
 
 ```bash
-curl -fsSL https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt | grep -oE 'node-v24[.0-9]+-linux-x64[.]tar[.]xz' | head -n 1 | xargs -I {} curl -fsSL -o /tmp/node.tar.xz https://nodejs.org/dist/latest-v24.x/{}
-mkdir -p /opt/node24 && tar -xJf /tmp/node.tar.xz -C /opt/node24 --strip-components=1
-ln -sf /opt/node24/bin/node /opt/node24/bin/npm /opt/node24/bin/npx /opt/node24/bin/corepack /usr/local/bin/
-corepack enable pnpm
+cd /tmp
+URL=https://nodejs.org/dist/latest-v24.x
+curl -fsSLO "$URL/SHASUMS256.txt"
+FILE=$(grep -oE 'node-v24[.0-9]+-linux-x64[.]tar[.]xz' SHASUMS256.txt)
+curl -fsSLO "$URL/$FILE"
+grep " $FILE\$" SHASUMS256.txt | sha256sum -c -
+mkdir -p /opt/node24
+tar -xJf "$FILE" -C /opt/node24 --strip-components=1
+/opt/node24/bin/corepack enable pnpm
 ```
 
 If a hook still fails to install, report the host the session refused: it belongs in the list above.
