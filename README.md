@@ -36,6 +36,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - A light, a dark or the system theme, kept on the device, for the interface and the map
 - A satellite view from the aerial photos of [IGN](https://geoservices.ign.fr/bdortho), with the labels of the map on top, and the transit lines of Île-de-France from [Île-de-France Mobilités](https://data.iledefrance-mobilites.fr) and the bike lanes of France, from OpenStreetMap through IGN, as layers; each kept on the device, and fetched only once turned on
 - On a phone, the places of a kind and the spot inspected in a sheet along the bottom, dragged between three heights as in the first version, with the round buttons rising above it
+- On a larger screen, the same sheet as a panel on the left, under the search field, with the kinds of places on its right
 - Round buttons over the map, as in the first version: map type with the theme, zoom, position, and an "About" dialog with privacy, sources, help, languages and credits
 - A page for addresses that do not exist
 

@@ -65,7 +65,7 @@
 
 <style>
   .spot {
-    inline-size: 100%;
+    position: absolute;
   }
 
   .spot:empty {
@@ -74,7 +74,6 @@
 
   section {
     inline-size: 100%;
-    max-inline-size: 27.5rem;
   }
 
   section > :global(*) {
@@ -111,15 +110,5 @@
 
   a {
     font-weight: var(--font-weight-strong);
-  }
-
-  @media (width <= 699px) and (orientation: portrait), (width <= 559px) {
-    .spot {
-      position: absolute;
-    }
-
-    section {
-      max-inline-size: none;
-    }
   }
 </style>

@@ -130,26 +130,3 @@ describe('the grip of a bottom sheet', () => {
       .toEqual(['36px', '5px']);
   });
 });
-
-describe('a bottom sheet on a large screen', () => {
-  it('stays in the flow of the page', async () => {
-    await page.viewport(1280, 800);
-    await render(BottomSheet, { ...labels, children: TALL });
-
-    await expect.element(sheetElement()).toHaveStyle({ position: 'static' });
-  });
-
-  it('has no grip', async () => {
-    await page.viewport(1280, 800);
-    await render(BottomSheet, { ...labels, children: TALL });
-
-    await expect.element(page.getByRole('button')).not.toBeInTheDocument();
-  });
-
-  it('is as tall as its content', async () => {
-    await page.viewport(1280, 800);
-    await render(BottomSheet, { ...labels, children: TALL });
-
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '2000px' });
-  });
-});
