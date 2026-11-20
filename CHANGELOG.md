@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/untracked-maps/untracked/compare/v1.10.0...v1.11.0) (2026-11-20)
+
+
+### Features
+
+* generate the fake places in a zone chosen by the configuration ([045b919](https://github.com/untracked-maps/untracked/commit/045b919ce5cdec45230c6be074fcf3c31e3bc522))
+
 # [1.10.0](https://github.com/untracked-maps/untracked/compare/v1.9.0...v1.10.0) (2026-11-20)
 
 
