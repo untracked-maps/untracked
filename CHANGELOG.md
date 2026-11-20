@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/untracked-maps/untracked/compare/v1.9.0...v1.10.0) (2026-11-20)
+
+
+### Features
+
+* show the sheet as a side panel on large screens ([#23](https://github.com/untracked-maps/untracked/issues/23)) ([8f8a211](https://github.com/untracked-maps/untracked/commit/8f8a2115efe9c7ddd024014d211b7daff3937de8))
+
 # [1.9.0](https://github.com/untracked-maps/untracked/compare/v1.8.0...v1.9.0) (2026-11-20)
 
 
