@@ -14,10 +14,9 @@
   const boxesOf = (frame: HTMLElement, selector: string): readonly DOMRect[] =>
     [...frame.querySelectorAll(selector)].map((element) => element.getBoundingClientRect());
 
-  const measuresOf = (frame: HTMLElement, height: number): FloatMeasures => {
+  const measuresOf = (frame: HTMLElement) => (): FloatMeasures => {
     const stack = boxesOf(frame, '[data-sheet-stack]');
     return {
-      sheetHeight: height,
       stackHeight: Math.max(...stack.map(({ bottom: end }) => end)) - Math.min(...stack.map(({ top }) => top)),
       viewportHeight: innerHeight,
       topBarBottom: Math.max(0, ...boxesOf(frame, '[data-sheet-top]').map(({ bottom: end }) => end)),
@@ -28,7 +27,7 @@
   const lifted =
     (height: number) =>
     (frame: HTMLElement): void => {
-      const { offset, hidden } = floatLift(measuresOf(frame, height));
+      const { offset, hidden } = floatLift(height, measuresOf(frame));
       frame.style.setProperty('--lift', `${offset}`);
       frame.toggleAttribute('data-floats-hidden', hidden);
     };

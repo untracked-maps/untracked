@@ -25,7 +25,6 @@
     readonly reduceLabel: string;
     readonly opening?: SheetStop;
     readonly subject?: unknown;
-    readonly open?: boolean;
     readonly covered?: boolean;
     readonly onHeight?: ((height: number) => void) | undefined;
     readonly onClose?: () => void;
@@ -33,17 +32,7 @@
 
   type Touching = TouchEvent & { readonly currentTarget: HTMLElement };
 
-  const {
-    children,
-    growLabel,
-    reduceLabel,
-    opening = 'half',
-    subject,
-    open = true,
-    covered = false,
-    onHeight,
-    onClose
-  }: Props = $props();
+  const { children, growLabel, reduceLabel, opening = 'half', subject, covered = false, onHeight, onClose }: Props = $props();
 
   const PHONE = '(max-width: 699px) and (orientation: portrait), (max-width: 559px)';
 
@@ -53,7 +42,7 @@
 
   const sheet: Observable<Sheet> = sheetOf(events);
 
-  const height = $derived(open ? sheetHeight($sheet) : 0);
+  const height = $derived(sheetHeight($sheet));
 
   const reopen = (stop: SheetStop, _content: unknown): void => events.next(sheetOpened(stop));
 

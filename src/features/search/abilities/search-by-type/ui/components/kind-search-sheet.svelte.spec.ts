@@ -52,11 +52,17 @@ describe('places of a kind on a phone', () => {
     await expect.element(sheet()).toHaveStyle({ position: 'fixed', blockSize: '150px' });
   });
 
-  it('take no room while no kind is shown', async () => {
+  it('build no sheet until a kind is shown, so that the page starts lighter', async () => {
     await onPhone({ status: 'closed' });
     await page.getByRole('button', { name: 'Bakeries' }).hover();
 
-    expect(sheet()?.getBoundingClientRect().height).toBe(0);
+    expect(sheet()).toBeNull();
+  });
+
+  it('say in the sheet how many places are listed', async () => {
+    await onPhone(BAKERIES);
+
+    expect(sheet()?.querySelector('p')?.textContent).toBe('25 places near the centre of the map, the nearest first.');
   });
 
   it('can be enlarged with the grip', async () => {
@@ -79,8 +85,10 @@ describe('places of a kind on a phone', () => {
 
     await expect.element(sheet()).toHaveStyle({ blockSize: '150px' });
   });
+});
 
-  it('hide behind the sheet that covers them', async () => {
+describe('the sheet of the places of a kind', () => {
+  it('hides behind the sheet that covers them', async () => {
     await onPhone(BAKERIES, { covered: true });
 
     await expect.element(sheet()).toHaveStyle({ visibility: 'hidden' });

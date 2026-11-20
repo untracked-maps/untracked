@@ -45,15 +45,18 @@
     onChoosePlace(place);
   };
 
-  const closeOnEscape = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape' && shownKind !== undefined) {
-      close(shownKind)();
-    }
-  };
+  const closeOnEscape =
+    (kind: PlaceKind) =>
+    (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        close(kind)();
+      }
+    };
 
-  const closedOnEscape = (element: HTMLElement): void => {
-    on(element, 'keydown', closeOnEscape);
-  };
+  const closedOnEscape =
+    (kind: PlaceKind) =>
+    (element: HTMLElement): (() => void) =>
+      on(element, 'keydown', closeOnEscape(kind));
 </script>
 
 <div class="kind-search">
@@ -74,46 +77,42 @@
       </li>
     {/each}
   </ul>
-  <BottomSheet
-    opening="peek"
-    subject={shownKind}
-    open={shownKind !== undefined}
-    {covered}
-    growLabel={m.sheet_grow()}
-    reduceLabel={m.sheet_reduce()}
-    onHeight={onSheetHeight}
-  >
-    <section
-      class={['places', shownKind !== undefined && 'open']}
-      aria-labelledby={shownKind === undefined ? undefined : `${uid}-title`}
-      {@attach closedOnEscape}
+  <p role="status" class="announced">{statusOf($search)}</p>
+  {#if shownKind !== undefined}
+    <BottomSheet
+      opening="peek"
+      subject={shownKind}
+      {covered}
+      growLabel={m.sheet_grow()}
+      reduceLabel={m.sheet_reduce()}
+      onHeight={onSheetHeight}
     >
-      {#if shownKind !== undefined}
+      <section class="places" aria-labelledby="{uid}-title" {@attach closedOnEscape(shownKind)}>
         <div class="heading">
           <h2 id="{uid}-title">{pluralOf(shownKind)}</h2>
           <button type="button" class="close" aria-label={m.search_by_type_close()} onclick={close(shownKind)}>
             <CloseIcon />
           </button>
         </div>
-      {/if}
-      <p role="status">{statusOf($search)}</p>
-      {#if $search.status === 'found'}
-        <ul>
-          {#each $search.places as place (place.id)}
-            <li>
-              <button type="button" class="place" onclick={choose($search.placeKind, place)}>
-                <Suggestion name={place.name} details={detailsOf(place)}>
-                  {#snippet icon()}
-                    <KindDot kind={place.kind} />
-                  {/snippet}
-                </Suggestion>
-              </button>
-            </li>
-          {/each}
-        </ul>
-      {/if}
-    </section>
-  </BottomSheet>
+        <p>{statusOf($search)}</p>
+        {#if $search.status === 'found'}
+          <ul>
+            {#each $search.places as place (place.id)}
+              <li>
+                <button type="button" class="place" onclick={choose($search.placeKind, place)}>
+                  <Suggestion name={place.name} details={detailsOf(place)}>
+                    {#snippet icon()}
+                      <KindDot kind={place.kind} />
+                    {/snippet}
+                  </Suggestion>
+                </button>
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      </section>
+    </BottomSheet>
+  {/if}
 </div>
 
 <style>
@@ -163,11 +162,8 @@
 
   .places {
     display: grid;
-    pointer-events: auto;
-  }
-
-  .places.open {
     overflow: clip;
+    pointer-events: auto;
     background: var(--surface);
     border-radius: var(--radius-l);
     box-shadow: var(--shadow-float);
@@ -233,12 +229,18 @@
     color: var(--text-muted);
   }
 
-  p:empty {
+  .announced {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
     padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
   }
 
   @media (width <= 699px) and (orientation: portrait), (width <= 559px) {
-    .places.open {
+    .places {
       overflow: visible;
       background: none;
       border-radius: 0;

@@ -132,8 +132,9 @@ describe('a bottom sheet', () => {
     expect(getComputedStyle(sheetElement() ?? document.body).boxShadow).not.toBe('none');
   });
 
-  it('casts no shadow while it is shut', async () => {
-    await shown({ open: false });
+  it('casts no shadow once it has closed', async () => {
+    await closable();
+    swipeDown(60);
     await pause();
 
     expect(getComputedStyle(sheetElement() ?? document.body).boxShadow).toBe('none');
