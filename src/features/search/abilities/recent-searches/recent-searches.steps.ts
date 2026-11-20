@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { Given, Then, When, type World } from '@cucumber/cucumber';
 import { type Observable, of, Subject, type Subscription, throwError } from 'rxjs';
-import { fakeParis } from '#libraries/fake-paris/fake-paris';
 import { type RecentPlace, type RecentPlaces, recentSearches } from './domain/recent-searches';
 
 type Visit = {
@@ -17,11 +16,13 @@ type RecentSearchesWorld = World & {
   visit: Visit | undefined;
 };
 
-const placeNamed = (name: string): RecentPlace => {
-  const place = fakeParis().find((candidate) => candidate.name === name);
-  assert.ok(place, `No place of the fake Paris is named ${name}.`);
-  return place;
-};
+const placeNamed = (name: string): RecentPlace => ({
+  id: name,
+  name,
+  kind: 'attraction',
+  address: '',
+  coordinates: { longitude: 2.3522, latitude: 48.8566 }
+});
 
 const placesNamed = (names: string): RecentPlaces => names.split(', ').map(placeNamed);
 

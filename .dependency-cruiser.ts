@@ -5,6 +5,7 @@ import { FORBIDDEN_GLOBAL } from '#dependency-cruiser/global';
 import { FORBIDDEN_LAYERS } from '#dependency-cruiser/layers';
 import { FORBIDDEN_LIBRARIES } from '#dependency-cruiser/libraries';
 import { FORBIDDEN_ROUTES } from '#dependency-cruiser/routes';
+import { FORBIDDEN_TESTS } from '#dependency-cruiser/tests';
 import { FORBIDDEN_UNREACHABLE } from '#dependency-cruiser/unreachable';
 
 const config: IConfiguration = {
@@ -15,7 +16,8 @@ const config: IConfiguration = {
     ...FORBIDDEN_FEATURES,
     ...FORBIDDEN_LAYERS,
     ...FORBIDDEN_CONFIGURATION,
-    ...FORBIDDEN_LIBRARIES
+    ...FORBIDDEN_LIBRARIES,
+    ...FORBIDDEN_TESTS
   ],
   options: {
     doNotFollow: { path: ['node_modules', '^[.]paraglide/'] },

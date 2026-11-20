@@ -34,15 +34,23 @@
 
 ## Rule: The nearest places of the kind come first, around the centre of the map
 
+### Background:
+
+- Given these places around the map
+  | name               | kind     | longitude | latitude |
+  | ------------------ | -------- | --------- | -------- |
+  | Pharmacie Centrale | pharmacy | 2.3523    | 48.8566  |
+  | Boulangerie Pons   | bakery   | 2.4480    | 48.9090  |
+  | Boulangerie Noel   | bakery   | 2.3540    | 48.8570  |
+
 ### Scenario: The visitor looks for bakeries in the centre of Paris
 
-- Given the places of the fake Paris, around the centre of the map
 - When the visitor looks for "bakery"
 - Then the first place listed is "Boulangerie Noel"
 
 ### Scenario: The visitor looks from the north-east of Paris
 
-- Given the places of the fake Paris, around the map centred at longitude 2.45 and latitude 48.91
+- Given the map is centred at longitude 2.45 and latitude 48.91
 - When the visitor looks for "bakery"
 - Then the first place listed is "Boulangerie Pons"
 
@@ -50,19 +58,28 @@
 
 ### Scenario: Many bakeries are near
 
-- Given the places of the fake Paris, around the centre of the map
+- Given 30 places of kind "bakery" around the centre of the map
 - When the visitor looks for "bakery"
 - Then 25 places are listed
 
 ### Scenario: Few hospitals are near
 
-- Given the places of the fake Paris, around the centre of the map
+- Given these places around the map
+  | name                | kind     | longitude | latitude |
+  | ------------------- | -------- | --------- | -------- |
+  | Hôtel-Dieu          | hospital | 2.3490    | 48.8550  |
+  | Hôpital Saint-Louis | hospital | 2.3690    | 48.8740  |
+  | Hôpital Avicenne    | hospital | 2.4300    | 48.9150  |
 - When the visitor looks for "hospital"
 - Then 2 places are listed
 
 ### Scenario: No garden is near
 
-- Given the places of the fake Paris, around the map centred at longitude 2.45 and latitude 48.91
+- Given these places around the map
+  | name                 | kind   | longitude | latitude |
+  | -------------------- | ------ | --------- | -------- |
+  | Jardin des Tuileries | garden | 2.3270    | 48.8635  |
+- And the map is centred at longitude 2.45 and latitude 48.91
 - When the visitor looks for "garden"
 - Then the visitor is told that no such place is near
 
@@ -70,6 +87,6 @@
 
 ### Scenario: The places cannot be loaded
 
-- Given the places of the fake Paris cannot be loaded, around the centre of the map
+- Given the places around the map cannot be loaded
 - When the visitor looks for "bakery"
 - Then the visitor is told that the list is unavailable

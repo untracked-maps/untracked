@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
-import { Given, Then, When, type World } from '@cucumber/cucumber';
+import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { firstValueFrom, NEVER, type Observable, of, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
-import { fakeParis } from '#libraries/fake-paris/fake-paris';
 import type { Place } from '../../domain/place';
 import { viewOfChosenPlace } from './domain/chosen-place';
 import { type FindPlaces, type SearchState, searchPlaces } from './domain/search-places';
@@ -20,24 +19,46 @@ type SearchPlacesWorld = World & {
 const placesFound = (state: SearchState): readonly string[] =>
   state.kind === 'found' ? state.places.map(({ name }) => name) : [];
 
-const fakeParisIndexed = async (world: SearchPlacesWorld): Promise<void> => {
-  world.places = fakeParis();
-  world.mapView = NEVER;
-  world.findPlaces = await firstValueFrom(miniSearchIndex(world.places));
-};
+const PARIS_CENTRE = { longitude: 2.3522, latitude: 48.8566 };
 
-Given('the places of the fake Paris', async function thePlacesOfTheFakeParis(this: SearchPlacesWorld) {
-  await fakeParisIndexed(this);
-  this.loadPlaces = (): Observable<readonly Place[]> => of(this.places);
+const placeFrom = (row: Readonly<Partial<Record<string, string>>>, index: number): Place => ({
+  id: `place-${index}`,
+  name: row['name'] ?? '',
+  kind: 'attraction',
+  address: row['address'] ?? '',
+  coordinates: {
+    longitude: Number(row['longitude'] ?? PARIS_CENTRE.longitude),
+    latitude: Number(row['latitude'] ?? PARIS_CENTRE.latitude)
+  },
+  fame: Number(row['fame'] ?? 0)
 });
 
-Given('the places of the fake Paris are on their way', async function thePlacesAreOnTheirWay(this: SearchPlacesWorld) {
-  await fakeParisIndexed(this);
+const indexed = async (world: SearchPlacesWorld, places: readonly Place[]): Promise<void> => {
+  world.places = places;
+  world.mapView = NEVER;
+  world.findPlaces = await firstValueFrom(miniSearchIndex(places));
+  world.loadPlaces = (): Observable<readonly Place[]> => of(places);
+};
+
+Given('these places to search', async function thesePlacesToSearch(this: SearchPlacesWorld, table: DataTable) {
+  await indexed(this, table.hashes().map(placeFrom));
+});
+
+Given(
+  '{int} places to search named {string}',
+  async function placesToSearchNamed(this: SearchPlacesWorld, count: number, name: string) {
+    await indexed(
+      this,
+      Array.from({ length: count }, (_, index) => placeFrom({ name }, index))
+    );
+  }
+);
+
+Given('the places to search are on their way', function thePlacesAreOnTheirWay(this: SearchPlacesWorld) {
   this.loadPlaces = (): Observable<readonly Place[]> => NEVER;
 });
 
-Given('the places of the fake Paris cannot be loaded', async function thePlacesCannotBeLoaded(this: SearchPlacesWorld) {
-  await fakeParisIndexed(this);
+Given('the places to search cannot be loaded', function thePlacesCannotBeLoaded(this: SearchPlacesWorld) {
   this.loadPlaces = (): Observable<readonly Place[]> => throwError(() => new Error('The places file answered 500.'));
 });
 

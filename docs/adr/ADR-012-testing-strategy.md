@@ -17,3 +17,11 @@ Tests use no mocks or spies: they pass fakes for ports and observe returned valu
 ## Consequences
 
 - Locally, Lighthouse needs a Chrome that Ubuntu's AppArmor lets sandbox: `CHROME_PATH=/usr/bin/google-chrome pnpm test:lighthouse`.
+
+## Update, 2026-11-20: each test writes its own inputs
+
+Five abilities' scenarios and two adapters' acceptance tests read the fake Paris ([ADR-028](ADR-028-a-fake-paris-generated-at-build-time.md)): a scenario said "Given the places of the fake Paris", and its outcome, such as the first of seven namesakes, depended on 2,036 generated places that no reader could see. A test now writes the inputs that show its case, in the scenario's tables or in the test itself, and nothing else.
+
+- dependency-cruiser's `tests-without-fake-data` rule forbids a test to import the fake places or Faker; only the fake places' own library tests them.
+- Its `tests-read-only-their-own-json` rule lets a test read only the JSON files of its own folder, the data it tests, never a data set shared with other tests. The check of the translations, which reads every locale, is the one exception, named in the rule.
+- A rule that needs many inputs, such as "at most seven places", says how many in its step, which builds them.

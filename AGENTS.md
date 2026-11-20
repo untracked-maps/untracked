@@ -33,6 +33,7 @@ While working, run the fast checks on what you touch: `pnpm check`, Biome, and `
 ## Writing tests
 
 - Test first: a failing test, the minimal code, then clean up, one behaviour at a time.
+- Each test writes its own inputs, in the scenario's tables or in the test itself: never the fake places, Faker or a JSON file of another folder, as dependency-cruiser enforces ([ADR-012](docs/adr/ADR-012-testing-strategy.md)).
 - No mocks or spies: pass fakes for ports and observe returned values. One assertion per test, no loop or branch in a test body. The `.grit/` plugins enforce no mock and one assertion per test. Test names state the behaviour.
 - Component tests are `*.svelte.spec.ts` and run in Chromium; unit tests are `*.spec.ts`; an ability's rules are Gherkin scenarios in `<ability>.ability.md`.
 - Accessibility targets WCAG 2.2 AA; the end-to-end tests run axe-core.

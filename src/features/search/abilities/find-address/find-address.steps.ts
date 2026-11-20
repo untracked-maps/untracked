@@ -1,17 +1,19 @@
 import assert from 'node:assert/strict';
-import { Given, Then, When, type World } from '@cucumber/cucumber';
+import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { firstValueFrom, of } from 'rxjs';
-import { fakeAddresses } from '#libraries/fake-paris/fake-addresses';
 import type { Found } from '../../domain/found';
 import type { Coordinates, Place } from '../../domain/place';
 import { findAddress, type LoadAddresses } from './domain/find-address';
 import { lazyAddressBook } from './implementation/lazy/lazy-address-book';
 import { prerenderedAddressBook } from './implementation/prerendered/prerendered-address-book';
 
+type AddressFile = readonly Readonly<Record<string, unknown>>[];
+
 type FindAddressWorld = World & {
+  file?: AddressFile;
   loadAddresses: LoadAddresses;
-  reference: Coordinates;
-  places: readonly Place[];
+  reference?: Coordinates;
+  places?: readonly Place[];
   found: readonly Found[];
 };
 
@@ -22,9 +24,6 @@ const ADDRESSES_FILE = '/data/addresses.json';
 const SERVED = 200;
 
 const FAILED = 500;
-
-const servingAddresses = (status: number) => (): Promise<Response> =>
-  Promise.resolve(Response.json(fakeAddresses(), { status }));
 
 const placeNamed = (name: string): Place => ({
   id: name,
@@ -37,26 +36,50 @@ const placeNamed = (name: string): Place => ({
 
 const namesOf = (found: readonly Found[]): readonly string[] => found.map(({ name }) => name);
 
-const theAddressBook = (world: FindAddressWorld, status: number, reference: Coordinates): void => {
-  world.loadAddresses = prerenderedAddressBook(servingAddresses(status), ADDRESSES_FILE);
-  world.reference = reference;
-  world.places = [];
+const CITY = 'Paris';
+
+const locatedIn = (row: Readonly<Partial<Record<string, string>>>): Readonly<Record<string, unknown>> => ({
+  postcode: row['postcode'],
+  city: CITY,
+  coordinates: { longitude: Number(row['longitude']), latitude: Number(row['latitude']) }
+});
+
+const houseIn = (row: Readonly<Partial<Record<string, string>>>): Readonly<Record<string, unknown>> => ({
+  kind: 'address',
+  number: row['number'],
+  street: row['street'],
+  ...locatedIn(row)
+});
+
+const districtIn = (row: Readonly<Partial<Record<string, string>>>): Readonly<Record<string, unknown>> => ({
+  kind: 'district',
+  name: row['name'],
+  ...locatedIn(row)
+});
+
+const served = (world: FindAddressWorld, file: AddressFile, status: number): void => {
+  world.file = file;
+  world.loadAddresses = prerenderedAddressBook(() => Promise.resolve(Response.json(file, { status })), ADDRESSES_FILE);
 };
 
-Given('the address book of the fake Paris', function theAddressBookOfTheFakeParis(this: FindAddressWorld) {
-  theAddressBook(this, SERVED, CENTRE_OF_PARIS);
+Given('these houses in the address book', function theseHouses(this: FindAddressWorld, table: DataTable) {
+  served(this, [...(this.file ?? []), ...table.hashes().map(houseIn)], SERVED);
+});
+
+Given('these districts in the address book', function theseDistricts(this: FindAddressWorld, table: DataTable) {
+  served(this, [...(this.file ?? []), ...table.hashes().map(districtIn)], SERVED);
+});
+
+Given('the address book cannot be loaded', function theAddressBookCannotBeLoaded(this: FindAddressWorld) {
+  served(this, [], FAILED);
 });
 
 Given(
-  'the address book of the fake Paris, around the map centred at longitude {float} and latitude {float}',
-  function theAddressBookAroundSomewhere(this: FindAddressWorld, longitude: number, latitude: number) {
-    theAddressBook(this, SERVED, { longitude, latitude });
+  'the visitor looks for an address around longitude {float} and latitude {float}',
+  function theVisitorLooksAround(this: FindAddressWorld, longitude: number, latitude: number) {
+    this.reference = { longitude, latitude };
   }
 );
-
-Given('the address book of the fake Paris cannot be loaded', function theAddressBookCannotBeLoaded(this: FindAddressWorld) {
-  theAddressBook(this, FAILED, CENTRE_OF_PARIS);
-});
 
 Given('the places {string} found by name', function thePlacesFoundByName(this: FindAddressWorld, names: string) {
   this.places = names.split(', ').map(placeNamed);
@@ -64,9 +87,9 @@ Given('the places {string} found by name', function thePlacesFoundByName(this: F
 
 When('the visitor looks up {string}', async function theVisitorLooksUp(this: FindAddressWorld, query: string) {
   const findFound = await firstValueFrom(
-    findAddress({ loadAddresses: this.loadAddresses, indexAddresses: lazyAddressBook })(of(() => this.places))
+    findAddress({ loadAddresses: this.loadAddresses, indexAddresses: lazyAddressBook })(of(() => this.places ?? []))
   );
-  this.found = findFound(query, this.reference);
+  this.found = findFound(query, this.reference ?? CENTRE_OF_PARIS);
 });
 
 Then('the first result is {string}', function theFirstResultIs(this: FindAddressWorld, line: string) {

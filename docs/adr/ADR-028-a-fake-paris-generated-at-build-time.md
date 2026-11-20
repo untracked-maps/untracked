@@ -34,3 +34,7 @@ A real adapter of `LoadPlaces` will read places from a data project ([ADR-001](A
 - **Faker in the browser**: tens of kilobytes on the map pages, already near their script budget, for data that never changes.
 - **The places in the page's data, through `+page.server.ts`**: every visit would download them, searching or not.
 - **A file committed in `static/`**: what can be generated is never committed ([ADR-016](ADR-016-architecture-documentation-generated-and-published.md)).
+
+## Update, 2026-11-20: no test reads the fake Paris
+
+The abilities' scenarios and the adapters' acceptance tests no longer read the fake Paris: each writes its own places and addresses ([ADR-012](ADR-012-testing-strategy.md)), and dependency-cruiser forbids any test but the library's own to import it. A change of Faker's French data now shows in the library's tests only, and no longer changes what the visitor's scenarios mean.

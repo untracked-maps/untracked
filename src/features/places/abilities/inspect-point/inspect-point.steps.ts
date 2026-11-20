@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
-import { Given, Then, When, type World } from '@cucumber/cucumber';
+import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { NEVER, type Observable, of, Subject, throwError } from 'rxjs';
-import { fakeParis } from '#libraries/fake-paris/fake-paris';
 import { type Coordinates, type InspectedSpot, inspectPoint } from './domain/inspect-point';
 import { nearestAddress } from './implementation/prerendered/nearest-address';
 import type { KnownAddress } from './implementation/prerendered/prerendered-addresses';
@@ -27,15 +26,22 @@ const inspectionStarted = (world: InspectPointWorld): void => {
   });
 };
 
-Given('the addresses of the fake Paris', function theAddressesOfTheFakeParis(this: InspectPointWorld) {
-  this.addresses = of(fakeParis());
+Given('these addresses on the map', function theseAddressesOnTheMap(this: InspectPointWorld, table: DataTable) {
+  this.addresses = of(
+    table.hashes().map(
+      (row): KnownAddress => ({
+        address: row['address'] ?? '',
+        coordinates: { longitude: Number(row['longitude']), latitude: Number(row['latitude']) }
+      })
+    )
+  );
 });
 
-Given('the addresses of the fake Paris are on their way', function theAddressesAreOnTheirWay(this: InspectPointWorld) {
+Given('the addresses on the map are on their way', function theAddressesAreOnTheirWay(this: InspectPointWorld) {
   this.addresses = NEVER;
 });
 
-Given('the addresses of the fake Paris cannot be loaded', function theAddressesCannotBeLoaded(this: InspectPointWorld) {
+Given('the addresses on the map cannot be loaded', function theAddressesCannotBeLoaded(this: InspectPointWorld) {
   this.addresses = throwError(() => new Error('The addresses file answered 500.'));
 });
 
