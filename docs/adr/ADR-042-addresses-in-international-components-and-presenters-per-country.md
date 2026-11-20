@@ -16,7 +16,7 @@ Formatting addresses by country is a known problem, solved in two halves:
 
 - **The domain holds an address in components**, named after ISO 19160-4 and schema.org's `PostalAddress`, with its country as an ISO 3166-1 alpha-2 code. A type, `Address`, enforces it.
 - **Presenters render an address in its country's format** with OpenCage's templates, through a maintained JavaScript implementation, rather than templates of our own. dependency-cruiser keeps that package in `*.presenter.ts` files.
-- **The change comes with the next ability that touches addresses**, in its pull request ([ADR-039](ADR-039-standards-first-and-their-libraries-in-the-domain.md)): the fake places then generate components, and the search of addresses reads them instead of cutting a line.
+- **The change comes with the next ability that touches addresses**, in its pull request ([ADR-043](ADR-043-standards-first-and-their-libraries-in-the-domain.md)): the fake places then generate components, and the search of addresses reads them instead of cutting a line.
 
 ## Consequences
 

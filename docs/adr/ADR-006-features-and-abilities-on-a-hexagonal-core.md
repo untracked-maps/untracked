@@ -60,7 +60,7 @@ Tests are exempt from the layer rules.
 
 ## Update, 2026-11-20: libraries that implement a standard
 
-Rule 4 now allows, besides `rxjs`, the libraries that implement a standard, listed by name in `DOMAIN_PACKAGES` in `.dependency-cruiser.ts`, so that a domain never rewrites a standard ([ADR-039](ADR-039-standards-first-and-their-libraries-in-the-domain.md)). Any other package in a domain stays an error.
+Rule 4 now allows, besides `rxjs`, the libraries that implement a standard, listed by name in `DOMAIN_PACKAGES` in `.dependency-cruiser.ts`, so that a domain never rewrites a standard ([ADR-043](ADR-043-standards-first-and-their-libraries-in-the-domain.md)). Any other package in a domain stays an error.
 
 ## Update, 2026-11-20: `.claude/` and `.devcontainer/`
 

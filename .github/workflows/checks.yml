@@ -94,7 +94,7 @@ jobs:
           abilities=$(git diff --name-only "$BASE_SHA...$HEAD_SHA" | grep -oE '^src/features/[^/]+/abilities/[^/]+' | sort -u | paste -sd ' ' -)
           count=$(printf '%s' "$abilities" | wc -w)
           if [ "$count" -gt 1 ]; then
-            echo "::warning title=Several abilities::One pull request per ability is the rule (ADR-039); this one touches $count: $abilities"
+            echo "::warning title=Several abilities::One pull request per ability is the rule (ADR-043); this one touches $count: $abilities"
           fi
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}

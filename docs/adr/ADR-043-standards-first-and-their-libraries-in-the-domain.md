@@ -1,4 +1,4 @@
-# ADR-039 — Standards first, and their libraries in the domain
+# ADR-043 — Standards first, and their libraries in the domain
 
 **Date**: 2026-11-20
 **Status**: accepted

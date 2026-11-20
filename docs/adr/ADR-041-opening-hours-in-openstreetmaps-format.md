@@ -5,7 +5,7 @@
 
 ## Context
 
-The place sheet will show when a place is open, and a search may keep only the places open now. The previous app read OpenStreetMap's `opening_hours` values with the [opening_hours](https://github.com/opening-hours/opening_hours.js) library. The rewrite first proposed a simpler shape of our own, ranges of hours for each weekday, with the rule "open now" written in the domain, to keep the domain free of packages ([ADR-006](ADR-006-features-and-abilities-on-a-hexagonal-core.md)). [ADR-039](ADR-039-standards-first-and-their-libraries-in-the-domain.md) orders shapes from standards and allows a domain to import the library that implements one.
+The place sheet will show when a place is open, and a search may keep only the places open now. The previous app read OpenStreetMap's `opening_hours` values with the [opening_hours](https://github.com/opening-hours/opening_hours.js) library. The rewrite first proposed a simpler shape of our own, ranges of hours for each weekday, with the rule "open now" written in the domain, to keep the domain free of packages ([ADR-006](ADR-006-features-and-abilities-on-a-hexagonal-core.md)). [ADR-043](ADR-043-standards-first-and-their-libraries-in-the-domain.md) orders shapes from standards and allows a domain to import the library that implements one.
 
 Three standards describe opening hours:
 

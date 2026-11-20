@@ -28,3 +28,7 @@ Types, Biome, the architecture rules and the tests leave a few kinds of mistakes
 - **Visual regression tests**: left until the interface has more than a greeting.
 - **type-coverage, editorconfig-checker and size-limit**: redundant with strict types, Biome and the hooks, and Lighthouse's script budget.
 - **A tool against comments**: none was found that tells comments from URLs reliably; the rule stays in `AGENTS.md`.
+
+## Update, 2026-11-20: one ADR per number
+
+Two pull requests open at the same time each took the next free number, and `main` received two ADR-039: the side panel and the choice of standards, renumbered ADR-043. `pnpm lint:adr` fails when two files of `docs/adr` share a number, run by a prek hook whenever `docs/adr` changes, and so in CI's `Hygiene` job: the second pull request fails once rebased on the first, and takes the next number. No maintained tool checks this; adr-tools numbers a new record but checks nothing.

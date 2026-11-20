@@ -114,7 +114,7 @@ Work on a branch named after the change's [Conventional Commits](https://www.con
 1. Before a large change, open an [issue](https://github.com/untracked-maps/untracked/issues) to talk about it first.
 2. Write the tests first, then the code, following [`AGENTS.md`](AGENTS.md).
 3. Put every text shown in `messages/`, in every language.
-4. When the change picks a library, a protocol or a rule, or sets aside a plausible alternative, record it in an ADR in [`docs/adr`](docs/adr). Shape the data after a standard, as [ADR-039](docs/adr/ADR-039-standards-first-and-their-libraries-in-the-domain.md) orders them.
+4. When the change picks a library, a protocol or a rule, or sets aside a plausible alternative, record it in an ADR in [`docs/adr`](docs/adr). Shape the data after a standard, as [ADR-043](docs/adr/ADR-043-standards-first-and-their-libraries-in-the-domain.md) orders them.
 5. While working, run the fast checks on what you touch: the types, Biome and Vitest. Once the change is done, run every check: `pnpm exec prek run --all-files --hook-stage pre-push`, then `pnpm test:e2e`, `pnpm test:mutation:incremental` and `pnpm test:lighthouse:quick`. When one fails, fix it, rerun that one, then all of them once more.
 6. Open a pull request against `main`. Every job of the `Checks` and `Security` workflows must be green: `main` requires them.
 

@@ -63,6 +63,12 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: adr-numbers
+        name: one ADR per number
+        entry: pnpm lint:adr
+        language: system
+        pass_filenames: false
+        files: ^docs/adr/
       - id: no-generated-code-in-src
         name: no generated code in src
         entry: pnpm lint:generated
