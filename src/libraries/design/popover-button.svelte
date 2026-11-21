@@ -19,7 +19,7 @@
 
   const closed = (dialog: HTMLDialogElement): void => dialog.hidePopover();
 
-  const UNPLACED = new DOMRect();
+  const UNPLACED = { left: 0, top: 0, right: 0, bottom: 0 };
 
   const place = (panel: HTMLElement): void => {
     const button = document.querySelector(`[popovertarget="${uid}-panel"]`)?.getBoundingClientRect() ?? UNPLACED;
@@ -77,6 +77,7 @@
     padding: 0;
     margin: 0;
     overflow: hidden;
+    pointer-events: auto;
     background: none;
     border: 0;
   }

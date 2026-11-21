@@ -18,9 +18,10 @@ const panel = (): Element => page.getByText('Theme').element().closest('[data-me
 
 const box = (element: Element): DOMRect => element.getBoundingClientRect();
 
-const opened = async (children = short): Promise<void> => {
+const opened = async (children = short, pointerEvents = 'auto'): Promise<void> => {
   await page.viewport(375, 667);
-  await render(PopoverButton, { label: 'Map type', icon, children });
+  const { container } = await render(PopoverButton, { label: 'Map type', icon, children });
+  container.style.pointerEvents = pointerEvents;
   await page.getByRole('button', { name: 'Map type' }).click();
   await expect.element(page.getByText('Theme')).toBeVisible();
 };
@@ -39,6 +40,16 @@ const outsideButton = (pressed: string[]): HTMLButtonElement => {
   onTestFinished(() => element.remove());
   return element;
 };
+
+describe('a menu in a layer that lets touches through to the map', () => {
+  it('closes when touched outside', async () => {
+    await opened(short, 'none');
+
+    await touchedAt(300, 600);
+
+    await expect.element(page.getByRole('dialog', { name: 'Map type' })).not.toBeInTheDocument();
+  });
+});
 
 describe('a menu touched outside', () => {
   it('closes', async () => {
