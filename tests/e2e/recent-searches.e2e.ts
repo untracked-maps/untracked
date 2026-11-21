@@ -10,7 +10,13 @@ const KEPT_GRAND_PALAIS = {
   id: 'grand-palais',
   name: 'Grand Palais',
   kind: 'attraction',
-  address: '3 avenue du Général Eisenhower, 75008 Paris',
+  address: {
+    houseNumber: '3',
+    street: 'Avenue du Général Eisenhower',
+    postalCode: '75008',
+    addressLocality: 'Paris',
+    addressCountry: 'FR'
+  },
   coordinates: { longitude: 2.312_48, latitude: 48.866_13 }
 };
 
