@@ -9,6 +9,7 @@ const HOUSE: KnownAddress = {
   street: 'rue de Châteaudun',
   postcode: '75009',
   city: 'Paris',
+  country: 'FR',
   coordinates: HERE
 };
 
@@ -17,6 +18,7 @@ const STREET: KnownAddress = {
   street: 'rue de Châteaudun',
   postcode: '75009',
   city: 'Paris',
+  country: 'FR',
   coordinates: HERE
 };
 
@@ -25,6 +27,7 @@ const DISTRICT: KnownAddress = {
   name: 'Paris 9e Arrondissement',
   postcode: '75009',
   city: 'Paris',
+  country: 'FR',
   coordinates: HERE
 };
 
@@ -34,7 +37,7 @@ describe('entry of a house address', () => {
       id: 'address-75009-18-bis-rue-de-chateaudun',
       name: '18 bis rue de Châteaudun',
       kind: 'address',
-      address: '75009 Paris',
+      address: { postalCode: '75009', addressLocality: 'Paris', addressCountry: 'FR' },
       coordinates: HERE
     });
   });

@@ -69,23 +69,23 @@
 ### Background:
 
 - Given these places to search
-  | name               | address                              | longitude | latitude |
-  | ------------------ | ------------------------------------ | --------- | -------- |
-  | Boulangerie Garcia | 12 Rue de Tolbiac, 75013 Paris       | 2.36      | 48.83    |
-  | Boulangerie Garcia | 97 Rue de Paris, 75019 Paris         | 2.44      | 48.90    |
-  | Boulangerie Garcia | 8 Passage Saint-Jacques, 75004 Paris | 2.25      | 48.87    |
+  | name               | house number | street                | postal code | longitude | latitude |
+  | ------------------ | ------------ | --------------------- | ----------- | --------- | -------- |
+  | Boulangerie Garcia | 12           | Rue de Tolbiac        | 75013       | 2.36      | 48.83    |
+  | Boulangerie Garcia | 97           | Rue de Paris          | 75019       | 2.44      | 48.90    |
+  | Boulangerie Garcia | 8            | Passage Saint-Jacques | 75004       | 2.25      | 48.87    |
 
 ### Scenario: Three bakeries bear the same name
 
 - Given the visitor looks at the map around longitude 2.45 and latitude 48.91
 - When the visitor searches for "boulangerie garcia"
-- Then the first place found stands at "97 Rue de Paris, 75019 Paris"
+- Then the first place found stands in "Rue de Paris"
 
 ### Scenario: The visitor looks from the other side of Paris
 
 - Given the visitor looks at the map around longitude 2.24 and latitude 48.87
 - When the visitor searches for "boulangerie garcia"
-- Then the first place found stands at "8 Passage Saint-Jacques, 75004 Paris"
+- Then the first place found stands in "Passage Saint-Jacques"
 
 ## Rule: Every word typed must match
 

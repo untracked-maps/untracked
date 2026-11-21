@@ -10,7 +10,7 @@ const GARCIA: Place = {
   id: 'boulangerie-garcia',
   name: 'Boulangerie Garcia',
   kind: 'bakery',
-  address: '97 Rue de Paris, 75019 Paris',
+  address: { houseNumber: '97', street: 'Rue de Paris', postalCode: '75019', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.35, latitude: 48.86 },
   fame: 0
 };

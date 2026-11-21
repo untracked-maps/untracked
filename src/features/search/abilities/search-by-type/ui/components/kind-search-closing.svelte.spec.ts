@@ -10,7 +10,7 @@ const HUBERT: Place = {
   id: 'pharmacie-hubert',
   name: 'Pharmacie Hubert',
   kind: 'pharmacy',
-  address: '11 Impasse Lepic, 75019 Paris',
+  address: { houseNumber: '11', street: 'Impasse Lepic', postalCode: '75019', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.33, latitude: 48.88 },
   fame: 0
 };

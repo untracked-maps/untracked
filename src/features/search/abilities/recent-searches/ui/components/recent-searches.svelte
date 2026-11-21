@@ -4,6 +4,7 @@
   import '#libraries/design/tokens.css';
   import type { Observable } from 'rxjs';
   import { m } from '#i18n/messages';
+  import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import { detailsOf } from '../../../../ui/components/kind-labels';
   import type { RecentPlace, RecentPlaces } from '../../domain/recent-searches';
 
@@ -30,7 +31,7 @@
       {#each $recents as recent (recent.id)}
         <li>
           <button type="button" class="recent" onclick={choose(recent)}>
-            <Suggestion name={recent.name} details={detailsOf(recent)}>
+            <Suggestion name={recent.name} details={detailsOf($addressLine)(recent)}>
               {#snippet icon()}
                 <ClockIcon />
               {/snippet}

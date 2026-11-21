@@ -6,7 +6,7 @@ const BAKERY: Place = {
   id: 'bakery',
   name: 'Boulangerie Garcia',
   kind: 'bakery',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.35, latitude: 48.85 },
   fame: 0
 };

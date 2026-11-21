@@ -36,15 +36,35 @@ type Coordinates = {
   readonly latitude: number;
 };
 
+type PostalAddress = {
+  readonly houseNumber?: string;
+  readonly street?: string;
+  readonly postalCode: string;
+  readonly addressLocality: string;
+  readonly addressCountry: string;
+};
+
 type Place = {
   readonly id: string;
   readonly name: string;
   readonly kind: PlaceKind;
-  readonly address: string;
+  readonly cuisine?: string;
+  readonly address: PostalAddress;
   readonly coordinates: Coordinates;
   readonly fame: number;
 };
 
 type LoadPlaces = () => Observable<readonly Place[]>;
 
-export { type Coordinates, type LoadPlaces, PLACE_KINDS, type Place, type PlaceKind };
+const isOptionalText = (value: unknown): boolean => value === undefined || typeof value === 'string';
+
+const isPostalAddress = (value: unknown): value is PostalAddress =>
+  typeof value === 'object' &&
+  value !== null &&
+  isOptionalText(Reflect.get(value, 'houseNumber')) &&
+  isOptionalText(Reflect.get(value, 'street')) &&
+  typeof Reflect.get(value, 'postalCode') === 'string' &&
+  typeof Reflect.get(value, 'addressLocality') === 'string' &&
+  typeof Reflect.get(value, 'addressCountry') === 'string';
+
+export { type Coordinates, isPostalAddress, type LoadPlaces, PLACE_KINDS, type Place, type PlaceKind, type PostalAddress };

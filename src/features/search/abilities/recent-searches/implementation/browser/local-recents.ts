@@ -1,7 +1,7 @@
 import { defer, type Observable, of } from 'rxjs';
 import { ADDRESS_KINDS, type AddressKind } from '../../../../domain/found';
-import { type Coordinates, PLACE_KINDS, type PlaceKind } from '../../../../domain/place';
-import type { RecentPlace, RecentPlaces, StoredRecents, StoreRecents } from '../../domain/recent-searches';
+import { type Coordinates, isPostalAddress, PLACE_KINDS, type PlaceKind } from '../../../../domain/place';
+import type { RecentPlaces, StoredRecents, StoreRecents } from '../../domain/recent-searches';
 
 const RECENTS_KEY = 'untracked-maps.recent-searches';
 
@@ -23,11 +23,19 @@ const isKnownKind = (value: unknown): value is PlaceKind | AddressKind => KINDS.
 const isCoordinates = (value: unknown): value is Coordinates =>
   isObject(value) && typeof value['longitude'] === 'number' && typeof value['latitude'] === 'number';
 
-const hasTexts = (value: Fields): boolean =>
-  typeof value['id'] === 'string' && typeof value['name'] === 'string' && typeof value['address'] === 'string';
-
-const isRecentPlace = (value: unknown): value is RecentPlace =>
-  isObject(value) && hasTexts(value) && isKnownKind(value['kind']) && isCoordinates(value['coordinates']);
+const recentPlaceOf = (value: unknown): RecentPlaces => {
+  if (!isObject(value)) {
+    return [];
+  }
+  const { id, name, kind, cuisine, address, coordinates } = value;
+  return typeof id === 'string' &&
+    typeof name === 'string' &&
+    isKnownKind(kind) &&
+    isPostalAddress(address) &&
+    isCoordinates(coordinates)
+    ? [{ id, name, kind, ...(typeof cuisine === 'string' ? { cuisine } : {}), address, coordinates }]
+    : [];
+};
 
 const parsed = (text: string | null): unknown => {
   try {
@@ -39,7 +47,7 @@ const parsed = (text: string | null): unknown => {
 
 const recentsIn = (text: string | null): RecentPlaces => {
   const value = parsed(text);
-  return Array.isArray(value) ? value.filter(isRecentPlace) : [];
+  return Array.isArray(value) ? value.flatMap(recentPlaceOf) : [];
 };
 
 const kept = (storage: RecentsStorage, recents: RecentPlaces): void =>

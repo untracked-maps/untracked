@@ -69,6 +69,13 @@ export const FORBIDDEN_GLOBAL: IForbiddenRuleType[] = [
     from: { path: '^src/', pathNot: [TESTS, ...BUILD_TIME_CODE] },
     to: { dependencyTypes: ['npm-dev'], dependencyTypesNot: ['type-only'], pathNot: ['node_modules/@types/'] }
   },
+  {
+    name: 'address-formatter-in-presenters-only',
+    severity: 'error',
+    comment: "Only a presenter writes an address in its country's format, with OpenCage's templates (ADR-042).",
+    from: { pathNot: ['[.]presenter[.]ts$', '[.]d[.]ts$'] },
+    to: { path: 'node_modules/@fragaria/address-formatter/' }
+  },
   ...BUILD_TIME_DEPENDENCIES.map(
     ({ name, from, allowed }): IForbiddenRuleType => ({
       name,

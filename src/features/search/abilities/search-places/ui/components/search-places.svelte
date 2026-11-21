@@ -10,6 +10,7 @@
   import type { Snippet } from 'svelte';
   import { on } from 'svelte/events';
   import { m } from '#i18n/messages';
+  import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import { type Found, isAddress } from '../../../../domain/found';
   import { detailsOf } from '../../../../ui/components/kind-labels';
   import type { SearchState } from '../../domain/search-places';
@@ -200,7 +201,7 @@
         aria-selected={index === $combobox.active}
         onmousedown={pick(place)}
       >
-        <Suggestion name={place.name} details={detailsOf(place)} active={index === $combobox.active}>
+        <Suggestion name={place.name} details={detailsOf($addressLine)(place)} active={index === $combobox.active}>
           {#snippet icon()}
             {#if isAddress(place)}
               <SignpostIcon />
