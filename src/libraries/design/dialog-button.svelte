@@ -64,6 +64,13 @@
     }
   };
 
+  const drawn =
+    (offset: number, share: number) =>
+    (dialog: HTMLDialogElement): void => {
+      dialog.style.setProperty('--swipe-offset', `${offset}px`);
+      dialog.style.setProperty('--backdrop-share', `${share}`);
+    };
+
   const released = (event: TouchEvent): void => events.next({ kind: 'released', time: event.timeStamp });
 </script>
 
@@ -73,9 +80,8 @@
   id="{uid}-dialog"
   aria-labelledby="{uid}-title"
   aria-describedby={description === undefined ? undefined : `${uid}-description`}
-  class={[$swipe.follows === true && 'swiping', $swipe.closing && 'closing']}
-  style:--swipe-offset="{swipeOffset($swipe)}px"
-  style:--backdrop-share={backdropShare($swipe)}
+  class={{ swiping: $swipe.follows === true, closing: $swipe.closing }}
+  {@attach drawn(swipeOffset($swipe), backdropShare($swipe))}
   closedby="any"
   onbeforetoggle={toggled}
   ontouchstart={touched}

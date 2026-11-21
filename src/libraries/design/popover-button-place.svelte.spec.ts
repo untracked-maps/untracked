@@ -88,6 +88,17 @@ describe('a menu touched outside', () => {
   });
 });
 
+describe('a menu whose button is gone', () => {
+  it('stands 8 px from the top of the screen', async () => {
+    await opened();
+    button().remove();
+
+    await page.viewport(360, 640);
+
+    await expect.poll(() => box(panel()).top).toBe(8);
+  });
+});
+
 describe('a menu on a small screen', () => {
   it('stands 8 px below its button when there is no room above it', async () => {
     await opened();

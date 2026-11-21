@@ -22,7 +22,8 @@
   const UNPLACED = { left: 0, top: 0, right: 0, bottom: 0 };
 
   const place = (panel: HTMLElement): void => {
-    const button = document.querySelector(`[popovertarget="${uid}-panel"]`)?.getBoundingClientRect() ?? UNPLACED;
+    const button =
+      document.querySelector(`[popovertarget="${uid}-panel"]:not([popovertargetaction])`)?.getBoundingClientRect() ?? UNPLACED;
     const { top, left, maxHeight } = menuPlace({
       button,
       menu: { width: panel.offsetWidth, height: panel.scrollHeight },

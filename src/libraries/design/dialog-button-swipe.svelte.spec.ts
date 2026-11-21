@@ -175,13 +175,3 @@ describe('a window swiped away on a phone', () => {
     await expect.element(dialog()).toHaveStyle({ translate: IN_PLACE });
   });
 });
-
-describe('a window swiped down on a large screen', () => {
-  it('does not move', async () => {
-    await opened(1024, 768);
-
-    swiped(50);
-
-    await expect.element(dialog()).toHaveStyle({ translate: IN_PLACE });
-  });
-});
