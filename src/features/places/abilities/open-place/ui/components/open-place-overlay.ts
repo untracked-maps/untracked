@@ -54,11 +54,7 @@ const nameOf = (place: SheetPlace, palette: Palette): HTMLElement => {
   label.className = 'open-place-name';
   label.setAttribute('aria-hidden', 'true');
   label.textContent = place.name;
-  const colour = NAME_COLOURS[palette].get(familyOf(place));
-  if (colour !== undefined) {
-    label.style.setProperty('--name-colour', colour);
-  }
-  label.style.setProperty('--name-halo', HALOS[palette]);
+  label.style.cssText = `--name-colour: ${NAME_COLOURS[palette].get(familyOf(place))}; --name-halo: ${HALOS[palette]}`;
   return label;
 };
 
