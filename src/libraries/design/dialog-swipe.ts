@@ -48,7 +48,7 @@ const closes = ({ dy }: DialogSwipe, start: SwipeStart, time: number): boolean =
 
 const released = (swipe: DialogSwipe, start: SwipeStart, time: number): DialogSwipe => ({
   ...RESTING,
-  closing: swipe.follows === true && closes(swipe, start, time)
+  closing: closes(swipe, start, time)
 });
 
 const nextSwipe = (swipe: DialogSwipe, event: SwipeEvent): DialogSwipe => {

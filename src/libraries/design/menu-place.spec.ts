@@ -50,6 +50,16 @@ describe('a menu without room above its button', () => {
   });
 });
 
+describe('a menu 1 px too tall for the room around its button', () => {
+  it('does not stand above its button', () => {
+    expect(menuPlace(measures({ menu: { width: 320, height: 545 } })).top).toBe(63);
+  });
+
+  it('does not stand below its button', () => {
+    expect(menuPlace(measures({ button: AT_THE_TOP_RIGHT, menu: { width: 320, height: 584 } })).top).toBe(8);
+  });
+});
+
 describe('a menu without room above nor below its button', () => {
   const wide = { width: 1024, height: 500 };
 

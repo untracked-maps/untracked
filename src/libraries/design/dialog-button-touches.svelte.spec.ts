@@ -24,7 +24,7 @@ const shown = async (width: number, height: number): Promise<void> => {
   await page.getByRole('button', { name: 'About' }).click();
 };
 
-describe('a aboutWindow touched on a phone', () => {
+describe('a window touched on a phone', () => {
   it('does not move when the touch starts with no finger', async () => {
     await shown(390, 844);
     touch('touchstart');
@@ -45,7 +45,32 @@ describe('a aboutWindow touched on a phone', () => {
   });
 });
 
-describe('a aboutWindow touched on a large screen', () => {
+describe('a window lifted on a phone', () => {
+  it('closes after a short and fast swipe', async () => {
+    await shown(390, 844);
+    touch('touchstart', 200);
+    touch('touchmove', 250);
+
+    touch('touchend');
+
+    await expect.element(aboutWindow).not.toBeInTheDocument();
+  });
+
+  it('stays on the screen for a moment while it slides out', async () => {
+    await shown(390, 844);
+    touch('touchstart', 200);
+    touch('touchmove', 350);
+    touch('touchend');
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 60);
+    });
+
+    expect(aboutWindow.element().hasAttribute('open')).toBe(true);
+  });
+});
+
+describe('a window touched on a large screen', () => {
   it('does not move when swiped down', async () => {
     await shown(1024, 768);
     touch('touchstart', 200);
