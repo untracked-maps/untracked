@@ -7,8 +7,6 @@ const SEED = 1789;
 
 const CUISINE_SEED = 1848;
 
-const WITHOUT_CUISINE = 'none';
-
 const PRECISION = 5;
 
 const FAMOUS_SHARE = 0.05;
@@ -42,7 +40,7 @@ const KIND_WEIGHTS: readonly { readonly weight: number; readonly value: Generate
   { weight: 2, value: 'theatre' }
 ];
 
-const CUISINE_WEIGHTS: readonly { readonly weight: number; readonly value: string }[] = [
+const CUISINE_WEIGHTS: readonly { readonly weight: number; readonly value: string | undefined }[] = [
   { weight: 30, value: 'french' },
   { weight: 15, value: 'italian' },
   { weight: 10, value: 'japanese' },
@@ -53,7 +51,7 @@ const CUISINE_WEIGHTS: readonly { readonly weight: number; readonly value: strin
   { weight: 4, value: 'thai' },
   { weight: 3, value: 'greek' },
   { weight: 3, value: 'mexican' },
-  { weight: 10, value: WITHOUT_CUISINE }
+  { weight: 10, value: undefined }
 ];
 
 type Fakers = {
@@ -72,8 +70,8 @@ const addressOf = (faker: Faker, zone: FakeZone): FakePostalAddress => ({
 });
 
 const cuisineOf = (faker: Faker, kind: GeneratedKind): Pick<FakePlace, 'cuisine'> => {
-  const cuisine = kind === 'restaurant' ? faker.helpers.weightedArrayElement(CUISINE_WEIGHTS) : WITHOUT_CUISINE;
-  return cuisine === WITHOUT_CUISINE ? {} : { cuisine };
+  const cuisine = kind === 'restaurant' ? faker.helpers.weightedArrayElement(CUISINE_WEIGHTS) : undefined;
+  return cuisine === undefined ? {} : { cuisine };
 };
 
 const fameOf = (faker: Faker): number =>

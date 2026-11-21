@@ -37,7 +37,7 @@ type Expectation = {
 
 const expectRecents = (kept: Readonly<Record<string, RecentPlaces>>, marbles: Marbles): Expectation => ({
   toBe: (expected: string, values: Readonly<Record<string, RecentPlaces>>): void =>
-    new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted)).run(({ cold, expectObservable }: Run) => {
+    new TestScheduler((actual, wanted) => expect(actual).toStrictEqual(wanted)).run(({ cold, expectObservable }: Run) => {
       const recents$ = recentSearches({
         storedRecents: () => cold(marbles.stored ?? 's', kept),
         storeRecents: marbles.storeRecents ?? storeNowhere

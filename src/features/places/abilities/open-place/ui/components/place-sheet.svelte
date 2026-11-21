@@ -8,8 +8,9 @@
   import Floating from '#libraries/design/floating.svelte';
   import '#libraries/design/tokens.css';
   import { addressLine } from '#libraries/postal-address/address-line.presenter';
-  import type { PlaceSheet } from '../../domain/open-place';
+  import { openedPlaceOf, type PlaceSheet } from '../../domain/open-place';
   import { longPress } from './long-press';
+  import { addressOf } from './place-address.presenter';
   import { typeOf } from './place-type.presenter';
 
   type Props = {
@@ -25,15 +26,9 @@
 
   const uid = $props.id();
 
-  const place = $derived($sheet.status === 'open' ? $sheet.place : undefined);
+  const place = $derived(openedPlaceOf($sheet));
 
-  const address = $derived(place?.address === undefined ? undefined : $addressLine?.(place.address));
-
-  const copy = (): void => {
-    if (address !== undefined) {
-      onCopy(address);
-    }
-  };
+  const address = $derived(addressOf($addressLine, place));
 </script>
 
 <div class="place" aria-live="polite">
@@ -56,15 +51,15 @@
               <CloseButton label={m.place_sheet_close()} onclick={onClose} />
             </div>
           </div>
-          {#if place.address !== undefined}
+          {#if address !== undefined}
             <section class="details" aria-label={m.place_sheet_details()}>
               <dl>
                 <dt>{m.place_sheet_address()}</dt>
-                <dd {@attach longPress({ onPress: copy, vibrate })}>{address}</dd>
+                <dd {@attach longPress({ onPress: (): void => onCopy(address), vibrate })}>{address}</dd>
               </dl>
             </section>
             <div class="actions" data-sheet-actions>
-              <button type="button" onclick={copy}><CopyIcon />{m.place_sheet_copy_address()}</button>
+              <button type="button" onclick={(): void => onCopy(address)}><CopyIcon />{m.place_sheet_copy_address()}</button>
             </div>
           {/if}
         </Floating>

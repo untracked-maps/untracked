@@ -72,25 +72,84 @@ describe('the place open on the map', () => {
     expect(dotOf('Square du Vert-Galant').querySelector('[data-disc]')).toHaveAttribute('fill', '#7D838A');
   });
 
-  it('shows its name beside the dot', async () => {
+  it('stands above the other marks of the map', async () => {
+    shown(of(opened(FLORE)));
+    await vi.waitFor(() => page.getByRole('img', { name: 'Café de Flore' }).element());
+
+    expect(Number(getComputedStyle(dotOf('Café de Flore').closest('.maplibregl-marker') ?? document.body).zIndex)).toBe(3);
+  });
+});
+
+describe('the dot of the place open', () => {
+  it('is an image for assistive technologies', async () => {
+    shown(of(opened(FLORE)));
+    await vi.waitFor(() => page.getByRole('img', { name: 'Café de Flore' }).element());
+
+    expect(dotOf('Café de Flore')).toHaveAttribute('role', 'img');
+  });
+
+  it('is drawn at the scale of its dot', async () => {
+    shown(of(opened(FLORE)));
+    await vi.waitFor(() => page.getByRole('img', { name: 'Café de Flore' }).element());
+
+    expect(dotOf('Café de Flore')).toHaveAttribute('viewBox', '0 0 44 44');
+  });
+
+  it('bears the pictogram of its family', async () => {
+    shown(of(opened(FLORE)));
+    await vi.waitFor(() => page.getByRole('img', { name: 'Café de Flore' }).element());
+
+    expect(dotOf('Café de Flore').querySelector('path')?.getAttribute('d')).not.toContain('{');
+  });
+
+  it('takes the room of its dot on the map', async () => {
+    shown(of(opened(FLORE)));
+    await vi.waitFor(() => page.getByRole('img', { name: 'Café de Flore' }).element());
+
+    expect(dotOf('Café de Flore').closest('.maplibregl-marker')?.getBoundingClientRect().width).toBe(44);
+  });
+});
+
+describe('the name of the place open', () => {
+  it('shows beside the dot', async () => {
     shown(of(opened(FLORE)));
 
     await expect.element(page.getByText('Café de Flore')).toBeVisible();
   });
 
-  it('writes its name in the colour of its family on the map', async () => {
+  it('is written in the colour of its family on the map', async () => {
     shown(of(opened(FLORE)));
 
     await expect.element(page.getByText('Café de Flore')).toHaveStyle({ color: 'rgb(181, 90, 37)' });
   });
 
-  it('writes its name in the dark colour of its family in the dark theme', async () => {
+  it('is written in the dark colour of its family in the dark theme', async () => {
     shown(of(opened(FLORE)), 'dark');
 
     await expect.element(page.getByText('Café de Flore')).toHaveStyle({ color: 'rgb(240, 160, 106)' });
   });
 
-  it('is marked by a red pin, without its name, when its family has no pictogram', async () => {
+  it('is left to the heading of its sheet, for assistive technologies', async () => {
+    shown(of(opened(FLORE)));
+
+    await expect.element(page.getByText('Café de Flore')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('is written over a white halo', async () => {
+    shown(of(opened(FLORE)));
+
+    await expect.element(page.getByText('Café de Flore')).toHaveStyle({ webkitTextStrokeColor: 'rgb(255, 255, 255)' });
+  });
+
+  it('is written over a dark halo in the dark theme', async () => {
+    shown(of(opened(FLORE)), 'dark');
+
+    await expect.element(page.getByText('Café de Flore')).toHaveStyle({ webkitTextStrokeColor: 'rgba(22, 24, 28, 0.95)' });
+  });
+});
+
+describe('the place open, when its family has no pictogram', () => {
+  it('is marked by a red pin, without its name', async () => {
     shown(of(opened(CASTLE)));
     await vi.waitFor(() => page.getByRole('img', { name: 'Château' }).element());
 
@@ -104,11 +163,11 @@ describe('the place open on the map', () => {
     expect(dotOf('Château').getBoundingClientRect().height).toBe(40);
   });
 
-  it('stands above the other marks of the map', async () => {
-    shown(of(opened(FLORE)));
-    await vi.waitFor(() => page.getByRole('img', { name: 'Café de Flore' }).element());
+  it('takes the room of its pin on the map', async () => {
+    shown(of(opened(CASTLE)));
+    await vi.waitFor(() => page.getByRole('img', { name: 'Château' }).element());
 
-    expect(Number(getComputedStyle(dotOf('Café de Flore').closest('.maplibregl-marker') ?? document.body).zIndex)).toBe(3);
+    expect(dotOf('Château').closest('.maplibregl-marker')?.getBoundingClientRect().height).toBe(40);
   });
 });
 

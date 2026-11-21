@@ -1,4 +1,4 @@
-import { type Observable, of, throwError } from 'rxjs';
+import { type Observable, of, take, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
 import { copyAddress, type Opening, openPlace, type PlaceSheet, type SheetPlace } from './open-place';
@@ -76,6 +76,15 @@ describe('the sheet of a place', () => {
 
   it('stays closed when closed while the places are on their way', () => {
     expectSheet({ places: '---p', opened: '-f', closed: '--x' }, 'c-c');
+  });
+
+  it('starts closed again once no one shows it any more', () => {
+    scheduler().run((run: Run) => {
+      const sheet = sheetOf(run, { opened: '-f' });
+      sheet.pipe(take(2)).subscribe();
+
+      run.expectObservable(sheet, '---^').toBe('---cf', SHEETS);
+    });
   });
 
   it('opens on the last place chosen', () => {

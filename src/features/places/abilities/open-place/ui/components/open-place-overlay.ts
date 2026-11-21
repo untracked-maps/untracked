@@ -2,7 +2,7 @@ import { type Map as MapLibreMap, Marker } from 'maplibre-gl';
 import { combineLatest, distinctUntilChanged, map, NEVER, Observable, switchMap } from 'rxjs';
 import DRAWINGS from '../../../../ui/components/place-dot-drawings.json' with { type: 'json' };
 import COLOURS from '../../../../ui/components/place-name-colours.json' with { type: 'json' };
-import type { PlaceSheet, SheetPlace } from '../../domain/open-place';
+import { openedPlaceOf, type PlaceSheet, type SheetPlace } from '../../domain/open-place';
 import MARKS from './open-place-marks.json' with { type: 'json' };
 import './open-place-overlay.css';
 
@@ -46,7 +46,7 @@ const dotOf = (name: string, { colour, pictogram }: Drawing): SVGSVGElement =>
     name,
     DOT.width,
     DOT.height,
-    [DOT.rim, DOT.disc.replace('{colour}', colour), DOT.pictogram.replace('{pictogram}', pictogram)].join('')
+    `${DOT.rim}${DOT.disc.replace('{colour}', colour)}${DOT.pictogram.replace('{pictogram}', pictogram)}`
   );
 
 const nameOf = (place: SheetPlace, palette: Palette): HTMLElement => {
@@ -54,7 +54,10 @@ const nameOf = (place: SheetPlace, palette: Palette): HTMLElement => {
   label.className = 'open-place-name';
   label.setAttribute('aria-hidden', 'true');
   label.textContent = place.name;
-  label.style.setProperty('--name-colour', NAME_COLOURS[palette].get(familyOf(place)) ?? '');
+  const colour = NAME_COLOURS[palette].get(familyOf(place));
+  if (colour !== undefined) {
+    label.style.setProperty('--name-colour', colour);
+  }
   label.style.setProperty('--name-halo', HALOS[palette]);
   return label;
 };
@@ -88,11 +91,9 @@ const marked =
           };
         });
 
-const placeOf = (sheet: PlaceSheet): SheetPlace | undefined => (sheet.status === 'open' ? sheet.place : undefined);
-
 const openPlaceOverlay =
   (sheet$: Observable<PlaceSheet>, palette$: Observable<Palette>) =>
   (mapLibre: MapLibreMap): Observable<never> =>
-    combineLatest([sheet$.pipe(map(placeOf), distinctUntilChanged()), palette$]).pipe(switchMap(marked(mapLibre)));
+    combineLatest([sheet$.pipe(map(openedPlaceOf), distinctUntilChanged()), palette$]).pipe(switchMap(marked(mapLibre)));
 
 export { openPlaceOverlay };
