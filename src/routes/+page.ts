@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, map, type Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, defer, firstValueFrom, map, type Observable, Subject, shareReplay } from 'rxjs';
 import type { ColourScheme } from '#features/appearance/abilities/choose-theme/domain/choose-theme';
 import { BASEMAPS, type Basemap, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
 import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
@@ -9,6 +9,8 @@ import { showTransitLines, type TransitLine } from '#features/map/abilities/show
 import { idfmTransitLines } from '#features/map/abilities/show-transit-lines/implementation/idfm/idfm-transit-lines';
 import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
 import { type Notice, showNotice } from '#features/notices/abilities/show-notice/domain/show-notice';
+import { type PlaceDot, showPlaces } from '#features/places/abilities/show-places/domain/show-places';
+import { prerenderedPlaces as prerenderedPlacesOnMap } from '#features/places/abilities/show-places/implementation/prerendered/prerendered-places';
 import { findAddress } from '#features/search/abilities/find-address/domain/find-address';
 import { lazyAddressBook } from '#features/search/abilities/find-address/implementation/lazy/lazy-address-book';
 import { prerenderedAddressBook } from '#features/search/abilities/find-address/implementation/prerendered/prerendered-address-book';
@@ -71,48 +73,66 @@ const keptChoice = <Value>(key: string, values: readonly [Value, ...Value[]]): K
 
 const fetchFile = (url: string): Promise<Response> => fetch(url);
 
-const searchSources = (): SearchSources => {
+const answered = (response: Response): Response => {
+  if (!response.ok) {
+    throw new Error(`The file answered ${response.status}.`);
+  }
+  return response;
+};
+
+const fetchedOnce = (url: string): (() => Promise<Response>) => {
+  const answer$ = defer(() => fetch(url)).pipe(map(answered), shareReplay(1));
+  return async () => (await firstValueFrom(answer$)).clone();
+};
+
+const searchSources = (fetchPlaces: () => Promise<Response>): SearchSources => {
   const withAddresses = findAddress({
     loadAddresses: prerenderedAddressBook(fetchFile, resolve('/data/addresses.json')),
     indexAddresses: lazyAddressBook
   });
   return {
-    loadPlaces: prerenderedPlaces(fetchFile, resolve('/data/places.json')),
+    loadPlaces: prerenderedPlaces(fetchPlaces, resolve('/data/places.json')),
     indexPlaces: (places) => withAddresses(miniSearchIndex(places))
   };
 };
 
-export const load: PageLoad = async ({
-  data,
-  parent
-}): Promise<{
+type Loaded = {
   readonly position: Located;
   readonly layers: MapLayers;
   readonly search: SearchSources;
   readonly notices: Notices;
   readonly sheetHeights: SheetHeights;
-}> => {
-  const { theme } = await parent();
+  readonly placesShown: (zoom$: Observable<number>) => Observable<readonly PlaceDot[]>;
+};
+
+const mapLayers = (colourScheme: Observable<ColourScheme>): MapLayers => {
   const basemap = keptChoice('untracked-maps.basemap', BASEMAPS);
   const transitLines = keptChoice('untracked-maps.transit-lines', SHOWN_OR_HIDDEN);
   const bikeLanes = keptChoice('untracked-maps.bike-lanes', SHOWN_OR_HIDDEN);
   return {
+    basemap,
+    transitLines,
+    bikeLanes,
+    transitLinesShown: transitLines.kept(),
+    bikeLanesShown: bikeLanes.kept(),
+    satelliteImagery: chooseBasemap({ chosenBasemap: basemap.kept, loadSatelliteImagery: ignOrthophotos })(),
+    transitLinesOnMap: showTransitLines({
+      shownTransitLines: transitLines.kept,
+      loadTransitLines: idfmTransitLines((url) => fetch(url))
+    })(),
+    bikeLanesOnMap: showBikeLanes({ shownBikeLanes: bikeLanes.kept })(colourScheme)
+  };
+};
+
+export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
+  const { theme } = await parent();
+  const fetchPlaces = fetchedOnce(resolve('/data/places.json'));
+  return {
     ...data,
-    search: searchSources(),
+    search: searchSources(fetchPlaces),
     notices: noticeBoard(),
     sheetHeights: sheetHeights(),
-    layers: {
-      basemap,
-      transitLines,
-      bikeLanes,
-      transitLinesShown: transitLines.kept(),
-      bikeLanesShown: bikeLanes.kept(),
-      satelliteImagery: chooseBasemap({ chosenBasemap: basemap.kept, loadSatelliteImagery: ignOrthophotos })(),
-      transitLinesOnMap: showTransitLines({
-        shownTransitLines: transitLines.kept,
-        loadTransitLines: idfmTransitLines((url) => fetch(url))
-      })(),
-      bikeLanesOnMap: showBikeLanes({ shownBikeLanes: bikeLanes.kept })(theme.colourScheme)
-    }
+    placesShown: showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) }),
+    layers: mapLayers(theme.colourScheme)
   };
 };
