@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/untracked-maps/untracked/compare/v1.14.0...v1.15.0) (2026-11-21)
+
+
+### Features
+
+* keep windows and menus whole on screen, at the former app's format ([#58](https://github.com/untracked-maps/untracked/issues/58)) ([c973f2c](https://github.com/untracked-maps/untracked/commit/c973f2cc7cc6751b79a01862bf11b52896f9676d))
+
 # [1.14.0](https://github.com/untracked-maps/untracked/compare/v1.13.0...v1.14.0) (2026-11-21)
 
 
