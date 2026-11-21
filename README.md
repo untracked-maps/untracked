@@ -26,6 +26,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - A search by name over about two thousand places of a fake Paris generated at build time, typos and beginnings of words included, that flies the map to the place chosen
 - Addresses, streets and arrondissements of the fake Paris in the same search field ("12 bd dauphine", "rue de rivoli", "75011"), typos and abbreviations included, mixed with the places found by name as the first version did
 - The last eight places chosen, kept on the device and offered as soon as the search field gets the focus, until the visitor clears them
+- Short notices under the top bar that tell what just happened, with an action to take it back: clearing the recent places can be undone
 - A search by kind of place, from chips under the search field or a kind typed in English or in French ("boulangerie", "the nearest pharmacy"), that lists and marks the 25 nearest places of that kind within 3.5 km of the centre of the map
 - A button that centres the map on the visitor's position, for now a fake one drawn at build time
 - A click, a long press or Enter on the map that marks the spot and gives its nearest address, for now a fake one, with a link to report a mistake there on OpenStreetMap

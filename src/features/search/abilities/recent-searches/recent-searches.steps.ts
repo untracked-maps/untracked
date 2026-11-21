@@ -6,6 +6,7 @@ import { type RecentPlace, type RecentPlaces, recentSearches } from './domain/re
 type Visit = {
   readonly chosen: Subject<RecentPlace>;
   readonly cleared: Subject<void>;
+  readonly restored: Subject<void>;
   readonly subscription: Subscription;
 };
 
@@ -39,13 +40,15 @@ const storeOn =
 const visitOf = (world: RecentSearchesWorld): Visit => {
   const chosen = new Subject<RecentPlace>();
   const cleared = new Subject<void>();
+  const restored = new Subject<void>();
   const subscription = recentSearches({ storedRecents: () => of(world.kept), storeRecents: storeOn(world) })({
     chosen,
-    cleared
+    cleared,
+    restored
   }).subscribe((recents) => {
     world.shown = recents;
   });
-  return { chosen, cleared, subscription };
+  return { chosen, cleared, restored, subscription };
 };
 
 const visiting = (world: RecentSearchesWorld): Visit => {
@@ -74,6 +77,10 @@ When('the visitor chooses {string}', function theVisitorChooses(this: RecentSear
 
 When('the visitor clears the recent searches', function theVisitorClears(this: RecentSearchesWorld) {
   visiting(this).cleared.next();
+});
+
+When('the visitor takes the clearing back', function theVisitorTakesBack(this: RecentSearchesWorld) {
+  visiting(this).restored.next();
 });
 
 When('the visitor comes back later', function theVisitorComesBack(this: RecentSearchesWorld) {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
-  import { BehaviorSubject, combineLatest, map, merge, NEVER, type Observable, of, ReplaySubject, Subject, tap } from 'rxjs';
+  import { combineLatest, map, merge, NEVER, type Observable, of, ReplaySubject, Subject, tap } from 'rxjs';
   import { WELCOME_STORAGE_KEY } from '#configuration/welcome';
   import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
   import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
@@ -32,6 +32,7 @@
   import TransitLinesCredit from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-credit.svelte';
   import { loadTransitLinesLayers } from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-overlay';
   import { layersOverlay } from '#features/map/ui/components/layers-on-map';
+  import NoticeCard from '#features/notices/abilities/show-notice/ui/components/notice.svelte';
   import { type Coordinates, inspectPoint } from '#features/places/abilities/inspect-point/domain/inspect-point';
   import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
   import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
@@ -117,6 +118,8 @@
 
   const clearedRecents = new Subject<void>();
 
+  const restoredRecents = new Subject<void>();
+
   const searchInputs = { wake: searchWakes, query: searchQueries };
 
   const searchState = $derived(searchPlaces(data.search)({ ...searchInputs, mapView: views }));
@@ -136,7 +139,7 @@
   const choosePlace = (place: RecentPlace): void => chosenPlaces.next(place);
 
   const recents = browser
-    ? recentSearches(localRecents(localStorage))({ chosen: chosenPlaces, cleared: clearedRecents })
+    ? recentSearches(localRecents(localStorage))({ chosen: chosenPlaces, cleared: clearedRecents, restored: restoredRecents })
     : of([]);
 
   const chooseRecent =
@@ -151,21 +154,16 @@
     (): void => {
       focusField();
       clearedRecents.next();
+      data.notices.tell({
+        text: m.recent_searches_cleared(),
+        action: { label: m.notice_undo(), run: () => restoredRecents.next() }
+      });
     };
-
-  const spotSheet = new BehaviorSubject(0);
-
-  const listSheet = new BehaviorSubject(0);
-
-  const sheetShown = combineLatest([spotSheet, listSheet]).pipe(
-    map((heights) => Math.max(...heights)),
-    tap((height) => data.sheets.show(height))
-  );
 
   $effect(() => {
     const subscription = merge(
       recents,
-      sheetShown,
+      data.sheetHeights.tallest.pipe(tap((height) => data.sheets.show(height))),
       keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views)
     ).subscribe();
     return (): void => subscription.unsubscribe();
@@ -217,10 +215,13 @@
       onChoosePlace={choosePlace}
       ready={browser}
       covered={$inspectedSpot.kind !== 'none'}
-      onSheetHeight={(height: number): void => listSheet.next(height)}
+      onSheetHeight={data.sheetHeights.list}
     />
   </div>
-  <SpotCard spot={inspectedSpot} onClose={dismissSpot} onSheetHeight={(height: number): void => spotSheet.next(height)} />
+  <div class="notice">
+    <NoticeCard shown={data.notices.shown} onAct={data.notices.act} />
+  </div>
+  <SpotCard spot={inspectedSpot} onClose={dismissSpot} onSheetHeight={data.sheetHeights.spot} />
   <LanguageSuggestion
     suggestion={data.languageSuggestion.suggestion}
     path={page.url.pathname}
@@ -338,9 +339,29 @@
       margin-block-start: 0;
     }
 
+    .top > .notice {
+      grid-area: 2 / 1 / auto / -1;
+      justify-self: start;
+      inline-size: min(26.25rem, 100% - 3.75rem);
+    }
+
+    :global(main:has([data-sheet-open])) .notice {
+      grid-column: 2;
+      inline-size: min(26.25rem, 100% - 4rem);
+      margin-inline-start: var(--space-1);
+    }
+
     :global(main:has([data-sheet-open])) .afloat {
       margin-inline-start: calc(min(25rem, 58vw - 1rem) + var(--space-4));
     }
+  }
+
+  .notice {
+    position: relative;
+    z-index: 4;
+    justify-self: center;
+    inline-size: min(26.25rem, 100%);
+    margin-block-start: calc(var(--space-2) - var(--space-3));
   }
 
   .afloat {

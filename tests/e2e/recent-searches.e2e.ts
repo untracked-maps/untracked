@@ -76,3 +76,58 @@ test('has no detectable accessibility violation with recent searches offered', a
 
   expect(violations).toEqual([]);
 });
+
+const cleared = async (page: Page): Promise<void> => {
+  await focusedWithGrandPalais(page);
+  await recentSearches(page).getByRole('button', { name: 'Clear' }).click();
+};
+
+const undo = (page: Page): Locator => page.getByRole('button', { name: 'Undo' });
+
+test('tells the visitor the recent places are cleared, and offers to take it back', async ({ page }) => {
+  await cleared(page);
+
+  await expect(page.getByText('Recent places cleared')).toBeVisible();
+});
+
+test('puts the recent places back once the visitor takes the clearing back', async ({ page }) => {
+  await cleared(page);
+  await undo(page).click();
+  await searchField(page).click();
+
+  await expect(recentSearches(page).getByRole('button', { name: GRAND_PALAIS })).toBeVisible();
+});
+
+test('withdraws the notice once its action is taken', async ({ page }) => {
+  await cleared(page);
+  await undo(page).click();
+
+  await expect(page.getByText('Recent places cleared')).toBeHidden();
+});
+
+test('shows the notice under the search field, covering nothing', async ({ page }) => {
+  await cleared(page);
+
+  const field = await page.getByRole('search').boundingBox();
+  const notice = await page.getByText('Recent places cleared').boundingBox();
+
+  expect(notice?.y).toBeGreaterThanOrEqual((field?.y ?? 0) + (field?.height ?? 0));
+});
+
+test('tells it in French under /fr', async ({ page }) => {
+  await keepGrandPalais(page);
+  await page.goto('./fr');
+  await page.getByRole('combobox').click();
+  await page.getByRole('button', { name: 'Effacer', exact: true }).click();
+
+  await expect(page.getByText('Lieux récents effacés')).toBeVisible();
+});
+
+test('has no detectable accessibility violation with a notice shown', async ({ page }) => {
+  await cleared(page);
+  await undo(page).waitFor();
+
+  const { violations } = await new AxeBuilder({ page }).analyze();
+
+  expect(violations).toEqual([]);
+});

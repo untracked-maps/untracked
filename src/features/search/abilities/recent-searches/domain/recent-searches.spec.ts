@@ -26,6 +26,7 @@ type Marbles = {
   readonly stored?: string;
   readonly chosen?: string;
   readonly cleared?: string;
+  readonly restored?: string;
   readonly storeRecents?: StoreRecents;
 };
 
@@ -39,7 +40,11 @@ const expectRecents = (kept: Readonly<Record<string, RecentPlaces>>, marbles: Ma
       const recents$ = recentSearches({
         storedRecents: () => cold(marbles.stored ?? 's', kept),
         storeRecents: marbles.storeRecents ?? storeNowhere
-      })({ chosen: cold(marbles.chosen ?? '', CHOSEN), cleared: cold(marbles.cleared ?? '', { c: undefined }) });
+      })({
+        chosen: cold(marbles.chosen ?? '', CHOSEN),
+        cleared: cold(marbles.cleared ?? '', { c: undefined }),
+        restored: cold(marbles.restored ?? '', { r: undefined })
+      });
       expectObservable(recents$).toBe(expected, values);
     })
 });
@@ -63,7 +68,11 @@ const counting = (): { readonly reads: string[]; readonly recents$: Observable<R
   };
   return {
     reads,
-    recents$: recentSearches({ storedRecents, storeRecents: storeNowhere })({ chosen: new Subject(), cleared: new Subject() })
+    recents$: recentSearches({ storedRecents, storeRecents: storeNowhere })({
+      chosen: new Subject(),
+      cleared: new Subject(),
+      restored: of()
+    })
   };
 };
 
@@ -114,7 +123,7 @@ describe('recent searches on the device', () => {
   it('are stored each time they change', () => {
     const { stored, storeRecents } = recording();
     const chosen = new Subject<RecentPlace>();
-    recentSearches({ storedRecents: () => of([LOUVRE]), storeRecents })({ chosen, cleared: of() }).subscribe();
+    recentSearches({ storedRecents: () => of([LOUVRE]), storeRecents })({ chosen, cleared: of(), restored: of() }).subscribe();
 
     chosen.next(ORSAY);
 
@@ -124,7 +133,7 @@ describe('recent searches on the device', () => {
   it('are stored empty once cleared', () => {
     const { stored, storeRecents } = recording();
     const cleared = new Subject<void>();
-    recentSearches({ storedRecents: () => of([LOUVRE]), storeRecents })({ chosen: of(), cleared }).subscribe();
+    recentSearches({ storedRecents: () => of([LOUVRE]), storeRecents })({ chosen: of(), cleared, restored: of() }).subscribe();
 
     cleared.next();
 
@@ -152,7 +161,11 @@ describe('recent searches on the device', () => {
   it('give a late follower the latest list only', () => {
     const seen: RecentPlaces[] = [];
     const chosen = new Subject<RecentPlace>();
-    const recents$ = recentSearches({ storedRecents: () => of([]), storeRecents: storeNowhere })({ chosen, cleared: of() });
+    const recents$ = recentSearches({ storedRecents: () => of([]), storeRecents: storeNowhere })({
+      chosen,
+      cleared: of(),
+      restored: of()
+    });
     recents$.subscribe();
     chosen.next(ORSAY);
 
