@@ -14,6 +14,9 @@ const theMap = (page: Page): Locator => page.getByRole('region', { name: 'Map', 
 
 const spotCard = (page: Page): Locator => page.getByRole('region', { name: 'Rue de Rivoli' });
 
+const anySpotCard = (page: Page): Locator =>
+  page.getByRole('region').filter({ has: page.getByRole('button', { name: 'Close the card' }) });
+
 const bakeries = (page: Page): Locator => page.getByRole('region', { name: 'Bakeries' });
 
 const about = (page: Page): Locator => page.getByRole('dialog', { name: 'Untracked Maps' });
@@ -47,6 +50,7 @@ const louvreSearched = async (page: Page): Promise<void> => {
 
 export {
   about,
+  anySpotCard,
   BEFORE_THE_APP,
   bakeries,
   bakeriesListed,

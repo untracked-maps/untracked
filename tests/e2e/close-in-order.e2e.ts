@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 import {
   about,
+  anySpotCard,
   BEFORE_THE_APP,
   bakeries,
   bakeriesListed,
@@ -18,7 +19,7 @@ const cardAboveTheList = async (page: Page): Promise<void> => {
   await opened(page);
   await bakeriesListed(page);
   await theMap(page).press('Enter');
-  await spotCard(page).waitFor();
+  await anySpotCard(page).waitFor();
 };
 
 test.beforeEach(refuseOpenFreeMap);
@@ -28,13 +29,13 @@ test('closes the card of a spot before the list of a kind, with the back button'
 
   await page.goBack();
 
-  await expect(spotCard(page)).toBeHidden();
+  await expect(anySpotCard(page)).toBeHidden();
 });
 
 test('keeps the list of a kind open when the back button closes the card above it', async ({ page }) => {
   await cardAboveTheList(page);
   await page.goBack();
-  await spotCard(page).waitFor({ state: 'hidden' });
+  await anySpotCard(page).waitFor({ state: 'hidden' });
 
   await expect(bakeries(page)).toBeVisible();
 });
@@ -42,7 +43,7 @@ test('keeps the list of a kind open when the back button closes the card above i
 test('closes the list of a kind at the second press of the back button', async ({ page }) => {
   await cardAboveTheList(page);
   await page.goBack();
-  await spotCard(page).waitFor({ state: 'hidden' });
+  await anySpotCard(page).waitFor({ state: 'hidden' });
 
   await page.goBack();
 
