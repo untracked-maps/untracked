@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/untracked-maps/untracked/compare/v1.13.0...v1.14.0) (2026-11-21)
+
+
+### Features
+
+* close what is open with Escape and the back button, in order ([#51](https://github.com/untracked-maps/untracked/issues/51)) ([32f8ce8](https://github.com/untracked-maps/untracked/commit/32f8ce816f2dcbc6ae1ce24167bdfd0b529ce2bc)), closes [#47](https://github.com/untracked-maps/untracked/issues/47)
+
 # [1.13.0](https://github.com/untracked-maps/untracked/compare/v1.12.0...v1.13.0) (2026-11-21)
 
 
