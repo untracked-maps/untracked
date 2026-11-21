@@ -15,6 +15,11 @@
 
   const sheetHeight = $derived(data.sheets.height);
 
+  $effect(() => {
+    const subscription = data.closing.closings.subscribe();
+    return (): void => subscription.unsubscribe();
+  });
+
   const hrefFor = (locale: Locale): string => localizeHref(page.url.pathname, { locale });
 
   const languageLinks = $derived(
@@ -36,7 +41,13 @@
   {@render children()}
 
   {#snippet bottom()}
-    <DialogButton label={m.about_label()} title={m.app_name()} description={m.welcome_title()} closeLabel={m.about_close()}>
+    <DialogButton
+      label={m.about_label()}
+      title={m.app_name()}
+      description={m.welcome_title()}
+      closeLabel={m.about_close()}
+      closable={data.closing.of('about')}
+    >
       {#snippet icon()}
         <InfoIcon />
       {/snippet}

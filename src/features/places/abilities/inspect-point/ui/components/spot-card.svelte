@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Observable } from 'rxjs';
-  import { on } from 'svelte/events';
+  import { NEVER, type Observable } from 'rxjs';
   import { m } from '#i18n/messages';
   import BottomSheet from '#libraries/design/bottom-sheet.svelte';
   import ButtonLink from '#libraries/design/button-link.svelte';
+  import { closedWhenAsked } from '#libraries/design/closable';
   import CloseButton from '#libraries/design/close-button.svelte';
   import Floating from '#libraries/design/floating.svelte';
   import WarningIcon from '#libraries/design/warning-icon.svelte';
@@ -15,21 +15,14 @@
     readonly spot: Observable<InspectedSpot>;
     readonly onClose: () => void;
     readonly onSheetHeight?: (height: number) => void;
+    readonly closings?: Observable<unknown>;
   };
 
-  const { spot, onClose, onSheetHeight }: Props = $props();
+  const { spot, onClose, onSheetHeight, closings = NEVER }: Props = $props();
 
   const uid = $props.id();
 
   const card = $derived($spot.kind === 'none' ? undefined : spotCardOf($spot));
-
-  const closeOnEscape = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape') {
-      onClose();
-    }
-  };
-
-  const closesOnEscape = (element: HTMLElement): (() => void) => on(element, 'keydown', closeOnEscape);
 </script>
 
 <div class="spot" aria-live="polite">
@@ -41,7 +34,7 @@
       {onClose}
       onHeight={onSheetHeight}
     >
-      <section aria-labelledby="{uid}-title" {@attach closesOnEscape}>
+      <section aria-labelledby="{uid}-title" {@attach closedWhenAsked(closings, onClose)}>
         <Floating>
           <div class="heading">
             <hgroup>

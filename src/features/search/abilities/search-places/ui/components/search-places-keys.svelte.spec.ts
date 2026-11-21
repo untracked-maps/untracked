@@ -109,25 +109,7 @@ describe('search keys that choose', () => {
   });
 });
 
-describe('search keys that dismiss', () => {
-  it('collapse the list with Escape', async () => {
-    await typed(['Escape']);
-
-    await expect.element(page.getByRole('combobox')).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  it('keep the text on the first Escape', async () => {
-    await typed(['Escape']);
-
-    await expect.element(page.getByRole('combobox')).toHaveValue('orsay');
-  });
-
-  it('clear the field on a second Escape', async () => {
-    const { queries } = await typed(['Escape', 'Escape']);
-
-    expect(await firstValueFrom(queries)).toBe('');
-  });
-
+describe('search keys that are left to the field', () => {
   it('keep the caret at the end of the text when moving through the options', async () => {
     await typed(['ArrowUp', 'x']);
 

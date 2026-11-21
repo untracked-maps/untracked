@@ -165,7 +165,9 @@
     const subscription = merge(
       recents,
       data.sheetHeights.tallest.pipe(tap((height) => data.sheets.show(height))),
-      keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views)
+      keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views, data.closing.steps),
+      inspectedSpot.pipe(tap(({ kind }) => data.closing.of('spot').onToggle(kind !== 'none'))),
+      kindSearch.pipe(tap(({ status }) => data.closing.of('kind list').onToggle(status !== 'closed')))
     ).subscribe();
     return (): void => subscription.unsubscribe();
   });
@@ -201,7 +203,15 @@
 <h1>{m.app_name()}</h1>
 
 <div class="top" data-sheet-top>
-  <SearchPlaces state={searchState} onWake={wakeSearch} onQuery={search} onChoose={choosePlace} ready={browser}>
+  <SearchPlaces
+    state={searchState}
+    onWake={wakeSearch}
+    onQuery={search}
+    onChoose={choosePlace}
+    ready={browser}
+    onOpen={data.closing.of('search').onToggle}
+    closings={data.closing.of('search').closings}
+  >
     {#snippet lead(panel)}
       <KindNamed named={kindNamed} onChoose={chooseKind} onClear={(): void => panel.settle('')} />
     {/snippet}
@@ -217,12 +227,18 @@
       ready={browser}
       covered={$inspectedSpot.kind !== 'none'}
       onSheetHeight={data.sheetHeights.list}
+      closings={data.closing.of('kind list').closings}
     />
   </div>
   <div class="notice">
     <NoticeCard shown={data.notices.shown} onAct={data.notices.act} />
   </div>
-  <SpotCard spot={inspectedSpot} onClose={dismissSpot} onSheetHeight={data.sheetHeights.spot} />
+  <SpotCard
+    spot={inspectedSpot}
+    onClose={dismissSpot}
+    onSheetHeight={data.sheetHeights.spot}
+    closings={data.closing.of('spot').closings}
+  />
   <LanguageSuggestion
     suggestion={data.languageSuggestion.suggestion}
     path={page.url.pathname}
@@ -243,7 +259,7 @@
     zoomOverlay(zooms),
     layersOverlay(layers.transitLinesOnMap, loadTransitLinesLayers),
     layersOverlay(layers.bikeLanesOnMap, loadBikeLanesLayers),
-    inspectedSpotOverlay(inspectedSpot, { onInspect: inspect, onDismiss: dismissSpot })
+    inspectedSpotOverlay(inspectedSpot, { onInspect: inspect })
   ]}
 />
 
@@ -267,7 +283,7 @@
       </MapCredit>
     </div>
     <div class="controls" data-sheet-stack>
-      <PopoverButton label={m.layers_label()}>
+      <PopoverButton label={m.layers_label()} closable={data.closing.of('map menu')}>
         {#snippet icon()}
           <LayersIcon />
         {/snippet}

@@ -34,19 +34,15 @@ const listening = (overlay$: Observable<unknown>): Subscription => {
 
 type Recorded = {
   readonly inspected: Coordinates[];
-  readonly dismissals: string[];
   readonly map: MapLibreMap;
 };
 
 const listenedMap = (spot: InspectedSpot = NONE, longitude = CENTRE.longitude): Recorded => {
-  const recorded: Recorded = { inspected: [], dismissals: [], map: mapCentredOn(longitude) };
+  const recorded: Recorded = { inspected: [], map: mapCentredOn(longitude) };
   const onInspect = (inspected: Coordinates): void => {
     recorded.inspected.push(inspected);
   };
-  const onDismiss = (): void => {
-    recorded.dismissals.push('dismissed');
-  };
-  listening(inspectedSpotOverlay(new BehaviorSubject(spot), { onInspect, onDismiss })(recorded.map));
+  listening(inspectedSpotOverlay(new BehaviorSubject(spot), { onInspect })(recorded.map));
   recorded.map.getCanvas().focus();
   return recorded;
 };
@@ -56,7 +52,7 @@ const rounded = ({ longitude, latitude }: Coordinates): Coordinates => ({
   latitude: Math.round(latitude * 1000) / 1000
 });
 
-const NO_ACTION = { onInspect: (): undefined => undefined, onDismiss: (): undefined => undefined };
+const NO_ACTION = { onInspect: (): undefined => undefined };
 
 const spotMark = (): ReturnType<typeof page.getByRole> => page.getByRole('img', { name: 'Selected spot' });
 
@@ -98,6 +94,18 @@ describe('inspected spot overlay, on the map', () => {
     spot.next(NONE);
 
     expect(document.activeElement).toBe(map.getCanvas());
+  });
+
+  it('leaves the focus in a field the visitor types in', () => {
+    const spot = new BehaviorSubject<InspectedSpot>(RIVOLI);
+    listening(inspectedSpotOverlay(spot, NO_ACTION)(mapCentredOn(CENTRE.longitude)));
+    const field = document.body.appendChild(document.createElement('input'));
+    onTestFinished(() => field.remove());
+    field.focus();
+
+    spot.next(NONE);
+
+    expect(document.activeElement).toBe(field);
   });
 
   it('leaves the focus where it is when another spot is inspected', () => {
@@ -159,14 +167,6 @@ describe('inspected spot overlay, from the visitor', () => {
     await userEvent.keyboard('{Shift}');
 
     expect(inspected).toEqual([]);
-  });
-
-  it('dismisses the spot on Escape', async () => {
-    const { dismissals } = listenedMap(RIVOLI);
-
-    await userEvent.keyboard('{Escape}');
-
-    expect(dismissals).toEqual(['dismissed']);
   });
 
   it('stops listening once the map no longer shows it', async () => {

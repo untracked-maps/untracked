@@ -1,4 +1,4 @@
-import { firstValueFrom, type Observable, of, ReplaySubject } from 'rxjs';
+import { firstValueFrom, NEVER, type Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { createRawSnippet } from 'svelte';
 import { on } from 'svelte/events';
 import { describe, expect, it } from 'vitest';
@@ -27,14 +27,18 @@ const suggestions = createRawSnippet((searchPanel: () => SearchPanel) => ({
   }
 }));
 
-const shownWith = async (state: Observable<SearchState> = IDLE): Promise<ReplaySubject<string>> => {
+const shownWith = async (
+  state: Observable<SearchState> = IDLE,
+  closings: Observable<unknown> = NEVER
+): Promise<ReplaySubject<string>> => {
   const queries = new ReplaySubject<string>(1);
   await render(SearchPlaces, {
     state,
     onWake: () => undefined,
     onQuery: (query: string) => queries.next(query),
     onChoose: () => undefined,
-    suggestions
+    suggestions,
+    closings
   });
   return queries;
 };
@@ -43,8 +47,11 @@ const field = (): Locator => page.getByRole('combobox', { name: 'Search a place 
 
 const panel = (): Locator => page.getByRole('region', { name: 'Suggestions' });
 
-const focused = async (state: Observable<SearchState> = IDLE): Promise<ReplaySubject<string>> => {
-  const queries = await shownWith(state);
+const focused = async (
+  state: Observable<SearchState> = IDLE,
+  closings: Observable<unknown> = NEVER
+): Promise<ReplaySubject<string>> => {
+  const queries = await shownWith(state, closings);
   await field().click();
   return queries;
 };
@@ -76,17 +83,19 @@ describe('search panel', () => {
     await expect.element(panel()).not.toBeInTheDocument();
   });
 
-  it('closes with Escape', async () => {
-    await focused();
+  it('closes when asked to', async () => {
+    const closings = new Subject<void>();
+    await focused(IDLE, closings);
 
-    await userEvent.keyboard('{Escape}');
+    closings.next();
 
     await expect.element(panel()).not.toBeInTheDocument();
   });
 
-  it('opens again when the field is pressed after Escape', async () => {
-    await focused();
-    await userEvent.keyboard('{Escape}');
+  it('opens again when the field is pressed once closed', async () => {
+    const closings = new Subject<void>();
+    await focused(IDLE, closings);
+    closings.next();
 
     await field().click();
 
@@ -117,20 +126,12 @@ describe('search panel suggestions', () => {
     await expect.element(panel()).toBeVisible();
   });
 
-  it('close with Escape from one of them', async () => {
-    await focused();
+  it('give the focus back to the field when asked to close', async () => {
+    const closings = new Subject<void>();
+    await focused(IDLE, closings);
     await userEvent.tab();
 
-    await userEvent.keyboard('{Escape}');
-
-    await expect.element(panel()).not.toBeInTheDocument();
-  });
-
-  it('give the focus back to the field with Escape', async () => {
-    await focused();
-    await userEvent.tab();
-
-    await userEvent.keyboard('{Escape}');
+    closings.next();
 
     await expect.element(field()).toHaveFocus();
   });

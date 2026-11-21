@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import { type Closable, closedWhenAsked, NEVER_ASKED, toggleTold } from './closable';
   import Floating from './floating.svelte';
   import IconButton from './icon-button.svelte';
   import './tokens.css';
@@ -8,16 +9,25 @@
     readonly label: string;
     readonly icon: Snippet;
     readonly children: Snippet;
+    readonly closable?: Closable;
   };
 
-  const { label, icon, children }: Props = $props();
+  const { label, icon, children, closable = NEVER_ASKED }: Props = $props();
 
   const uid = $props.id();
+
+  const closed = (dialog: HTMLDialogElement): void => dialog.hidePopover();
 </script>
 
 <IconButton {label} toggles="{uid}-panel" tone="neutral">{@render icon()}</IconButton>
 
-<dialog id="{uid}-panel" popover="auto" aria-label={label}>
+<dialog
+  id="{uid}-panel"
+  popover="auto"
+  aria-label={label}
+  onbeforetoggle={toggleTold(closable)}
+  {@attach closedWhenAsked(closable.closings, closed)}
+>
   <Floating>
     <div class="sections">
       {@render children()}

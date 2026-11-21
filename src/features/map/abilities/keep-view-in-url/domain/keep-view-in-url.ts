@@ -1,4 +1,15 @@
-import { concatMap, debounceTime, distinctUntilChanged, filter, map, type Observable } from 'rxjs';
+import {
+  concatMap,
+  debounceTime,
+  distinctUntilChanged,
+  EMPTY,
+  filter,
+  map,
+  merge,
+  type Observable,
+  share,
+  withLatestFrom
+} from 'rxjs';
 import { fragmentOfView, type MapView, viewOfFragment } from './view-fragment';
 
 type ReadFragment = () => Observable<string>;
@@ -22,9 +33,20 @@ const viewInUrl =
   (): Observable<MapView> =>
     readFragment().pipe(map(viewOfFragment), filter(isView));
 
+const settledFragments = (views$: Observable<MapView>): Observable<string> =>
+  views$.pipe(debounceTime(SETTLING_TIME), map(fragmentOfView), distinctUntilChanged(), share());
+
 const keepViewInUrl =
   ({ writeFragment }: KeepViewInUrlPorts) =>
-  (views$: Observable<MapView>): Observable<string> =>
-    views$.pipe(debounceTime(SETTLING_TIME), map(fragmentOfView), distinctUntilChanged(), concatMap(writeFragment));
+  (views$: Observable<MapView>, steps$: Observable<unknown> = EMPTY): Observable<string> => {
+    const fragments$ = settledFragments(views$);
+    return merge(
+      fragments$,
+      steps$.pipe(
+        withLatestFrom(fragments$),
+        map(([, fragment]) => fragment)
+      )
+    ).pipe(concatMap(writeFragment));
+  };
 
 export { keepViewInUrl, type ReadFragment, viewInUrl, type WriteFragment };

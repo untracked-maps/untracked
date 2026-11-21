@@ -1,7 +1,9 @@
+import { Subject } from 'rxjs';
 import { createRawSnippet } from 'svelte';
 import { describe, expect, it } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
+import { type Closable, NEVER_ASKED } from './closable';
 import DialogButton from './dialog-button.svelte';
 
 const icon = createRawSnippet(() => ({ render: (): string => '<svg aria-hidden="true"></svg>' }));
@@ -10,9 +12,20 @@ const children = createRawSnippet(() => ({ render: (): string => '<a href="/priv
 
 const props = { label: 'About this map', title: 'Untracked Maps', closeLabel: 'Close', icon, children };
 
-const open = async (): Promise<void> => {
-  await render(DialogButton, props);
+const open = async (closable: Closable = NEVER_ASKED): Promise<void> => {
+  await render(DialogButton, { ...props, closable });
   await page.getByRole('button', { name: 'About this map' }).click();
+};
+
+const told = async (): Promise<readonly boolean[]> => {
+  const toggles: boolean[] = [];
+  await open({
+    ...NEVER_ASKED,
+    onToggle: (opened: boolean): void => {
+      toggles.push(opened);
+    }
+  });
+  return toggles;
 };
 
 describe('dialog button', () => {
@@ -91,5 +104,42 @@ describe('dialog button description', () => {
     await open();
 
     await expect.element(page.getByRole('dialog').getByRole('paragraph')).not.toBeInTheDocument();
+  });
+});
+
+describe('dialog button, for what closes it from outside', () => {
+  it('tells when its dialog opens', async () => {
+    const toggles = await told();
+
+    await expect.poll(() => toggles).toEqual([true]);
+  });
+
+  it('tells its dialog opens at once, before the next key is pressed', async () => {
+    const heard: string[] = [];
+    const onToggle = (opened: boolean): void => {
+      heard.push(opened ? 'opened' : 'closed');
+    };
+    await render(DialogButton, { ...props, closable: { ...NEVER_ASKED, onToggle } });
+
+    document.querySelector<HTMLButtonElement>('[aria-haspopup="dialog"]')?.click();
+
+    expect(heard).toEqual(['opened']);
+  });
+
+  it('tells when its dialog closes', async () => {
+    const toggles = await told();
+
+    await page.getByRole('button', { name: 'Close' }).click();
+
+    await expect.poll(() => toggles).toEqual([true, false]);
+  });
+
+  it('closes its dialog when asked to', async () => {
+    const closings = new Subject<void>();
+    await open({ ...NEVER_ASKED, closings });
+
+    closings.next();
+
+    await expect.element(page.getByRole('dialog')).not.toBeInTheDocument();
   });
 });

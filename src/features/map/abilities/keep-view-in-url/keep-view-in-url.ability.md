@@ -61,3 +61,10 @@
 
 - When the visitor moves the map to zoom level 13.456 on 48.8566, 2.3522
 - Then the URL hash becomes "map=13.46/48.8566/2.3522"
+
+## Rule: The URL keeps the view when the visitor steps back in the history
+
+### Scenario: The entry the visitor steps back to gets the view of the map
+
+- When the visitor moves the map to zoom level 17 on 48.85837, 2.29448, then steps back in the history
+- Then the URL hash is written again as "map=17/48.85837/2.29448"
