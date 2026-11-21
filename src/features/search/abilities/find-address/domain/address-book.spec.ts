@@ -19,6 +19,7 @@ const house = (number: string, streetName: string, postcode = '75001', kilometre
   street: streetName,
   postcode,
   city: 'Paris',
+  country: 'FR',
   coordinates: north(kilometres)
 });
 
@@ -27,6 +28,7 @@ const street = (name: string, postcode = '75001', kilometres = 1): KnownAddress 
   street: name,
   postcode,
   city: 'Paris',
+  country: 'FR',
   coordinates: north(kilometres)
 });
 
@@ -35,6 +37,7 @@ const district = (number: number, kilometres = 1): KnownAddress => ({
   name: `Paris ${number}e Arrondissement`,
   postcode: `750${String(number).padStart(2, '0')}`,
   city: 'Paris',
+  country: 'FR',
   coordinates: north(kilometres)
 });
 
@@ -50,7 +53,7 @@ const found = (known: readonly KnownAddress[], query: string): readonly RankedAd
   addressBookOf(known)(addressQueryOf(query), HERE);
 
 const namesFound = (known: readonly KnownAddress[], query: string): readonly string[] =>
-  found(known, query).map(({ address }) => `${address.name}, ${address.address}`);
+  found(known, query).map(({ address: { name, address } }) => `${name}, ${address.postalCode} ${address.addressLocality}`);
 
 describe('addresses found for a house number and a street', () => {
   it('start with the house at that number', () => {

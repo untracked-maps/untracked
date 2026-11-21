@@ -7,11 +7,24 @@ import { mixedResults } from './mixed-results';
 const HERE = { longitude: 2.35, latitude: 48.85 };
 
 const address = (name: string, clean = true): RankedAddress => ({
-  address: { id: name, name, kind: 'address', address: '75001 Paris', coordinates: HERE },
+  address: {
+    id: name,
+    name,
+    kind: 'address',
+    address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
+    coordinates: HERE
+  },
   clean
 });
 
-const place = (name: string): Place => ({ id: name, name, kind: 'cafe', address: '', coordinates: HERE, fame: 0 });
+const place = (name: string): Place => ({
+  id: name,
+  name,
+  kind: 'cafe',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
+  coordinates: HERE,
+  fame: 0
+});
 
 const ADDRESSES: readonly RankedAddress[] = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6'].map((name) => address(name));
 

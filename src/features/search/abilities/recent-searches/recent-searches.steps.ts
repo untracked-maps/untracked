@@ -21,7 +21,7 @@ const placeNamed = (name: string): RecentPlace => ({
   id: name,
   name,
   kind: 'attraction',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.3522, latitude: 48.8566 }
 });
 

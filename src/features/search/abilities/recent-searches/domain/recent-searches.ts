@@ -17,7 +17,7 @@ import {
 } from 'rxjs';
 import type { Found } from '../../../domain/found';
 
-type RecentPlace = Pick<Found, 'id' | 'name' | 'kind' | 'address' | 'coordinates'>;
+type RecentPlace = Pick<Found, 'id' | 'name' | 'kind' | 'address' | 'coordinates'> & { readonly cuisine?: string };
 
 type RecentPlaces = readonly RecentPlace[];
 
@@ -45,10 +45,11 @@ type Change = (kept: Kept) => Kept;
 
 const MOST_RECENT = 8;
 
-const recentOf = ({ id, name, kind, address, coordinates: { longitude, latitude } }: RecentPlace): RecentPlace => ({
+const recentOf = ({ id, name, kind, cuisine, address, coordinates: { longitude, latitude } }: RecentPlace): RecentPlace => ({
   id,
   name,
   kind,
+  ...(cuisine === undefined ? {} : { cuisine }),
   address,
   coordinates: { longitude, latitude }
 });

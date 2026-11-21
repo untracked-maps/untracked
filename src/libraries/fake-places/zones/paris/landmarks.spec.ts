@@ -12,9 +12,24 @@ describe('landmarks', () => {
       id: 'tour-eiffel',
       name: 'Tour Eiffel',
       kind: 'attraction',
-      address: '5 avenue Anatole France, 75007 Paris',
+      address: {
+        houseNumber: '5',
+        street: 'avenue Anatole France',
+        postalCode: '75007',
+        addressLocality: 'Paris',
+        addressCountry: 'FR'
+      },
       coordinates: { longitude: 2.294_48, latitude: 48.858_26 },
       fame: 99
+    });
+  });
+
+  it('may name a street without a house number', () => {
+    expect(landmarks()[1]?.address).toEqual({
+      street: 'Rue de Rivoli',
+      postalCode: '75001',
+      addressLocality: 'Paris',
+      addressCountry: 'FR'
     });
   });
 

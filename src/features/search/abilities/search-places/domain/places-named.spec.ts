@@ -10,7 +10,7 @@ const place = (id: string, name: string, changes: Partial<Place> = {}): Place =>
   id,
   name,
   kind: 'hotel',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: CENTRE,
   fame: 0,
   ...changes

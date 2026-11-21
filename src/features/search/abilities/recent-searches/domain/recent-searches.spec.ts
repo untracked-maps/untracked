@@ -8,7 +8,7 @@ const placeNamed = (name: string): RecentPlace & Pick<Place, 'kind'> => ({
   id: name.toLowerCase(),
   name,
   kind: 'museum',
-  address: `${name}, Paris`,
+  address: { street: name, postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.35, latitude: 48.85 }
 });
 
@@ -16,7 +16,8 @@ const LOUVRE = placeNamed('Louvre');
 const ORSAY = placeNamed('Orsay');
 const FAMOUS_LOUVRE: Place = { ...LOUVRE, fame: 98 };
 const NINE: RecentPlaces = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].map(placeNamed);
-const CHOSEN: Readonly<Record<string, RecentPlace>> = { l: LOUVRE, o: ORSAY, f: FAMOUS_LOUVRE };
+const TRATTORIA: RecentPlace = { ...placeNamed('Trattoria'), kind: 'restaurant', cuisine: 'italian' };
+const CHOSEN: Readonly<Record<string, RecentPlace>> = { l: LOUVRE, o: ORSAY, f: FAMOUS_LOUVRE, t: TRATTORIA };
 
 const storeNowhere: StoreRecents = () => of(undefined);
 
@@ -36,7 +37,7 @@ type Expectation = {
 
 const expectRecents = (kept: Readonly<Record<string, RecentPlaces>>, marbles: Marbles): Expectation => ({
   toBe: (expected: string, values: Readonly<Record<string, RecentPlaces>>): void =>
-    new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted)).run(({ cold, expectObservable }: Run) => {
+    new TestScheduler((actual, wanted) => expect(actual).toStrictEqual(wanted)).run(({ cold, expectObservable }: Run) => {
       const recents$ = recentSearches({
         storedRecents: () => cold(marbles.stored ?? 's', kept),
         storeRecents: marbles.storeRecents ?? storeNowhere
@@ -106,6 +107,10 @@ describe('recent searches', () => {
 
   it('keep only what a recent search needs of the place chosen', () => {
     expectRecents({ s: [] }, { chosen: '-f' }).toBe('sf', { s: [], f: [LOUVRE] });
+  });
+
+  it('keep the cuisine of a restaurant chosen', () => {
+    expectRecents({ s: [] }, { chosen: '-t' }).toBe('st', { s: [], t: [TRATTORIA] });
   });
 
   it('forget every place when cleared', () => {

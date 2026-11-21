@@ -7,7 +7,7 @@ const LOUVRE: Place = {
   id: 'musee-du-louvre',
   name: 'Musée du Louvre',
   kind: 'museum',
-  address: 'Rue de Rivoli, 75001 Paris',
+  address: { houseNumber: '1', street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.337_64, latitude: 48.860_61 },
   fame: 98
 };
@@ -22,6 +22,7 @@ const placesServed = (body: unknown): Promise<readonly Place[]> =>
 
 const INVALID_PLACES: readonly (readonly [string, unknown])[] = [
   ['a value that is not an object', 'Louvre'],
+  ['no value', null],
   ['no id', { ...LOUVRE, id: undefined }],
   ['an id that is not text', { ...LOUVRE, id: 1 }],
   ['no name', { ...LOUVRE, name: undefined }],
@@ -29,7 +30,12 @@ const INVALID_PLACES: readonly (readonly [string, unknown])[] = [
   ['no kind', { ...LOUVRE, kind: undefined }],
   ['an unknown kind', { ...LOUVRE, kind: 'castle' }],
   ['no address', { ...LOUVRE, address: undefined }],
-  ['an address that is not text', { ...LOUVRE, address: 1 }],
+  ['an address that is not an object', { ...LOUVRE, address: 'Rue de Rivoli, 75001 Paris' }],
+  ['an address without postal code', { ...LOUVRE, address: { ...LOUVRE.address, postalCode: undefined } }],
+  ['an address without locality', { ...LOUVRE, address: { ...LOUVRE.address, addressLocality: undefined } }],
+  ['an address without country', { ...LOUVRE, address: { ...LOUVRE.address, addressCountry: 1 } }],
+  ['a street that is not text', { ...LOUVRE, address: { ...LOUVRE.address, street: 1 } }],
+  ['a house number that is not text', { ...LOUVRE, address: { ...LOUVRE.address, houseNumber: 1 } }],
   ['no coordinates', { ...LOUVRE, coordinates: undefined }],
   ['coordinates that are not an object', { ...LOUVRE, coordinates: '2.3, 48.8' }],
   ['no longitude', { ...LOUVRE, coordinates: { latitude: 48.86 } }],
@@ -47,6 +53,23 @@ describe('prerendered places', () => {
 
   it.each(INVALID_PLACES)('leaves out a place with %s', async (_, invalid) => {
     expect(await placesServed([invalid, LOUVRE])).toEqual([LOUVRE]);
+  });
+
+  it('reads an address without a house number', async () => {
+    const { houseNumber: _, ...street } = LOUVRE.address;
+    const unnumbered: Place = { ...LOUVRE, address: street };
+
+    expect(await placesServed([unnumbered])).toEqual([unnumbered]);
+  });
+
+  it('reads the cuisine of a place', async () => {
+    const restaurant: Place = { ...LOUVRE, kind: 'restaurant', cuisine: 'italian' };
+
+    expect(await placesServed([restaurant])).toEqual([restaurant]);
+  });
+
+  it('leaves out a cuisine that is not text', async () => {
+    expect(await placesServed([{ ...LOUVRE, cuisine: 1 }])).toEqual([LOUVRE]);
   });
 
   it('reads no place from a file that is not a list', async () => {

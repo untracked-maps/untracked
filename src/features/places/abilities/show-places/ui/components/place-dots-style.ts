@@ -3,9 +3,9 @@ import type {
   GeoJSONSourceSpecification,
   SymbolLayerSpecification
 } from '@maplibre/maplibre-gl-style-spec';
+import COLOURS from '../../../../ui/components/place-name-colours.json' with { type: 'json' };
 import type { PlaceDot } from '../../domain/show-places';
 import { PLACE_DOT_ICON_PREFIX, WITHOUT_FAMILY } from './place-dot-icon';
-import COLOURS from './place-name-colours.json' with { type: 'json' };
 
 type PlaceNamesPalette = 'light' | 'dark';
 

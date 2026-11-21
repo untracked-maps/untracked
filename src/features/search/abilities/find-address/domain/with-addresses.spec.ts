@@ -6,13 +6,21 @@ import { withAddressesOf } from './with-addresses';
 
 const CENTRE = { longitude: 2.3522, latitude: 48.8566 };
 
-const BAR: Place = { id: 'bar-vaugirard', name: 'Bar Vaugirard', kind: 'bar', address: '', coordinates: CENTRE, fame: 0 };
+const BAR: Place = {
+  id: 'bar-vaugirard',
+  name: 'Bar Vaugirard',
+  kind: 'bar',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
+  coordinates: CENTRE,
+  fame: 0
+};
 
 const VAUGIRARD: KnownAddress = {
   kind: 'street',
   street: 'Rue de Vaugirard',
   postcode: '75006',
   city: 'Paris',
+  country: 'FR',
   coordinates: CENTRE
 };
 

@@ -1,51 +1,50 @@
-import { addressPartsOf } from './address-parts';
-import type { FakePlace } from './fake-place';
+import type { FakePlace, FakePostalAddress } from './fake-place';
 import { fakePlaces } from './fake-places';
 import type { FakeDistrictOfZone, FakeZone } from './fake-zone';
 
 type FakeCoordinates = FakePlace['coordinates'];
 
-type FakeStreetAddress = {
+type FakeLocality = Pick<FakePostalAddress, 'postalCode' | 'addressLocality' | 'addressCountry'>;
+
+type FakeStreetAddress = FakeLocality & {
   readonly kind: 'address' | 'street';
   readonly address: string;
-  readonly number?: string;
+  readonly houseNumber?: string;
   readonly street: string;
-  readonly postcode: string;
-  readonly city: string;
   readonly coordinates: FakeCoordinates;
 };
 
-type FakeDistrict = {
+type FakeDistrict = FakeLocality & {
   readonly kind: 'district';
   readonly name: string;
-  readonly postcode: string;
-  readonly city: string;
   readonly coordinates: FakeCoordinates;
 };
 
 type FakeAddress = FakeStreetAddress | FakeDistrict;
 
-const streetAddressOf = ({ address, coordinates }: FakePlace): readonly FakeStreetAddress[] =>
-  addressPartsOf(address).map(
-    ({ number, street, postcode, city }): FakeStreetAddress =>
-      number === undefined
-        ? { kind: 'street', address, street, postcode, city, coordinates }
-        : { kind: 'address', address, number, street, postcode, city, coordinates }
-  );
+const lineOf = ({ houseNumber, street, postalCode, addressLocality }: FakePostalAddress): string =>
+  [[houseNumber, street].filter((part) => part !== undefined).join(' '), `${postalCode} ${addressLocality}`].join(', ');
+
+const streetAddressOf = ({ address, coordinates }: FakePlace): readonly FakeStreetAddress[] => {
+  const { houseNumber, street, postalCode, addressLocality, addressCountry } = address;
+  const located = { address: lineOf(address), street, postalCode, addressLocality, addressCountry, coordinates };
+  return [houseNumber === undefined ? { kind: 'street', ...located } : { kind: 'address', houseNumber, ...located }];
+};
 
 const districtOf =
-  (city: string) =>
+  ({ city, country }: FakeZone) =>
   ({ name, postcode, coordinates }: FakeDistrictOfZone): FakeDistrict => ({
     kind: 'district',
     name,
-    postcode,
-    city,
+    postalCode: postcode,
+    addressLocality: city,
+    addressCountry: country,
     coordinates
   });
 
 const fakeAddresses = (zone: FakeZone): readonly FakeAddress[] => [
   ...fakePlaces(zone).flatMap(streetAddressOf),
-  ...zone.districts.map(districtOf(zone.city))
+  ...zone.districts.map(districtOf(zone))
 ];
 
 export { fakeAddresses };

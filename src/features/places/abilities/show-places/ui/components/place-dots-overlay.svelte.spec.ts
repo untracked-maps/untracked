@@ -2,10 +2,11 @@ import { type GeoJSONSource, Map as MapLibreMap, type StyleSpecification, setWor
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { BehaviorSubject, type Observable, of, type Subscription } from 'rxjs';
 import { describe, expect, it, onTestFinished, vi } from 'vitest';
-import { type Place, showPlaces } from '../../domain/show-places';
+import { type Place, type PlaceDot, showPlaces } from '../../domain/show-places';
 import { placeDotsOverlay } from './place-dots-overlay';
 
 const EIFFEL: Place = {
+  id: 'tour-eiffel',
   name: 'Tour Eiffel',
   kind: 'attraction',
   family: 'sight',
@@ -32,7 +33,8 @@ const STYLE: StyleSpecification = {
 
 const OTHER_STYLE: StyleSpecification = { ...STYLE, layers: [{ id: 'water', type: 'background' }, ...STYLE.layers] };
 
-const shownPlaces = showPlaces({ loadPlaces: (): Observable<readonly Place[]> => of([EIFFEL, CAMILLE]) });
+const shownPlaces = (zoom$: Observable<number>): Observable<readonly PlaceDot[]> =>
+  showPlaces({ loadPlaces: (): Observable<readonly Place[]> => of([EIFFEL, CAMILLE]) })(zoom$, of(undefined));
 
 const mapOn = (style?: StyleSpecification): MapLibreMap => {
   setWorkerUrl(workerUrl);

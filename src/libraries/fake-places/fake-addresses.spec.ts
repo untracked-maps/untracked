@@ -13,14 +13,15 @@ const SAINT_MALO: FakeZone = {
 };
 
 describe('fake addresses', () => {
-  it('start with the address of the first place, in parts', () => {
+  it('start with the address of the first place, in components', () => {
     expect(ADDRESSES[0]).toEqual({
       kind: 'address',
       address: '5 avenue Anatole France, 75007 Paris',
-      number: '5',
+      houseNumber: '5',
       street: 'avenue Anatole France',
-      postcode: '75007',
-      city: 'Paris',
+      postalCode: '75007',
+      addressLocality: 'Paris',
+      addressCountry: 'FR',
       coordinates: { longitude: 2.294_48, latitude: 48.858_26 }
     });
   });
@@ -30,8 +31,9 @@ describe('fake addresses', () => {
       kind: 'street',
       address: 'Rue de Rivoli, 75001 Paris',
       street: 'Rue de Rivoli',
-      postcode: '75001',
-      city: 'Paris',
+      postalCode: '75001',
+      addressLocality: 'Paris',
+      addressCountry: 'FR',
       coordinates: { longitude: 2.337_64, latitude: 48.860_61 }
     });
   });
@@ -48,8 +50,9 @@ describe('fake addresses', () => {
     expect(fakeAddresses(SAINT_MALO).at(-1)).toEqual({
       kind: 'district',
       name: 'Intra-Muros',
-      postcode: '35400',
-      city: 'Saint-Malo',
+      postalCode: '35400',
+      addressLocality: 'Saint-Malo',
+      addressCountry: 'FR',
       coordinates: { longitude: -2.025, latitude: 48.649 }
     });
   });

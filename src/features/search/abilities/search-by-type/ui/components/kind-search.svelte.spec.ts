@@ -10,7 +10,7 @@ const GARCIA: Place = {
   id: 'boulangerie-garcia',
   name: 'Boulangerie Garcia',
   kind: 'bakery',
-  address: '97 Rue de Paris, 75019 Paris',
+  address: { houseNumber: '97', street: 'Rue de Paris', postalCode: '75019', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.35, latitude: 48.86 },
   fame: 0
 };
@@ -137,12 +137,12 @@ describe('places of the kind shown', () => {
     await expect.element(page.getByRole('status')).toBeInTheDocument();
   });
 
-  it('close, then fly to the place chosen', async () => {
+  it('stay open under the place chosen, to come back once its sheet is closed', async () => {
     const { events } = await shown(FOUND);
 
     await garcia().click();
 
-    expect(events).toEqual(['closed', 'boulangerie-garcia']);
+    expect(events).toEqual(['boulangerie-garcia']);
   });
 
   it('give the focus back to the chip of the kind once a place is chosen', async () => {

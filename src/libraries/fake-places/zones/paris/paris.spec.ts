@@ -11,7 +11,13 @@ describe('the fake Paris', () => {
         id: 'fake-paris-0001',
         name: 'Pharmacie Vincent',
         kind: 'pharmacy',
-        address: '44 Passage Delesseux, 75015 Paris',
+        address: {
+          houseNumber: '44',
+          street: 'Passage Delesseux',
+          postalCode: '75015',
+          addressLocality: 'Paris',
+          addressCountry: 'FR'
+        },
         coordinates: { longitude: 2.325_07, latitude: 48.850_07 },
         fame: 0
       }
@@ -30,8 +36,9 @@ describe('the fake Paris', () => {
     expect(fakeAddresses(PARIS).at(-9)).toEqual({
       kind: 'district',
       name: 'Paris 12e Arrondissement',
-      postcode: '75012',
-      city: 'Paris',
+      postalCode: '75012',
+      addressLocality: 'Paris',
+      addressCountry: 'FR',
       coordinates: { longitude: 2.421_33, latitude: 48.834_97 }
     });
   });

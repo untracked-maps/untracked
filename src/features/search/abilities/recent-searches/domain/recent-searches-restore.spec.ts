@@ -5,7 +5,13 @@ import { type RecentPlace, type RecentPlaces, recentSearches } from './recent-se
 
 const placeNamed = (name: string): RecentPlace => {
   const id = name.toLowerCase();
-  return { id, name, address: `${name}, Paris`, kind: 'museum', coordinates: { latitude: 48.85, longitude: 2.35 } };
+  return {
+    id,
+    name,
+    address: { street: name, postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
+    kind: 'museum',
+    coordinates: { latitude: 48.85, longitude: 2.35 }
+  };
 };
 
 const LOUVRE = placeNamed('Louvre');

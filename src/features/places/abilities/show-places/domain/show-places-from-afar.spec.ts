@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { type Place, showPlaces } from './show-places';
 
 const LAFAYETTE: Place = {
+  id: 'galeries-lafayette',
   name: 'Galeries Lafayette',
   kind: 'department-store',
   family: 'shop',
@@ -12,6 +13,7 @@ const LAFAYETTE: Place = {
 };
 
 const NORD: Place = {
+  id: 'gare-du-nord',
   name: 'Gare du Nord',
   kind: 'station',
   family: 'train',
@@ -21,7 +23,7 @@ const NORD: Place = {
 };
 
 const shownAt = async (zoom: number, place: Place): Promise<readonly (readonly [string, number])[]> => {
-  const dots$ = showPlaces({ loadPlaces: () => of([place]) })(of(zoom));
+  const dots$ = showPlaces({ loadPlaces: () => of([place]) })(of(zoom), of(undefined));
   return (await firstValueFrom(dots$)).map(({ name, order }) => [name, order]);
 };
 
