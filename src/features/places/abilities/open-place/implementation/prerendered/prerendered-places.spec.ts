@@ -48,6 +48,15 @@ describe('prerendered places of the sheet', () => {
     expect(await placesServed([VERT_GALANT])).toEqual([VERT_GALANT]);
   });
 
+  it('reads an address without house number nor street', async () => {
+    const square: SheetPlace = {
+      ...VERT_GALANT,
+      address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' }
+    };
+
+    expect(await placesServed([square])).toEqual([square]);
+  });
+
   it.each(INVALID_PLACES)('leaves out a place with %s', async (_, invalid) => {
     expect(await placesServed([invalid, VERT_GALANT])).toEqual([VERT_GALANT]);
   });

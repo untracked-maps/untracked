@@ -20,13 +20,15 @@ const NUMBER = /^\d{1,3}$/u;
 
 const RESTAURANTS = PLACES.filter(({ kind }) => kind === 'restaurant');
 
+const MANY_RESTAURANTS = generatedPlaces(SAINT_MALO, 2000).filter(({ kind }) => kind === 'restaurant');
+
 describe('generated places', () => {
   it('are as many as asked', () => {
     expect(PLACES).toHaveLength(500);
   });
 
   it('are the same at every build', () => {
-    expect(generatedPlaces(SAINT_MALO, 1)).toEqual(generatedPlaces(SAINT_MALO, 1));
+    expect(generatedPlaces(SAINT_MALO, 500)).toEqual(PLACES);
   });
 
   it('are numbered from one after their zone', () => {
@@ -75,6 +77,24 @@ describe('the cuisines of generated places', () => {
 
   it('are given to restaurants only', () => {
     expect(PLACES.filter(({ kind, cuisine }) => kind !== 'restaurant' && cuisine !== undefined)).toEqual([]);
+  });
+
+  it('are the cuisines of OpenStreetMap that the sheet of a place names', () => {
+    expect(new Set(MANY_RESTAURANTS.map(({ cuisine }) => cuisine))).toEqual(
+      new Set([
+        undefined,
+        'french',
+        'italian',
+        'japanese',
+        'chinese',
+        'lebanese',
+        'indian',
+        'vietnamese',
+        'thai',
+        'greek',
+        'mexican'
+      ])
+    );
   });
 
   it('are of several kinds', () => {

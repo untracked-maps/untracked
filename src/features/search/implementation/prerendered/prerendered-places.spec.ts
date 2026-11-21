@@ -22,6 +22,7 @@ const placesServed = (body: unknown): Promise<readonly Place[]> =>
 
 const INVALID_PLACES: readonly (readonly [string, unknown])[] = [
   ['a value that is not an object', 'Louvre'],
+  ['no value', null],
   ['no id', { ...LOUVRE, id: undefined }],
   ['an id that is not text', { ...LOUVRE, id: 1 }],
   ['no name', { ...LOUVRE, name: undefined }],

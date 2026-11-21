@@ -40,7 +40,17 @@
     readonly closings?: Observable<unknown>;
   };
 
-  const { state, onWake, onQuery, onChoose, lead, suggestions, ready = true, onOpen, closings = NEVER }: Props = $props();
+  const {
+    state,
+    onWake,
+    onQuery,
+    onChoose,
+    lead,
+    suggestions,
+    ready = true,
+    onOpen = (): void => undefined,
+    closings = NEVER
+  }: Props = $props();
 
   const uid = $props.id();
 
@@ -90,7 +100,7 @@
 
   const tellTextIsLeft = ({ text }: Combobox): void => {
     if (text !== '') {
-      onOpen?.(true);
+      onOpen(true);
     }
   };
 
@@ -108,7 +118,7 @@
 
   const isOpen = $derived($combobox.open || $combobox.text !== '');
 
-  $effect(() => onOpen?.(isOpen));
+  $effect(() => onOpen(isOpen));
 
   const move = (step: 1 | -1) => (): void => events.next({ kind: 'moved', step });
 

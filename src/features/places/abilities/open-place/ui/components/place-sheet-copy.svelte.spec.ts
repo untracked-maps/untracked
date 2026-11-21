@@ -23,10 +23,15 @@ const STATUE: SheetPlace = { id: 'statue', name: 'Statue', coordinates: { longit
 
 const ADDRESS = '172 Boulevard Saint-Germain, 75006 Paris';
 
-const copiesOf = async (place: SheetPlace): Promise<readonly string[]> => {
+type Copying = {
+  readonly copies: readonly string[];
+  readonly unmount: () => void;
+};
+
+const copying = async (place: SheetPlace): Promise<Copying> => {
   const copies: string[] = [];
   const sheet: PlaceSheet = { status: 'open', place, from: 'kind list' };
-  await render(PlaceSheetCard, {
+  const { unmount } = await render(PlaceSheetCard, {
     sheet: of(sheet),
     onClose: (): void => undefined,
     onCopy: (text: string): void => {
@@ -36,8 +41,10 @@ const copiesOf = async (place: SheetPlace): Promise<readonly string[]> => {
       copies.push(`vibrated ${milliseconds} ms`);
     }
   });
-  return copies;
+  return { copies, unmount };
 };
+
+const copiesOf = async (place: SheetPlace): Promise<readonly string[]> => (await copying(place)).copies;
 
 const pointer = (type: string, x: number, y: number): PointerEvent =>
   new PointerEvent(type, { bubbles: true, clientX: x, clientY: y, pointerId: 1, isPrimary: true });
@@ -124,6 +131,17 @@ describe('a long press on the address', () => {
     const copies = await copiesOf(FLORE);
 
     await pressedFor(600, pointer('pointercancel', 10, 10));
+
+    expect(copies).toEqual([]);
+  });
+
+  it('copies nothing once the sheet is gone', async () => {
+    const { copies, unmount } = await copying(FLORE);
+    await vi.waitFor(() => page.getByText(ADDRESS).element());
+    const address = page.getByText(ADDRESS).element();
+    unmount();
+    address.dispatchEvent(pointer('pointerdown', 10, 10));
+    await pause(600);
 
     expect(copies).toEqual([]);
   });

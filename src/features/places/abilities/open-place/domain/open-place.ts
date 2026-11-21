@@ -69,6 +69,8 @@ type CopyAddressPorts = {
 
 const CLOSED: PlaceSheet = { status: 'closed' };
 
+const openedPlaceOf = (sheet: PlaceSheet): SheetPlace | undefined => (sheet.status === 'open' ? sheet.place : undefined);
+
 const sheetOf =
   ({ id, from }: Opening) =>
   (places: readonly SheetPlace[]): PlaceSheet => {
@@ -109,6 +111,7 @@ export {
   copyAddress,
   type LoadPlaces,
   type Opening,
+  openedPlaceOf,
   openPlace,
   type PlaceSheet,
   type PostalAddress,

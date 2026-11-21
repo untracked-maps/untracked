@@ -5,7 +5,7 @@ type Typed = Pick<SheetPlace, 'kind' | 'cuisine'>;
 
 type Label = () => string;
 
-const TYPES: ReadonlyMap<string, Label> = new Map([
+const TYPES: ReadonlyMap<string | undefined, Label> = new Map<string | undefined, Label>([
   ['restaurant', m.place_sheet_type_restaurant],
   ['cafe', m.place_sheet_type_cafe],
   ['bar', m.place_sheet_type_bar],
@@ -34,7 +34,7 @@ const TYPES: ReadonlyMap<string, Label> = new Map([
   ['station', m.place_sheet_type_station]
 ]);
 
-const CUISINES: ReadonlyMap<string, Label> = new Map([
+const CUISINES: ReadonlyMap<string | undefined, Label> = new Map<string | undefined, Label>([
   ['french', m.place_sheet_cuisine_french],
   ['italian', m.place_sheet_cuisine_italian],
   ['japanese', m.place_sheet_cuisine_japanese],
@@ -48,8 +48,8 @@ const CUISINES: ReadonlyMap<string, Label> = new Map([
 ]);
 
 const typeOf = ({ kind, cuisine }: Typed): string => {
-  const type = (TYPES.get(kind ?? '') ?? m.place_sheet_type_none)();
-  const cuisineName = CUISINES.get(cuisine ?? '');
+  const type = (TYPES.get(kind) ?? m.place_sheet_type_none)();
+  const cuisineName = CUISINES.get(cuisine);
   return cuisineName === undefined ? type : m.place_sheet_type_with_cuisine({ type, cuisine: cuisineName() });
 };
 
