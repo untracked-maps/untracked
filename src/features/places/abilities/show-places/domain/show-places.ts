@@ -24,6 +24,7 @@ type Coordinates = {
 };
 
 type Place = {
+  readonly id: string;
   readonly name: string;
   readonly kind: string;
   readonly family: Family | undefined;
@@ -110,10 +111,11 @@ const stepOf = (zoom: number): number => Math.floor(zoom / ZOOM_STEP) * ZOOM_STE
 
 const showPlaces =
   ({ loadPlaces }: ShowPlacesPorts) =>
-  (zoom$: Observable<number>): Observable<readonly PlaceDot[]> =>
+  (zoom$: Observable<number>, open$: Observable<string | undefined>): Observable<readonly PlaceDot[]> =>
     combineLatest([
       defer(loadPlaces).pipe(catchError(() => of<readonly Place[]>([]))),
-      zoom$.pipe(map(stepOf), distinctUntilChanged())
-    ]).pipe(map(([places, zoom]) => dotsAt(zoom)(places)));
+      zoom$.pipe(map(stepOf), distinctUntilChanged()),
+      open$
+    ]).pipe(map(([places, zoom, open]) => dotsAt(zoom)(places.filter(({ id }) => id !== open))));
 
 export { FAMILIES, type Family, type LoadPlaces, type Place, type PlaceDot, showPlaces };

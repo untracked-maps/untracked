@@ -16,6 +16,7 @@ const LOUVRE = {
 };
 
 const LOUVRE_ON_MAP: Place = {
+  id: 'musee-du-louvre',
   name: 'Musée du Louvre',
   kind: 'museum',
   family: 'culture',
@@ -36,6 +37,8 @@ const placesRead = (content: unknown, url = PLACES_FILE): Promise<readonly Place
 
 const FLAWED_PLACES: readonly { readonly flaw: string; readonly place: unknown }[] = [
   { flaw: 'is not an object', place: 'Musée du Louvre' },
+  { flaw: 'has no id', place: { ...LOUVRE, id: undefined } },
+  { flaw: 'has an id that is not text', place: { ...LOUVRE, id: 1 } },
   { flaw: 'has no name', place: { ...LOUVRE, name: undefined } },
   { flaw: 'has a name that is not text', place: { ...LOUVRE, name: 1 } },
   { flaw: 'has no kind', place: { ...LOUVRE, kind: undefined } },

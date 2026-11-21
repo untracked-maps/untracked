@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, defer, firstValueFrom, map, type Observable, Subject, shareReplay } from 'rxjs';
+import { BehaviorSubject, combineLatest, defer, firstValueFrom, map, type Observable, of, Subject, shareReplay } from 'rxjs';
 import type { ColourScheme } from '#features/appearance/abilities/choose-theme/domain/choose-theme';
 import { BASEMAPS, type Basemap, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
 import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
@@ -9,6 +9,16 @@ import { showTransitLines, type TransitLine } from '#features/map/abilities/show
 import { idfmTransitLines } from '#features/map/abilities/show-transit-lines/implementation/idfm/idfm-transit-lines';
 import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
 import { type Notice, showNotice } from '#features/notices/abilities/show-notice/domain/show-notice';
+import {
+  type Coordinates,
+  type InspectedSpot,
+  inspectPoint
+} from '#features/places/abilities/inspect-point/domain/inspect-point';
+import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
+import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
+import { copyAddress, type Opening, openPlace, type PlaceSheet } from '#features/places/abilities/open-place/domain/open-place';
+import { clipboardCopy } from '#features/places/abilities/open-place/implementation/browser/clipboard';
+import { prerenderedPlaces as prerenderedPlacesOfSheet } from '#features/places/abilities/open-place/implementation/prerendered/prerendered-places';
 import { type PlaceDot, showPlaces } from '#features/places/abilities/show-places/domain/show-places';
 import { prerenderedPlaces as prerenderedPlacesOnMap } from '#features/places/abilities/show-places/implementation/prerendered/prerendered-places';
 import { findAddress } from '#features/search/abilities/find-address/domain/find-address';
@@ -18,6 +28,7 @@ import type { IndexPlaces } from '#features/search/abilities/search-places/domai
 import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
 import type { LoadPlaces } from '#features/search/domain/place';
 import { prerenderedPlaces } from '#features/search/implementation/prerendered/prerendered-places';
+import { m } from '#i18n/messages';
 import { browser } from '$app/env';
 import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
@@ -52,17 +63,60 @@ const noticeBoard = (): Notices => {
 
 type SheetHeights = {
   readonly spot: (height: number) => void;
+  readonly place: (height: number) => void;
   readonly list: (height: number) => void;
   readonly tallest: Observable<number>;
 };
 
 const sheetHeights = (): SheetHeights => {
   const spot = new BehaviorSubject(0);
+  const place = new BehaviorSubject(0);
   const list = new BehaviorSubject(0);
   return {
     spot: (height) => spot.next(height),
+    place: (height) => place.next(height),
     list: (height) => list.next(height),
-    tallest: combineLatest([spot, list]).pipe(map((heights) => Math.max(...heights)))
+    tallest: combineLatest([spot, place, list]).pipe(map((heights) => Math.max(...heights)))
+  };
+};
+
+type PlaceSheets = {
+  readonly sheet: Observable<PlaceSheet>;
+  readonly open: (opening: Opening) => void;
+  readonly close: () => void;
+  readonly copy: (text: string) => void;
+  readonly vibrate: (milliseconds: number) => void;
+};
+
+const COPY_NOTICES = { copied: m.place_sheet_address_copied, 'not copied': m.place_sheet_address_not_copied };
+
+const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices): PlaceSheets => {
+  const opened = new Subject<Opening>();
+  const closed = new Subject<void>();
+  const copy = copyAddress({ copyText: clipboardCopy(browser ? navigator.clipboard : undefined) });
+  return {
+    sheet: openPlace({ loadPlaces: prerenderedPlacesOfSheet(fetchPlaces, resolve('/data/places.json')) })({ opened, closed }),
+    open: (opening) => opened.next(opening),
+    close: () => closed.next(),
+    copy: (text) => copy(of(text)).subscribe((copied) => notices.tell({ text: COPY_NOTICES[copied]() })),
+    vibrate: (milliseconds) => navigator.vibrate?.(milliseconds)
+  };
+};
+
+type Spots = {
+  readonly spot: Observable<InspectedSpot>;
+  readonly inspect: (spot: Coordinates) => void;
+  readonly dismiss: () => void;
+};
+
+const spotsInspected = (): Spots => {
+  const inspected = new Subject<Coordinates>();
+  const dismissed = new Subject<void>();
+  const reverseGeocode = nearestAddress(prerenderedAddresses(fetchFile, resolve('/data/addresses.json')));
+  return {
+    spot: inspectPoint({ reverseGeocode })({ inspected, dismissed }),
+    inspect: (spot) => inspected.next(spot),
+    dismiss: () => dismissed.next()
   };
 };
 
@@ -102,6 +156,8 @@ type Loaded = {
   readonly search: SearchSources;
   readonly notices: Notices;
   readonly sheetHeights: SheetHeights;
+  readonly places: PlaceSheets;
+  readonly spots: Spots;
   readonly placesShown: (zoom$: Observable<number>) => Observable<readonly PlaceDot[]>;
 };
 
@@ -127,12 +183,18 @@ const mapLayers = (colourScheme: Observable<ColourScheme>): MapLayers => {
 export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
   const { theme } = await parent();
   const fetchPlaces = fetchedOnce(resolve('/data/places.json'));
+  const notices = noticeBoard();
+  const places = placeSheets(fetchPlaces, notices);
+  const openId = places.sheet.pipe(map((sheet) => (sheet.status === 'open' ? sheet.place.id : undefined)));
+  const shownOnMap = showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) });
   return {
     ...data,
     search: searchSources(fetchPlaces),
-    notices: noticeBoard(),
+    notices,
     sheetHeights: sheetHeights(),
-    placesShown: showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) }),
+    places,
+    spots: spotsInspected(),
+    placesShown: (zoom$) => shownOnMap(zoom$, openId),
     layers: mapLayers(theme.colourScheme)
   };
 };

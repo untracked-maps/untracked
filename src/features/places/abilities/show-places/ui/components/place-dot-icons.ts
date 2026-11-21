@@ -1,4 +1,4 @@
-import DRAWINGS from './place-dot-drawings.json' with { type: 'json' };
+import DRAWINGS from '../../../../ui/components/place-dot-drawings.json' with { type: 'json' };
 import { PLACE_DOT_ICON_PREFIX } from './place-dot-icon';
 
 type PlaceDotIcon = {
