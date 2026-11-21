@@ -80,7 +80,7 @@
   id="{uid}-dialog"
   aria-labelledby="{uid}-title"
   aria-describedby={description === undefined ? undefined : `${uid}-description`}
-  class={{ swiping: $swipe.follows === true, closing: $swipe.closing }}
+  class={[$swipe.follows === true && 'swiping', $swipe.closing && 'closing']}
   {@attach drawn(swipeOffset($swipe), backdropShare($swipe))}
   closedby="any"
   onbeforetoggle={toggled}
