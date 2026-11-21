@@ -6,7 +6,6 @@ import './inspected-spot-overlay.css';
 
 type SpotActions = {
   readonly onInspect: (spot: Coordinates) => void;
-  readonly onDismiss: () => void;
 };
 
 const coordinatesOf = (lngLat: LngLat): Coordinates => {
@@ -25,13 +24,13 @@ const pointerEvents =
       };
     });
 
-const keysOn = (target: MapLibreMap, key: string): Observable<KeyboardEvent> =>
-  fromEvent<KeyboardEvent>(target.getCanvas(), 'keydown').pipe(filter((event) => event.key === key));
+const enterPresses = (target: MapLibreMap): Observable<KeyboardEvent> =>
+  fromEvent<KeyboardEvent>(target.getCanvas(), 'keydown').pipe(filter((event) => event.key === 'Enter'));
 
 const inspections = (target: MapLibreMap): Observable<Coordinates> =>
   merge(
     merge(pointerEvents(target)('click'), pointerEvents(target)('contextmenu')).pipe(map(({ lngLat }) => lngLat)),
-    keysOn(target, 'Enter').pipe(map(() => target.getCenter()))
+    enterPresses(target).pipe(map(() => target.getCenter()))
   ).pipe(map(coordinatesOf));
 
 const spotMark = (): HTMLElement => {
@@ -44,6 +43,8 @@ const spotMark = (): HTMLElement => {
 
 const isClosing = ([before, after]: readonly [InspectedSpot, InspectedSpot]): boolean =>
   before.kind !== 'none' && after.kind === 'none';
+
+const isTypedIn = (): boolean => document.activeElement instanceof HTMLInputElement;
 
 const markedSpots = (target: MapLibreMap, spot$: Observable<InspectedSpot>): Observable<InspectedSpot> =>
   defer(() => {
@@ -60,17 +61,13 @@ const focusBack = (target: MapLibreMap, spot$: Observable<InspectedSpot>): Obser
   spot$.pipe(
     pairwise(),
     filter(isClosing),
+    filter(() => !isTypedIn()),
     tap(() => target.getCanvas().focus())
   );
 
 const inspectedSpotOverlay =
-  (spot$: Observable<InspectedSpot>, { onInspect, onDismiss }: SpotActions) =>
+  (spot$: Observable<InspectedSpot>, { onInspect }: SpotActions) =>
   (target: MapLibreMap): Observable<unknown> =>
-    merge(
-      inspections(target).pipe(tap(onInspect)),
-      keysOn(target, 'Escape').pipe(tap(onDismiss)),
-      markedSpots(target, spot$),
-      focusBack(target, spot$)
-    );
+    merge(inspections(target).pipe(tap(onInspect)), markedSpots(target, spot$), focusBack(target, spot$));
 
 export { inspectedSpotOverlay };

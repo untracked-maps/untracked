@@ -1,10 +1,10 @@
 <script lang="ts">
   import BottomSheet from '#libraries/design/bottom-sheet.svelte';
+  import { closedWhenAsked } from '#libraries/design/closable';
   import CloseIcon from '#libraries/design/close-icon.svelte';
   import Suggestion from '#libraries/design/suggestion.svelte';
   import '#libraries/design/tokens.css';
-  import type { Observable } from 'rxjs';
-  import { on } from 'svelte/events';
+  import { NEVER, type Observable } from 'rxjs';
   import { m } from '#i18n/messages';
   import type { Place, PlaceKind } from '../../../../domain/place';
   import { detailsOf } from '../../../../ui/components/kind-labels';
@@ -21,9 +21,10 @@
     readonly ready?: boolean;
     readonly covered?: boolean;
     readonly onSheetHeight?: (height: number) => void;
+    readonly closings?: Observable<unknown>;
   };
 
-  const { search, onChoose, onChoosePlace, ready = true, covered = false, onSheetHeight }: Props = $props();
+  const { search, onChoose, onChoosePlace, ready = true, covered = false, onSheetHeight, closings = NEVER }: Props = $props();
 
   const uid = $props.id();
 
@@ -45,18 +46,14 @@
     onChoosePlace(place);
   };
 
-  const closeOnEscape =
+  const closeFrom =
     (kind: PlaceKind) =>
-    (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') {
-        close(kind)();
+    (list: HTMLElement): void => {
+      if (list.contains(document.activeElement)) {
+        focusChip(kind);
       }
+      onChoose();
     };
-
-  const closedOnEscape =
-    (kind: PlaceKind) =>
-    (element: HTMLElement): (() => void) =>
-      on(element, 'keydown', closeOnEscape(kind));
 </script>
 
 <div class="kind-search">
@@ -87,7 +84,7 @@
       reduceLabel={m.sheet_reduce()}
       onHeight={onSheetHeight}
     >
-      <section class="places" aria-labelledby="{uid}-title" {@attach closedOnEscape(shownKind)}>
+      <section class="places" aria-labelledby="{uid}-title" {@attach closedWhenAsked(closings, closeFrom(shownKind))}>
         <div class="heading">
           <h2 id="{uid}-title">{pluralOf(shownKind)}</h2>
           <button type="button" class="close" aria-label={m.search_by_type_close()} onclick={close(shownKind)}>

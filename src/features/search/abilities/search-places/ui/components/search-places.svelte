@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { closedWhenAsked } from '#libraries/design/closable';
   import CloseIcon from '#libraries/design/close-icon.svelte';
   import PinIcon from '#libraries/design/pin-icon.svelte';
   import SearchIcon from '#libraries/design/search-icon.svelte';
   import SignpostIcon from '#libraries/design/signpost-icon.svelte';
   import Suggestion from '#libraries/design/suggestion.svelte';
   import '#libraries/design/tokens.css';
-  import { type Observable, Subject } from 'rxjs';
+  import { NEVER, type Observable, Subject } from 'rxjs';
   import type { Snippet } from 'svelte';
   import { on } from 'svelte/events';
   import { m } from '#i18n/messages';
@@ -34,9 +35,11 @@
     readonly lead?: Snippet<[SearchPanel]>;
     readonly suggestions?: Snippet<[SearchPanel]>;
     readonly ready?: boolean;
+    readonly onOpen?: (open: boolean) => void;
+    readonly closings?: Observable<unknown>;
   };
 
-  const { state, onWake, onQuery, onChoose, lead, suggestions, ready = true }: Props = $props();
+  const { state, onWake, onQuery, onChoose, lead, suggestions, ready = true, onOpen, closings = NEVER }: Props = $props();
 
   const uid = $props.id();
 
@@ -57,10 +60,14 @@
 
   const focusField = (): void => document.querySelector<HTMLElement>(`#${CSS.escape(fieldId)}`)?.focus();
 
-  const settle = (text: string): void => {
-    focusField();
+  const settleUnfocused = (text: string): void => {
     events.next({ kind: 'chosen', text });
     onQuery(text);
+  };
+
+  const settle = (text: string): void => {
+    focusField();
+    settleUnfocused(text);
   };
 
   const clear = (): void => {
@@ -80,21 +87,34 @@
     }
   };
 
-  const dismiss = (current: Combobox): void => {
-    if (current.open) {
-      events.next(CLOSE);
-    } else {
-      typeText('');
+  const tellTextIsLeft = ({ text }: Combobox): void => {
+    if (text !== '') {
+      onOpen?.(true);
     }
   };
+
+  const close = (current: Combobox): void => {
+    if (current.open) {
+      focusField();
+      events.next(CLOSE);
+      tellTextIsLeft(current);
+    } else {
+      settleUnfocused('');
+    }
+  };
+
+  const closeNow = (): void => close($combobox);
+
+  const isOpen = $derived($combobox.open || $combobox.text !== '');
+
+  $effect(() => onOpen?.(isOpen));
 
   const move = (step: 1 | -1) => (): void => events.next({ kind: 'moved', step });
 
   const KEYS: ReadonlyMap<string, (current: Combobox) => void> = new Map([
     ['ArrowDown', move(1)],
     ['ArrowUp', move(-1)],
-    ['Enter', chooseActive],
-    ['Escape', dismiss]
+    ['Enter', chooseActive]
   ]);
 
   const press = (event: KeyboardEvent): void => {
@@ -120,19 +140,9 @@
     }
   };
 
-  const closeOnEscape = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape') {
-      focusField();
-      events.next(CLOSE);
-    }
-  };
-
   const keepFocus = (event: MouseEvent): void => event.preventDefault();
 
-  const hostedIn = (element: HTMLElement): void => {
-    on(element, 'mousedown', keepFocus);
-    on(element, 'keydown', closeOnEscape);
-  };
+  const hostedIn = (element: HTMLElement): (() => void) => on(element, 'mousedown', keepFocus);
 
   const pick =
     (place: Found) =>
@@ -142,7 +152,7 @@
     };
 </script>
 
-<search onfocusout={leave}>
+<search onfocusout={leave} {@attach closedWhenAsked(closings, closeNow)}>
   <label for={fieldId}>{m.search_places_label()}</label>
   <span class="field">
     <SearchIcon />

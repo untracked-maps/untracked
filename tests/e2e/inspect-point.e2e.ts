@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { spotCard, theMap } from './home-page';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const ADDRESSES_FILE = '**/data/addresses.json';
@@ -9,10 +10,6 @@ const BY_THE_LOUVRE = '#map=17/48.8606/2.3377';
 const NOTE_BY_THE_LOUVRE = 'https://www.openstreetmap.org/note/new#map=19/48.86060/2.33770';
 
 const OUT_OF_THE_OUTAGE_BANNER = { position: { x: 900, y: 200 } };
-
-const theMap = (page: Page): Locator => page.getByRole('region', { name: 'Map', exact: true });
-
-const spotCard = (page: Page): Locator => page.getByRole('region', { name: 'Rue de Rivoli' });
 
 const spotMark = (page: Page): Locator => page.getByRole('img', { name: 'Selected spot' });
 

@@ -1,6 +1,6 @@
-import { of } from 'rxjs';
+import { NEVER, type Observable, of, Subject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
 import type { Place, PlaceKind } from '../../../../domain/place';
 import type { KindSearch } from '../../domain/search-by-type';
@@ -19,13 +19,14 @@ const FOUND: KindSearch = { status: 'found', placeKind: 'pharmacy', places: [HUB
 
 const HUBERT_BUTTON = /^Pharmacie Hubert/u;
 
-const shown = async (search: KindSearch = FOUND): Promise<readonly string[]> => {
+const shown = async (search: KindSearch = FOUND, closings: Observable<unknown> = NEVER): Promise<readonly string[]> => {
   const choices: string[] = [];
   const remember = (choice: string): void => {
     choices.push(choice);
   };
   await render(KindSearchPanel, {
     search: of(search),
+    closings,
     onChoose: (kind?: PlaceKind): void => remember(kind ?? 'closed'),
     onChoosePlace: ({ id }: Place): void => remember(id)
   });
@@ -73,31 +74,40 @@ describe('closing the places of a kind', () => {
     await expect.element(chip('Pharmacies')).toHaveFocus();
   });
 
-  it('is done with Escape', async () => {
-    const events = await shown();
-    hubertButton().focus();
+  it('is done when asked to', async () => {
+    const closings = new Subject<void>();
+    const events = await shown(FOUND, closings);
 
-    await userEvent.keyboard('{Escape}');
+    closings.next();
 
     expect(events).toEqual(['closed']);
   });
 
-  it('is not done with another key', async () => {
-    const events = await shown();
+  it('gives the focus back to the chip when asked to while the focus is in the list', async () => {
+    const closings = new Subject<void>();
+    await shown(FOUND, closings);
     hubertButton().focus();
 
-    await userEvent.keyboard('{Shift}');
+    closings.next();
 
-    expect(events).toEqual([]);
+    await expect.element(chip('Pharmacies')).toHaveFocus();
   });
 
-  it('is not done with Escape while nothing is shown', async () => {
-    const events = await shown({ status: 'closed' });
+  it('leaves the focus where it is when asked to while the focus is elsewhere', async () => {
+    const closings = new Subject<void>();
+    await shown(FOUND, closings);
+    chip('Cafés').element().focus();
 
-    page
-      .getByRole('status')
-      .element()
-      .dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    closings.next();
+
+    await expect.element(chip('Cafés')).toHaveFocus();
+  });
+
+  it('is not done when asked to while nothing is shown', async () => {
+    const closings = new Subject<void>();
+    const events = await shown({ status: 'closed' }, closings);
+
+    closings.next();
 
     expect(events).toEqual([]);
   });

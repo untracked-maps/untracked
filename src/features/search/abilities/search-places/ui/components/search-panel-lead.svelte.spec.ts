@@ -1,8 +1,8 @@
-import { of } from 'rxjs';
+import { NEVER, type Observable, of, Subject } from 'rxjs';
 import { createRawSnippet } from 'svelte';
 import { on } from 'svelte/events';
 import { describe, expect, it } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
 import type { SearchPanel } from './combobox.presenter';
 import SearchPlaces from './search-places.svelte';
@@ -18,13 +18,14 @@ const SEARCHING = { kind: 'searching', query: 'boulangerie' } as const;
 
 const IDLE = { kind: 'idle' } as const;
 
-const shownWith = async (state: typeof SEARCHING | typeof IDLE): Promise<void> => {
+const shownWith = async (state: typeof SEARCHING | typeof IDLE, closings: Observable<unknown> = NEVER): Promise<void> => {
   await render(SearchPlaces, {
     state: of(state),
     onWake: () => undefined,
     onQuery: () => undefined,
     onChoose: () => undefined,
-    lead
+    lead,
+    closings
   });
 };
 
@@ -50,10 +51,11 @@ describe('lead of the search panel', () => {
   });
 
   it('closes with the panel', async () => {
-    await shownWith(IDLE);
+    const closings = new Subject<void>();
+    await shownWith(IDLE, closings);
     await field().click();
 
-    await userEvent.keyboard('{Escape}');
+    closings.next();
 
     await expect.element(leadButton()).not.toBeInTheDocument();
   });
@@ -74,15 +76,5 @@ describe('lead of the search panel', () => {
     await leadButton().click();
 
     await expect.element(field()).toHaveValue('');
-  });
-
-  it('closes the panel on Escape from its block', async () => {
-    await shownWith(IDLE);
-    await field().click();
-    await leadButton().element().focus();
-
-    await userEvent.keyboard('{Escape}');
-
-    await expect.element(leadButton()).not.toBeInTheDocument();
   });
 });

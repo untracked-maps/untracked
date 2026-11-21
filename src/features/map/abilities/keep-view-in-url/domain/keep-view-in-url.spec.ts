@@ -75,3 +75,35 @@ describe('keep view in URL', () => {
     });
   });
 });
+
+describe('keep view in URL, after a step in the history', () => {
+  it('writes the view again, on the entry the history stepped to', () => {
+    scheduler().run(({ cold, hot, expectObservable }) => {
+      const kept$ = keepViewInUrl({ writeFragment: (fragment) => cold('(w|)', { w: fragment }) })(
+        hot('v', { v: EIFFEL_TOWER }),
+        hot('400ms s')
+      );
+
+      expectObservable(kept$).toBe('300ms f 99ms f', { f: 'map=17/48.85837/2.29448' });
+    });
+  });
+
+  it('writes the last view only', () => {
+    scheduler().run(({ cold, hot, expectObservable }) => {
+      const kept$ = keepViewInUrl({ writeFragment: (fragment) => cold('(w|)', { w: fragment }) })(
+        hot('a 400ms b', { a: EIFFEL_TOWER, b: LOUVRE }),
+        hot('900ms s')
+      );
+
+      expectObservable(kept$).toBe('300ms f 400ms l 198ms l', { f: 'map=17/48.85837/2.29448', l: 'map=16/48.8606/2.3376' });
+    });
+  });
+
+  it('writes nothing while the map has not moved', () => {
+    scheduler().run(({ cold, hot, expectObservable }) => {
+      const kept$ = keepViewInUrl({ writeFragment: (fragment) => cold('(w|)', { w: fragment }) })(hot(''), hot('s'));
+
+      expectObservable(kept$).toBe('');
+    });
+  });
+});

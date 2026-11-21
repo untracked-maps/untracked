@@ -1,6 +1,6 @@
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
+import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
 import type { Coordinates, InspectedSpot } from '../../domain/inspect-point';
 import SpotCard from './spot-card.svelte';
@@ -21,14 +21,6 @@ const recordingCloses = (): { readonly closes: string[]; readonly onClose: () =>
     closes.push('closed');
   };
   return { closes, onClose };
-};
-
-const closesOnKey = async (key: string): Promise<readonly string[]> => {
-  const { closes, onClose } = recordingCloses();
-  await render(SpotCard, { ...props, onClose });
-  page.getByRole('link', { name: 'Report', exact: true }).element().focus();
-  await userEvent.keyboard(key);
-  return closes;
 };
 
 describe('spot card, as shown', () => {
@@ -112,11 +104,23 @@ describe('spot card, once read', () => {
     expect(closes).toEqual(['closed']);
   });
 
-  it('closes with Escape', async () => {
-    expect(await closesOnKey('{Escape}')).toEqual(['closed']);
+  it('closes when asked to', async () => {
+    const { closes, onClose } = recordingCloses();
+    const closings = new Subject<void>();
+    await render(SpotCard, { ...props, onClose, closings });
+
+    closings.next();
+
+    expect(closes).toEqual(['closed']);
   });
 
-  it('stays open with other keys', async () => {
-    expect(await closesOnKey('{Shift}')).toEqual([]);
+  it('is not closed when asked to while no spot is inspected', async () => {
+    const { closes, onClose } = recordingCloses();
+    const closings = new Subject<void>();
+    await render(SpotCard, { ...props, spot: of<InspectedSpot>({ kind: 'none' }), onClose, closings });
+
+    closings.next();
+
+    expect(closes).toEqual([]);
   });
 });

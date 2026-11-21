@@ -1,4 +1,4 @@
-import { BehaviorSubject, NEVER, type Observable, of } from 'rxjs';
+import { BehaviorSubject, filter, NEVER, type Observable, of, Subject, share } from 'rxjs';
 import { THEME_STORAGE_KEY } from '#configuration/theme';
 import {
   type ColourScheme,
@@ -10,8 +10,18 @@ import { browserPreferredColourScheme } from '#features/appearance/abilities/cho
 import { suggestLanguage } from '#features/languages/abilities/suggest-language/domain/suggest-language';
 import { localDismissal } from '#features/languages/abilities/suggest-language/implementation/browser/local-dismissal';
 import { browserPreferredLanguages } from '#features/languages/abilities/suggest-language/implementation/browser/preferred-languages';
+import {
+  type Closable,
+  closeWhatIsOpen,
+  type Report
+} from '#features/navigation/abilities/close-what-is-open/domain/close-what-is-open';
+import { escapePresses } from '#features/navigation/abilities/close-what-is-open/implementation/browser/escape-presses';
+import { historyEntry } from '#features/navigation/abilities/close-what-is-open/implementation/browser/history-entry';
+import { historySteps } from '#features/navigation/abilities/close-what-is-open/implementation/browser/history-steps';
 import { getLocale, locales } from '#i18n/runtime';
+import { type Closable as ClosableElement, NEVER_ASKED } from '#libraries/design/closable';
 import { browser } from '$app/env';
+import { goto } from '$app/navigation';
 import type { LayoutLoad } from './$types';
 
 type Theme = {
@@ -62,13 +72,47 @@ const bottomSheets = (): BottomSheets => {
   return { height: heights, show: (height) => heights.next(height) };
 };
 
+type Closing = {
+  readonly of: (element: Closable) => ClosableElement;
+  readonly closings: Observable<Closable>;
+  readonly steps: Observable<unknown>;
+};
+
+const addHistoryEntry = (): Promise<void> => goto(location.href, { shallow: true });
+
+const closingInThisBrowser = (): Closing => {
+  const reports = new Subject<Report>();
+  const steps = historySteps(globalThis).pipe(share());
+  const closings = closeWhatIsOpen({ entry: historyEntry(addHistoryEntry, history) })({
+    reports,
+    escapes: escapePresses(globalThis),
+    steps
+  }).pipe(share());
+  return {
+    of: (element) => ({
+      onToggle: (open) => reports.next({ element, open }),
+      closings: closings.pipe(filter((closing) => closing === element))
+    }),
+    closings,
+    steps
+  };
+};
+
+const closingWhilePrerendering: Closing = {
+  of: () => NEVER_ASKED,
+  closings: NEVER,
+  steps: NEVER
+};
+
 export const prerender = true;
 
 export const load: LayoutLoad = (): {
   readonly theme: Theme;
   readonly languageSuggestion: LanguageSuggestion;
   readonly sheets: BottomSheets;
+  readonly closing: Closing;
 } => ({
+  closing: browser ? closingInThisBrowser() : closingWhilePrerendering,
   sheets: bottomSheets(),
   theme: browser ? themeOnThisDevice() : themeWhilePrerendering,
   languageSuggestion: browser ? languageSuggestionOnThisDevice() : languageSuggestionWhilePrerendering
