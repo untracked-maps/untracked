@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/untracked-maps/untracked/compare/v1.11.0...v1.12.0) (2026-11-21)
+
+
+### Features
+
+* tell what just happened in a short notice ([#27](https://github.com/untracked-maps/untracked/issues/27)) ([c91cba5](https://github.com/untracked-maps/untracked/commit/c91cba563fc771716380c9864340660d0c2de2c3))
+
 # [1.11.0](https://github.com/untracked-maps/untracked/compare/v1.10.0...v1.11.0) (2026-11-20)
 
 
