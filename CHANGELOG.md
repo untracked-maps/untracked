@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/untracked-maps/untracked/compare/v1.12.0...v1.13.0) (2026-11-21)
+
+
+### Features
+
+* show places on the map as dots coloured by family ([#52](https://github.com/untracked-maps/untracked/issues/52)) ([8e84f31](https://github.com/untracked-maps/untracked/commit/8e84f3182f51362890d30a6f8fcc52c5a240bbae)), closes [#8CC3AE](https://github.com/untracked-maps/untracked/issues/8CC3AE) [#9DB6E0](https://github.com/untracked-maps/untracked/issues/9DB6E0) [#50](https://github.com/untracked-maps/untracked/issues/50)
+
 # [1.12.0](https://github.com/untracked-maps/untracked/compare/v1.11.0...v1.12.0) (2026-11-21)
 
 
