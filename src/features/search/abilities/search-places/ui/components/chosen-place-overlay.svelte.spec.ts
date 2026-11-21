@@ -10,7 +10,12 @@ const ORSAY: Place = {
   id: 'musee-d-orsay',
   name: "Musée d'Orsay",
   kind: 'museum',
-  address: "1 rue de la Légion d'Honneur, 75007 Paris",
+  address: {
+    street: "rue de la Légion d'Honneur",
+    postalCode: '75007',
+    addressLocality: 'Paris',
+    addressCountry: 'FR'
+  },
   coordinates: { longitude: 2.326_56, latitude: 48.86 },
   fame: 90
 };

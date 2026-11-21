@@ -7,7 +7,7 @@ const PANTHEON: Place = {
   id: 'pantheon',
   name: 'Panthéon',
   kind: 'monument',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.346, latitude: 48.846 },
   fame: 85
 };

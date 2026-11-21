@@ -9,7 +9,7 @@ const LOUVRE: RecentPlace = {
   id: 'musee-du-louvre',
   name: 'Musée du Louvre',
   kind: 'museum',
-  address: 'Rue de Rivoli, 75001 Paris',
+  address: { houseNumber: '99', street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.337_64, latitude: 48.860_61 }
 };
 
@@ -76,7 +76,45 @@ describe('local recent searches kept by another version', () => {
   it('skip a place without an address', async () => {
     expect(await readFrom(storedWith([{ ...LOUVRE, address: null }]))).toEqual([]);
   });
+});
 
+describe('local recent searches kept with an address', () => {
+  it('skip a place whose address is one line, as an earlier version kept it', async () => {
+    expect(await readFrom(storedWith([{ ...LOUVRE, address: 'Rue de Rivoli, 75001 Paris' }]))).toEqual([]);
+  });
+
+  it('skip a place whose address has no postal code', async () => {
+    expect(await readFrom(storedWith([{ ...LOUVRE, address: { ...LOUVRE.address, postalCode: undefined } }]))).toEqual([]);
+  });
+
+  it('skip a place whose address has no locality', async () => {
+    expect(await readFrom(storedWith([{ ...LOUVRE, address: { ...LOUVRE.address, addressLocality: 7 } }]))).toEqual([]);
+  });
+
+  it('skip a place whose address has no country', async () => {
+    expect(await readFrom(storedWith([{ ...LOUVRE, address: { ...LOUVRE.address, addressCountry: undefined } }]))).toEqual([]);
+  });
+
+  it('skip a place whose street is not text', async () => {
+    expect(await readFrom(storedWith([{ ...LOUVRE, address: { ...LOUVRE.address, street: 7 } }]))).toEqual([]);
+  });
+
+  it('skip a place whose house number is not text', async () => {
+    expect(await readFrom(storedWith([{ ...LOUVRE, address: { ...LOUVRE.address, houseNumber: 7 } }]))).toEqual([]);
+  });
+
+  it('keep the cuisine of a restaurant', async () => {
+    const restaurant: RecentPlace = { ...LOUVRE, kind: 'restaurant', cuisine: 'italian' };
+
+    expect(await readFrom(storedWith([restaurant]))).toEqual([restaurant]);
+  });
+
+  it('leave out a cuisine that is not text', async () => {
+    expect(await readFrom(storedWith([{ ...LOUVRE, cuisine: 7 }]))).toEqual([LOUVRE]);
+  });
+});
+
+describe('local recent searches kept with a kind', () => {
   it('skip a place of an unknown kind', async () => {
     expect(await readFrom(storedWith([{ ...LOUVRE, kind: 'volcano' }]))).toEqual([]);
   });

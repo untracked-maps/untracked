@@ -10,6 +10,7 @@ type KnownAddress =
       readonly street: string;
       readonly postcode: string;
       readonly city: string;
+      readonly country: string;
       readonly coordinates: Coordinates;
     }
   | {
@@ -17,6 +18,7 @@ type KnownAddress =
       readonly street: string;
       readonly postcode: string;
       readonly city: string;
+      readonly country: string;
       readonly coordinates: Coordinates;
     }
   | {
@@ -24,6 +26,7 @@ type KnownAddress =
       readonly name: string;
       readonly postcode: string;
       readonly city: string;
+      readonly country: string;
       readonly coordinates: Coordinates;
     };
 
@@ -56,7 +59,7 @@ const foundOf = (known: KnownAddress): FoundAddress => {
     id: `${known.kind}-${known.postcode}-${slugOf(name)}`,
     name,
     kind: known.kind,
-    address: `${known.postcode} ${known.city}`,
+    address: { postalCode: known.postcode, addressLocality: known.city, addressCountry: known.country },
     coordinates: known.coordinates
   };
 };

@@ -6,7 +6,7 @@ const place = (kind: FakePlace['kind'], fame: number): FakePlace => ({
   id: 'a-place',
   name: 'A place',
   kind,
-  address: '1 rue de la Paix, 75002 Paris',
+  address: { houseNumber: '1', street: 'rue de la Paix', postalCode: '75002', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.33, latitude: 48.87 },
   fame
 });

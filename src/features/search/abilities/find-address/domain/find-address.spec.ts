@@ -9,9 +9,23 @@ import { withAddressesOf } from './with-addresses';
 
 const HERE = { longitude: 2.35, latitude: 48.85 };
 
-const SQUARE: Place = { id: 'square', name: 'Square Rivoli', kind: 'park', address: '', coordinates: HERE, fame: 0 };
+const SQUARE: Place = {
+  id: 'square',
+  name: 'Square Rivoli',
+  kind: 'park',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
+  coordinates: HERE,
+  fame: 0
+};
 
-const STREET: KnownAddress = { kind: 'street', street: 'Rue de Rivoli', postcode: '75001', city: 'Paris', coordinates: HERE };
+const STREET: KnownAddress = {
+  kind: 'street',
+  street: 'Rue de Rivoli',
+  postcode: '75001',
+  city: 'Paris',
+  country: 'FR',
+  coordinates: HERE
+};
 
 const findingSquare: FindFound = () => [SQUARE];
 

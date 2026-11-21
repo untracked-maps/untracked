@@ -48,7 +48,7 @@ Given('these places around the map', function thesePlacesAroundTheMap(this: Sear
         id: `place-${index}`,
         name: row['name'] ?? '',
         kind: kindOf(row['kind'] ?? ''),
-        address: '',
+        address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
         coordinates: { longitude: Number(row['longitude']), latitude: Number(row['latitude']) },
         fame: 0
       })
@@ -67,7 +67,7 @@ Given(
           id: `place-${index}`,
           name: `${kind} ${index}`,
           kind: kindOf(kind),
-          address: '',
+          address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
           coordinates: {
             longitude: CENTRE_OF_PARIS.longitude + index * DEGREES_BETWEEN_NEIGHBOURS,
             latitude: CENTRE_OF_PARIS.latitude

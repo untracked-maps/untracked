@@ -14,7 +14,7 @@ const placeNorthOf = (reference: Coordinates, id: string, kilometres: number, ki
   id,
   name: id,
   kind,
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: {
     longitude: reference.longitude,
     latitude: reference.latitude + kilometres / KILOMETRES_PER_DEGREE_OF_LATITUDE

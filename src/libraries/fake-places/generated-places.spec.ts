@@ -6,6 +6,7 @@ import { generatedPlaces } from './generated-places';
 const SAINT_MALO: FakeZone = {
   id: 'fake-saint-malo',
   city: 'Saint-Malo',
+  country: 'FR',
   locale: [fr, base],
   bounds: { west: -2.04, south: 48.62, east: -1.95, north: 48.66 },
   postcodes: ['35400'],
@@ -15,7 +16,9 @@ const SAINT_MALO: FakeZone = {
 
 const PLACES = generatedPlaces(SAINT_MALO, 500);
 
-const ADDRESS = /^\d{1,3} .+, 35400 Saint-Malo$/u;
+const NUMBER = /^\d{1,3}$/u;
+
+const RESTAURANTS = PLACES.filter(({ kind }) => kind === 'restaurant');
 
 describe('generated places', () => {
   it('are as many as asked', () => {
@@ -37,24 +40,64 @@ describe('generated places', () => {
   it('lie within their zone, north to south', () => {
     expect(PLACES.every(({ coordinates: { latitude } }) => latitude >= 48.62 && latitude <= 48.66)).toBe(true);
   });
+});
 
-  it('have a one-line address at a postcode of their zone, in its city', () => {
-    expect(PLACES.filter(({ address }) => !ADDRESS.test(address))).toEqual([]);
+describe('the addresses of generated places', () => {
+  it('are at a postcode of their zone', () => {
+    expect(PLACES.filter(({ address }) => address.postalCode !== '35400')).toEqual([]);
   });
 
-  it('are mostly unknown', () => {
+  it('are in the city of their zone', () => {
+    expect(PLACES.filter(({ address }) => address.addressLocality !== 'Saint-Malo')).toEqual([]);
+  });
+
+  it('are in the country of their zone', () => {
+    expect(PLACES.filter(({ address }) => address.addressCountry !== 'FR')).toEqual([]);
+  });
+
+  it('have a house number', () => {
+    expect(PLACES.filter(({ address }) => !NUMBER.test(address.houseNumber ?? ''))).toEqual([]);
+  });
+
+  it('have a street', () => {
+    expect(PLACES.filter(({ address }) => (address.street ?? '') === '')).toEqual([]);
+  });
+});
+
+describe('the cuisines of generated places', () => {
+  it('are given to most restaurants', () => {
+    expect(RESTAURANTS.filter(({ cuisine }) => cuisine !== undefined).length).toBeGreaterThan(RESTAURANTS.length * 0.7);
+  });
+
+  it('leave some restaurants without one', () => {
+    expect(RESTAURANTS.some(({ cuisine }) => cuisine === undefined)).toBe(true);
+  });
+
+  it('are given to restaurants only', () => {
+    expect(PLACES.filter(({ kind, cuisine }) => kind !== 'restaurant' && cuisine !== undefined)).toEqual([]);
+  });
+
+  it('are of several kinds', () => {
+    expect(new Set(RESTAURANTS.map(({ cuisine }) => cuisine)).size).toBeGreaterThan(5);
+  });
+});
+
+describe('the fame of generated places', () => {
+  it('is mostly none', () => {
     expect(PLACES.filter(({ fame }) => fame === 0).length).toBeGreaterThan(450);
   });
 
-  it('are at most a little known', () => {
+  it('is at most a little', () => {
     expect(Math.max(...PLACES.map(({ fame }) => fame))).toBeLessThanOrEqual(30);
   });
 
-  it('are sometimes a little known', () => {
+  it('is sometimes a little', () => {
     expect(PLACES.some(({ fame }) => fame > 0)).toBe(true);
   });
+});
 
-  it('are of many kinds', () => {
+describe('the kinds of generated places', () => {
+  it('are many', () => {
     expect(new Set(PLACES.map(({ kind }) => kind)).size).toBe(20);
   });
 });

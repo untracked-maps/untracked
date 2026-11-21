@@ -6,6 +6,7 @@
   import '#libraries/design/tokens.css';
   import { NEVER, type Observable } from 'rxjs';
   import { m } from '#i18n/messages';
+  import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import type { Place, PlaceKind } from '../../../../domain/place';
   import { detailsOf } from '../../../../ui/components/kind-labels';
   import { MAIN_KINDS } from '../../domain/main-kinds';
@@ -97,7 +98,7 @@
             {#each $search.places as place (place.id)}
               <li>
                 <button type="button" class="place" onclick={choose($search.placeKind, place)}>
-                  <Suggestion name={place.name} details={detailsOf(place)}>
+                  <Suggestion name={place.name} details={detailsOf($addressLine)(place)}>
                     {#snippet icon()}
                       <KindDot kind={place.kind} />
                     {/snippet}

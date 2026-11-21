@@ -11,6 +11,7 @@ type Fields = Readonly<Record<string, unknown>>;
 type Located = {
   readonly postcode: string;
   readonly city: string;
+  readonly country: string;
   readonly coordinates: Coordinates;
 };
 
@@ -23,21 +24,24 @@ const isObject = (value: unknown): value is Fields => typeof value === 'object' 
 const isCoordinates = (value: unknown): value is Coordinates =>
   isObject(value) && typeof value['longitude'] === 'number' && typeof value['latitude'] === 'number';
 
-const locatedOf = ({ postcode, city, coordinates }: Fields): readonly Located[] =>
-  typeof postcode === 'string' && typeof city === 'string' && isCoordinates(coordinates)
-    ? [{ postcode, city, coordinates }]
+const locatedOf = ({ postalCode, addressLocality, addressCountry, coordinates }: Fields): readonly Located[] =>
+  typeof postalCode === 'string' &&
+  typeof addressLocality === 'string' &&
+  typeof addressCountry === 'string' &&
+  isCoordinates(coordinates)
+    ? [{ postcode: postalCode, city: addressLocality, country: addressCountry, coordinates }]
     : [];
 
-const houseOf: Parse = ({ number, street }, { postcode, city, coordinates }): readonly KnownAddress[] =>
-  typeof number === 'string' && typeof street === 'string'
-    ? [{ kind: 'address', number, street, postcode, city, coordinates }]
+const houseOf: Parse = ({ houseNumber, street }, located): readonly KnownAddress[] =>
+  typeof houseNumber === 'string' && typeof street === 'string'
+    ? [{ kind: 'address', number: houseNumber, street, ...located }]
     : [];
 
-const streetOnlyOf: Parse = ({ street }, { postcode, city, coordinates }): readonly KnownAddress[] =>
-  typeof street === 'string' ? [{ kind: 'street', street, postcode, city, coordinates }] : [];
+const streetOnlyOf: Parse = ({ street }, located): readonly KnownAddress[] =>
+  typeof street === 'string' ? [{ kind: 'street', street, ...located }] : [];
 
-const districtOf: Parse = ({ name }, { postcode, city, coordinates }): readonly KnownAddress[] =>
-  typeof name === 'string' ? [{ kind: 'district', name, postcode, city, coordinates }] : [];
+const districtOf: Parse = ({ name }, located): readonly KnownAddress[] =>
+  typeof name === 'string' ? [{ kind: 'district', name, ...located }] : [];
 
 const PARSERS: ReadonlyMap<unknown, Parse> = new Map<unknown, Parse>([
   ['address', houseOf],
@@ -59,11 +63,12 @@ const streetKeyOf = ({ street, postcode }: HouseAddress): string => `${postcode}
 const meanOf = (values: readonly number[]): number => values.reduce((sum, value) => sum + value, 0) / values.length;
 
 const streetOf = (houses: readonly HouseAddress[]): readonly KnownAddress[] =>
-  houses.slice(0, 1).map(({ street, postcode, city }) => ({
+  houses.slice(0, 1).map(({ street, postcode, city, country }) => ({
     kind: 'street',
     street,
     postcode,
     city,
+    country,
     coordinates: {
       longitude: meanOf(houses.map(({ coordinates }) => coordinates.longitude)),
       latitude: meanOf(houses.map(({ coordinates }) => coordinates.latitude))

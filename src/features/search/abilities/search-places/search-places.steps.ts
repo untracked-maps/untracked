@@ -25,7 +25,13 @@ const placeFrom = (row: Readonly<Partial<Record<string, string>>>, index: number
   id: `place-${index}`,
   name: row['name'] ?? '',
   kind: 'attraction',
-  address: row['address'] ?? '',
+  address: {
+    ...(row['house number'] === undefined ? {} : { houseNumber: row['house number'] }),
+    street: row['street'] ?? '',
+    postalCode: row['postal code'] ?? '75001',
+    addressLocality: 'Paris',
+    addressCountry: 'FR'
+  },
   coordinates: {
     longitude: Number(row['longitude'] ?? PARIS_CENTRE.longitude),
     latitude: Number(row['latitude'] ?? PARIS_CENTRE.latitude)
@@ -95,8 +101,8 @@ Then('the first place found is {string}', function theFirstPlaceFoundIs(this: Se
   assert.equal(placesFound(this.state)[0], name);
 });
 
-Then('the first place found stands at {string}', function theFirstPlaceFoundStandsAt(this: SearchPlacesWorld, address: string) {
-  assert.equal(this.state.kind === 'found' && this.state.places[0]?.address, address);
+Then('the first place found stands in {string}', function theFirstPlaceFoundStandsIn(this: SearchPlacesWorld, street: string) {
+  assert.equal(this.state.kind === 'found' && this.state.places[0]?.address.street, street);
 });
 
 Then('the place found after it is {string}', function thePlaceFoundAfterItIs(this: SearchPlacesWorld, name: string) {

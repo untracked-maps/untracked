@@ -13,7 +13,13 @@ const SQUARE: Place = {
   id: 'square-thierry-martin',
   name: 'Square Thierry Martin',
   kind: 'park',
-  address: "150 Quai de l'Abbaye, 75015 Paris",
+  address: {
+    houseNumber: '150',
+    street: "Quai de l'Abbaye",
+    postalCode: '75015',
+    addressLocality: 'Paris',
+    addressCountry: 'FR'
+  },
   coordinates: CENTRE_OF_PARIS,
   fame: 0
 };
@@ -25,10 +31,11 @@ const house = (
   [longitude, latitude]: readonly [number, number]
 ): Readonly<Record<string, unknown>> => ({
   kind: 'address',
-  number,
+  houseNumber: number,
   street,
-  postcode,
-  city: 'Paris',
+  postalCode: postcode,
+  addressLocality: 'Paris',
+  addressCountry: 'FR',
   coordinates: { longitude, latitude }
 });
 
@@ -39,8 +46,9 @@ const district = (
 ): Readonly<Record<string, unknown>> => ({
   kind: 'district',
   name,
-  postcode,
-  city: 'Paris',
+  postalCode: postcode,
+  addressLocality: 'Paris',
+  addressCountry: 'FR',
   coordinates: { longitude, latitude }
 });
 
@@ -78,7 +86,11 @@ const knownAddresses = await firstValueFrom(
 
 const findFound = withAddressesOf(knownAddresses)((query) => (query.includes('martin') ? [SQUARE] : []));
 
-const lineOf = ({ name, address }: Found): string => `${name}, ${address}`;
+const streetLineOf = ({ houseNumber, street }: Found['address']): readonly string[] =>
+  street === undefined ? [] : [[houseNumber, street].filter((part) => part !== undefined).join(' ')];
+
+const lineOf = ({ name, address }: Found): string =>
+  [name, ...streetLineOf(address), `${address.postalCode} ${address.addressLocality}`].join(', ');
 
 const firstFound = (query: string, reference: Coordinates = CENTRE_OF_PARIS): string | undefined => {
   const [first] = findFound(query, reference);

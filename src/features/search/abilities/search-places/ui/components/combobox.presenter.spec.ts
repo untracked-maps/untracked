@@ -17,7 +17,7 @@ const place = (id: string): Place => ({
   id,
   name: `Place ${id}`,
   kind: 'museum',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.35, latitude: 48.85 },
   fame: 0
 });

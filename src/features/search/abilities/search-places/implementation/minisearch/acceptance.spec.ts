@@ -9,7 +9,7 @@ const place = (id: string, name: string, fame: number, [longitude, latitude]: re
   id,
   name,
   kind: 'attraction',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude, latitude },
   fame
 });
