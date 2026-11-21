@@ -118,3 +118,21 @@ describe('search, telling whether it is open', () => {
     expect(opens).toEqual([false, true, true, false]);
   });
 });
+
+describe('search, asked to close with no one told when it opens', () => {
+  it('keeps the text left in its field', async () => {
+    const closings = new Subject<void>();
+    await render(SearchPlaces, {
+      state: FOUND,
+      onWake: () => undefined,
+      onQuery: () => undefined,
+      onChoose: () => undefined,
+      closings
+    });
+    await page.getByRole('combobox').fill('orsay');
+
+    closings.next();
+
+    await expect.element(page.getByRole('combobox')).toHaveValue('orsay');
+  });
+});
