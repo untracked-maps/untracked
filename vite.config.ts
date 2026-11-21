@@ -26,6 +26,10 @@ const parkPointer: BrowserCommand<[]> = async ({ page }) => {
   await page.mouse.move(OUTSIDE_THE_PAGE, OUTSIDE_THE_PAGE);
 };
 
+const reduceMotion: BrowserCommand<[reduced: boolean]> = async ({ page }, reduced) => {
+  await page.emulateMedia({ reducedMotion: reduced ? 'reduce' : 'no-preference' });
+};
+
 const config: ViteUserConfig = defineConfig({
   plugins: [
     sveltekit({
@@ -86,7 +90,7 @@ const config: ViteUserConfig = defineConfig({
             provider: playwright(),
             instances: [{ browser: 'chromium', headless: true }],
             trace: { mode: 'retain-on-failure', tracesDir: '.vitest/traces' },
-            commands: { parkPointer }
+            commands: { parkPointer, reduceMotion }
           },
           include: ['src/**/*.svelte.spec.ts'],
           setupFiles: ['./vitest.browser-setup.ts']
