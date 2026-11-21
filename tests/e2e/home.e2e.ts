@@ -162,7 +162,7 @@ test('closes the map type panel once the visitor clicks elsewhere', async ({ pag
   await page.goto('./');
   await layersButton(page).click();
 
-  await page.getByRole('combobox', { name: 'Search a place' }).click();
+  await layers(page).click({ position: { x: 10, y: 10 } });
 
   await expect(layers(page)).toBeHidden();
 });
