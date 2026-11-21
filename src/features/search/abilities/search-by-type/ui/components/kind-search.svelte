@@ -43,7 +43,7 @@
   };
 
   const choose = (kind: PlaceKind, place: Place) => (): void => {
-    close(kind)();
+    focusChip(kind);
     onChoosePlace(place);
   };
 

@@ -137,12 +137,12 @@ describe('places of the kind shown', () => {
     await expect.element(page.getByRole('status')).toBeInTheDocument();
   });
 
-  it('close, then fly to the place chosen', async () => {
+  it('stay open under the place chosen, to come back once its sheet is closed', async () => {
     const { events } = await shown(FOUND);
 
     await garcia().click();
 
-    expect(events).toEqual(['closed', 'boulangerie-garcia']);
+    expect(events).toEqual(['boulangerie-garcia']);
   });
 
   it('give the focus back to the chip of the kind once a place is chosen', async () => {

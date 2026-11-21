@@ -18,20 +18,22 @@ const numberOf = (value: unknown, key: string): number | undefined => {
 const familyOf = (value: unknown): Family | undefined => FAMILIES.find((family) => family === fieldOf(value, 'family'));
 
 const placeIn = (value: unknown): Place[] => {
+  const id = textOf(value, 'id');
   const name = textOf(value, 'name');
   const kind = textOf(value, 'kind');
   const longitude = numberOf(fieldOf(value, 'coordinates'), 'longitude');
   const latitude = numberOf(fieldOf(value, 'coordinates'), 'latitude');
   const minzoom = numberOf(value, 'minzoom');
   const rank = numberOf(value, 'rank');
-  return name === undefined ||
+  return id === undefined ||
+    name === undefined ||
     kind === undefined ||
     longitude === undefined ||
     latitude === undefined ||
     minzoom === undefined ||
     rank === undefined
     ? []
-    : [{ name, kind, family: familyOf(value), coordinates: { longitude, latitude }, minzoom, rank }];
+    : [{ id, name, kind, family: familyOf(value), coordinates: { longitude, latitude }, minzoom, rank }];
 };
 
 const placesOf = async (response: Response): Promise<readonly Place[]> => {

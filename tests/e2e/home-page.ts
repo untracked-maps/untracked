@@ -27,6 +27,13 @@ const searchField = (page: Page): Locator => page.getByRole('combobox', { name: 
 
 const placesFound = (page: Page): Locator => page.getByRole('listbox', { name: 'Places and addresses found' });
 
+const LOUVRE_SUGGESTED = /^Musée du Louvre/u;
+
+const louvreSheet = (page: Page): Locator => page.getByRole('region', { name: 'Musée du Louvre' });
+
+const anyPlaceSheet = (page: Page): Locator =>
+  page.getByRole('region').filter({ has: page.getByRole('button', { name: 'Close the sheet' }) });
+
 const opened = async (page: Page): Promise<void> => {
   await page.goto(`./${BY_THE_LOUVRE}`);
   await searchField(page).waitFor();
@@ -48,14 +55,24 @@ const louvreSearched = async (page: Page): Promise<void> => {
   await placesFound(page).waitFor();
 };
 
+const louvreOpened = async (page: Page): Promise<void> => {
+  await opened(page);
+  await louvreSearched(page);
+  await placesFound(page).getByRole('option', { name: LOUVRE_SUGGESTED }).click();
+  await louvreSheet(page).waitFor();
+};
+
 export {
   about,
+  anyPlaceSheet,
   anySpotCard,
   BEFORE_THE_APP,
   bakeries,
   bakeriesListed,
   IN_THE_APP,
+  louvreOpened,
   louvreSearched,
+  louvreSheet,
   mapMenu,
   ONE_ZOOM_CLOSER,
   opened,

@@ -1,0 +1,14 @@
+{
+  "dot": {
+    "width": 44,
+    "height": 44,
+    "rim": "<filter id=\"open-place-shadow\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feDropShadow dx=\"0\" dy=\"1.5\" stdDeviation=\"3\" flood-color=\"#000000\" flood-opacity=\"0.35\"/></filter><circle cx=\"22\" cy=\"22\" r=\"19.2\" fill=\"#FFFFFF\" filter=\"url(#open-place-shadow)\"/>",
+    "disc": "<circle data-disc cx=\"22\" cy=\"22\" r=\"17\" fill=\"{colour}\"/>",
+    "pictogram": "<path transform=\"translate(11.8 11.8) scale(0.85)\" fill=\"#FFFFFF\" fill-rule=\"evenodd\" d=\"{pictogram}\"/>"
+  },
+  "pin": {
+    "width": 30,
+    "height": 40,
+    "drawing": "<filter id=\"open-place-pin-shadow\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feDropShadow dx=\"0\" dy=\"3\" stdDeviation=\"2\" flood-color=\"#000000\" flood-opacity=\"0.3\"/></filter><path d=\"M15 39C15 39 2 24.5 2 15a13 13 0 0 1 26 0c0 9.5-13 24-13 24z\" fill=\"#D93A2F\" stroke=\"#FFFFFF\" stroke-width=\"2\" filter=\"url(#open-place-pin-shadow)\"/><circle cx=\"15\" cy=\"15\" r=\"5\" fill=\"#FFFFFF\"/>"
+  }
+}

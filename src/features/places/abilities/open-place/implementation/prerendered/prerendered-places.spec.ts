@@ -1,0 +1,76 @@
+import { firstValueFrom } from 'rxjs';
+import { describe, expect, it } from 'vitest';
+import type { SheetPlace } from '../../domain/open-place';
+import { prerenderedPlaces } from './prerendered-places';
+
+const LUIGI: SheetPlace = {
+  id: 'sakura',
+  name: 'Sakura',
+  kind: 'restaurant',
+  cuisine: 'japanese',
+  family: 'food',
+  address: {
+    houseNumber: '40',
+    street: 'Rue Sainte-Anne',
+    postalCode: '75002',
+    addressLocality: 'Paris',
+    addressCountry: 'FR'
+  },
+  coordinates: { longitude: 2.335, latitude: 48.867 }
+};
+
+const VERT_GALANT: SheetPlace = {
+  id: 'vert-galant',
+  name: 'Square du Vert-Galant',
+  coordinates: { longitude: 2.341, latitude: 48.857 }
+};
+
+const placesServed = (body: unknown, status = 200): Promise<readonly SheetPlace[]> =>
+  firstValueFrom(prerenderedPlaces(() => Promise.resolve(Response.json(body, { status })), '/data/places.json')());
+
+const INVALID_PLACES: readonly (readonly [string, unknown])[] = [
+  ['a value that is not an object', 'Sakura'],
+  ['no value', null],
+  ['no id', { ...LUIGI, id: undefined }],
+  ['no name', { ...LUIGI, name: 7 }],
+  ['no coordinates', { ...LUIGI, coordinates: undefined }],
+  ['coordinates that are not an object', { ...LUIGI, coordinates: '2.34, 48.85' }],
+  ['no longitude', { ...LUIGI, coordinates: { latitude: 48.85 } }],
+  ['no latitude', { ...LUIGI, coordinates: { longitude: 2.34 } }]
+];
+
+describe('prerendered places of the sheet', () => {
+  it('reads a place with its kind, cuisine, family and address', async () => {
+    expect(await placesServed([LUIGI])).toEqual([LUIGI]);
+  });
+
+  it('reads a place without kind, cuisine, family nor address', async () => {
+    expect(await placesServed([VERT_GALANT])).toEqual([VERT_GALANT]);
+  });
+
+  it.each(INVALID_PLACES)('leaves out a place with %s', async (_, invalid) => {
+    expect(await placesServed([invalid, VERT_GALANT])).toEqual([VERT_GALANT]);
+  });
+
+  it.each([
+    ['a kind that is not text', { kind: 7 }],
+    ['a cuisine that is not text', { cuisine: 7 }],
+    ['a family that is not text', { family: 7 }],
+    ['an address that is not an object', { address: '40 Rue Sainte-Anne, 75002 Paris' }],
+    ['an address without postal code', { address: { ...LUIGI.address, postalCode: undefined } }],
+    ['an address without locality', { address: { ...LUIGI.address, addressLocality: 7 } }],
+    ['an address without country', { address: { ...LUIGI.address, addressCountry: undefined } }],
+    ['a street that is not text', { address: { ...LUIGI.address, street: 7 } }],
+    ['a house number that is not text', { address: { ...LUIGI.address, houseNumber: 7 } }]
+  ])('leaves out %s', async (_, invalid) => {
+    expect(await placesServed([{ ...VERT_GALANT, ...invalid }])).toEqual([VERT_GALANT]);
+  });
+
+  it('reads nothing from a file that is not a list', async () => {
+    expect(await placesServed({ places: [LUIGI] })).toEqual([]);
+  });
+
+  it('fails when the file cannot be served', async () => {
+    await expect(placesServed([], 500)).rejects.toThrow('The places file answered 500.');
+  });
+});

@@ -164,6 +164,29 @@
 - And "Arc de Triomphe" goes along with "Musée Rodin"
 - And "Station Total" goes along with "Banque de France"
 
+## Rule: The place open in its sheet shows no small dot, since a larger one marks it
+
+### Background:
+
+- Given these places
+  | name               | kind       | family | minzoom | rank |
+  | ------------------ | ---------- | ------ | ------- | ---- |
+  | Tour Eiffel        | attraction | sight  | 11.5    | 0    |
+  | Galeries Lafayette | shop       | shop   | 13.75   | 110  |
+
+### Scenario: The visitor opens the sheet of a place
+
+- Given "Tour Eiffel" is open in its sheet
+- When the map is at zoom 16
+- Then the places shown are "Galeries Lafayette"
+
+### Scenario: The visitor closes the sheet of the place
+
+- Given "Tour Eiffel" is open in its sheet
+- And its sheet is closed
+- When the map is at zoom 16
+- Then the places shown are "Tour Eiffel, Galeries Lafayette"
+
 ## Rule: Without its places, the map shows no dot
 
 ### Scenario: The places cannot be loaded
