@@ -28,6 +28,7 @@ The project restarted on 2026-11-15 in this repository; the map, search and rout
 - The last eight places chosen, kept on the device and offered as soon as the search field gets the focus, until the visitor clears them
 - Short notices under the top bar that tell what just happened, with an action to take it back: clearing the recent places can be undone
 - A search by kind of place, from chips under the search field or a kind typed in English or in French ("boulangerie", "the nearest pharmacy"), that lists and marks the 25 nearest places of that kind within 3.5 km of the centre of the map
+- The places of the fake Paris shown on the map as dots coloured by family, each with a pictogram and its name: the best known from afar, every place up close
 - A button that centres the map on the visitor's position, for now a fake one drawn at build time
 - A click, a long press or Enter on the map that marks the spot and gives its nearest address, for now a fake one, with a link to report a mistake there on OpenStreetMap
 - The view of the map kept in the address, so that a reload or a shared link opens the same place

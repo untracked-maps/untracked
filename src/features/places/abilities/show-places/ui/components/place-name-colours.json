@@ -1,0 +1,40 @@
+{
+  "light": {
+    "halo": "#FFFFFF",
+    "names": {
+      "food": "#b55a25",
+      "cafe": "#b55a25",
+      "bar": "#b55a25",
+      "bakery": "#b55a25",
+      "shop": "#3253AA",
+      "culture": "#0E7681",
+      "sight": "#0E7681",
+      "nature": "#2F6E3F",
+      "health": "#A8392F",
+      "stay": "#78427d",
+      "money": "#3e5f53",
+      "fuel": "#3e577d",
+      "train": "#2B4793",
+      "none": "#5F656C"
+    }
+  },
+  "dark": {
+    "halo": "rgba(22,24,28,0.9)",
+    "names": {
+      "food": "#F0A06A",
+      "cafe": "#F0A06A",
+      "bar": "#F0A06A",
+      "bakery": "#F0A06A",
+      "shop": "#8FA8F0",
+      "culture": "#5FC6D0",
+      "sight": "#5FC6D0",
+      "nature": "#7CC48D",
+      "health": "#F08A85",
+      "stay": "#D29AD6",
+      "money": "#8CC3AE",
+      "fuel": "#9DB6E0",
+      "train": "#9DB2F2",
+      "none": "#AEB3B9"
+    }
+  }
+}

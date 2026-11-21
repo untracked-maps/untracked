@@ -38,6 +38,7 @@
   import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
   import { inspectedSpotOverlay } from '#features/places/abilities/inspect-point/ui/components/inspected-spot-overlay';
   import SpotCard from '#features/places/abilities/inspect-point/ui/components/spot-card.svelte';
+  import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
@@ -235,6 +236,7 @@
   onMap={basemap.watch}
   onViewChange={keepView}
   overlays={[
+    placeDotsOverlay(data.placesShown, data.theme.colourScheme),
     positionOverlay(located),
     kindPlacesOverlay(kindSearch),
     chosenPlaceOverlay(chosenPlaces),

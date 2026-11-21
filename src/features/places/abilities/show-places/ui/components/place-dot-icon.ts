@@ -1,0 +1,5 @@
+const PLACE_DOT_ICON_PREFIX = 'place-';
+
+const WITHOUT_FAMILY = 'none';
+
+export { PLACE_DOT_ICON_PREFIX, WITHOUT_FAMILY };
