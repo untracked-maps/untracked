@@ -44,7 +44,13 @@ const LAFAYETTE_DOT: PlaceDot = {
   order: 110
 };
 
-const placeOf = (family: Family | undefined, kind = 'place'): Place => ({ ...PARKING, name: family ?? kind, kind, family });
+const placeOf = (family: Family | undefined, kind = 'place'): Place => ({
+  ...PARKING,
+  name: family ?? kind,
+  kind,
+  family,
+  minzoom: 19
+});
 
 const EVERY_FAMILY: readonly Place[] = [
   placeOf('food'),

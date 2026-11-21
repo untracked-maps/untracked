@@ -52,9 +52,9 @@ type Shown = {
 
 const ZOOM_STEP = 0.25;
 
-const CLOSE_ZOOM = 17;
+const CLOSE_ZOOM: number = 17;
 
-const CLOSER_ZOOM = 17.5;
+const CLOSER_ZOOM: number = 17.5;
 
 const LAST_PRIORITY_AT_CLOSE_ZOOM = 2.5;
 
@@ -78,10 +78,14 @@ const PRIORITIES: Readonly<Record<Family, number | undefined>> = {
   train: undefined
 };
 
-const shownByPriority = (priority: number | undefined): Shown | undefined =>
+const STATION_PRIORITY = 0;
+
+const zoomOfFamily = (priority: number): number => (priority <= LAST_PRIORITY_AT_CLOSE_ZOOM ? CLOSE_ZOOM : CLOSER_ZOOM);
+
+const shownWithFamily = (minzoom: number, priority: number | undefined): Shown =>
   priority === undefined
-    ? undefined
-    : { from: priority <= LAST_PRIORITY_AT_CLOSE_ZOOM ? CLOSE_ZOOM : CLOSER_ZOOM, order: priority };
+    ? { from: minzoom, order: STATION_PRIORITY }
+    : { from: Math.min(minzoom, zoomOfFamily(priority)), order: priority };
 
 const shownWithoutFamily = (kind: string): Shown | undefined =>
   kind === NEVER_SHOWN_WITHOUT_FAMILY ? undefined : WITHOUT_FAMILY;
@@ -89,8 +93,8 @@ const shownWithoutFamily = (kind: string): Shown | undefined =>
 const shownFromAfar = ({ family, minzoom, rank }: Place): Shown | undefined =>
   family === undefined ? undefined : { from: minzoom, order: rank };
 
-const shownUpClose = ({ family, kind }: Place): Shown | undefined =>
-  family === undefined ? shownWithoutFamily(kind) : shownByPriority(PRIORITIES[family]);
+const shownUpClose = ({ family, kind, minzoom }: Place): Shown | undefined =>
+  family === undefined ? shownWithoutFamily(kind) : shownWithFamily(minzoom, PRIORITIES[family]);
 
 const dotsAt =
   (zoom: number) =>

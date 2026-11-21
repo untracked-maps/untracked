@@ -28,7 +28,7 @@ const HALO_WIDTH = 1.6;
 
 const CLOSE_ZOOM = 17;
 
-const LINE_HEIGHT = { fromAfar: 1.1, upClose: 1.15 };
+const LINE_HEIGHT = { fromAfar: 1.1, upClose: 1.15, withoutFamily: 1.2 };
 
 const OFFSET_WITHOUT_FAMILY = 1.05;
 
@@ -66,7 +66,7 @@ const withoutFamily = (palette: PlaceNamesPalette): SymbolLayerSpecification => 
     'icon-size': 0.85,
     'text-size': 11.5,
     'text-offset': [OFFSET_WITHOUT_FAMILY, 0],
-    'text-line-height': LINE_HEIGHT.upClose
+    'text-line-height': LINE_HEIGHT.withoutFamily
   },
   paint: namePaint(palette)
 });

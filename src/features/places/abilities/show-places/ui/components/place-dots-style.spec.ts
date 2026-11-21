@@ -95,8 +95,8 @@ describe('the dot of a place without a family', () => {
     expect(WITHOUT_FAMILY).toHaveProperty(['layout', 'text-offset'], [1.05, 0]);
   });
 
-  it('has a name whose lines are 1.15 em high', () => {
-    expect(WITHOUT_FAMILY).toHaveProperty(['layout', 'text-line-height'], 1.15);
+  it('has a name whose lines are 1.2 em high', () => {
+    expect(WITHOUT_FAMILY).toHaveProperty(['layout', 'text-line-height'], 1.2);
   });
 
   it('has a name written as the names of the other places', () => {
