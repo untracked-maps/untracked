@@ -1,4 +1,4 @@
-# ADR-048 — The sheet of a place, and addresses in components
+# ADR-049 — The sheet of a place, and addresses in components
 
 **Date**: 2026-11-21
 **Status**: accepted
