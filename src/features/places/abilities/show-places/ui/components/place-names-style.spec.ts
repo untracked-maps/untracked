@@ -25,6 +25,10 @@ describe('the name of a place with a family', () => {
     expect(WITH_FAMILY).toHaveProperty(['layout', 'text-anchor'], 'left');
   });
 
+  it('has its lines aligned on the left', () => {
+    expect(WITH_FAMILY).toHaveProperty(['layout', 'text-justify'], 'left');
+  });
+
   it('starts 1 em from the centre of the dot', () => {
     expect(WITH_FAMILY).toHaveProperty(['layout', 'text-offset'], [1, 0]);
   });

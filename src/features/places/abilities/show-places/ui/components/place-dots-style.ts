@@ -45,6 +45,7 @@ const nameLayout: SymbolLayout = {
   'text-field': ['get', 'name'],
   'text-font': ['Inter SemiBold'],
   'text-anchor': 'left',
+  'text-justify': 'left',
   'text-max-width': 8,
   'symbol-sort-key': ['get', 'order']
 };
