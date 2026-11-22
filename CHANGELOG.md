@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/untracked-maps/untracked/compare/v1.16.0...v1.17.0) (2026-11-22)
+
+
+### Features
+
+* show an open menu on its button, and finish the windows' measures ([#64](https://github.com/untracked-maps/untracked/issues/64)) ([9133b05](https://github.com/untracked-maps/untracked/commit/9133b051f28df1cbc04cd9db45b8ce90b5d4a1e5))
+
 # [1.16.0](https://github.com/untracked-maps/untracked/compare/v1.15.0...v1.16.0) (2026-11-22)
 
 
