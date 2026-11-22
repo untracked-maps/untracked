@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
 import { EIFFEL_TOWER_FROM_THE_CENTRE, eiffelTowerDrawn, WEST_OF_THE_EIFFEL_TOWER } from './eiffel-tower';
-import { IN_THE_APP, louvreOpened, louvreSheet, theMap } from './home-page';
+import { IN_THE_APP, louvreOpened, louvreSearched, louvreSheet, opened, placesFound, theMap } from './home-page';
 import { refuseOpenFreeMap } from './openfreemap';
 
 type Area = {
@@ -12,7 +12,11 @@ type Area = {
 
 const IN_PARIS = /#map=14\/48\.8566\/2\.3522$/u;
 
-const FLIGHT_DURATION = 800;
+const FRAMES_WATCHED = 90;
+
+const POSITIONS_OF_A_JUMP = 3;
+
+const LOUVRE_SUGGESTED = /^Musée du Louvre/u;
 
 const markOf = (page: Page, name: string): Locator => page.getByRole('img', { name, exact: true });
 
@@ -62,6 +66,32 @@ const eiffelTouched = async (page: Page): Promise<void> => {
   await expect.poll(() => eiffelTowerDrawn(page, 0)).toBe(true);
   const { width, height } = page.viewportSize() ?? { width: 0, height: 0 };
   await page.mouse.click(width / 2 + EIFFEL_TOWER_FROM_THE_CENTRE, height / 2);
+};
+
+const positionsSeen = (page: Page, label: string): Promise<number> =>
+  page.evaluate(
+    ({ name, frames }) => {
+      const positionOf = (): string => {
+        const box = document.querySelector(`[role="img"][aria-label="${name}"]`)?.getBoundingClientRect();
+        return box === undefined ? 'none' : `${Math.round(box.x)} ${Math.round(box.y)}`;
+      };
+      const watched = (left: number, seen: ReadonlySet<string>): Promise<number> =>
+        left === 0
+          ? Promise.resolve(seen.size)
+          : new Promise((resolve) => {
+              requestAnimationFrame(() => resolve(watched(left - 1, new Set([...seen, positionOf()]))));
+            });
+      return watched(frames, new Set());
+    },
+    { name: label, frames: FRAMES_WATCHED }
+  );
+
+const louvreWatchedWhileChosen = async (page: Page): Promise<number> => {
+  await opened(page);
+  await louvreSearched(page);
+  const watched = positionsSeen(page, 'Musée du Louvre');
+  await placesFound(page).getByRole('option', { name: LOUVRE_SUGGESTED }).click();
+  return watched;
 };
 
 type Visible = (page: Page, region: Locator) => Promise<Area>;
@@ -133,8 +163,6 @@ test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 
   test('jumps to the place chosen instead of flying', async ({ page }) => {
-    await louvreOpened(page);
-
-    await expect.poll(louvreOffTheMiddle(page, rightOfThePanel), { timeout: FLIGHT_DURATION / 2 }).toBeLessThanOrEqual(1);
+    expect(await louvreWatchedWhileChosen(page)).toBeLessThanOrEqual(POSITIONS_OF_A_JUMP);
   });
 });
