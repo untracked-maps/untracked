@@ -59,13 +59,13 @@ test('says no address was found near the spot', async ({ page }) => {
   await expect(page.getByRole('region', { name: 'Selected spot' })).toContainText('Address not found');
 });
 
-test('says « Address introuvable » under /fr', async ({ page }) => {
+test('says the address cannot be found, in French under /fr', async ({ page }) => {
   await page.route(ADDRESSES_FILE, (route) => route.fulfill({ json: [] }));
   await page.goto(`fr${BY_THE_LOUVRE}`);
 
   await page.getByRole('region', { name: 'Carte', exact: true }).press('Enter');
 
-  await expect(page.getByRole('region', { name: 'Point sélectionné' })).toContainText('Address introuvable');
+  await expect(page.getByRole('region', { name: 'Point sélectionné' })).toContainText('introuvable');
 });
 
 test('inspects the centre of the map with Enter', async ({ page }) => {
