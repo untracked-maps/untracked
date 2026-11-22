@@ -7,9 +7,9 @@
   import CopyIcon from '#libraries/design/copy-icon.svelte';
   import Floating from '#libraries/design/floating.svelte';
   import '#libraries/design/tokens.css';
+  import { longPress } from '#libraries/design/long-press';
   import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import { openedPlaceOf, type PlaceSheet } from '../../domain/open-place';
-  import { longPress } from './long-press';
   import { addressOf } from './place-address.presenter';
   import { typeOf } from './place-type.presenter';
 

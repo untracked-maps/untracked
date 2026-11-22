@@ -37,7 +37,7 @@ type PostalAddress = {
   readonly addressCountry: string;
 };
 
-type Origin = 'search' | 'kind list';
+type Origin = 'search' | 'kind list' | 'map';
 
 type Opening = {
   readonly id: string;

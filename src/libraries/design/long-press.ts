@@ -1,8 +1,10 @@
-import { filter, fromEvent, map, merge, type Observable, switchMap, takeUntil, timer } from 'rxjs';
+import { filter, fromEvent, map, merge, type Observable, switchMap, takeUntil, tap, timer } from 'rxjs';
+
+type Vibrate = (milliseconds: number) => void;
 
 type LongPress = {
   readonly onPress: () => void;
-  readonly vibrate: (milliseconds: number) => void;
+  readonly vibrate: Vibrate;
 };
 
 const PRESS_DURATION = 480;
@@ -23,20 +25,20 @@ const releasesOf = (element: HTMLElement, start: PointerEvent): Observable<unkno
     fromEvent<PointerEvent>(element, 'pointermove').pipe(filter(movedFrom(start)))
   );
 
-const longPressesOf = (element: HTMLElement): Observable<void> =>
-  fromEvent<PointerEvent>(element, 'pointerdown').pipe(
-    switchMap((start) => timer(PRESS_DURATION).pipe(takeUntil(releasesOf(element, start)))),
-    map(() => undefined)
+const heldFrom = (element: HTMLElement, start: PointerEvent, vibrate: Vibrate): Observable<PointerEvent> =>
+  timer(PRESS_DURATION).pipe(
+    takeUntil(releasesOf(element, start)),
+    tap(() => vibrate(VIBRATION)),
+    map(() => start)
   );
 
 const longPress =
   ({ onPress, vibrate }: LongPress) =>
   (element: HTMLElement): (() => void) => {
-    const subscription = longPressesOf(element).subscribe(() => {
-      vibrate(VIBRATION);
-      onPress();
-    });
+    const subscription = fromEvent<PointerEvent>(element, 'pointerdown')
+      .pipe(switchMap((start) => heldFrom(element, start, vibrate)))
+      .subscribe(() => onPress());
     return (): void => subscription.unsubscribe();
   };
 
-export { longPress };
+export { heldFrom, longPress, type Vibrate };

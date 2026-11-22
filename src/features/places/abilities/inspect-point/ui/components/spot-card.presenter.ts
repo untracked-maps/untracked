@@ -33,17 +33,16 @@ const linesOf = (address: string): AddressLines => {
     : { street: address.slice(0, at), locality: address.slice(at + SEPARATOR.length) };
 };
 
-const UNADDRESSED_TITLES: Readonly<Record<Exclude<ShownSpot['kind'], 'address'>, () => string>> = {
-  looking: m.inspect_point_looking,
-  'no-address': m.inspect_point_no_address,
+const UNADDRESSED_SUBTITLES: Readonly<Record<Exclude<ShownSpot['kind'], 'address'>, () => string>> = {
+  looking: m.inspect_point_address,
+  'no-address': m.inspect_point_address_not_found,
   unavailable: m.inspect_point_unavailable
 };
 
-const titleOf = (spot: ShownSpot): string =>
-  spot.kind === 'address' ? linesOf(spot.address).street : UNADDRESSED_TITLES[spot.kind]();
+const titleOf = (spot: ShownSpot): string => (spot.kind === 'address' ? linesOf(spot.address).street : m.inspect_point_spot());
 
 const subtitleOf = (spot: ShownSpot): string =>
-  (spot.kind === 'address' && linesOf(spot.address).locality) || coordinatesOf(spot.spot);
+  spot.kind === 'address' ? linesOf(spot.address).locality || coordinatesOf(spot.spot) : UNADDRESSED_SUBTITLES[spot.kind]();
 
 const spotCardOf = (spot: ShownSpot): SpotCard => ({
   title: titleOf(spot),

@@ -43,6 +43,31 @@ test('opens a card about the spot pressed long', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Close the card' })).toBeVisible();
 });
 
+test('says the address is being looked for under the title of the spot', async ({ page }) => {
+  await page.route(ADDRESSES_FILE, () => undefined);
+
+  await inspectTheCentre(page);
+
+  await expect(page.getByRole('region', { name: 'Selected spot' })).toContainText('Address');
+});
+
+test('says no address was found near the spot', async ({ page }) => {
+  await page.route(ADDRESSES_FILE, (route) => route.fulfill({ json: [] }));
+
+  await inspectTheCentre(page);
+
+  await expect(page.getByRole('region', { name: 'Selected spot' })).toContainText('Address not found');
+});
+
+test('says the address cannot be found, in French under /fr', async ({ page }) => {
+  await page.route(ADDRESSES_FILE, (route) => route.fulfill({ json: [] }));
+  await page.goto(`fr${BY_THE_LOUVRE}`);
+
+  await page.getByRole('region', { name: 'Carte', exact: true }).press('Enter');
+
+  await expect(page.getByRole('region', { name: 'Point sélectionné' })).toContainText('introuvable');
+});
+
 test('inspects the centre of the map with Enter', async ({ page }) => {
   await inspectTheCentre(page);
 
