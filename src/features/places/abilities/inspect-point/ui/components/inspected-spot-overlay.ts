@@ -1,5 +1,5 @@
-import { type LngLat, type Map as MapLibreMap, type MapMouseEvent, Marker } from 'maplibre-gl';
-import { defer, filter, finalize, fromEvent, map, merge, Observable, pairwise, tap } from 'rxjs';
+import { type LngLat, type Map as MapLibreMap, Marker } from 'maplibre-gl';
+import { defer, filter, finalize, fromEvent, map, merge, type Observable, pairwise, tap } from 'rxjs';
 import { m } from '#i18n/messages';
 import type { Coordinates, InspectedSpot } from '../../domain/inspect-point';
 import './inspected-spot-overlay.css';
@@ -13,25 +13,11 @@ const coordinatesOf = (lngLat: LngLat): Coordinates => {
   return { longitude: lng, latitude: lat };
 };
 
-const pointerEvents =
-  (target: MapLibreMap) =>
-  (type: 'click' | 'contextmenu'): Observable<MapMouseEvent> =>
-    new Observable<MapMouseEvent>((subscriber) => {
-      const listener = (event: MapMouseEvent): void => subscriber.next(event);
-      target.on(type, listener);
-      return (): void => {
-        target.off(type, listener);
-      };
-    });
-
 const enterPresses = (target: MapLibreMap): Observable<KeyboardEvent> =>
   fromEvent<KeyboardEvent>(target.getCanvas(), 'keydown').pipe(filter((event) => event.key === 'Enter'));
 
 const inspections = (target: MapLibreMap): Observable<Coordinates> =>
-  merge(
-    merge(pointerEvents(target)('click'), pointerEvents(target)('contextmenu')).pipe(map(({ lngLat }) => lngLat)),
-    enterPresses(target).pipe(map(() => target.getCenter()))
-  ).pipe(map(coordinatesOf));
+  enterPresses(target).pipe(map(() => coordinatesOf(target.getCenter())));
 
 const spotMark = (): HTMLElement => {
   const element = document.createElement('span');

@@ -37,7 +37,9 @@
   import SpotCard from '#features/places/abilities/inspect-point/ui/components/spot-card.svelte';
   import { openPlaceOverlay } from '#features/places/abilities/open-place/ui/components/open-place-overlay';
   import PlaceSheetCard from '#features/places/abilities/open-place/ui/components/place-sheet.svelte';
+  import { placeDotAt } from '#features/places/abilities/show-places/ui/components/place-dot-at';
   import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
+  import { touchedMapOverlay } from '#features/places/abilities/touch-the-map/ui/components/touched-map-overlay';
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
@@ -180,8 +182,6 @@
     return (): void => subscription.unsubscribe();
   });
 
-  const keepView = (view: MapView): void => views.next(view);
-
   const [placeSheet, inspectedSpot] = $derived([data.places.sheet, data.spots.spot]);
 
   const acknowledgement = browser ? localAcknowledgement(localStorage, WELCOME_STORAGE_KEY) : undefined;
@@ -226,7 +226,7 @@
       onChoosePlace={choosePlace('kind list')}
       ready={browser}
       covered={$inspectedSpot.kind !== 'none' || $placeSheet.status === 'open'}
-      onSheetHeight={data.sheetHeights.list}
+      onSheetHeight={data.sheetHeights.of('list')}
       closings={data.closing.of('kind list').closings}
     />
   </div>
@@ -238,13 +238,13 @@
     onClose={data.places.close}
     onCopy={data.places.copy}
     vibrate={data.places.vibrate}
-    onSheetHeight={data.sheetHeights.place}
+    onSheetHeight={data.sheetHeights.of('place')}
     closings={data.closing.of('place').closings}
   />
   <SpotCard
     spot={inspectedSpot}
     onClose={data.spots.dismiss}
-    onSheetHeight={data.sheetHeights.spot}
+    onSheetHeight={data.sheetHeights.of('spot')}
     closings={data.closing.of('spot').closings}
   />
   <LanguageSuggestion
@@ -258,7 +258,7 @@
   {scene}
   label={m.map_label()}
   onMap={basemap.watch}
-  onViewChange={keepView}
+  onViewChange={(view): void => views.next(view)}
   overlays={[
     placeDotsOverlay(data.placesShown, data.theme.colourScheme),
     positionOverlay(located),
@@ -268,7 +268,15 @@
     zoomOverlay(zooms),
     layersOverlay(layers.transitLinesOnMap, loadTransitLinesLayers),
     layersOverlay(layers.bikeLanesOnMap, loadBikeLanesLayers),
-    inspectedSpotOverlay(inspectedSpot, { onInspect: data.spots.inspect })
+    inspectedSpotOverlay(inspectedSpot, { onInspect: data.spots.inspect }),
+    touchedMapOverlay({
+      placeAt: placeDotAt,
+      vibrate: data.places.vibrate,
+      sheetOpen: data.spots.sheetOpen,
+      onOpenPlace: (id) => data.places.open({ id, from: 'map' }),
+      onInspect: data.spots.inspect,
+      onClose: data.spots.closeSheets
+    })
   ]}
 />
 

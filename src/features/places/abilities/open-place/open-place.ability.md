@@ -1,7 +1,7 @@
 # Feature: Open the sheet of a place
 
 > The visitor chooses a place among the suggestions of the search or in the
-> list of a kind of places. Its sheet opens: its name, its type and its
+> list of a kind of places, or touches its dot on the map. Its sheet opens: its name, its type and its
 > address, which the visitor can copy. Closing the sheet takes the visitor
 > back to where the place was chosen.
 
@@ -64,6 +64,11 @@
 
 - When the visitor opens "flore" from the list of a kind
 - Then the sheet was opened from the list of a kind
+
+### Scenario: The place was touched on the map
+
+- When the visitor opens "flore" from the map
+- Then the sheet was opened from the map
 
 ### Scenario: The visitor closes the sheet
 

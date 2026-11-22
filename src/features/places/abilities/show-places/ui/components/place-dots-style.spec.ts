@@ -4,13 +4,14 @@ import type { PlaceDot } from '../../domain/show-places';
 import { PLACE_DOTS_SOURCE, placeDotsData, placeDotsLayers } from './place-dots-style';
 
 const CAMILLE: PlaceDot = {
+  id: 'chez-camille',
   name: 'Chez Camille',
   family: 'food',
   coordinates: { longitude: 2.35, latitude: 48.86 },
   order: 0
 };
 
-const PARKING: PlaceDot = { ...CAMILLE, name: 'Parking Vinci', family: undefined, order: 5 };
+const PARKING: PlaceDot = { ...CAMILLE, id: 'parking-vinci', name: 'Parking Vinci', family: undefined, order: 5 };
 
 const styleOf = (palette: 'light' | 'dark'): Parameters<typeof validateStyleMin>[0] => ({
   version: 8,
@@ -28,21 +29,26 @@ describe('place dots on the map', () => {
     expect(validateStyleMin(styleOf(palette))).toStrictEqual([]);
   });
 
-  it('are points named after their place, with its family and its order', () => {
+  it('are points named after their place, with its id, its family and its order', () => {
     expect(placeDotsData([CAMILLE])).toStrictEqual({
       type: 'FeatureCollection',
       features: [
         {
           type: 'Feature',
           geometry: { type: 'Point', coordinates: [2.35, 48.86] },
-          properties: { name: 'Chez Camille', family: 'food', order: 0 }
+          properties: { id: 'chez-camille', name: 'Chez Camille', family: 'food', order: 0 }
         }
       ]
     });
   });
 
   it('say when a place has no family', () => {
-    expect(placeDotsData([PARKING]).features[0]?.properties).toStrictEqual({ name: 'Parking Vinci', family: 'none', order: 5 });
+    expect(placeDotsData([PARKING]).features[0]?.properties).toStrictEqual({
+      id: 'parking-vinci',
+      name: 'Parking Vinci',
+      family: 'none',
+      order: 5
+    });
   });
 
   it('are drawn in two layers of symbols, the places without a family underneath', () => {

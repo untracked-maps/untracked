@@ -48,7 +48,7 @@ describe('spot card, as shown', () => {
 
     spot.next({ kind: 'no-address', spot: LOUVRE });
 
-    await expect.element(page.getByRole('region', { name: 'No address here' })).toBeVisible();
+    await expect.element(page.getByRole('region', { name: 'Selected spot' })).toBeVisible();
   });
 
   it('announces the spot inspected', async () => {

@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, defer, firstValueFrom, map, type Observable, of, Subject, shareReplay } from 'rxjs';
+import { combineLatest, defer, firstValueFrom, map, type Observable, of, Subject, shareReplay } from 'rxjs';
 import type { ColourScheme } from '#features/appearance/abilities/choose-theme/domain/choose-theme';
 import { BASEMAPS, type Basemap, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
 import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
@@ -29,6 +29,7 @@ import { miniSearchIndex } from '#features/search/abilities/search-places/implem
 import type { LoadPlaces } from '#features/search/domain/place';
 import { prerenderedPlaces } from '#features/search/implementation/prerendered/prerendered-places';
 import { m } from '#i18n/messages';
+import { type TallestSheet, tallestSheet } from '#libraries/design/tallest-sheet';
 import { browser } from '$app/env';
 import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
@@ -61,25 +62,6 @@ const noticeBoard = (): Notices => {
   return { shown: showNotice({ told, acted }), tell: (notice) => told.next(notice), act: () => acted.next() };
 };
 
-type SheetHeights = {
-  readonly spot: (height: number) => void;
-  readonly place: (height: number) => void;
-  readonly list: (height: number) => void;
-  readonly tallest: Observable<number>;
-};
-
-const sheetHeights = (): SheetHeights => {
-  const spot = new BehaviorSubject(0);
-  const place = new BehaviorSubject(0);
-  const list = new BehaviorSubject(0);
-  return {
-    spot: (height) => spot.next(height),
-    place: (height) => place.next(height),
-    list: (height) => list.next(height),
-    tallest: combineLatest([spot, place, list]).pipe(map((heights) => Math.max(...heights)))
-  };
-};
-
 type PlaceSheets = {
   readonly sheet: Observable<PlaceSheet>;
   readonly open: (opening: Opening) => void;
@@ -90,13 +72,16 @@ type PlaceSheets = {
 
 const COPY_NOTICES = { copied: m.place_sheet_address_copied, 'not copied': m.place_sheet_address_not_copied };
 
-const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices): PlaceSheets => {
+const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, dismissed: Subject<void>): PlaceSheets => {
   const opened = new Subject<Opening>();
   const closed = new Subject<void>();
   const copy = copyAddress({ copyText: clipboardCopy(browser ? navigator.clipboard : undefined) });
   return {
     sheet: openPlace({ loadPlaces: prerenderedPlacesOfSheet(fetchPlaces, resolve('/data/places.json')) })({ opened, closed }),
-    open: (opening) => opened.next(opening),
+    open: (opening): void => {
+      dismissed.next();
+      opened.next(opening);
+    },
     close: () => closed.next(),
     copy: (text) => copy(of(text)).subscribe((copied) => notices.tell({ text: COPY_NOTICES[copied]() })),
     vibrate: (milliseconds) => navigator.vibrate?.(milliseconds)
@@ -105,18 +90,28 @@ const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices): Pl
 
 type Spots = {
   readonly spot: Observable<InspectedSpot>;
+  readonly sheetOpen: Observable<boolean>;
   readonly inspect: (spot: Coordinates) => void;
   readonly dismiss: () => void;
+  readonly closeSheets: () => void;
 };
 
-const spotsInspected = (): Spots => {
+const spotsInspected = (places: PlaceSheets, dismissed: Subject<void>): Spots => {
   const inspected = new Subject<Coordinates>();
-  const dismissed = new Subject<void>();
   const reverseGeocode = nearestAddress(prerenderedAddresses(fetchFile, resolve('/data/addresses.json')));
+  const spot = inspectPoint({ reverseGeocode })({ inspected, dismissed });
   return {
-    spot: inspectPoint({ reverseGeocode })({ inspected, dismissed }),
-    inspect: (spot) => inspected.next(spot),
-    dismiss: () => dismissed.next()
+    spot,
+    sheetOpen: combineLatest([places.sheet, spot]).pipe(map(([place, { kind }]) => place.status === 'open' || kind !== 'none')),
+    inspect: (at): void => {
+      places.close();
+      inspected.next(at);
+    },
+    dismiss: () => dismissed.next(),
+    closeSheets: (): void => {
+      places.close();
+      dismissed.next();
+    }
   };
 };
 
@@ -155,7 +150,7 @@ type Loaded = {
   readonly layers: MapLayers;
   readonly search: SearchSources;
   readonly notices: Notices;
-  readonly sheetHeights: SheetHeights;
+  readonly sheetHeights: TallestSheet;
   readonly places: PlaceSheets;
   readonly spots: Spots;
   readonly placesShown: (zoom$: Observable<number>) => Observable<readonly PlaceDot[]>;
@@ -184,16 +179,17 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
   const { theme } = await parent();
   const fetchPlaces = fetchedOnce(resolve('/data/places.json'));
   const notices = noticeBoard();
-  const places = placeSheets(fetchPlaces, notices);
+  const dismissed = new Subject<void>();
+  const places = placeSheets(fetchPlaces, notices, dismissed);
   const openId = places.sheet.pipe(map((sheet) => (sheet.status === 'open' ? sheet.place.id : undefined)));
   const shownOnMap = showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) });
   return {
     ...data,
     search: searchSources(fetchPlaces),
     notices,
-    sheetHeights: sheetHeights(),
+    sheetHeights: tallestSheet(),
     places,
-    spots: spotsInspected(),
+    spots: spotsInspected(places, dismissed),
     placesShown: (zoom$) => shownOnMap(zoom$, openId),
     layers: mapLayers(theme.colourScheme)
   };

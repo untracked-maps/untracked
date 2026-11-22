@@ -34,6 +34,7 @@ const PARKING: Place = {
 };
 
 const EIFFEL_DOT: PlaceDot = {
+  id: 'tour-eiffel',
   name: 'Tour Eiffel',
   family: 'sight',
   coordinates: { longitude: 2.294_48, latitude: 48.858_26 },
@@ -41,6 +42,7 @@ const EIFFEL_DOT: PlaceDot = {
 };
 
 const LAFAYETTE_DOT: PlaceDot = {
+  id: 'galeries-lafayette',
   name: 'Galeries Lafayette',
   family: 'shop',
   coordinates: { longitude: 2.332_14, latitude: 48.873_73 },

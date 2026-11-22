@@ -24,21 +24,31 @@ describe('spot card presenter', () => {
   it('gives the coordinates under an address of a single line', () => {
     expect(spotCardOf({ kind: 'address', spot: LOUVRE, address: 'Cour Carrée' }).subtitle).toBe('48.86061, 2.33764');
   });
+});
 
-  it('says the address is being looked for', () => {
-    expect(spotCardOf({ kind: 'looking', spot: LOUVRE }).title).toBe('Looking for the address…');
+describe('spot card presenter, without an address', () => {
+  it('titles the card of a spot whose address is being looked for', () => {
+    expect(spotCardOf({ kind: 'looking', spot: LOUVRE }).title).toBe('Selected spot');
   });
 
-  it('says there is no address at the spot', () => {
-    expect(spotCardOf({ kind: 'no-address', spot: LOUVRE }).title).toBe('No address here');
+  it('says the address is being looked for under the title', () => {
+    expect(spotCardOf({ kind: 'looking', spot: LOUVRE }).subtitle).toBe('Address');
   });
 
-  it('says the address is unavailable', () => {
-    expect(spotCardOf({ kind: 'unavailable', spot: LOUVRE }).title).toBe('Address unavailable');
+  it('titles the card of a spot without address', () => {
+    expect(spotCardOf({ kind: 'no-address', spot: LOUVRE }).title).toBe('Selected spot');
   });
 
-  it('gives the coordinates of a spot without address', () => {
-    expect(spotCardOf({ kind: 'no-address', spot: LOUVRE }).subtitle).toBe('48.86061, 2.33764');
+  it('says no address was found under the title', () => {
+    expect(spotCardOf({ kind: 'no-address', spot: LOUVRE }).subtitle).toBe('Address not found');
+  });
+
+  it('titles the card of a spot whose address is unavailable', () => {
+    expect(spotCardOf({ kind: 'unavailable', spot: LOUVRE }).title).toBe('Selected spot');
+  });
+
+  it('says the address is unavailable under the title', () => {
+    expect(spotCardOf({ kind: 'unavailable', spot: LOUVRE }).subtitle).toBe('Address unavailable');
   });
 
   it('reports on OpenStreetMap with a note at the spot', () => {

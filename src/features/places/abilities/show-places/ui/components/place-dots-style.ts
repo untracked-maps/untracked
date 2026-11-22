@@ -103,10 +103,10 @@ const placeDotsLayers = (palette: PlaceNamesPalette): readonly SymbolLayerSpecif
 
 const placeDotsData = (dots: readonly PlaceDot[]): PlaceDotsData => ({
   type: 'FeatureCollection',
-  features: dots.map(({ name, family: familyOfDot, coordinates: { longitude, latitude }, order }) => ({
+  features: dots.map(({ id, name, family: familyOfDot, coordinates: { longitude, latitude }, order }) => ({
     type: 'Feature',
     geometry: { type: 'Point', coordinates: [longitude, latitude] },
-    properties: { name, family: familyOfDot ?? WITHOUT_FAMILY, order }
+    properties: { id, name, family: familyOfDot ?? WITHOUT_FAMILY, order }
   }))
 });
 

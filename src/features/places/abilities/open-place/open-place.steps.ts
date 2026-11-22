@@ -85,6 +85,11 @@ When(
   }
 );
 
+When('the visitor opens {string} from the map', function theVisitorOpensFromTheMap(this: OpenPlaceWorld, id: string) {
+  sheetStarted(this);
+  this.opened.next({ id, from: 'map' });
+});
+
 When('the visitor closes the sheet', function theVisitorClosesTheSheet(this: OpenPlaceWorld) {
   this.closed.next();
 });
@@ -162,3 +167,7 @@ Then(
     assert.equal(this.copied, 'not copied');
   }
 );
+
+Then('the sheet was opened from the map', function theSheetWasOpenedFromTheMap(this: OpenPlaceWorld) {
+  assert.equal(this.sheet.status === 'open' && this.sheet.from, 'map');
+});

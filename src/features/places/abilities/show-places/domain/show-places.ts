@@ -34,6 +34,7 @@ type Place = {
 };
 
 type PlaceDot = {
+  readonly id: string;
   readonly name: string;
   readonly family: Family | undefined;
   readonly coordinates: Coordinates;
@@ -103,7 +104,7 @@ const dotsAt =
     places.flatMap((place): PlaceDot[] => {
       const shown = zoom < CLOSE_ZOOM ? shownFromAfar(place) : shownUpClose(place);
       return shown !== undefined && shown.from <= zoom
-        ? [{ name: place.name, family: place.family, coordinates: place.coordinates, order: shown.order }]
+        ? [{ id: place.id, name: place.name, family: place.family, coordinates: place.coordinates, order: shown.order }]
         : [];
     });
 

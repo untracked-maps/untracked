@@ -129,20 +129,20 @@ describe('inspected spot overlay, on the map', () => {
 });
 
 describe('inspected spot overlay, from the visitor', () => {
-  it('inspects the spot clicked', async () => {
+  it('leaves the clicks to the touches of the map', async () => {
     const { inspected, map } = listenedMap();
 
     await userEvent.click(map.getCanvas());
 
-    expect(inspected.map(rounded)).toEqual([CENTRE]);
+    expect(inspected).toEqual([]);
   });
 
-  it('inspects the spot pressed long or clicked with the secondary button', async () => {
+  it('leaves the right clicks to the touches of the map', async () => {
     const { inspected, map } = listenedMap();
 
     await userEvent.click(map.getCanvas(), { button: 'right' });
 
-    expect(inspected.map(rounded)).toEqual([CENTRE]);
+    expect(inspected).toEqual([]);
   });
 
   it('inspects the centre of the map on Enter', async () => {
@@ -176,16 +176,10 @@ describe('inspected spot overlay, from the visitor', () => {
       inspected.push(spot);
     };
     listening(inspectedSpotOverlay(of(NONE), { ...NO_ACTION, onInspect })(map)).unsubscribe();
+    map.getCanvas().focus();
 
-    await userEvent.click(map.getCanvas());
+    await userEvent.keyboard('{Enter}');
 
     expect(inspected).toEqual([]);
-  });
-
-  it('leaves the map once it no longer shows the spot', () => {
-    const map = mapCentredOn(CENTRE.longitude);
-    listening(inspectedSpotOverlay(of(NONE), NO_ACTION)(map)).unsubscribe();
-
-    expect(map.listens('click')).toBe(false);
   });
 });
