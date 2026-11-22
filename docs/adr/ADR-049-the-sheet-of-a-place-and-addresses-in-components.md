@@ -23,11 +23,12 @@ Choosing a place in the search or in the list of a kind of places left the visit
 - Recent places kept by an earlier version, with a one-line address, are left out once.
 - The addresses file still carries a one-line address for the sheet of a spot, written by the fake generator in French order; that sheet reads components when step 9 changes it.
 - A long press on the address copies it, after 480 ms, unless the finger moves more than 10 px; the device vibrates 10 ms where it can. A copy refused tells the visitor in a short notice ([ADR-045](ADR-045-short-notices-with-one-action.md)).
-- The weight of the app grows by the templates of every country, loaded only once an address is shown.
+- The weight of the app grows by the templates of every country, loaded only once an address is shown: the rest of the app goes from 93.78 kB to 154.83 kB compressed, under its limit of 200 kB. oertio asked on 2026-11-21 to load France's templates only; the package imports every country's templates, state codes and county codes as a whole and offers no way to load one country. On 2026-11-22 oertio chose to keep the package as it is, for now; whether to keep it, raise the limit or change the library is left to Marc to decide later.
 
 ## Alternatives considered
 
 - **Templates of our own for France**, or the address written in French order by the generator: the standard rewritten, which ADR-042 set aside.
+- **France's templates only**, by replacing the package's data files with a cut copy at build time: 61 kB less, but a copy of a dependency to keep in step with each release.
 - **The formatter loaded with the page**: simpler presenters, but 62 kB more to load and run before the map, against the budgets of [ADR-022](ADR-022-lighthouse-budgets-per-page.md).
 - **The large dot as a symbol layer with the sprite**: drawn by MapLibre with the other dots, but under every DOM marker, those of the list of a kind among them.
 - **Opening the sheet with the place itself rather than its id**: the search and the list would carry the family and every field of the sheet, which they do not need; links (step 11) open a place by its id too.
