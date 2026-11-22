@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const NOEL = /^Boulangerie Noel/u;
@@ -74,7 +74,7 @@ test('names the grip in French under /fr', async ({ page }) => {
 test('has no detectable accessibility violation with a sheet open on a phone', async ({ page }) => {
   await bakeriesShown(page);
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });

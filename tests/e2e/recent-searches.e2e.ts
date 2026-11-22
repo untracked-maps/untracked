@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const GRAND_PALAIS = /^Grand Palais/u;
@@ -78,7 +78,7 @@ test('closes the panel when the visitor presses the map', async ({ page }) => {
 test('has no detectable accessibility violation with recent searches offered', async ({ page }) => {
   await focusedWithGrandPalais(page);
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });
@@ -89,6 +89,14 @@ const cleared = async (page: Page): Promise<void> => {
 };
 
 const undo = (page: Page): Locator => page.getByRole('button', { name: 'Undo' });
+
+const SLOWED_PLAYBACK = 0.1;
+
+const slowedAnimations = async (page: Page): Promise<void> => {
+  const devTools = await page.context().newCDPSession(page);
+  await devTools.send('Animation.enable');
+  await devTools.send('Animation.setPlaybackRate', { playbackRate: SLOWED_PLAYBACK });
+};
 
 test('tells the visitor the recent places are cleared, and offers to take it back', async ({ page }) => {
   await cleared(page);
@@ -133,7 +141,16 @@ test('has no detectable accessibility violation with a notice shown', async ({ p
   await cleared(page);
   await undo(page).waitFor();
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
+});
+
+test('has no detectable accessibility violation with a notice shown, however slowly it appears', async ({ page }) => {
+  await focusedWithGrandPalais(page);
+  await slowedAnimations(page);
+  await recentSearches(page).getByRole('button', { name: 'Clear' }).click();
+  await undo(page).waitFor();
+
+  expect(await violationsOf(page)).toEqual([]);
 });

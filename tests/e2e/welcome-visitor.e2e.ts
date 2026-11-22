@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, type Route, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const welcome = (page: Page): Locator => page.getByRole('region', { name: 'A map that does not track you' });
@@ -69,7 +69,7 @@ test('has no detectable accessibility violation with the welcome shown on a phon
   await page.goto('./');
   await welcome(page).waitFor();
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });

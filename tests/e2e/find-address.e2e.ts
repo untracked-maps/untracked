@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const ADDRESSES_FILE = '**/data/addresses.json';
@@ -95,5 +95,5 @@ test('has no detectable accessibility violation with addresses listed', async ({
   await searchFor(page, '40 rue moufetard');
   await page.getByRole('option', { name: MOUFFETARD }).waitFor();
 
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  expect(await violationsOf(page)).toEqual([]);
 });

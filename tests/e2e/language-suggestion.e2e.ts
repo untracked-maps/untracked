@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 
 test.describe('with a French browser', () => {
   test.use({ locale: 'fr-FR' });
@@ -37,7 +37,7 @@ test.describe('with a French browser', () => {
     await page.goto('./');
     await page.getByRole('complementary').waitFor();
 
-    const { violations } = await new AxeBuilder({ page }).analyze();
+    const violations = await violationsOf(page);
 
     expect(violations).toEqual([]);
   });

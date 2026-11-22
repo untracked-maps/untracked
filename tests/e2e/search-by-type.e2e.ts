@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const PLACES_FILE = '**/data/places.json';
@@ -129,7 +129,7 @@ test('names the kinds in French under /fr', async ({ page }) => {
 test('has no detectable accessibility violation with the bakeries listed', async ({ page }) => {
   await bakeriesShown(page);
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });
@@ -139,7 +139,7 @@ test('has no detectable accessibility violation with a kind offered in the searc
   await searchField(page).fill('pharmacie');
   await page.getByRole('button', { name: PHARMACIES_NEAR_YOU }).waitFor();
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });
