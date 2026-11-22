@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/untracked-maps/untracked/compare/v1.18.0...v1.19.0) (2026-11-22)
+
+
+### Features
+
+* frame the map on what is opened, measured ([#69](https://github.com/untracked-maps/untracked/issues/69)) ([b0515be](https://github.com/untracked-maps/untracked/commit/b0515be93208a0234001a24b34c79f8befa7c8c6))
+
 # [1.18.0](https://github.com/untracked-maps/untracked/compare/v1.17.0...v1.18.0) (2026-11-22)
 
 
