@@ -19,6 +19,8 @@ type SwipeEvent =
   | { readonly kind: 'released'; readonly time: number }
   | { readonly kind: 'toggled' };
 
+const releasedAt = (time: number): SwipeEvent => ({ kind: 'released', time });
+
 const SLOP = 6;
 
 const CLOSING_DISTANCE = 90;
@@ -79,4 +81,4 @@ const swipeOffset = ({ dy }: DialogSwipe): number => dy;
 
 const backdropShare = ({ dy }: DialogSwipe): number => Math.max(FAINTEST_BACKDROP, 1 - dy / FADE_DISTANCE);
 
-export { backdropShare, type SwipeEvent, swipeClosed, swipeOf, swipeOffset };
+export { backdropShare, releasedAt, type SwipeEvent, swipeClosed, swipeOf, swipeOffset };

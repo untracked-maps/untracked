@@ -19,7 +19,7 @@
 
   const closed = (dialog: HTMLDialogElement): void => dialog.hidePopover();
 
-  const UNPLACED = { left: 0, top: 0, right: 0, bottom: 0 };
+  const UNPLACED = { left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0 };
 
   const buttonBox = (): DOMRect | typeof UNPLACED =>
     document.querySelector(`[popovertarget="${uid}-panel"]:not([popovertargetaction])`)?.getBoundingClientRect() ?? UNPLACED;
@@ -37,11 +37,11 @@
   };
 
   const cover = (over: HTMLElement): void => {
-    const { left, top, right, bottom } = buttonBox();
+    const { left, top, width, height } = buttonBox();
     over.style.setProperty('inset-block-start', `${top}px`);
     over.style.setProperty('inset-inline-start', `${left}px`);
-    over.style.setProperty('inline-size', `${right - left}px`);
-    over.style.setProperty('block-size', `${bottom - top}px`);
+    over.style.setProperty('inline-size', `${width}px`);
+    over.style.setProperty('block-size', `${height}px`);
   };
 
   const covered = (over: HTMLElement): (() => void) => {
@@ -133,6 +133,8 @@
 
   .over-button {
     position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
     padding: 0;
     cursor: pointer;
     background: none;

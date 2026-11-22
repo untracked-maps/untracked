@@ -1,5 +1,5 @@
 import { createRawSnippet } from 'svelte';
-import { describe, expect, it, onTestFinished } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import { cdp, page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
 import PopoverButton from './popover-button.svelte';
@@ -91,5 +91,48 @@ describe('the button of a menu while pressed', () => {
     const pressed = await pressing(await opened());
 
     expect(getComputedStyle(pressed).backgroundColor).toBe('rgb(40, 54, 85)');
+  });
+});
+
+const nextFrame = (): Promise<number> =>
+  new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+
+const moved = (element: Element, right: number): void => {
+  if (element.getBoundingClientRect().right !== right) {
+    throw new Error('The button has not moved yet');
+  }
+};
+
+const movedTo = async (element: Element, right: number): Promise<void> => {
+  await vi.waitFor(() => moved(element, right));
+  await nextFrame();
+  await nextFrame();
+};
+
+const openedAside = async (): Promise<Element> => {
+  await page.viewport(375, 667);
+  const { container } = await render(PopoverButton, { label: 'Map type', icon, children });
+  container.style.cssText = 'position: fixed; inset: auto 20px 100px auto';
+  await page.getByRole('button', { name: 'Map type' }).click();
+  await expect.element(page.getByText('Basemap')).toBeVisible();
+  return button();
+};
+
+describe('the button of an open menu away from the corner of the screen', () => {
+  it('darkens while pressed', async () => {
+    const pressed = await pressing(await openedAside());
+
+    expect(getComputedStyle(pressed).backgroundColor).toBe('rgb(209, 214, 227)');
+  });
+
+  it('darkens while pressed after the screen changed size', async () => {
+    const aside = await openedAside();
+    await page.viewport(600, 500);
+    await movedTo(aside, 580);
+    const pressed = await pressing(aside);
+
+    expect(getComputedStyle(pressed).backgroundColor).toBe('rgb(209, 214, 227)');
   });
 });

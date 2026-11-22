@@ -1,6 +1,6 @@
 import { from, lastValueFrom, type ObservedValueOf, toArray } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import { backdropShare, type SwipeEvent, swipeClosed, swipeOf, swipeOffset } from './dialog-swipe';
+import { backdropShare, releasedAt, type SwipeEvent, swipeClosed, swipeOf, swipeOffset } from './dialog-swipe';
 
 type DialogSwipe = ObservedValueOf<ReturnType<typeof swipeOf>>;
 
@@ -168,5 +168,11 @@ describe('a window swiped away', () => {
 
   it('is not asked to close when it comes back', async () => {
     await expect(closings([touched(), moved([0, 50]), released(400)]).then(({ length }) => length)).resolves.toBe(0);
+  });
+});
+
+describe('the event of a finger lifted from a window', () => {
+  it('tells when the finger was lifted', () => {
+    expect(releasedAt(420)).toEqual({ kind: 'released', time: 420 });
   });
 });
