@@ -30,4 +30,4 @@ const showMap =
       map(([basemap, view]) => ({ basemap, view }))
     );
 
-export { type LoadBasemap, type MapScene, type MapView, showMap };
+export { type Coordinates, type LoadBasemap, type MapScene, type MapView, showMap };

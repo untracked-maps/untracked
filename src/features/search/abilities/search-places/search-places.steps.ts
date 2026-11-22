@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { firstValueFrom, NEVER, type Observable, of, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
-import type { Place } from '../../domain/place';
-import { viewOfChosenPlace } from './domain/chosen-place';
+import { ADDRESS_KINDS, type Found } from '../../domain/found';
+import { PLACE_KINDS, type Place } from '../../domain/place';
+import { addressesChosenAt, districtsChosenAt } from './domain/chosen-place';
 import { type FindPlaces, type SearchState, searchPlaces } from './domain/search-places';
 import { miniSearchIndex } from './implementation/minisearch/minisearch-index';
 
@@ -13,11 +14,21 @@ type SearchPlacesWorld = World & {
   findPlaces: FindPlaces;
   mapView: Observable<{ readonly center: Place['coordinates'] }>;
   state: SearchState;
-  view: { readonly center: Place['coordinates']; readonly zoom: number };
+  addressesShown: readonly Place['coordinates'][];
+  districtsShown: readonly Place['coordinates'][];
 };
 
 const placesFound = (state: SearchState): readonly string[] =>
   state.kind === 'found' ? state.places.map(({ name }) => name) : [];
+
+const KINDS: ReadonlySet<string> = new Set([...PLACE_KINDS, ...ADDRESS_KINDS]);
+
+const isKind = (kind: string): kind is Found['kind'] => KINDS.has(kind);
+
+const kindOf = (kind: string): Found['kind'] => {
+  assert.ok(isKind(kind));
+  return kind;
+};
 
 const PARIS_CENTRE = { longitude: 2.3522, latitude: 48.8566 };
 
@@ -88,15 +99,6 @@ When('the visitor searches for {string}', function theVisitorSearchesFor(this: S
   });
 });
 
-When(
-  'the visitor chooses {string} on a map at zoom level {float}',
-  function theVisitorChooses(this: SearchPlacesWorld, name: string, zoom: number) {
-    const chosen = this.places.find((place) => place.name === name);
-    assert.ok(chosen);
-    this.view = viewOfChosenPlace(chosen, zoom);
-  }
-);
-
 Then('the first place found is {string}', function theFirstPlaceFoundIs(this: SearchPlacesWorld, name: string) {
   assert.equal(placesFound(this.state)[0], name);
 });
@@ -132,13 +134,36 @@ Then('the visitor is told that the search is unavailable', function theSearchIsU
   assert.equal(this.state.kind, 'unavailable');
 });
 
-Then(
-  'the map flies to longitude {float} and latitude {float}',
-  function theMapFliesTo(this: SearchPlacesWorld, longitude: number, latitude: number) {
-    assert.deepEqual(this.view.center, { longitude, latitude });
+When(
+  /^the visitor chooses an? (?<kind>\w+) at (?<latitude>[\d.]+), (?<longitude>[\d.]+)$/u,
+  function theVisitorChoosesAt(this: SearchPlacesWorld, kind: string, latitude: string, longitude: string) {
+    const chosen = of({ kind: kindOf(kind), coordinates: { longitude: Number(longitude), latitude: Number(latitude) } });
+    const shown = (told: Observable<Place['coordinates']>): readonly Place['coordinates'][] => {
+      const all: Place['coordinates'][] = [];
+      told.subscribe((at) => {
+        all.push(at);
+      });
+      return all;
+    };
+    this.addressesShown = shown(addressesChosenAt(chosen));
+    this.districtsShown = shown(districtsChosenAt(chosen));
   }
 );
 
-Then('the map shows the place at zoom level {float}', function theMapShowsThePlaceAt(this: SearchPlacesWorld, zoom: number) {
-  assert.equal(this.view.zoom, zoom);
+Then(
+  'the map is told to show an address at {float}, {float}',
+  function theMapIsToldToShowTheAddress(this: SearchPlacesWorld, latitude: number, longitude: number) {
+    assert.deepEqual([this.addressesShown, this.districtsShown], [[{ longitude, latitude }], []]);
+  }
+);
+
+Then(
+  'the map is told to show a district at {float}, {float}',
+  function theMapIsToldToShowTheDistrict(this: SearchPlacesWorld, latitude: number, longitude: number) {
+    assert.deepEqual([this.addressesShown, this.districtsShown], [[], [{ longitude, latitude }]]);
+  }
+);
+
+Then('the map is told nothing by the search', function theMapIsToldNothing(this: SearchPlacesWorld) {
+  assert.deepEqual([this.addressesShown, this.districtsShown], [[], []]);
 });

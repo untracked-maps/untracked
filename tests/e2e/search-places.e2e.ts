@@ -10,7 +10,7 @@ const EIFFEL_TOWER = /^Tour Eiffel/u;
 
 const GRAND_PALAIS = /^Grand Palais/u;
 
-const GRAND_PALAIS_VIEW = /#map=16\.5\/48\.866\d*\/2\.312\d*$/u;
+const GRAND_PALAIS_VIEW = /#map=16\.5\//u;
 
 const SACRE_COEUR_DETAILS = /Lieu de culte · 35 rue du Chevalier de la Barre/u;
 

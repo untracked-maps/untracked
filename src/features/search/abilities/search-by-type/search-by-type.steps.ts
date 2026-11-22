@@ -4,7 +4,7 @@ import { type Observable, of, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { type Coordinates, type LoadPlaces, PLACE_KINDS, type Place, type PlaceKind } from '../../domain/place';
 import { kindNamedIn } from './domain/kind-words';
-import { type KindSearch, searchByType } from './domain/search-by-type';
+import { type KindSearch, placesFoundAt, searchByType } from './domain/search-by-type';
 
 type SearchByTypeWorld = World & {
   loadPlaces: LoadPlaces;
@@ -132,3 +132,14 @@ Then('the visitor is told that no such place is near', function noSuchPlaceIsNea
 Then('the visitor is told that the list is unavailable', function theListIsUnavailable(this: SearchByTypeWorld) {
   assert.equal(this.search.status, 'unavailable');
 });
+
+Then(
+  'the map is told to show {int} place(s), the first at {float}, {float}',
+  function theMapIsToldToShowThePlaces(this: SearchByTypeWorld, count: number, latitude: number, longitude: number) {
+    const told: (readonly Coordinates[])[] = [];
+    placesFoundAt(of(this.search)).subscribe((places) => {
+      told.push(places);
+    });
+    assert.deepEqual([told.length, told[0]?.length, told[0]?.[0]], [1, count, { longitude, latitude }]);
+  }
+);

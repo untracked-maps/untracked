@@ -1,20 +1,21 @@
-import type { Found } from '../../../domain/found';
+import { filter, map, type Observable } from 'rxjs';
+import { type Found, isAddress } from '../../../domain/found';
 import type { Coordinates } from '../../../domain/place';
 
-type ShownPlace = Pick<Found, 'name' | 'kind' | 'coordinates'>;
+type Chosen = Pick<Found, 'kind' | 'coordinates'>;
 
-type PlaceView = {
-  readonly center: Coordinates;
-  readonly zoom: number;
-};
+const isDistrict = ({ kind }: Chosen): boolean => kind === 'district';
 
-const PLACE_ZOOM = 16.5;
+const addressesChosenAt = (chosen$: Observable<Chosen>): Observable<Coordinates> =>
+  chosen$.pipe(
+    filter((chosen) => isAddress(chosen) && !isDistrict(chosen)),
+    map(({ coordinates }) => coordinates)
+  );
 
-const DISTRICT_ZOOM = 14;
+const districtsChosenAt = (chosen$: Observable<Chosen>): Observable<Coordinates> =>
+  chosen$.pipe(
+    filter(isDistrict),
+    map(({ coordinates }) => coordinates)
+  );
 
-const viewOfChosenPlace = ({ kind, coordinates }: ShownPlace, zoom: number): PlaceView => ({
-  center: coordinates,
-  zoom: kind === 'district' ? DISTRICT_ZOOM : Math.max(zoom, PLACE_ZOOM)
-});
-
-export { type ShownPlace, viewOfChosenPlace };
+export { addressesChosenAt, districtsChosenAt };

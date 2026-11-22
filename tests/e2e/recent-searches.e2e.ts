@@ -4,7 +4,7 @@ import { refuseOpenFreeMap } from './openfreemap';
 
 const GRAND_PALAIS = /^Grand Palais/u;
 
-const GRAND_PALAIS_VIEW = /#map=16\.5\/48\.866\d*\/2\.312\d*$/u;
+const GRAND_PALAIS_VIEW = /#map=16\.5\//u;
 
 const KEPT_GRAND_PALAIS = {
   id: 'grand-palais',

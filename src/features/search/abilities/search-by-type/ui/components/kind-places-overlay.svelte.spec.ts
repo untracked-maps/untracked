@@ -1,4 +1,4 @@
-import { LngLat, Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
+import { Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { BehaviorSubject, type Observable } from 'rxjs';
 import { describe, expect, it, onTestFinished, vi } from 'vitest';
@@ -46,9 +46,6 @@ const drawn = (overlay$: Observable<unknown>): void => {
   onTestFinished(() => subscription.unsubscribe());
 };
 
-const shows = (map: MapLibreMap, { coordinates: { longitude, latitude } }: Place): boolean =>
-  map.getBounds().contains(new LngLat(longitude, latitude));
-
 describe('places of a kind on the map', () => {
   it('are marked by name', async () => {
     drawn(kindPlacesOverlay(new BehaviorSubject<KindSearch>(FOUND))(mapAt(13)));
@@ -62,20 +59,13 @@ describe('places of a kind on the map', () => {
     await expect.element(page.getByRole('img', { name: 'Boulangerie Garcia' })).toHaveAttribute('data-kind', 'bakery');
   });
 
-  it('are all shown, the map fitting them', async () => {
-    const map = mapAt(16);
-
+  it('leave the fit to the framing of the map', async () => {
+    const map = mapAt(13);
     drawn(kindPlacesOverlay(new BehaviorSubject<KindSearch>(FOUND))(map));
 
-    await expect.poll(() => shows(map, GARCIA) && shows(map, NOEL), { timeout: 5000 }).toBe(true);
-  });
+    await vi.waitFor(() => page.getByRole('img', { name: 'Boulangerie Garcia' }).element());
 
-  it('are not shown from closer than the street', async () => {
-    const map = mapAt(10);
-
-    drawn(kindPlacesOverlay(new BehaviorSubject<KindSearch>({ ...FOUND, places: [GARCIA] }))(map));
-
-    await expect.poll(() => (shows(map, GARCIA) ? map.getZoom() : undefined), { timeout: 5000 }).toBe(16);
+    expect(map.isMoving()).toBe(false);
   });
 
   it('are unmarked once the search is closed', async () => {

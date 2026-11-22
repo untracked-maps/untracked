@@ -134,22 +134,24 @@
 - When the visitor searches for "louvre"
 - Then the visitor is told that the search is unavailable
 
-## Rule: The map shows the chosen place at street level
+## Rule: The map is told where an address chosen stands, the sheet of a place telling it for a place
 
-### Background:
+### Scenario: An address is chosen
 
-- Given these places to search
-  | name            | longitude | latitude |
-  | --------------- | --------- | -------- |
-  | Musée du Louvre | 2.33764   | 48.86061 |
+- When the visitor chooses an address at 48.8585, 2.3262
+- Then the map is told to show an address at 48.8585, 2.3262
 
-### Scenario: The visitor chooses a place on a map seen from afar
+### Scenario: A street is chosen
 
-- When the visitor chooses "Musée du Louvre" on a map at zoom level 13
-- Then the map flies to longitude 2.33764 and latitude 48.86061
-- And the map shows the place at zoom level 16.5
+- When the visitor chooses a street at 48.8585, 2.3262
+- Then the map is told to show an address at 48.8585, 2.3262
 
-### Scenario: The visitor chooses a place on a map seen from close by
+### Scenario: A district is chosen
 
-- When the visitor chooses "Musée du Louvre" on a map at zoom level 18
-- Then the map shows the place at zoom level 18
+- When the visitor chooses a district at 48.854, 2.333
+- Then the map is told to show a district at 48.854, 2.333
+
+### Scenario: A place is chosen
+
+- When the visitor chooses a museum at 48.86061, 2.33764
+- Then the map is told nothing by the search

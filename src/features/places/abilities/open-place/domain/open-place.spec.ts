@@ -1,7 +1,7 @@
 import { type Observable, of, take, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
-import { copyAddress, type Opening, openPlace, type PlaceSheet, type SheetPlace } from './open-place';
+import { copyAddress, type Opening, openPlace, type PlaceSheet, placesOpenedAt, type SheetPlace } from './open-place';
 
 const FLORE: SheetPlace = {
   id: 'flore',
@@ -158,5 +158,31 @@ describe('copying an address', () => {
     })(of('12 Rue de l’Éperon, 75006 Paris')).subscribe();
 
     expect(texts).toEqual(['12 Rue de l’Éperon, 75006 Paris']);
+  });
+});
+
+describe('where the place opened stands', () => {
+  const expectWhereabouts = (sheets: string, expected: string): void =>
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(placesOpenedAt(cold(sheets, SHEETS))).toBe(expected, {
+        f: FLORE.coordinates,
+        l: LUIGI.coordinates
+      });
+    });
+
+  it('is told once its sheet opens', () => {
+    expectWhereabouts('cf', '-f');
+  });
+
+  it('is told for each place opened', () => {
+    expectWhereabouts('fl', 'fl');
+  });
+
+  it('is told once while the same sheet stays open', () => {
+    expectWhereabouts('ff', 'f-');
+  });
+
+  it('is told again when the place opens again after its sheet was closed', () => {
+    expectWhereabouts('fcf', 'f-f');
   });
 });

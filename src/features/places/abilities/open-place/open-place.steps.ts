@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
-import { type Observable, of, Subject, throwError } from 'rxjs';
-import { copyAddress, type Opening, openPlace, type PlaceSheet, type SheetPlace } from './domain/open-place';
+import { type Observable, of, Subject, share, throwError } from 'rxjs';
+import { copyAddress, type Opening, openPlace, type PlaceSheet, placesOpenedAt, type SheetPlace } from './domain/open-place';
 
 type Row = Readonly<Partial<Record<string, string>>>;
 
@@ -13,6 +13,7 @@ type OpenPlaceWorld = World & {
   sheet: PlaceSheet;
   copiedTexts: string[];
   copied: string;
+  shownOnMap: SheetPlace['coordinates'][];
 };
 
 const filled = (value: string | undefined): string | undefined => (value === '' ? undefined : value);
@@ -42,7 +43,7 @@ const placeOf = (row: Row): SheetPlace => {
     ...(kind === undefined ? {} : { kind }),
     ...(cuisine === undefined ? {} : { cuisine }),
     ...addressOf(row),
-    coordinates: { longitude: 2.33, latitude: 48.85 }
+    coordinates: { longitude: Number(row['longitude'] ?? '2.33'), latitude: Number(row['latitude'] ?? '48.85') }
   };
 };
 
@@ -52,7 +53,14 @@ const sheetStarted = (world: OpenPlaceWorld): void => {
   }
   world.opened = new Subject<Opening>();
   world.closed = new Subject<void>();
-  openPlace({ loadPlaces: () => world.places ?? of([]) })({ opened: world.opened, closed: world.closed }).subscribe((sheet) => {
+  world.shownOnMap = [];
+  const sheet$ = openPlace({ loadPlaces: () => world.places ?? of([]) })({ opened: world.opened, closed: world.closed }).pipe(
+    share()
+  );
+  placesOpenedAt(sheet$).subscribe((at) => {
+    world.shownOnMap.push(at);
+  });
+  sheet$.subscribe((sheet) => {
     world.sheet = sheet;
   });
 };
@@ -171,3 +179,10 @@ Then(
 Then('the sheet was opened from the map', function theSheetWasOpenedFromTheMap(this: OpenPlaceWorld) {
   assert.equal(this.sheet.status === 'open' && this.sheet.from, 'map');
 });
+
+Then(
+  'the map is told to show {int} place(s), the last at {float}, {float}',
+  function theMapIsToldToShow(this: OpenPlaceWorld, count: number, latitude: number, longitude: number) {
+    assert.deepEqual([this.shownOnMap.length, this.shownOnMap.at(-1)], [count, { longitude, latitude }]);
+  }
+);

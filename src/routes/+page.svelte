@@ -23,8 +23,8 @@
   import { type MapScene, type MapView, showMap } from '#features/map/abilities/show-map/domain/show-map';
   import { openFreeMapBasemap } from '#features/map/abilities/show-map/implementation/openfreemap/load-basemap';
   import { basemapPalettes } from '#features/map/abilities/show-map/implementation/openfreemap/style/colours';
-  import { basemapSpriteName } from '#features/map/abilities/show-map/implementation/openfreemap/style/sprite';
   import { openMapTilesId } from '#features/map/abilities/show-map/implementation/openfreemap/style/tiles';
+  import { framingOverlay } from '#features/map/abilities/show-map/ui/components/framing-overlay';
   import MapCanvas from '#features/map/abilities/show-map/ui/components/map-canvas.svelte';
   import MapCredit from '#features/map/abilities/show-map/ui/components/map-credit.svelte';
   import ZoomButtons from '#features/map/abilities/show-map/ui/components/zoom-buttons.svelte';
@@ -35,6 +35,7 @@
   import NoticeCard from '#features/notices/abilities/show-notice/ui/components/notice.svelte';
   import { inspectedSpotOverlay } from '#features/places/abilities/inspect-point/ui/components/inspected-spot-overlay';
   import SpotCard from '#features/places/abilities/inspect-point/ui/components/spot-card.svelte';
+  import { placesOpenedAt } from '#features/places/abilities/open-place/domain/open-place';
   import { openPlaceOverlay } from '#features/places/abilities/open-place/ui/components/open-place-overlay';
   import PlaceSheetCard from '#features/places/abilities/open-place/ui/components/place-sheet.svelte';
   import { placeDotAt } from '#features/places/abilities/show-places/ui/components/place-dot-at';
@@ -47,11 +48,12 @@
   import { localRecents } from '#features/search/abilities/recent-searches/implementation/browser/local-recents';
   import RecentSearches from '#features/search/abilities/recent-searches/ui/components/recent-searches.svelte';
   import { namedKind } from '#features/search/abilities/search-by-type/domain/named-kind';
-  import { searchByType } from '#features/search/abilities/search-by-type/domain/search-by-type';
+  import { placesFoundAt, searchByType } from '#features/search/abilities/search-by-type/domain/search-by-type';
   import { lazyKindWords } from '#features/search/abilities/search-by-type/implementation/lazy/lazy-kind-words';
   import KindNamed from '#features/search/abilities/search-by-type/ui/components/kind-named.svelte';
   import { kindPlacesOverlay } from '#features/search/abilities/search-by-type/ui/components/kind-places-overlay';
   import KindSearch from '#features/search/abilities/search-by-type/ui/components/kind-search.svelte';
+  import { addressesChosenAt, districtsChosenAt } from '#features/search/abilities/search-places/domain/chosen-place';
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
   import { chosenPlaceOverlay } from '#features/search/abilities/search-places/ui/components/chosen-place-overlay';
   import type { SearchPanel } from '#features/search/abilities/search-places/ui/components/combobox.presenter';
@@ -72,10 +74,6 @@
 
   const { data }: PageProps = $props();
 
-  const glyphsUrl = (origin: string): string => `${origin}${resolve('/')}glyphs/{fontstack}/{range}.pbf`;
-
-  const spriteUrl = (origin: string): string => `${origin}${resolve('/')}sprites/${basemapSpriteName}`;
-
   const replaceUrl = (url: string): Promise<void> => Promise.resolve(replaceState(url, page.state));
 
   const layers = $derived(data.layers);
@@ -88,7 +86,7 @@
     browser
       ? showMap({
           loadBasemap: openFreeMapBasemap(
-            { glyphs: glyphsUrl(location.origin), sprite: spriteUrl(location.origin) },
+            { origin: location.origin, basePath: resolve('/') },
             data.theme.colourScheme.pipe(map((scheme) => basemapPalettes[scheme])),
             layers.satelliteImagery
           )
@@ -265,6 +263,11 @@
     kindPlacesOverlay(kindSearch),
     chosenPlaceOverlay(chosenPlaces),
     openPlaceOverlay(placeSheet, data.theme.colourScheme),
+    framingOverlay({
+      placesOpened: merge(placesOpenedAt(placeSheet), addressesChosenAt(chosenPlaces)),
+      districtsOpened: districtsChosenAt(chosenPlaces),
+      placesListed: placesFoundAt(kindSearch)
+    }),
     zoomOverlay(zooms),
     layersOverlay(layers.transitLinesOnMap, loadTransitLinesLayers),
     layersOverlay(layers.bikeLanesOnMap, loadBikeLanesLayers),

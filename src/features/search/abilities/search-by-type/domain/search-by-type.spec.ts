@@ -2,7 +2,7 @@ import type { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
 import type { Coordinates, LoadPlaces, Place, PlaceKind } from '../../../domain/place';
-import { type KindSearch, searchByType } from './search-by-type';
+import { type KindSearch, placesFoundAt, searchByType } from './search-by-type';
 
 const KILOMETRES_PER_DEGREE_OF_LATITUDE = 110.54;
 
@@ -154,6 +154,30 @@ describe('places watched by the search by type', () => {
       helpers.expectObservable(searches$);
       helpers.expectObservable(searches$);
       helpers.expectSubscriptions(places$.subscriptions).toBe('-(^!)');
+    });
+  });
+});
+
+describe('where the places found stand', () => {
+  const Searches: Readonly<Record<string, KindSearch>> = {
+    c: CLOSED,
+    s: { status: 'searching', placeKind: 'bakery' },
+    f: { status: 'found', placeKind: 'bakery', places: [CENTRAL, SOUTHERN] },
+    n: { status: 'none-near', placeKind: 'bakery' },
+    u: { status: 'unavailable', placeKind: 'bakery' }
+  };
+
+  it('is told once places are found', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(placesFoundAt(cold('csf', Searches))).toBe('--p', {
+        p: [CENTRAL.coordinates, SOUTHERN.coordinates]
+      });
+    });
+  });
+
+  it('is not told when none is found', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(placesFoundAt(cold('nu', Searches))).toBe('--');
     });
   });
 });

@@ -54,6 +54,11 @@
 - When the visitor looks for "bakery"
 - Then the first place listed is "Boulangerie Pons"
 
+### Scenario: The map is told where the places listed stand
+
+- When the visitor looks for "bakery"
+- Then the map is told to show 1 place, the first at 48.857, 2.354
+
 ## Rule: The places listed are within 3.5 km, 25 at most
 
 ### Scenario: Many bakeries are near
