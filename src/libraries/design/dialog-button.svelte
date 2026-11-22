@@ -186,14 +186,18 @@
       inline-size: 100%;
       max-inline-size: 100%;
       max-block-size: 92dvh;
-      padding-block-end: max(1.375rem, env(safe-area-inset-bottom));
+      padding-block-end: calc(1.375rem + env(safe-area-inset-bottom));
       margin-block-end: 0;
       border-radius: 1.375rem 1.375rem 0 0;
     }
 
+    .heading {
+      margin-block-start: 0.4375rem;
+    }
+
     .handle {
       position: absolute;
-      inset-block-start: var(--space-2);
+      inset-block-start: var(--space-3);
       inset-inline-start: calc(50% - 1.1875rem);
       display: block;
       inline-size: 2.375rem;
