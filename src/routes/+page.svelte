@@ -78,9 +78,7 @@
 
   const layers = $derived(data.layers);
 
-  const transitLinesShown = $derived(layers.transitLinesShown);
-
-  const bikeLanesShown = $derived(layers.bikeLanesShown);
+  const [transitLinesShown, bikeLanesShown] = $derived([layers.transitLinesShown, layers.bikeLanesShown]);
 
   const scene: Observable<MapScene<StyleSpecification>> = $derived(
     browser
@@ -172,10 +170,11 @@
     const subscription = merge(
       recents,
       data.sheetHeights.tallest.pipe(tap((height) => data.sheets.show(height))),
-      keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views, data.closing.steps),
+      keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views, data.closing.steps, data.links.kept),
       inspectedSpot.pipe(tap(({ kind }) => data.closing.of('spot').onToggle(kind !== 'none'))),
       placeSheet.pipe(tap(({ status }) => data.closing.of('place').onToggle(status === 'open'))),
-      kindSearch.pipe(tap(({ status }) => data.closing.of('kind list').onToggle(status !== 'closed')))
+      kindSearch.pipe(tap(({ status }) => data.closing.of('kind list').onToggle(status !== 'closed'))),
+      data.links.followed
     ).subscribe();
     return (): void => subscription.unsubscribe();
   });
@@ -235,6 +234,7 @@
     sheet={placeSheet}
     onClose={data.places.close}
     onCopy={data.places.copy}
+    onShare={data.links.share}
     vibrate={data.places.vibrate}
     onSheetHeight={data.sheetHeights.of('place')}
     closings={data.closing.of('place').closings}
@@ -242,6 +242,7 @@
   <SpotCard
     spot={inspectedSpot}
     onClose={data.spots.dismiss}
+    onShare={data.links.share}
     onSheetHeight={data.sheetHeights.of('spot')}
     closings={data.closing.of('spot').closings}
   />

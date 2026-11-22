@@ -1,5 +1,6 @@
 import { type Map as MapLibreMap, Marker } from 'maplibre-gl';
 import { combineLatest, distinctUntilChanged, map, NEVER, Observable, switchMap } from 'rxjs';
+import { m } from '#i18n/messages';
 import DRAWINGS from '../../../../ui/components/place-dot-drawings.json' with { type: 'json' };
 import COLOURS from '../../../../ui/components/place-name-colours.json' with { type: 'json' };
 import { openedPlaceOf, type PlaceSheet, type SheetPlace } from '../../domain/open-place';
@@ -26,7 +27,9 @@ const NAME_COLOURS: Readonly<Record<Palette, ReadonlyMap<string, string>>> = {
   dark: new Map(Object.entries(COLOURS.dark.names))
 };
 
-const familyOf = ({ family }: SheetPlace): string => family ?? WITHOUT_FAMILY;
+type MarkedPlace = Pick<SheetPlace, 'name' | 'family' | 'coordinates'>;
+
+const familyOf = ({ family }: MarkedPlace): string => family ?? WITHOUT_FAMILY;
 
 const imageOf = (name: string, width: number, height: number, drawing: string): SVGSVGElement => {
   const image = document.createElementNS(SVG, 'svg');
@@ -49,7 +52,7 @@ const dotOf = (name: string, { colour, pictogram }: Drawing): SVGSVGElement =>
     `${DOT.rim}${DOT.disc.replace('{colour}', colour)}${DOT.pictogram.replace('{pictogram}', pictogram)}`
   );
 
-const nameOf = (place: SheetPlace, palette: Palette): HTMLElement => {
+const nameOf = (place: MarkedPlace, palette: Palette): HTMLElement => {
   const label = document.createElement('span');
   label.className = 'open-place-name';
   label.setAttribute('aria-hidden', 'true');
@@ -58,9 +61,13 @@ const nameOf = (place: SheetPlace, palette: Palette): HTMLElement => {
   return label;
 };
 
-const markOf = (place: SheetPlace, palette: Palette): HTMLElement => {
+type Marked = {
+  readonly place: MarkedPlace;
+  readonly drawing?: Drawing;
+};
+
+const markOf = ({ place, drawing }: Marked, palette: Palette): HTMLElement => {
   const mark = document.createElement('div');
-  const drawing = DRAWN.get(familyOf(place));
   mark.className = drawing === undefined ? 'open-place-mark open-place-pin' : 'open-place-mark';
   mark.append(
     ...(drawing === undefined
@@ -72,24 +79,38 @@ const markOf = (place: SheetPlace, palette: Palette): HTMLElement => {
 
 const marked =
   (mapLibre: MapLibreMap) =>
-  ([place, palette]: readonly [SheetPlace | undefined, Palette]): Observable<never> =>
-    place === undefined
+  ([shown, palette]: readonly [Marked | undefined, Palette]): Observable<never> =>
+    shown === undefined
       ? NEVER
       : new Observable<never>(() => {
           const marker = new Marker({
-            element: markOf(place, palette),
-            anchor: DRAWN.has(familyOf(place)) ? 'center' : 'bottom'
+            element: markOf(shown, palette),
+            anchor: shown.drawing === undefined ? 'bottom' : 'center'
           })
-            .setLngLat([place.coordinates.longitude, place.coordinates.latitude])
+            .setLngLat([shown.place.coordinates.longitude, shown.place.coordinates.latitude])
             .addTo(mapLibre);
           return (): void => {
             marker.remove();
           };
         });
 
+const markWith = (place: MarkedPlace, drawing: Drawing | undefined): Marked =>
+  drawing === undefined ? { place } : { place, drawing };
+
+const openedMarkOf = (place: SheetPlace | undefined): Marked | undefined =>
+  place === undefined ? undefined : markWith(place, DRAWN.get(familyOf(place)));
+
+const markedOf = (sheet: PlaceSheet): Marked | undefined =>
+  sheet.status === 'missing' && sheet.at !== undefined
+    ? { place: { name: m.place_missing(), coordinates: sheet.at } }
+    : openedMarkOf(openedPlaceOf(sheet));
+
+const isSameMark = (before: Marked | undefined, after: Marked | undefined): boolean =>
+  before?.place.coordinates === after?.place.coordinates;
+
 const openPlaceOverlay =
   (sheet$: Observable<PlaceSheet>, palette$: Observable<Palette>) =>
   (mapLibre: MapLibreMap): Observable<never> =>
-    combineLatest([sheet$.pipe(map(openedPlaceOf), distinctUntilChanged()), palette$]).pipe(switchMap(marked(mapLibre)));
+    combineLatest([sheet$.pipe(map(markedOf), distinctUntilChanged(isSameMark)), palette$]).pipe(switchMap(marked(mapLibre)));
 
 export { openPlaceOverlay };

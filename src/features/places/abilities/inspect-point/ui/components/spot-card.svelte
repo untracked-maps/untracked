@@ -6,9 +6,10 @@
   import { closedWhenAsked } from '#libraries/design/closable';
   import CloseButton from '#libraries/design/close-button.svelte';
   import Floating from '#libraries/design/floating.svelte';
+  import ShareButton from '#libraries/design/share-button.svelte';
   import WarningIcon from '#libraries/design/warning-icon.svelte';
   import '#libraries/design/tokens.css';
-  import type { InspectedSpot } from '../../domain/inspect-point';
+  import type { Coordinates, InspectedSpot } from '../../domain/inspect-point';
   import { spotCardOf } from './spot-card.presenter';
 
   type Props = {
@@ -16,13 +17,14 @@
     readonly onClose: () => void;
     readonly onSheetHeight?: (height: number) => void;
     readonly closings?: Observable<unknown>;
+    readonly onShare?: (shared: { readonly title: string; readonly at: Coordinates }) => void;
   };
 
-  const { spot, onClose, onSheetHeight, closings = NEVER }: Props = $props();
+  const { spot, onClose, onSheetHeight, closings = NEVER, onShare }: Props = $props();
 
   const uid = $props.id();
 
-  const card = $derived($spot.kind === 'none' ? undefined : spotCardOf($spot));
+  const card = $derived($spot.kind === 'none' ? undefined : { ...spotCardOf($spot), at: $spot.spot });
 </script>
 
 <div class="spot" aria-live="polite">
@@ -37,6 +39,9 @@
       <section aria-labelledby="{uid}-title" {@attach closedWhenAsked(closings, onClose)}>
         <Floating>
           <div class="heading">
+            {#if onShare !== undefined}
+              <ShareButton label={m.share_link()} onclick={(): void => onShare({ title: card.title, at: card.at })} />
+            {/if}
             <hgroup>
               <h2 id="{uid}-title">{card.title}</h2>
               <p>{card.subtitle}</p>
@@ -81,6 +86,10 @@
     gap: var(--space-3);
     align-items: flex-start;
     justify-content: space-between;
+  }
+
+  hgroup {
+    flex: 1;
   }
 
   h2 {

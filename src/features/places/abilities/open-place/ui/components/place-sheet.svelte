@@ -7,8 +7,9 @@
   import CopyIcon from '#libraries/design/copy-icon.svelte';
   import Floating from '#libraries/design/floating.svelte';
   import '#libraries/design/tokens.css';
+  import ShareButton from '#libraries/design/share-button.svelte';
   import { addressLine } from '#libraries/postal-address/address-line.presenter';
-  import { openedPlaceOf, type PlaceSheet } from '../../domain/open-place';
+  import { openedPlaceOf, type PlaceSheet, type SheetPlace } from '../../domain/open-place';
   import PlaceActions from './place-actions.svelte';
   import { addressOf } from './place-address.presenter';
   import PlaceDetails from './place-details.svelte';
@@ -21,9 +22,14 @@
     readonly vibrate: (milliseconds: number) => void;
     readonly onSheetHeight?: (height: number) => void;
     readonly closings?: Observable<unknown>;
+    readonly onShare?: (shared: {
+      readonly title: string;
+      readonly at: SheetPlace['coordinates'];
+      readonly place: string;
+    }) => void;
   };
 
-  const { sheet, onClose, onCopy, vibrate, onSheetHeight, closings = NEVER }: Props = $props();
+  const { sheet, onClose, onCopy, vibrate, onSheetHeight, closings = NEVER, onShare }: Props = $props();
 
   const uid = $props.id();
 
@@ -48,6 +54,14 @@
               <h2 id="{uid}-name">{place.name}</h2>
               <p>{typeOf(place)}</p>
             </hgroup>
+            {#if onShare !== undefined}
+              <div class="share">
+                <ShareButton
+                  label={m.share_link()}
+                  onclick={(): void => onShare({ title: place.name, at: place.coordinates, place: place.id })}
+                />
+              </div>
+            {/if}
             <div class="close">
               <CloseButton label={m.place_sheet_close()} onclick={onClose} />
             </div>
@@ -59,6 +73,22 @@
               <button type="button" onclick={(): void => onCopy(address)}><CopyIcon />{m.place_sheet_copy_address()}</button>
             </div>
           {/if}
+        </Floating>
+      </section>
+    </BottomSheet>
+  {:else if $sheet.status === 'missing'}
+    <BottomSheet subject="missing" growLabel={m.sheet_grow()} reduceLabel={m.sheet_reduce()} {onClose} onHeight={onSheetHeight}>
+      <section aria-labelledby="{uid}-missing" {@attach closedWhenAsked(closings, onClose)}>
+        <Floating>
+          <div class="heading">
+            <hgroup>
+              <h2 id="{uid}-missing">{m.place_missing()}</h2>
+              <p class="why">{m.place_missing_why()}</p>
+            </hgroup>
+            <div class="close">
+              <CloseButton label={m.place_sheet_close()} onclick={onClose} />
+            </div>
+          </div>
         </Floating>
       </section>
     </BottomSheet>
@@ -110,19 +140,32 @@
     text-transform: uppercase;
   }
 
+  hgroup .why {
+    margin-block-start: var(--space-1);
+    text-wrap: pretty;
+  }
+
   .close {
     position: absolute;
     inset-block-start: calc(0.875rem - var(--space-4));
     inset-inline-end: calc(0.875rem - var(--space-4));
   }
 
-  .close :global(button)::after {
+  .share {
+    position: absolute;
+    inset-block-start: calc(0.875rem - var(--space-4));
+    inset-inline-start: calc(0.875rem - var(--space-4));
+  }
+
+  .close :global(button)::after,
+  .share :global(button)::after {
     position: absolute;
     inset: -0.375rem;
     content: "";
   }
 
-  .close :global(button) {
+  .close :global(button),
+  .share :global(button) {
     position: relative;
   }
 

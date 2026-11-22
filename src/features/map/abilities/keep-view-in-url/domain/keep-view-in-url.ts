@@ -1,4 +1,5 @@
 import {
+  combineLatest,
   concatMap,
   debounceTime,
   distinctUntilChanged,
@@ -7,6 +8,7 @@ import {
   map,
   merge,
   type Observable,
+  of,
   share,
   withLatestFrom
 } from 'rxjs';
@@ -33,20 +35,32 @@ const viewInUrl =
   (): Observable<MapView> =>
     readFragment().pipe(map(viewOfFragment), filter(isView));
 
+const unlessKept = ([, kept]: readonly [string, boolean]): boolean => !kept;
+
 const settledFragments = (views$: Observable<MapView>): Observable<string> =>
   views$.pipe(debounceTime(SETTLING_TIME), map(fragmentOfView), distinctUntilChanged(), share());
 
 const keepViewInUrl =
   ({ writeFragment }: KeepViewInUrlPorts) =>
-  (views$: Observable<MapView>, steps$: Observable<unknown> = EMPTY): Observable<string> => {
+  (
+    views$: Observable<MapView>,
+    steps$: Observable<unknown> = EMPTY,
+    linkKept$: Observable<boolean> = of(false)
+  ): Observable<string> => {
     const fragments$ = settledFragments(views$);
     return merge(
-      fragments$,
+      combineLatest([fragments$, linkKept$]).pipe(
+        filter(unlessKept),
+        map(([fragment]) => fragment),
+        distinctUntilChanged()
+      ),
       steps$.pipe(
-        withLatestFrom(fragments$),
-        map(([, fragment]) => fragment)
+        withLatestFrom(fragments$, linkKept$),
+        map(([, fragment, kept]): readonly [string, boolean] => [fragment, kept]),
+        filter(unlessKept),
+        map(([fragment]) => fragment)
       )
     ).pipe(concatMap(writeFragment));
   };
 
-export { keepViewInUrl, type ReadFragment, viewInUrl, type WriteFragment };
+export { keepViewInUrl, type ReadFragment, type ViewInUrlPorts, viewInUrl, type WriteFragment };

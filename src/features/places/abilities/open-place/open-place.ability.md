@@ -110,6 +110,36 @@
 - And the visitor opens "flore" from the search
 - Then the map is told to show 2 places, the last at 48.85404, 2.33263
 
+## Rule: A link to a place that cannot be found says so
+
+### Background:
+
+- Given these places to open
+  | id    | name          | kind |
+  | ----- | ------------- | ---- |
+  | flore | Café de Flore | cafe |
+
+### Scenario: A link opens a place that is known
+
+- When the visitor opens "flore" from a link at 48.85404, 2.33263
+- Then the sheet of "Café de Flore" is open
+
+### Scenario: A link opens a place that is not known
+
+- When the visitor opens "tour-eiffel" from a link at 48.85837, 2.294481
+- Then the place is missing, at 48.85837, 2.294481
+
+### Scenario: A link without a view opens a place that is not known
+
+- When the visitor opens "tour-eiffel" from a link without a position
+- Then the place is missing, without a point
+
+### Scenario: A link opens a place while the places cannot be loaded
+
+- Given the places to open cannot be loaded
+- When the visitor opens "flore" from a link at 48.85404, 2.33263
+- Then the place is missing, at 48.85404, 2.33263
+
 ## Rule: The sheet opens only once the places are there
 
 ### Scenario: The places cannot be loaded
