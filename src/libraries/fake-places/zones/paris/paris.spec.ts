@@ -4,6 +4,8 @@ import { fakePlaces } from '../../fake-places';
 import { generatedPlaces } from '../../generated-places';
 import { PARIS } from './paris';
 
+const FACEBOOK = 'https://facebook.example';
+
 describe('the fake Paris', () => {
   it('generates the same first place at every build', () => {
     expect(generatedPlaces(PARIS, 1)).toEqual([
@@ -18,6 +20,8 @@ describe('the fake Paris', () => {
           addressLocality: 'Paris',
           addressCountry: 'FR'
         },
+        website: 'https://www.pharmacie-vincent.example',
+        facebook: `${FACEBOOK}/PharmacieVincent`,
         coordinates: { longitude: 2.325_07, latitude: 48.850_07 },
         fame: 0
       }

@@ -33,7 +33,9 @@ test.describe('the sheet of a place chosen in the search', () => {
   test('gives the address of the place with its city', async ({ page }) => {
     await louvreOpened(page);
 
-    await expect(louvreSheet(page).getByRole('region', { name: 'Details' })).toHaveText('Address Rue de Rivoli, 75001 Paris');
+    await expect(
+      louvreSheet(page).getByRole('region', { name: 'Details' }).getByText('Rue de Rivoli, 75001 Paris', { exact: true })
+    ).toBeVisible();
   });
 
   test('marks the place on the map with a large dot', async ({ page }) => {

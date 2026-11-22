@@ -41,6 +41,11 @@ type FakePlace = {
   readonly kind: FakePlaceKind;
   readonly cuisine?: string;
   readonly address: FakePostalAddress;
+  readonly phone?: string;
+  readonly website?: string;
+  readonly menu?: string;
+  readonly instagram?: string;
+  readonly facebook?: string;
   readonly coordinates: { readonly longitude: number; readonly latitude: number };
   readonly fame: number;
 };

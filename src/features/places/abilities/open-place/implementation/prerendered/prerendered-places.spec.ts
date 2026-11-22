@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import type { SheetPlace } from '../../domain/open-place';
 import { prerenderedPlaces } from './prerendered-places';
 
+const FACEBOOK = 'https://facebook.example';
+
 const LUIGI: SheetPlace = {
   id: 'sakura',
   name: 'Sakura',
@@ -23,6 +25,17 @@ const VERT_GALANT: SheetPlace = {
   id: 'vert-galant',
   name: 'Square du Vert-Galant',
   coordinates: { longitude: 2.341, latitude: 48.857 }
+};
+
+const PROCOPE: SheetPlace = {
+  id: 'procope',
+  name: 'Le Procope',
+  phone: '+33 1 99 00 12 34',
+  website: 'https://www.procope.example',
+  menu: 'https://www.procope.example/menu',
+  instagram: 'https://instagram.example/leprocope',
+  facebook: `${FACEBOOK}/procope`,
+  coordinates: { longitude: 2.3388, latitude: 48.8531 }
 };
 
 const placesServed = (body: unknown, status = 200): Promise<readonly SheetPlace[]> =>
@@ -48,6 +61,10 @@ describe('prerendered places of the sheet', () => {
     expect(await placesServed([VERT_GALANT])).toEqual([VERT_GALANT]);
   });
 
+  it('reads a place with its phone, website, menu, Instagram and Facebook', async () => {
+    expect(await placesServed([PROCOPE])).toEqual([PROCOPE]);
+  });
+
   it('reads an address without house number nor street', async () => {
     const square: SheetPlace = {
       ...VERT_GALANT,
@@ -65,6 +82,11 @@ describe('prerendered places of the sheet', () => {
     ['a kind that is not text', { kind: 7 }],
     ['a cuisine that is not text', { cuisine: 7 }],
     ['a family that is not text', { family: 7 }],
+    ['a phone that is not text', { phone: 33_199_001_234 }],
+    ['a website that is not text', { website: true }],
+    ['a menu that is not text', { menu: {} }],
+    ['an Instagram account that is not text', { instagram: 7 }],
+    ['a Facebook page that is not text', { facebook: 7 }],
     ['an address that is not an object', { address: '40 Rue Sainte-Anne, 75002 Paris' }],
     ['an address without postal code', { address: { ...LUIGI.address, postalCode: undefined } }],
     ['an address without locality', { address: { ...LUIGI.address, addressLocality: 7 } }],
