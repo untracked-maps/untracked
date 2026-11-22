@@ -29,7 +29,7 @@ const placeNamed = (name: string): Place => ({
   id: name,
   name,
   kind: 'cafe',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: CENTRE_OF_PARIS,
   fame: 0
 });
@@ -39,14 +39,15 @@ const namesOf = (found: readonly Found[]): readonly string[] => found.map(({ nam
 const CITY = 'Paris';
 
 const locatedIn = (row: Readonly<Partial<Record<string, string>>>): Readonly<Record<string, unknown>> => ({
-  postcode: row['postcode'],
-  city: CITY,
+  postalCode: row['postcode'],
+  addressLocality: CITY,
+  addressCountry: 'FR',
   coordinates: { longitude: Number(row['longitude']), latitude: Number(row['latitude']) }
 });
 
 const houseIn = (row: Readonly<Partial<Record<string, string>>>): Readonly<Record<string, unknown>> => ({
   kind: 'address',
-  number: row['number'],
+  houseNumber: row['number'],
   street: row['street'],
   ...locatedIn(row)
 });
@@ -94,7 +95,10 @@ When('the visitor looks up {string}', async function theVisitorLooksUp(this: Fin
 
 Then('the first result is {string}', function theFirstResultIs(this: FindAddressWorld, line: string) {
   const [first] = this.found;
-  assert.equal(first === undefined ? undefined : `${first.name}, ${first.address}`, line);
+  assert.equal(
+    first === undefined ? undefined : `${first.name}, ${first.address.postalCode} ${first.address.addressLocality}`,
+    line
+  );
 });
 
 Then('no place is among the results', function noPlaceIsAmongTheResults(this: FindAddressWorld) {

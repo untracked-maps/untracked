@@ -5,7 +5,14 @@ import { lazyAddressBook } from './lazy-address-book';
 
 const HERE = { longitude: 2.35, latitude: 48.85 };
 
-const STREET: KnownAddress = { kind: 'street', street: 'Rue de Rivoli', postcode: '75001', city: 'Paris', coordinates: HERE };
+const STREET: KnownAddress = {
+  kind: 'street',
+  street: 'Rue de Rivoli',
+  postcode: '75001',
+  city: 'Paris',
+  country: 'FR',
+  coordinates: HERE
+};
 
 describe('address book loaded on demand', () => {
   it('adds the addresses to the places found', async () => {

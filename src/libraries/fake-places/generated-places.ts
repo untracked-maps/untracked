@@ -1,9 +1,11 @@
 import { Faker } from '@faker-js/faker';
-import type { FakePlace, GeneratedKind } from './fake-place';
+import type { FakePlace, FakePostalAddress, GeneratedKind } from './fake-place';
 import type { FakeZone } from './fake-zone';
 import { placeNameOf } from './place-names';
 
 const SEED = 1789;
+
+const CUISINE_SEED = 1848;
 
 const PRECISION = 5;
 
@@ -38,22 +40,52 @@ const KIND_WEIGHTS: readonly { readonly weight: number; readonly value: Generate
   { weight: 2, value: 'theatre' }
 ];
 
+const CUISINE_WEIGHTS: readonly { readonly weight: number; readonly value: string | undefined }[] = [
+  { weight: 30, value: 'french' },
+  { weight: 15, value: 'italian' },
+  { weight: 10, value: 'japanese' },
+  { weight: 8, value: 'chinese' },
+  { weight: 6, value: 'lebanese' },
+  { weight: 6, value: 'indian' },
+  { weight: 5, value: 'vietnamese' },
+  { weight: 4, value: 'thai' },
+  { weight: 3, value: 'greek' },
+  { weight: 3, value: 'mexican' },
+  { weight: 10, value: undefined }
+];
+
+type Fakers = {
+  readonly faker: Faker;
+  readonly cuisines: Faker;
+};
+
 const idOf = (zone: FakeZone, index: number): string => `${zone.id}-${String(index + 1).padStart(ID_DIGITS, '0')}`;
 
-const addressOf = (faker: Faker, zone: FakeZone): string =>
-  `${faker.number.int({ min: 1, max: HIGHEST_NUMBER })} ${faker.location.street()}, ${faker.helpers.arrayElement(zone.postcodes)} ${zone.city}`;
+const addressOf = (faker: Faker, zone: FakeZone): FakePostalAddress => ({
+  houseNumber: String(faker.number.int({ min: 1, max: HIGHEST_NUMBER })),
+  street: faker.location.street(),
+  postalCode: faker.helpers.arrayElement(zone.postcodes),
+  addressLocality: zone.city,
+  addressCountry: zone.country
+});
+
+const cuisineOf = (faker: Faker, kind: GeneratedKind): Pick<FakePlace, 'cuisine'> => {
+  const cuisine = kind === 'restaurant' ? faker.helpers.weightedArrayElement(CUISINE_WEIGHTS) : undefined;
+  return cuisine === undefined ? {} : { cuisine };
+};
 
 const fameOf = (faker: Faker): number =>
   faker.datatype.boolean({ probability: FAMOUS_SHARE }) ? faker.number.int({ min: 1, max: MOST_FAME }) : 0;
 
 const generatedPlace =
-  (faker: Faker, zone: FakeZone) =>
+  ({ faker, cuisines }: Fakers, zone: FakeZone) =>
   (index: number): FakePlace => {
     const kind = faker.helpers.weightedArrayElement(KIND_WEIGHTS);
     return {
       id: idOf(zone, index),
       name: placeNameOf(kind, { firstName: faker.person.firstName(), lastName: faker.person.lastName() }),
       kind,
+      ...cuisineOf(cuisines, kind),
       address: addressOf(faker, zone),
       coordinates: {
         longitude: faker.location.longitude({ min: zone.bounds.west, max: zone.bounds.east, precision: PRECISION }),
@@ -64,8 +96,11 @@ const generatedPlace =
   };
 
 const generatedPlaces = (zone: FakeZone, count: number): readonly FakePlace[] => {
-  const faker = new Faker({ locale: [...zone.locale], seed: SEED });
-  return Array.from({ length: count }, (_, index) => generatedPlace(faker, zone)(index));
+  const fakers: Fakers = {
+    faker: new Faker({ locale: [...zone.locale], seed: SEED }),
+    cuisines: new Faker({ locale: [...zone.locale], seed: CUISINE_SEED })
+  };
+  return Array.from({ length: count }, (_, index) => generatedPlace(fakers, zone)(index));
 };
 
 export { generatedPlaces };

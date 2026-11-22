@@ -9,7 +9,7 @@ const place = (id: string, name: string): Place => ({
   id,
   name,
   kind: 'museum',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: HERE,
   fame: 0
 });

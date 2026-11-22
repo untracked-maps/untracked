@@ -1,0 +1,36 @@
+.open-place-mark {
+  z-index: 3;
+  display: block;
+  inline-size: 44px;
+  block-size: 44px;
+}
+
+.open-place-mark svg {
+  display: block;
+  overflow: visible;
+}
+
+.open-place-pin {
+  inline-size: 30px;
+  block-size: 40px;
+}
+
+.open-place-name {
+  --name-colour: currentcolor;
+  --name-halo: transparent;
+
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: calc(50% + 1.75em);
+  inline-size: max-content;
+  max-inline-size: 9em;
+  font-family: Inter, sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--name-colour);
+  -webkit-text-stroke: 4px var(--name-halo);
+  pointer-events: none;
+  paint-order: stroke fill;
+  translate: 0 -50%;
+}

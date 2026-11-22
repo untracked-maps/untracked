@@ -10,7 +10,7 @@ const placeNorth = (id: string, kilometres: number, kind: PlaceKind = 'bakery'):
   id,
   name: id,
   kind,
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: HERE.longitude, latitude: HERE.latitude + kilometres / KILOMETRES_PER_DEGREE_OF_LATITUDE },
   fame: 0
 });

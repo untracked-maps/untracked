@@ -9,7 +9,7 @@ const LOUVRE: RecentPlace = {
   id: 'musee-du-louvre',
   name: 'Musée du Louvre',
   kind: 'museum',
-  address: 'Rue de Rivoli, 75001 Paris',
+  address: { street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.337_64, latitude: 48.860_61 }
 };
 
@@ -17,7 +17,7 @@ const GARE_DE_LYON: RecentPlace = {
   id: 'gare-de-lyon',
   name: 'Gare de Lyon',
   kind: 'station',
-  address: 'Place Louis-Armand, 75012 Paris',
+  address: { street: 'Place Louis-Armand', postalCode: '75012', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.373_01, latitude: 48.844_34 }
 };
 

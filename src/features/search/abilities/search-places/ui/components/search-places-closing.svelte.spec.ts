@@ -14,7 +14,13 @@ const FOUND: Observable<SearchState> = of({
       id: 'orsay-fleurs',
       name: 'Orsay Fleurs',
       kind: 'florist',
-      address: '3 rue de Lille, 75007 Paris',
+      address: {
+        houseNumber: '3',
+        street: 'rue de Lille',
+        postalCode: '75007',
+        addressLocality: 'Paris',
+        addressCountry: 'FR'
+      },
       coordinates: { longitude: 2.33, latitude: 48.858 },
       fame: 0
     }

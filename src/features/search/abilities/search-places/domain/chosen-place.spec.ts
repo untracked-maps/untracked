@@ -6,7 +6,7 @@ const LOUVRE: Place = {
   id: 'musee-du-louvre',
   name: 'Musée du Louvre',
   kind: 'museum',
-  address: 'Rue de Rivoli, 75001 Paris',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.337_64, latitude: 48.860_61 },
   fame: 98
 };

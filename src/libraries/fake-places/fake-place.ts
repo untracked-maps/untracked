@@ -27,11 +27,20 @@ type GeneratedKind = (typeof GENERATED_KINDS)[number];
 
 type FakePlaceKind = GeneratedKind | (typeof LANDMARK_KINDS)[number];
 
+type FakePostalAddress = {
+  readonly houseNumber?: string;
+  readonly street: string;
+  readonly postalCode: string;
+  readonly addressLocality: string;
+  readonly addressCountry: string;
+};
+
 type FakePlace = {
   readonly id: string;
   readonly name: string;
   readonly kind: FakePlaceKind;
-  readonly address: string;
+  readonly cuisine?: string;
+  readonly address: FakePostalAddress;
   readonly coordinates: { readonly longitude: number; readonly latitude: number };
   readonly fame: number;
 };
@@ -42,4 +51,4 @@ const KNOWN_KINDS: ReadonlySet<string> = new Set(FAKE_PLACE_KINDS);
 
 const isFakePlaceKind = (kind: string): kind is FakePlaceKind => KNOWN_KINDS.has(kind);
 
-export { type FakePlace, type GeneratedKind, isFakePlaceKind };
+export { type FakePlace, type FakePostalAddress, type GeneratedKind, isFakePlaceKind };

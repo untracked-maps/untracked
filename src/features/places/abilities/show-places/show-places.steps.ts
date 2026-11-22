@@ -5,6 +5,7 @@ import { FAMILIES, type Family, type LoadPlaces, type Place, type PlaceDot, show
 
 type ShowPlacesWorld = World & {
   loadPlaces: LoadPlaces;
+  openPlace: string | undefined;
   dots: readonly PlaceDot[];
 };
 
@@ -20,6 +21,7 @@ const orderOf = (world: ShowPlacesWorld, name: string): number | undefined =>
 Given('these places', function thesePlaces(this: ShowPlacesWorld, table: DataTable) {
   const places = table.hashes().map(
     (row): Place => ({
+      id: row['name'] ?? '',
       name: row['name'] ?? '',
       kind: row['kind'] ?? '',
       family: familyOf(row['family'] ?? ''),
@@ -35,8 +37,16 @@ Given('the places cannot be loaded', function thePlacesCannotBeLoaded(this: Show
   this.loadPlaces = (): Observable<readonly Place[]> => throwError(() => new Error('The places file answered 500.'));
 });
 
+Given('{string} is open in its sheet', function isOpenInItsSheet(this: ShowPlacesWorld, name: string) {
+  this.openPlace = name;
+});
+
+Given('its sheet is closed', function itsSheetIsClosed(this: ShowPlacesWorld) {
+  this.openPlace = undefined;
+});
+
 When('the map is at zoom {float}', function theMapIsAtZoom(this: ShowPlacesWorld, zoom: number) {
-  showPlaces({ loadPlaces: this.loadPlaces })(of(zoom)).subscribe((dots) => {
+  showPlaces({ loadPlaces: this.loadPlaces })(of(zoom), of(this.openPlace)).subscribe((dots) => {
     this.dots = dots;
   });
 });

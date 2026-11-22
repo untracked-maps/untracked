@@ -12,7 +12,7 @@ const RIVOLI: Found = {
   id: 'street-75001-rue-de-rivoli',
   name: 'Rue de Rivoli',
   kind: 'street',
-  address: '75001 Paris',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: HERE
 };
 
@@ -20,7 +20,7 @@ const SQUARE: Found = {
   id: 'square',
   name: 'Square Rivoli',
   kind: 'park',
-  address: '1 Rue de Rivoli, 75001 Paris',
+  address: { houseNumber: '1', street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: HERE,
   fame: 0
 };

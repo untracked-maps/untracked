@@ -10,6 +10,7 @@
   import type { Snippet } from 'svelte';
   import { on } from 'svelte/events';
   import { m } from '#i18n/messages';
+  import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import { type Found, isAddress } from '../../../../domain/found';
   import { detailsOf } from '../../../../ui/components/kind-labels';
   import type { SearchState } from '../../domain/search-places';
@@ -39,7 +40,17 @@
     readonly closings?: Observable<unknown>;
   };
 
-  const { state, onWake, onQuery, onChoose, lead, suggestions, ready = true, onOpen, closings = NEVER }: Props = $props();
+  const {
+    state,
+    onWake,
+    onQuery,
+    onChoose,
+    lead,
+    suggestions,
+    ready = true,
+    onOpen = (): void => undefined,
+    closings = NEVER
+  }: Props = $props();
 
   const uid = $props.id();
 
@@ -89,7 +100,7 @@
 
   const tellTextIsLeft = ({ text }: Combobox): void => {
     if (text !== '') {
-      onOpen?.(true);
+      onOpen(true);
     }
   };
 
@@ -107,7 +118,7 @@
 
   const isOpen = $derived($combobox.open || $combobox.text !== '');
 
-  $effect(() => onOpen?.(isOpen));
+  $effect(() => onOpen(isOpen));
 
   const move = (step: 1 | -1) => (): void => events.next({ kind: 'moved', step });
 
@@ -200,7 +211,7 @@
         aria-selected={index === $combobox.active}
         onmousedown={pick(place)}
       >
-        <Suggestion name={place.name} details={detailsOf(place)} active={index === $combobox.active}>
+        <Suggestion name={place.name} details={detailsOf($addressLine)(place)} active={index === $combobox.active}>
           {#snippet icon()}
             {#if isAddress(place)}
               <SignpostIcon />

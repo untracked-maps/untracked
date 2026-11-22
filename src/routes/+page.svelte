@@ -33,11 +33,10 @@
   import { loadTransitLinesLayers } from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-overlay';
   import { layersOverlay } from '#features/map/ui/components/layers-on-map';
   import NoticeCard from '#features/notices/abilities/show-notice/ui/components/notice.svelte';
-  import { type Coordinates, inspectPoint } from '#features/places/abilities/inspect-point/domain/inspect-point';
-  import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
-  import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
   import { inspectedSpotOverlay } from '#features/places/abilities/inspect-point/ui/components/inspected-spot-overlay';
   import SpotCard from '#features/places/abilities/inspect-point/ui/components/spot-card.svelte';
+  import { openPlaceOverlay } from '#features/places/abilities/open-place/ui/components/open-place-overlay';
+  import PlaceSheetCard from '#features/places/abilities/open-place/ui/components/place-sheet.svelte';
   import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
@@ -137,7 +136,15 @@
 
   const search = (query: string): void => searchQueries.next(query);
 
-  const choosePlace = (place: RecentPlace): void => chosenPlaces.next(place);
+  const choosePlace =
+    (from: 'search' | 'kind list') =>
+    (place: RecentPlace): void => {
+      chosenPlaces.next(place);
+      data.places.open({ id: place.id, from });
+      if (from === 'search') {
+        chooseKind();
+      }
+    };
 
   const recents = browser
     ? recentSearches(localRecents(localStorage))({ chosen: chosenPlaces, cleared: clearedRecents, restored: restoredRecents })
@@ -147,7 +154,7 @@
     ({ settle }: SearchPanel) =>
     (recent: RecentPlace): void => {
       settle(recent.name);
-      chosenPlaces.next(recent);
+      choosePlace('search')(recent);
     };
 
   const clearRecents =
@@ -167,6 +174,7 @@
       data.sheetHeights.tallest.pipe(tap((height) => data.sheets.show(height))),
       keepViewInUrl({ writeFragment: replacedFragment(replaceUrl) })(views, data.closing.steps),
       inspectedSpot.pipe(tap(({ kind }) => data.closing.of('spot').onToggle(kind !== 'none'))),
+      placeSheet.pipe(tap(({ status }) => data.closing.of('place').onToggle(status === 'open'))),
       kindSearch.pipe(tap(({ status }) => data.closing.of('kind list').onToggle(status !== 'closed')))
     ).subscribe();
     return (): void => subscription.unsubscribe();
@@ -174,17 +182,7 @@
 
   const keepView = (view: MapView): void => views.next(view);
 
-  const inspections = new Subject<Coordinates>();
-
-  const dismissals = new Subject<void>();
-
-  const inspectedSpot = inspectPoint({
-    reverseGeocode: nearestAddress(prerenderedAddresses((url) => fetch(url), resolve('/data/addresses.json')))
-  })({ inspected: inspections, dismissed: dismissals });
-
-  const inspect = (spot: Coordinates): void => inspections.next(spot);
-
-  const dismissSpot = (): void => dismissals.next();
+  const [placeSheet, inspectedSpot] = $derived([data.places.sheet, data.spots.spot]);
 
   const acknowledgement = browser ? localAcknowledgement(localStorage, WELCOME_STORAGE_KEY) : undefined;
 
@@ -194,8 +192,10 @@
   const acknowledge = (): void => acknowledgement?.acknowledge();
 
   const welcomeShown: Observable<boolean> = $derived(
-    combineLatest([welcome, inspectedSpot, kindSearch]).pipe(
-      map(([welcomed, spot, list]) => welcomed && spot.kind === 'none' && list.status === 'closed')
+    combineLatest([welcome, inspectedSpot, kindSearch, placeSheet]).pipe(
+      map(
+        ([shown, spot, list, place]) => shown && spot.kind === 'none' && list.status === 'closed' && place.status === 'closed'
+      )
     )
   );
 </script>
@@ -207,7 +207,7 @@
     state={searchState}
     onWake={wakeSearch}
     onQuery={search}
-    onChoose={choosePlace}
+    onChoose={choosePlace('search')}
     ready={browser}
     onOpen={data.closing.of('search').onToggle}
     closings={data.closing.of('search').closings}
@@ -223,9 +223,9 @@
     <KindSearch
       search={kindSearch}
       onChoose={chooseKind}
-      onChoosePlace={choosePlace}
+      onChoosePlace={choosePlace('kind list')}
       ready={browser}
-      covered={$inspectedSpot.kind !== 'none'}
+      covered={$inspectedSpot.kind !== 'none' || $placeSheet.status === 'open'}
       onSheetHeight={data.sheetHeights.list}
       closings={data.closing.of('kind list').closings}
     />
@@ -233,9 +233,17 @@
   <div class="notice">
     <NoticeCard shown={data.notices.shown} onAct={data.notices.act} />
   </div>
+  <PlaceSheetCard
+    sheet={placeSheet}
+    onClose={data.places.close}
+    onCopy={data.places.copy}
+    vibrate={data.places.vibrate}
+    onSheetHeight={data.sheetHeights.place}
+    closings={data.closing.of('place').closings}
+  />
   <SpotCard
     spot={inspectedSpot}
-    onClose={dismissSpot}
+    onClose={data.spots.dismiss}
     onSheetHeight={data.sheetHeights.spot}
     closings={data.closing.of('spot').closings}
   />
@@ -256,10 +264,11 @@
     positionOverlay(located),
     kindPlacesOverlay(kindSearch),
     chosenPlaceOverlay(chosenPlaces),
+    openPlaceOverlay(placeSheet, data.theme.colourScheme),
     zoomOverlay(zooms),
     layersOverlay(layers.transitLinesOnMap, loadTransitLinesLayers),
     layersOverlay(layers.bikeLanesOnMap, loadBikeLanesLayers),
-    inspectedSpotOverlay(inspectedSpot, { onInspect: inspect })
+    inspectedSpotOverlay(inspectedSpot, { onInspect: data.spots.inspect })
   ]}
 />
 

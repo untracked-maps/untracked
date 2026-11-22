@@ -1,4 +1,4 @@
-import type { Coordinates, Place } from './place';
+import type { Coordinates, Place, PostalAddress } from './place';
 
 const ADDRESS_KINDS = ['address', 'street', 'district'] as const;
 
@@ -8,7 +8,7 @@ type FoundAddress = {
   readonly id: string;
   readonly name: string;
   readonly kind: AddressKind;
-  readonly address: string;
+  readonly address: PostalAddress;
   readonly coordinates: Coordinates;
 };
 

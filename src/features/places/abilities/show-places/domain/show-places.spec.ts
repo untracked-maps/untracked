@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { type Family, type Place, type PlaceDot, showPlaces } from './show-places';
 
 const EIFFEL: Place = {
+  id: 'tour-eiffel',
   name: 'Tour Eiffel',
   kind: 'attraction',
   family: 'sight',
@@ -13,6 +14,7 @@ const EIFFEL: Place = {
 };
 
 const LAFAYETTE: Place = {
+  id: 'galeries-lafayette',
   name: 'Galeries Lafayette',
   kind: 'department-store',
   family: 'shop',
@@ -22,6 +24,7 @@ const LAFAYETTE: Place = {
 };
 
 const PARKING: Place = {
+  id: 'parking-vinci',
   name: 'Parking Vinci',
   kind: 'parking',
   family: undefined,
@@ -71,7 +74,7 @@ const EVERY_FAMILY: readonly Place[] = [
 ];
 
 const dotsAt = (zoom: number, places: readonly Place[]): Promise<readonly PlaceDot[]> =>
-  firstValueFrom(showPlaces({ loadPlaces: (): Observable<readonly Place[]> => of(places) })(of(zoom)));
+  firstValueFrom(showPlaces({ loadPlaces: (): Observable<readonly Place[]> => of(places) })(of(zoom), of(undefined)));
 
 const namesAt = async (zoom: number, places: readonly Place[]): Promise<readonly string[]> =>
   (await dotsAt(zoom, places)).map(({ name }) => name);
@@ -86,7 +89,7 @@ const DOTS: Readonly<Record<string, readonly PlaceDot[]>> = { n: [], e: [EIFFEL_
 const expectDots = (zooms: string, places: string, expected: string): void =>
   new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted)).run(({ cold, expectObservable }) => {
     const loadPlaces = (): Observable<readonly Place[]> => cold(places, { p: [EIFFEL, LAFAYETTE] });
-    expectObservable(showPlaces({ loadPlaces })(cold(zooms, ZOOMS))).toBe(expected, DOTS);
+    expectObservable(showPlaces({ loadPlaces })(cold(zooms, ZOOMS), of(undefined))).toBe(expected, DOTS);
   });
 
 describe('show places, before zoom 17', () => {
@@ -176,7 +179,7 @@ describe('show places, as the map zooms', () => {
   it('shows no place when the places cannot be loaded', async () => {
     const loadPlaces = (): Observable<readonly Place[]> => throwError(() => new Error('The places file answered 500.'));
 
-    expect(await firstValueFrom(showPlaces({ loadPlaces })(of(17)))).toStrictEqual([]);
+    expect(await firstValueFrom(showPlaces({ loadPlaces })(of(17), of(undefined)))).toStrictEqual([]);
   });
 
   it('asks for the places only once the map has a zoom', () => {
@@ -184,6 +187,6 @@ describe('show places, as the map zooms', () => {
       throw new Error('The places were asked before anyone subscribed.');
     };
 
-    expect(() => showPlaces({ loadPlaces: refusing })(of(17))).not.toThrow();
+    expect(() => showPlaces({ loadPlaces: refusing })(of(17), of(undefined))).not.toThrow();
   });
 });

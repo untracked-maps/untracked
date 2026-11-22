@@ -22,7 +22,7 @@ const place = (changes: Partial<Place>): Place => ({
   id: 'alpha-beta',
   name: 'Alpha Beta',
   kind: 'hotel',
-  address: '',
+  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: HERE,
   fame: 0,
   ...changes
