@@ -1,4 +1,4 @@
-import { LngLat, Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
+import { Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { BehaviorSubject, type Observable, Subject } from 'rxjs';
 import { describe, expect, it, onTestFinished } from 'vitest';
@@ -20,8 +20,6 @@ const ORSAY: Place = {
   coordinates: { longitude: 2.326_56, latitude: 48.86 },
   fame: 90
 };
-
-const ORSAY_LNG_LAT = new LngLat(ORSAY.coordinates.longitude, ORSAY.coordinates.latitude);
 
 const FLORE: Place = {
   ...ORSAY,
@@ -84,32 +82,6 @@ describe('chosen place overlay', () => {
     await expect.element(page.getByRole('img', { name: '1 Rue du Bac' })).not.toBeInTheDocument();
   });
 
-  it('flies to the chosen place', async () => {
-    const map = mapAt(13);
-
-    drawn(chosenPlaceOverlay(new BehaviorSubject(ORSAY))(map));
-
-    await expect.poll(() => map.getCenter().distanceTo(ORSAY_LNG_LAT), { timeout: 5000 }).toBeLessThan(1);
-  });
-
-  it('zooms in to the street', async () => {
-    const map = mapAt(13);
-
-    drawn(chosenPlaceOverlay(new BehaviorSubject(ORSAY))(map));
-
-    await expect.poll(() => map.getZoom(), { timeout: 5000 }).toBe(16.5);
-  });
-
-  it('keeps a closer zoom', async () => {
-    const map = mapAt(18);
-
-    drawn(chosenPlaceOverlay(new BehaviorSubject(ORSAY))(map));
-
-    await expect
-      .poll(() => (map.getCenter().distanceTo(ORSAY_LNG_LAT) < 1 ? map.getZoom() : undefined), { timeout: 5000 })
-      .toBe(18);
-  });
-
   it('removes the mark once the map no longer shows it', async () => {
     const remove = drawn(chosenPlaceOverlay(new BehaviorSubject<Found>(RUE_DU_BAC))(mapAt(13)));
 
@@ -122,6 +94,14 @@ describe('chosen place overlay', () => {
     const map = mapAt(13);
 
     drawn(chosenPlaceOverlay(new Subject<Place>())(map));
+
+    expect(map.isMoving()).toBe(false);
+  });
+
+  it('leaves the move to the framing of the map once a place is chosen', () => {
+    const map = mapAt(13);
+
+    drawn(chosenPlaceOverlay(new BehaviorSubject(ORSAY))(map));
 
     expect(map.isMoving()).toBe(false);
   });

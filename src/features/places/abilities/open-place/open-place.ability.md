@@ -76,6 +76,40 @@
 - And the visitor closes the sheet
 - Then no sheet is open
 
+## Rule: The map is told where the place opened stands
+
+### Background:
+
+- Given these places to open
+  | id    | name          | longitude | latitude |
+  | ----- | ------------- | --------- | -------- |
+  | flore | Café de Flore | 2.33263   | 48.85404 |
+  | luigi | Chez Luigi    | 2.3395    | 48.8547  |
+
+### Scenario: A place opens
+
+- When the visitor opens "flore" from the map
+- Then the map is told to show 1 place, the last at 48.85404, 2.33263
+
+### Scenario: Another place opens
+
+- When the visitor opens "flore" from the map
+- And the visitor opens "luigi" from the search
+- Then the map is told to show 2 places, the last at 48.8547, 2.3395
+
+### Scenario: The sheet closes
+
+- When the visitor opens "flore" from the map
+- And the visitor closes the sheet
+- Then the map is told to show 1 place, the last at 48.85404, 2.33263
+
+### Scenario: The same place opens again after its sheet was closed
+
+- When the visitor opens "flore" from the map
+- And the visitor closes the sheet
+- And the visitor opens "flore" from the search
+- Then the map is told to show 2 places, the last at 48.85404, 2.33263
+
 ## Rule: The sheet opens only once the places are there
 
 ### Scenario: The places cannot be loaded

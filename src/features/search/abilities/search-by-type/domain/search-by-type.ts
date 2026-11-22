@@ -1,4 +1,4 @@
-import { catchError, map, type Observable, of, shareReplay, startWith, switchMap, take, withLatestFrom } from 'rxjs';
+import { catchError, filter, map, type Observable, of, shareReplay, startWith, switchMap, take, withLatestFrom } from 'rxjs';
 import type { Coordinates, LoadPlaces, Place, PlaceKind } from '../../../domain/place';
 import { nearestOfKind } from './nearest-of-kind';
 
@@ -52,4 +52,14 @@ const searchByType =
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-export { type KindSearch, searchByType };
+type FoundPlaces = Extract<KindSearch, { readonly status: 'found' }>;
+
+const isFound = (search: KindSearch): search is FoundPlaces => search.status === 'found';
+
+const placesFoundAt = (search$: Observable<KindSearch>): Observable<readonly [Coordinates, ...Coordinates[]]> =>
+  search$.pipe(
+    filter(isFound),
+    map(({ places: [first, ...others] }) => [first.coordinates, ...others.map(({ coordinates }) => coordinates)] as const)
+  );
+
+export { type KindSearch, placesFoundAt, searchByType };

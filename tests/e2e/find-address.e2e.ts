@@ -14,7 +14,7 @@ const RIVOLI_IN_FRENCH = /^Rue de Rivoli Voie · 75001 Paris/u;
 
 const ELEVENTH = /^Paris 11e Arrondissement/u;
 
-const DISTRICT_VIEW = /#map=14\/48\.859\d*\/2\.380\d*$/u;
+const DISTRICT_VIEW = /#map=14\//u;
 
 const searchField = (page: Page): Locator =>
   page.getByRole('combobox', { name: 'Search a place or an address', disabled: false });

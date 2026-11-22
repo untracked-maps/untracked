@@ -2,7 +2,9 @@ import {
   catchError,
   concatMap,
   defer,
+  distinctUntilChanged,
   endWith,
+  filter,
   ignoreElements,
   map,
   merge,
@@ -71,6 +73,16 @@ const CLOSED: PlaceSheet = { status: 'closed' };
 
 const openedPlaceOf = (sheet: PlaceSheet): SheetPlace | undefined => (sheet.status === 'open' ? sheet.place : undefined);
 
+const isOpened = (place: SheetPlace | undefined): place is SheetPlace => place !== undefined;
+
+const placesOpenedAt = (sheet$: Observable<PlaceSheet>): Observable<Coordinates> =>
+  sheet$.pipe(
+    map(openedPlaceOf),
+    distinctUntilChanged(),
+    filter(isOpened),
+    map(({ coordinates }) => coordinates)
+  );
+
 const sheetOf =
   ({ id, from }: Opening) =>
   (places: readonly SheetPlace[]): PlaceSheet => {
@@ -115,5 +127,6 @@ export {
   openPlace,
   type PlaceSheet,
   type PostalAddress,
+  placesOpenedAt,
   type SheetPlace
 };

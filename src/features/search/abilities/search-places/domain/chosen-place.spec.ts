@@ -1,30 +1,59 @@
+import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
-import type { Place } from '../../../domain/place';
-import { viewOfChosenPlace } from './chosen-place';
+import type { Found } from '../../../domain/found';
+import { addressesChosenAt, districtsChosenAt } from './chosen-place';
 
-const LOUVRE: Place = {
-  id: 'musee-du-louvre',
-  name: 'Musée du Louvre',
-  kind: 'museum',
-  address: { postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' },
-  coordinates: { longitude: 2.337_64, latitude: 48.860_61 },
-  fame: 98
+type Chosen = Pick<Found, 'kind' | 'coordinates'>;
+
+const BAC = { longitude: 2.3262, latitude: 48.8585 };
+
+const GERMAIN = { longitude: 2.333, latitude: 48.854 };
+
+const CHOSEN: Readonly<Record<string, Chosen>> = {
+  a: { kind: 'address', coordinates: BAC },
+  s: { kind: 'street', coordinates: BAC },
+  d: { kind: 'district', coordinates: GERMAIN },
+  p: { kind: 'museum', coordinates: BAC }
 };
 
-describe('view of a chosen place', () => {
-  it('is centred on the place', () => {
-    expect(viewOfChosenPlace(LOUVRE, 13).center).toEqual({ longitude: 2.337_64, latitude: 48.860_61 });
+const scheduler = (): TestScheduler => new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted));
+
+describe('where an address chosen stands', () => {
+  it('is told for an address', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(addressesChosenAt(cold('a', CHOSEN))).toBe('b', { b: BAC });
+    });
   });
 
-  it('zooms in to the street when the map is further out', () => {
-    expect(viewOfChosenPlace(LOUVRE, 13).zoom).toBe(16.5);
+  it('is told for a street', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(addressesChosenAt(cold('s', CHOSEN))).toBe('b', { b: BAC });
+    });
   });
 
-  it('keeps a closer zoom', () => {
-    expect(viewOfChosenPlace(LOUVRE, 18).zoom).toBe(18);
+  it('is left to the sheet of a place', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(addressesChosenAt(cold('p', CHOSEN))).toBe('-');
+    });
   });
 
-  it('shows the whole of an arrondissement, however close the map is', () => {
-    expect(viewOfChosenPlace({ ...LOUVRE, kind: 'district' }, 18).zoom).toBe(14);
+  it('is told apart for a district', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(addressesChosenAt(cold('d', CHOSEN))).toBe('-');
+    });
+  });
+});
+
+describe('where a district chosen stands', () => {
+  it('is told for a district', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(districtsChosenAt(cold('d', CHOSEN))).toBe('g', { g: GERMAIN });
+    });
+  });
+
+  it('is not told for an address', () => {
+    scheduler().run(({ cold, expectObservable }) => {
+      expectObservable(districtsChosenAt(cold('a', CHOSEN))).toBe('-');
+    });
   });
 });
