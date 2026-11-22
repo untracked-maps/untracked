@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, type Route, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 
 const DARK_SURFACE = 'rgb(28, 31, 36)';
 const LIGHT_SURFACE = 'rgb(255, 255, 255)';
@@ -72,7 +72,7 @@ test.describe('on a device that prefers light', () => {
     await openStartedApp(page);
     await chooseTheme(page, 'Dark');
 
-    const { violations } = await new AxeBuilder({ page }).analyze();
+    const violations = await violationsOf(page);
 
     expect(violations).toEqual([]);
   });

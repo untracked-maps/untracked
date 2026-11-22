@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const PLACES_FILE = '**/data/places.json';
@@ -87,7 +87,7 @@ test('has no detectable accessibility violation with places listed', async ({ pa
   await searchFor(page, 'louvre');
   await page.getByRole('listbox', { name: 'Places and addresses found' }).waitFor();
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });
@@ -104,7 +104,7 @@ test('keeps the cleared search accessible', async ({ page }) => {
   await searchFor(page, 'grand palais');
   await page.getByRole('button', { name: 'Clear the search' }).waitFor();
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });

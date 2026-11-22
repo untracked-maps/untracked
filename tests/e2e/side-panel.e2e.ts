@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const PANEL_END = 16 + 400;
@@ -72,7 +72,7 @@ test('shows the spot inspected in place of the places of a kind', async ({ page 
 test('has no detectable accessibility violation with the panel open', async ({ page }) => {
   await bakeriesShown(page);
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });

@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, type Locator, type Page, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const aboutButton = (page: Page): Locator => page.getByRole('button', { name: 'About this map' });
@@ -99,7 +99,7 @@ test('opens the page that says who sees what from the about dialog', async ({ pa
 test('has no detectable accessibility violation', async ({ page }) => {
   await page.goto('./');
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });
@@ -108,7 +108,7 @@ test('has no detectable accessibility violation with the about dialog open', asy
   await page.goto('./');
   await aboutButton(page).click();
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });
@@ -171,7 +171,7 @@ test('has no detectable accessibility violation with the map type panel open', a
   await page.goto('./');
   await layersButton(page).click();
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });

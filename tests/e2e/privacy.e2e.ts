@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { violationsOf } from './accessibility';
 
 test('lists who sees what', async ({ page }) => {
   await page.goto('privacy');
@@ -16,7 +16,7 @@ test('lists who sees what in French', async ({ page }) => {
 test('has no detectable accessibility violation on the privacy page', async ({ page }) => {
   await page.goto('privacy');
 
-  const { violations } = await new AxeBuilder({ page }).analyze();
+  const violations = await violationsOf(page);
 
   expect(violations).toEqual([]);
 });
