@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/untracked-maps/untracked/compare/v1.15.0...v1.16.0) (2026-11-22)
+
+
+### Features
+
+* open the sheet of a place with its name, type and address ([#59](https://github.com/untracked-maps/untracked/issues/59)) ([c64a2ca](https://github.com/untracked-maps/untracked/commit/c64a2ca729b6d6d609b71a17b63eb7193942394b))
+
 # [1.15.0](https://github.com/untracked-maps/untracked/compare/v1.14.0...v1.15.0) (2026-11-21)
 
 
