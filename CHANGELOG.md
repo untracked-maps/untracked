@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/untracked-maps/untracked/compare/v1.17.0...v1.18.0) (2026-11-22)
+
+
+### Features
+
+* touch the map in the former app's order, and long-press a spot ([#65](https://github.com/untracked-maps/untracked/issues/65)) ([b0e323a](https://github.com/untracked-maps/untracked/commit/b0e323a3ed8e92cb9148ae94ec7ed84c2a55f384))
+
 # [1.17.0](https://github.com/untracked-maps/untracked/compare/v1.16.0...v1.17.0) (2026-11-22)
 
 
