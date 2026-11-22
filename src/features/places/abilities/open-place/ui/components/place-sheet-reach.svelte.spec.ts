@@ -44,12 +44,12 @@ const shown = async (place: SheetPlace): Promise<void> => {
   });
 };
 
+const details = (): ReturnType<typeof page.getByRole> => page.getByRole('region', { name: 'Details' });
+
 const lines = (): readonly string[] =>
-  [...document.querySelectorAll('[aria-label="Details"] dl > div')].map((line) =>
+  [...(details().query()?.querySelectorAll('dl > div') ?? [])].map((line) =>
     [...line.children].map(({ textContent }) => textContent.trim()).join(': ')
   );
-
-const details = (): ReturnType<typeof page.getByRole> => page.getByRole('region', { name: 'Details' });
 
 describe('calling a place', () => {
   it('is a link that dials its number without spaces', async () => {

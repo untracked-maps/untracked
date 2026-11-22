@@ -107,10 +107,16 @@ describe('the details of a place', () => {
     await expect.element(page.getByRole('region', { name: 'Details' })).toBeVisible();
   });
 
+  it('are titled "Details" for every visitor to see', async () => {
+    await rendered(opened(LUIGI));
+
+    await expect.element(page.getByRole('region', { name: 'Details' }).getByRole('heading', { name: 'Details' })).toBeVisible();
+  });
+
   it('label the address', async () => {
     await rendered(opened(LUIGI));
 
-    await expect.element(page.getByRole('region', { name: 'Details' })).toHaveTextContent(`Address ${ADDRESS}`);
+    await expect.element(page.getByRole('region', { name: 'Details' })).toHaveTextContent(`Details Address ${ADDRESS}`);
   });
 
   it('give the address with its city, in the format of its country', async () => {

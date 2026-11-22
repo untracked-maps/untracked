@@ -14,6 +14,8 @@
 
   const { place, address, onCopy, vibrate }: Props = $props();
 
+  const uid = $props.id();
+
   const pages = $derived(
     [
       { label: m.place_sheet_website(), link: place.website, text: siteNameOf },
@@ -25,7 +27,8 @@
 </script>
 
 {#if place.phone !== undefined || pages.length > 0 || address !== undefined}
-  <section class="details" aria-label={m.place_sheet_details()}>
+  <section aria-labelledby="{uid}-details">
+    <h3 id="{uid}-details">{m.place_sheet_details()}</h3>
     <dl>
       {#if place.phone !== undefined}
         <div>
@@ -50,17 +53,24 @@
 {/if}
 
 <style>
-  .details {
-    padding: var(--space-3) var(--space-4);
-    margin-block-start: var(--space-4);
-    background: var(--surface-sunken);
-    border-radius: var(--radius-m);
+  section {
+    margin-block-start: 1.375rem;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--text);
   }
 
   dl {
     display: grid;
     gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     margin: 0;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-m);
   }
 
   dt {
