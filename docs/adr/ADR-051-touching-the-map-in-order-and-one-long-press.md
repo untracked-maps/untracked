@@ -1,4 +1,4 @@
-# ADR-050 — Touching the map in order, and one long press
+# ADR-051 — Touching the map in order, and one long press
 
 **Date**: 2026-11-22
 **Status**: accepted
