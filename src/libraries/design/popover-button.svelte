@@ -21,9 +21,11 @@
 
   const UNPLACED = { left: 0, top: 0, right: 0, bottom: 0 };
 
+  const buttonBox = (): DOMRect | typeof UNPLACED =>
+    document.querySelector(`[popovertarget="${uid}-panel"]:not([popovertargetaction])`)?.getBoundingClientRect() ?? UNPLACED;
+
   const place = (panel: HTMLElement): void => {
-    const button =
-      document.querySelector(`[popovertarget="${uid}-panel"]:not([popovertargetaction])`)?.getBoundingClientRect() ?? UNPLACED;
+    const button = buttonBox();
     const { top, left, maxHeight } = menuPlace({
       button,
       menu: { width: panel.offsetWidth, height: panel.scrollHeight },
@@ -32,6 +34,21 @@
     panel.style.setProperty('inset-block-start', `${top}px`);
     panel.style.setProperty('inset-inline-start', `${left}px`);
     panel.style.setProperty('max-block-size', `${maxHeight}px`);
+  };
+
+  const cover = (over: HTMLElement): void => {
+    const { left, top, right, bottom } = buttonBox();
+    over.style.setProperty('inset-block-start', `${top}px`);
+    over.style.setProperty('inset-inline-start', `${left}px`);
+    over.style.setProperty('inline-size', `${right - left}px`);
+    over.style.setProperty('block-size', `${bottom - top}px`);
+  };
+
+  const covered = (over: HTMLElement): (() => void) => {
+    const observer = new ResizeObserver(() => cover(over));
+    observer.observe(over);
+    observer.observe(document.documentElement);
+    return observer.disconnect.bind(observer);
   };
 
   const placed = (panel: HTMLElement): (() => void) => {
@@ -59,6 +76,15 @@
     popovertarget="{uid}-panel"
     popovertargetaction="hide"
   ></button>
+  <button
+    type="button"
+    class="over-button"
+    tabindex="-1"
+    aria-hidden="true"
+    popovertarget="{uid}-panel"
+    popovertargetaction="hide"
+    {@attach covered}
+  ></button>
   <div class="panel" data-menu-panel {@attach placed}>
     <Floating>
       <div class="sections">
@@ -69,6 +95,14 @@
 </dialog>
 
 <style>
+  :global(button):has(+ dialog .over-button:active) {
+    background: var(--surface-open-pressed);
+  }
+
+  :global(button):has(+ dialog):active {
+    background: var(--surface-pressed);
+  }
+
   :global(button):has(+ dialog:popover-open) {
     color: var(--accent);
     background: var(--surface-open);
@@ -95,6 +129,15 @@
     cursor: default;
     background: none;
     border: 0;
+  }
+
+  .over-button {
+    position: absolute;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    border-radius: 50%;
   }
 
   .panel {
