@@ -6,21 +6,20 @@ type ScreenPoint = {
   readonly y: number;
 };
 
-type DotFeature = MapGeoJSONFeature & {
-  readonly geometry: Extract<MapGeoJSONFeature['geometry'], { readonly type: 'Point' }>;
-};
-
 const HALF_TOUCH = 12;
 
 const DOT_LAYERS: readonly string[] = placeDotsLayers('light').map(({ id }) => id);
 
-const isDot = (feature: MapGeoJSONFeature): feature is DotFeature => feature.geometry.type === 'Point';
+const centreOf = (map: MapLibreMap, { geometry }: MapGeoJSONFeature): ScreenPoint | undefined =>
+  geometry.type === 'Point'
+    ? map.project({ lng: Number(geometry.coordinates[0]), lat: Number(geometry.coordinates[1]) })
+    : undefined;
 
 const touchedAround =
   (map: MapLibreMap, point: ScreenPoint) =>
-  ({ geometry: { coordinates } }: DotFeature): boolean => {
-    const centre = map.project({ lng: Number(coordinates[0]), lat: Number(coordinates[1]) });
-    return Math.abs(centre.x - point.x) <= HALF_TOUCH && Math.abs(centre.y - point.y) <= HALF_TOUCH;
+  (feature: MapGeoJSONFeature): boolean => {
+    const centre = centreOf(map, feature);
+    return centre !== undefined && Math.abs(centre.x - point.x) <= HALF_TOUCH && Math.abs(centre.y - point.y) <= HALF_TOUCH;
   };
 
 const placeDotAt = (map: MapLibreMap, point: ScreenPoint): string | undefined => {
@@ -34,7 +33,6 @@ const placeDotAt = (map: MapLibreMap, point: ScreenPoint): string | undefined =>
       ],
       { layers }
     )
-    .filter(isDot)
     .filter(touchedAround(map, point));
   const [dot] = [...under, ...around];
   return dot === undefined ? undefined : String(dot.properties['id']);
