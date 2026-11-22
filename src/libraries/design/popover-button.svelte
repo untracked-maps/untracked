@@ -69,6 +69,11 @@
 </dialog>
 
 <style>
+  :global(button):has(+ dialog:popover-open) {
+    color: var(--accent);
+    background: var(--surface-open);
+  }
+
   dialog {
     inset: 0;
     inline-size: 100%;

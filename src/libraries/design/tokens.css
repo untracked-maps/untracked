@@ -13,6 +13,7 @@
   --accent: light-dark(rgb(42 91 215), rgb(107 155 255));
   --accent-strong: light-dark(rgb(42 91 215), rgb(58 111 224));
   --accent-soft: light-dark(rgb(245 248 255), rgb(31 40 54));
+  --surface-open: light-dark(rgb(232 238 252), rgb(44 60 94));
   --focus: var(--accent);
   --shadow-edge: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 6%));
   --shadow-near: light-dark(rgb(0 0 0 / 8%), rgb(0 0 0 / 50%));
