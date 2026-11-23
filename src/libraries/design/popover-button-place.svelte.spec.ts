@@ -123,4 +123,10 @@ describe('a menu on a small screen', () => {
 
     expect(box(panel()).right).toBeLessThanOrEqual(367);
   });
+
+  it('stays 8 px from the left of the screen when its button is near the left edge', async () => {
+    await opened();
+
+    expect(box(panel()).left).toBe(8);
+  });
 });
