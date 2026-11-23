@@ -28,6 +28,11 @@ type SheetPlace = {
   readonly cuisine?: string;
   readonly family?: string;
   readonly address?: PostalAddress;
+  readonly phone?: string;
+  readonly website?: string;
+  readonly menu?: string;
+  readonly instagram?: string;
+  readonly facebook?: string;
   readonly coordinates: Coordinates;
 };
 

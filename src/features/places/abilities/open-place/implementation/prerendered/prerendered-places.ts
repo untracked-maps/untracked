@@ -22,10 +22,17 @@ const isPostalAddress = (value: unknown): value is PostalAddress =>
   typeof value['addressLocality'] === 'string' &&
   typeof value['addressCountry'] === 'string';
 
-const textField = (fields: Fields, key: 'kind' | 'cuisine' | 'family'): Partial<Record<typeof key, string>> => {
-  const value = fields[key];
-  return typeof value === 'string' ? { [key]: value } : {};
-};
+const TEXT_FIELDS = ['kind', 'cuisine', 'family', 'phone', 'website', 'menu', 'instagram', 'facebook'] as const;
+
+type TextFields = Partial<Pick<SheetPlace, (typeof TEXT_FIELDS)[number]>>;
+
+const textFields = (fields: Fields): TextFields =>
+  Object.fromEntries(
+    TEXT_FIELDS.flatMap((key) => {
+      const value = fields[key];
+      return typeof value === 'string' ? [[key, value]] : [];
+    })
+  );
 
 const addressField = ({ address }: Fields): Pick<SheetPlace, 'address'> => (isPostalAddress(address) ? { address } : {});
 
@@ -39,9 +46,7 @@ const placeOf = (value: unknown): readonly SheetPlace[] => {
         {
           id,
           name,
-          ...textField(value, 'kind'),
-          ...textField(value, 'cuisine'),
-          ...textField(value, 'family'),
+          ...textFields(value),
           ...addressField(value),
           coordinates
         }

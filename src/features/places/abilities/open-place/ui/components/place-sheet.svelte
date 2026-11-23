@@ -7,10 +7,11 @@
   import CopyIcon from '#libraries/design/copy-icon.svelte';
   import Floating from '#libraries/design/floating.svelte';
   import '#libraries/design/tokens.css';
-  import { longPress } from '#libraries/design/long-press';
   import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import { openedPlaceOf, type PlaceSheet } from '../../domain/open-place';
+  import PlaceActions from './place-actions.svelte';
   import { addressOf } from './place-address.presenter';
+  import PlaceDetails from './place-details.svelte';
   import { typeOf } from './place-type.presenter';
 
   type Props = {
@@ -51,13 +52,9 @@
               <CloseButton label={m.place_sheet_close()} onclick={onClose} />
             </div>
           </div>
+          <PlaceActions {place} />
+          <PlaceDetails {place} {address} {onCopy} {vibrate} />
           {#if address !== undefined}
-            <section class="details" aria-label={m.place_sheet_details()}>
-              <dl>
-                <dt>{m.place_sheet_address()}</dt>
-                <dd {@attach longPress({ onPress: (): void => onCopy(address), vibrate })}>{address}</dd>
-              </dl>
-            </section>
             <div class="actions" data-sheet-actions>
               <button type="button" onclick={(): void => onCopy(address)}><CopyIcon />{m.place_sheet_copy_address()}</button>
             </div>
@@ -127,28 +124,6 @@
 
   .close :global(button) {
     position: relative;
-  }
-
-  .details {
-    margin-block-start: var(--space-4);
-  }
-
-  dl {
-    margin: 0;
-  }
-
-  dt {
-    font-size: 0.8125rem;
-    color: var(--text-muted);
-  }
-
-  dd {
-    margin: 0;
-    font-size: 0.96875rem;
-    color: var(--text);
-    overflow-wrap: anywhere;
-    user-select: none;
-    -webkit-touch-callout: none;
   }
 
   .actions {

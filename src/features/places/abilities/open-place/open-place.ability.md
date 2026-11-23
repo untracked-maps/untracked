@@ -131,3 +131,28 @@
 - Given the device cannot copy
 - When the visitor copies "172 Boulevard Saint-Germain, 75006 Paris"
 - Then the visitor is told that the address could not be copied
+
+## Rule: The sheet tells how to reach the place
+
+### Background:
+
+- Given these places to reach
+  | id      | name        | phone             | website                     | menu                             | instagram                           | facebook                         |
+  | ------- | ----------- | ----------------- | --------------------------- | -------------------------------- | ----------------------------------- | -------------------------------- |
+  | procope | Le Procope  | +33 1 99 00 12 34 | https://www.procope.example | https://www.procope.example/menu | https://instagram.example/leprocope | https://facebook.example/procope |
+  | galant  | Vert-Galant |                   |                             |                                  |                                     |                                  |
+
+### Scenario: The place has a phone, a website, a menu, Instagram and Facebook
+
+- When the visitor opens "procope" from the search
+- Then the place is reached by
+  | phone | +33 1 99 00 12 34 |
+  | website | https://www.procope.example |
+  | menu | https://www.procope.example/menu |
+  | instagram | https://instagram.example/leprocope |
+  | facebook | https://facebook.example/procope |
+
+### Scenario: The place has no way to be reached
+
+- When the visitor opens "galant" from the search
+- Then the place cannot be reached
