@@ -15,6 +15,7 @@ import {
   switchMap,
   take
 } from 'rxjs';
+import type { Tags } from './good-to-know';
 
 type Coordinates = {
   readonly longitude: number;
@@ -33,6 +34,7 @@ type SheetPlace = {
   readonly menu?: string;
   readonly instagram?: string;
   readonly facebook?: string;
+  readonly tags?: Tags;
   readonly coordinates: Coordinates;
 };
 

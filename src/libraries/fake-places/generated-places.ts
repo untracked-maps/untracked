@@ -1,6 +1,7 @@
 import { Faker } from '@faker-js/faker';
 import type { FakePlace, FakePostalAddress, GeneratedKind } from './fake-place';
 import { fakeReach } from './fake-reach';
+import { fakeTags } from './fake-tags';
 import type { FakeZone } from './fake-zone';
 import { placeNameOf } from './place-names';
 
@@ -9,6 +10,8 @@ const SEED = 1789;
 const CUISINE_SEED = 1848;
 
 const REACH_SEED = 1871;
+
+const TAGS_SEED = 1905;
 
 const PRECISION = 5;
 
@@ -61,6 +64,7 @@ type Fakers = {
   readonly faker: Faker;
   readonly cuisines: Faker;
   readonly reach: Faker;
+  readonly tags: Faker;
 };
 
 const idOf = (zone: FakeZone, index: number): string => `${zone.id}-${String(index + 1).padStart(ID_DIGITS, '0')}`;
@@ -82,7 +86,7 @@ const fameOf = (faker: Faker): number =>
   faker.datatype.boolean({ probability: FAMOUS_SHARE }) ? faker.number.int({ min: 1, max: MOST_FAME }) : 0;
 
 const generatedPlace =
-  ({ faker, cuisines, reach }: Fakers, zone: FakeZone) =>
+  ({ faker, cuisines, reach, tags }: Fakers, zone: FakeZone) =>
   (index: number): FakePlace => {
     const kind = faker.helpers.weightedArrayElement(KIND_WEIGHTS);
     const name = placeNameOf(kind, { firstName: faker.person.firstName(), lastName: faker.person.lastName() });
@@ -93,6 +97,7 @@ const generatedPlace =
       ...cuisineOf(cuisines, kind),
       address: addressOf(faker, zone),
       ...fakeReach(reach, { name, kind }),
+      ...fakeTags(tags, { kind }),
       coordinates: {
         longitude: faker.location.longitude({ min: zone.bounds.west, max: zone.bounds.east, precision: PRECISION }),
         latitude: faker.location.latitude({ min: zone.bounds.south, max: zone.bounds.north, precision: PRECISION })
@@ -105,7 +110,8 @@ const generatedPlaces = (zone: FakeZone, count: number): readonly FakePlace[] =>
   const fakers: Fakers = {
     faker: new Faker({ locale: [...zone.locale], seed: SEED }),
     cuisines: new Faker({ locale: [...zone.locale], seed: CUISINE_SEED }),
-    reach: new Faker({ locale: [...zone.locale], seed: REACH_SEED })
+    reach: new Faker({ locale: [...zone.locale], seed: REACH_SEED }),
+    tags: new Faker({ locale: [...zone.locale], seed: TAGS_SEED })
   };
   return Array.from({ length: count }, (_, index) => generatedPlace(fakers, zone)(index));
 };

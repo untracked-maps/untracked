@@ -13,6 +13,7 @@
   import PlaceActions from './place-actions.svelte';
   import { addressOf } from './place-address.presenter';
   import PlaceDetails from './place-details.svelte';
+  import PlaceGoodToKnow from './place-good-to-know.svelte';
   import { typeOf } from './place-type.presenter';
 
   type Props = {
@@ -67,6 +68,7 @@
             </div>
           </div>
           <PlaceActions {place} />
+          <PlaceGoodToKnow {place} />
           <PlaceDetails {place} {address} {onCopy} {vibrate} />
           {#if address !== undefined}
             <div class="actions" data-sheet-actions>
