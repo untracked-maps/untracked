@@ -39,6 +39,11 @@ const opened = async (page: Page): Promise<void> => {
   await searchField(page).waitFor();
 };
 
+const searchedFor = async (page: Page, query: string): Promise<void> => {
+  await page.goto('./');
+  await searchField(page).fill(query);
+};
+
 const spotInspected = async (page: Page): Promise<void> => {
   await opened(page);
   await theMap(page).press('Enter');
@@ -77,6 +82,7 @@ export {
   ONE_ZOOM_CLOSER,
   opened,
   placesFound,
+  searchedFor,
   searchField,
   spotCard,
   spotInspected,

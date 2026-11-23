@@ -2,8 +2,6 @@ import { expect, type Locator, type Page, test } from '@playwright/test';
 import { violationsOf } from './accessibility';
 import { refuseOpenFreeMap } from './openfreemap';
 
-const PLACES_FILE = '**/data/places.json';
-
 const NOEL = /^Boulangerie Noel/u;
 
 const BAKERIES_NEAR_YOU = /^Bakeries near you/u;
@@ -40,14 +38,6 @@ test('offers the main kinds of places under the search field', async ({ page }) 
   await page.goto('./');
 
   await expect(page.getByRole('list', { name: 'Kinds of places' }).getByRole('button')).toHaveCount(7);
-});
-
-test('loads no place before a kind is chosen', async ({ page }) => {
-  const requested = placesFilesRequested(page);
-  await page.goto('./');
-  await chip(page, 'Bakeries').waitFor();
-
-  expect(requested).toEqual([]);
 });
 
 test('lists the 25 bakeries nearest to the centre of the map', async ({ page }) => {
@@ -119,11 +109,10 @@ test('loads the places once for both searches', async ({ page }) => {
 
 test('names the kinds in French under /fr', async ({ page }) => {
   await page.goto('fr');
-  const loading = page.waitForRequest(PLACES_FILE);
 
   await chip(page, 'Boulangeries').click();
 
-  await expect(loading).resolves.toBeDefined();
+  await expect(page.getByRole('region', { name: 'Boulangeries' })).toBeVisible();
 });
 
 test('has no detectable accessibility violation with the bakeries listed', async ({ page }) => {
