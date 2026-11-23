@@ -1,14 +1,17 @@
-import { combineLatest, defer, firstValueFrom, map, type Observable, of, Subject, shareReplay } from 'rxjs';
+import { combineLatest, EMPTY, map, merge, type Observable, of, Subject, tap } from 'rxjs';
 import type { ColourScheme } from '#features/appearance/abilities/choose-theme/domain/choose-theme';
 import { BASEMAPS, type Basemap, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
 import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
+import { linkInUrl, linkKept, placesLinked, pointsLinked } from '#features/map/abilities/keep-view-in-url/domain/followed-link';
+import { type LinkTarget, linkTo } from '#features/map/abilities/keep-view-in-url/domain/link-fragment';
+import { locationFragment } from '#features/map/abilities/keep-view-in-url/implementation/browser/url-fragment';
 import type { Located } from '#features/map/abilities/locate-me/domain/locate-me';
 import { showBikeLanes } from '#features/map/abilities/show-bike-lanes/domain/show-bike-lanes';
 import type { BasemapImagery } from '#features/map/abilities/show-map/implementation/openfreemap/basemap-style';
 import { showTransitLines, type TransitLine } from '#features/map/abilities/show-transit-lines/domain/show-transit-lines';
 import { idfmTransitLines } from '#features/map/abilities/show-transit-lines/implementation/idfm/idfm-transit-lines';
 import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
-import { type Notice, showNotice } from '#features/notices/abilities/show-notice/domain/show-notice';
+import { type Notices, noticeBoard } from '#features/notices/abilities/show-notice/ui/components/notice-board';
 import {
   type Coordinates,
   type InspectedSpot,
@@ -19,6 +22,8 @@ import { prerenderedAddresses } from '#features/places/abilities/inspect-point/i
 import { copyAddress, type Opening, openPlace, type PlaceSheet } from '#features/places/abilities/open-place/domain/open-place';
 import { clipboardCopy } from '#features/places/abilities/open-place/implementation/browser/clipboard';
 import { prerenderedPlaces as prerenderedPlacesOfSheet } from '#features/places/abilities/open-place/implementation/prerendered/prerendered-places';
+import { shareSheet } from '#features/places/abilities/share-link/implementation/browser/share-sheet';
+import { linkSharing } from '#features/places/abilities/share-link/ui/components/link-sharing';
 import { type PlaceDot, showPlaces } from '#features/places/abilities/show-places/domain/show-places';
 import { prerenderedPlaces as prerenderedPlacesOnMap } from '#features/places/abilities/show-places/implementation/prerendered/prerendered-places';
 import { findAddress } from '#features/search/abilities/find-address/domain/find-address';
@@ -30,6 +35,7 @@ import type { LoadPlaces } from '#features/search/domain/place';
 import { prerenderedPlaces } from '#features/search/implementation/prerendered/prerendered-places';
 import { m } from '#i18n/messages';
 import { type TallestSheet, tallestSheet } from '#libraries/design/tallest-sheet';
+import { fetchedOnce } from '#libraries/fetched-once/fetched-once';
 import { browser } from '$app/env';
 import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
@@ -48,18 +54,6 @@ type MapLayers = {
 type SearchSources = {
   readonly loadPlaces: LoadPlaces;
   readonly indexPlaces: IndexPlaces;
-};
-
-type Notices = {
-  readonly shown: Observable<Notice | undefined>;
-  readonly tell: (notice: Notice) => void;
-  readonly act: () => void;
-};
-
-const noticeBoard = (): Notices => {
-  const told = new Subject<Notice>();
-  const acted = new Subject<void>();
-  return { shown: showNotice({ told, acted }), tell: (notice) => told.next(notice), act: () => acted.next() };
 };
 
 type PlaceSheets = {
@@ -102,7 +96,9 @@ const spotsInspected = (places: PlaceSheets, dismissed: Subject<void>): Spots =>
   const spot = inspectPoint({ reverseGeocode })({ inspected, dismissed });
   return {
     spot,
-    sheetOpen: combineLatest([places.sheet, spot]).pipe(map(([place, { kind }]) => place.status === 'open' || kind !== 'none')),
+    sheetOpen: combineLatest([places.sheet, spot]).pipe(
+      map(([{ status }, { kind }]) => status !== 'closed' || kind !== 'none')
+    ),
     inspect: (at): void => {
       places.close();
       inspected.next(at);
@@ -122,16 +118,21 @@ const keptChoice = <Value>(key: string, values: readonly [Value, ...Value[]]): K
 
 const fetchFile = (url: string): Promise<Response> => fetch(url);
 
-const answered = (response: Response): Response => {
-  if (!response.ok) {
-    throw new Error(`The file answered ${response.status}.`);
-  }
-  return response;
+type Links = {
+  readonly followed: Observable<unknown>;
+  readonly kept: Observable<boolean>;
+  readonly share: (shared: LinkTarget & { readonly title: string }) => void;
 };
 
-const fetchedOnce = (url: string): (() => Promise<Response>) => {
-  const answer$ = defer(() => fetch(url)).pipe(map(answered), shareReplay(1));
-  return async () => (await firstValueFrom(answer$)).clone();
+const sharedLinks = (places: PlaceSheets, spots: Spots, notices: Notices): Links => {
+  const link$ = browser ? linkInUrl({ readFragment: locationFragment(location) })() : EMPTY;
+  const copyText = clipboardCopy(browser ? navigator.clipboard : undefined);
+  const share = linkSharing({ shareUrl: shareSheet(browser ? navigator : undefined), copyText }, notices.tell);
+  return {
+    followed: merge(placesLinked(link$).pipe(tap(places.open)), pointsLinked(link$).pipe(tap(spots.inspect))),
+    kept: linkKept(link$, spots.sheetOpen),
+    share: ({ title, ...target }) => share({ title, url: linkTo(location.href, target) })
+  };
 };
 
 const searchSources = (fetchPlaces: () => Promise<Response>): SearchSources => {
@@ -153,6 +154,7 @@ type Loaded = {
   readonly sheetHeights: TallestSheet;
   readonly places: PlaceSheets;
   readonly spots: Spots;
+  readonly links: Links;
   readonly placesShown: (zoom$: Observable<number>) => Observable<readonly PlaceDot[]>;
 };
 
@@ -177,10 +179,11 @@ const mapLayers = (colourScheme: Observable<ColourScheme>): MapLayers => {
 
 export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
   const { theme } = await parent();
-  const fetchPlaces = fetchedOnce(resolve('/data/places.json'));
+  const fetchPlaces = fetchedOnce(fetchFile, resolve('/data/places.json'));
   const notices = noticeBoard();
   const dismissed = new Subject<void>();
   const places = placeSheets(fetchPlaces, notices, dismissed);
+  const spots = spotsInspected(places, dismissed);
   const openId = places.sheet.pipe(map((sheet) => (sheet.status === 'open' ? sheet.place.id : undefined)));
   const shownOnMap = showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) });
   return {
@@ -189,7 +192,8 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
     notices,
     sheetHeights: tallestSheet(),
     places,
-    spots: spotsInspected(places, dismissed),
+    spots,
+    links: sharedLinks(places, spots, notices),
     placesShown: (zoom$) => shownOnMap(zoom$, openId),
     layers: mapLayers(theme.colourScheme)
   };

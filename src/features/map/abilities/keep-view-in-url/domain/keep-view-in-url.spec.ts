@@ -107,3 +107,29 @@ describe('keep view in URL, after a step in the history', () => {
     });
   });
 });
+
+describe('keep view in URL, while a link is kept', () => {
+  it('writes no view while the link is kept', () => {
+    scheduler().run(({ cold, hot, expectObservable }) => {
+      const kept$ = keepViewInUrl({ writeFragment: (fragment) => cold('(w|)', { w: fragment }) })(
+        hot('v', { v: EIFFEL_TOWER }),
+        hot('400ms s'),
+        hot('k', { k: true })
+      );
+
+      expectObservable(kept$).toBe('');
+    });
+  });
+
+  it('writes the view once the link is let go', () => {
+    scheduler().run(({ cold, hot, expectObservable }) => {
+      const kept$ = keepViewInUrl({ writeFragment: (fragment) => cold('(w|)', { w: fragment }) })(
+        hot('v', { v: EIFFEL_TOWER }),
+        hot(''),
+        hot('k 500ms g', { k: true, g: false })
+      );
+
+      expectObservable(kept$).toBe('501ms f', { f: 'map=17/48.85837/2.29448' });
+    });
+  });
+});

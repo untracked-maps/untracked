@@ -44,16 +44,18 @@ type PostalAddress = {
   readonly addressCountry: string;
 };
 
-type Origin = 'search' | 'kind list' | 'map';
+type Origin = 'search' | 'kind list' | 'map' | 'link';
 
 type Opening = {
   readonly id: string;
   readonly from: Origin;
+  readonly at?: Coordinates;
 };
 
 type PlaceSheet =
   | { readonly status: 'closed' }
-  | { readonly status: 'open'; readonly place: SheetPlace; readonly from: Origin };
+  | { readonly status: 'open'; readonly place: SheetPlace; readonly from: Origin }
+  | { readonly status: 'missing'; readonly at?: Coordinates };
 
 type LoadPlaces = () => Observable<readonly SheetPlace[]>;
 
@@ -88,11 +90,18 @@ const placesOpenedAt = (sheet$: Observable<PlaceSheet>): Observable<Coordinates>
     map(({ coordinates }) => coordinates)
   );
 
+const notFound = ({ from, at }: Opening): PlaceSheet => {
+  if (from !== 'link') {
+    return CLOSED;
+  }
+  return at === undefined ? { status: 'missing' } : { status: 'missing', at };
+};
+
 const sheetOf =
-  ({ id, from }: Opening) =>
+  (opening: Opening) =>
   (places: readonly SheetPlace[]): PlaceSheet => {
-    const place = places.find((known) => known.id === id);
-    return place === undefined ? CLOSED : { status: 'open', place, from };
+    const place = places.find((known) => known.id === opening.id);
+    return place === undefined ? notFound(opening) : { status: 'open', place, from: opening.from };
   };
 
 const openPlace = ({ loadPlaces }: OpenPlacePorts): ((inputs: OpenPlaceInputs) => Observable<PlaceSheet>) => {
