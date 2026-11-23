@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/untracked-maps/untracked/compare/v1.19.0...v1.20.0) (2026-11-23)
+
+
+### Features
+
+* call a place, open its website, and list how to reach it ([#73](https://github.com/untracked-maps/untracked/issues/73)) ([e072573](https://github.com/untracked-maps/untracked/commit/e0725734fc08d16fe96124ecffe6451e6fd88d21))
+
 # [1.19.0](https://github.com/untracked-maps/untracked/compare/v1.18.0...v1.19.0) (2026-11-22)
 
 
