@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/untracked-maps/untracked/compare/v1.20.0...v1.21.0) (2026-11-23)
+
+
+### Features
+
+* share a place or a spot by a link, and open such a link ([#72](https://github.com/untracked-maps/untracked/issues/72)) ([2ca3144](https://github.com/untracked-maps/untracked/commit/2ca31441d187bbcd11557698ff7159dda398a213)), closes [#56](https://github.com/untracked-maps/untracked/issues/56)
+
 # [1.20.0](https://github.com/untracked-maps/untracked/compare/v1.19.0...v1.20.0) (2026-11-23)
 
 
