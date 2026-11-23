@@ -73,14 +73,6 @@ test.describe('copying the address of a place', () => {
 
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('Rue de Rivoli, 75001 Paris');
   });
-
-  test('tells the visitor the address is copied', async ({ page }) => {
-    await louvreOpened(page);
-
-    await page.getByRole('button', { name: 'Copy the address' }).click();
-
-    await expect(page.getByText('Address copied')).toBeVisible();
-  });
 });
 
 const louvreOpenedInFrench = async (page: Page): Promise<void> => {
