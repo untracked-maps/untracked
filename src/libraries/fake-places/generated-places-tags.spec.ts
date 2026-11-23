@@ -64,10 +64,6 @@ describe('the tags of generated places', () => {
     );
   });
 
-  it('give a terrace to many cafés', () => {
-    expect(shareTagged(ofKinds('cafe'), 'outdoor_seating')).toBeGreaterThan(0.25);
-  });
-
   it('give a terrace only where one eats or drinks', () => {
     expect(
       PLACES.filter(
@@ -88,10 +84,6 @@ describe('the tags of generated places', () => {
     ).toEqual([]);
   });
 
-  it('leave some places without any', () => {
-    expect(PLACES.filter(({ tags }) => tags === undefined).length / PLACES.length).toBeGreaterThan(0.25);
-  });
-
   it('leave out an empty set of tags', () => {
     expect(PLACES.filter(({ tags }) => tags !== undefined && Object.keys(tags).length === 0)).toEqual([]);
   });
@@ -102,5 +94,43 @@ describe('the tags of generated places', () => {
 
   it('say accessible toilets are toilets', () => {
     expect(PLACES.filter(({ tags }) => tags?.['toilets:wheelchair'] === 'yes' && tags['toilets'] !== 'yes')).toEqual([]);
+  });
+});
+
+describe('the places given tags', () => {
+  it('give a terrace to many cafés', () => {
+    expect(shareTagged(ofKinds('cafe'), 'outdoor_seating')).toBeGreaterThan(0.25);
+  });
+
+  it('give a terrace to some restaurants and bars', () => {
+    expect(shareTagged(ofKinds('restaurant', 'bar'), 'outdoor_seating')).toBeGreaterThan(0.2);
+  });
+
+  it('let some restaurants take contactless payment', () => {
+    expect(shareTagged(ofKinds('restaurant'), 'payment:contactless')).toBeGreaterThan(0.1);
+  });
+
+  it('let some shops take contactless payment', () => {
+    expect(shareTagged(ofKinds('florist', 'hairdresser', 'beauty-salon'), 'payment:contactless')).toBeGreaterThan(0.1);
+  });
+
+  it('take reservations at some restaurants', () => {
+    expect(shareTagged(ofKinds('restaurant'), 'reservation')).toBeGreaterThan(0.2);
+  });
+
+  it('tell whether some bars take reservations', () => {
+    expect(shareTagged(ofKinds('bar'), 'reservation')).toBeGreaterThan(0.05);
+  });
+
+  it('ask a reservation at some hairdressers and beauty salons', () => {
+    expect(shareTagged(ofKinds('hairdresser', 'beauty-salon'), 'reservation')).toBeGreaterThan(0.2);
+  });
+
+  it('give toilets to some cinemas, theatres, museums and libraries', () => {
+    expect(shareTagged(ofKinds('cinema', 'theatre', 'museum', 'library'), 'toilets')).toBeGreaterThan(0.1);
+  });
+
+  it('leave some places without any', () => {
+    expect(PLACES.filter(({ tags }) => tags === undefined).length / PLACES.length).toBeGreaterThan(0.25);
   });
 });
