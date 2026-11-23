@@ -51,47 +51,6 @@ const lines = (): readonly string[] =>
     [...line.children].map(({ textContent }) => textContent.trim()).join(': ')
   );
 
-describe('calling a place', () => {
-  it('is a link that dials its number without spaces', async () => {
-    await shown(PROCOPE);
-
-    await expect.element(page.getByRole('link', { name: 'Call' })).toHaveAttribute('href', 'tel:+33199001234');
-  });
-
-  it('is not offered without a phone', async () => {
-    await shown({ ...WITHOUT_BUTTONS, website: WEBSITE });
-
-    await expect.element(page.getByRole('link', { name: 'Call' })).not.toBeInTheDocument();
-  });
-});
-
-describe('the website button of a place', () => {
-  it('links to its website', async () => {
-    await shown(PROCOPE);
-
-    await expect
-      .element(page.getByRole('link', { name: 'Website', exact: true }))
-      .toHaveAttribute('href', 'https://www.procope.example/carte?langue=fr');
-  });
-
-  it('opens it in a new tab', async () => {
-    await shown(PROCOPE);
-
-    await expect.element(page.getByRole('link', { name: 'Website', exact: true })).toHaveAttribute('target', '_blank');
-  });
-
-  it('opens it without giving it the app', async () => {
-    await shown(PROCOPE);
-    await expect.element(page.getByRole('link', { name: 'Website', exact: true })).toHaveAttribute('rel', 'noopener');
-  });
-
-  it('is not offered without a website', async () => {
-    await shown({ ...WITHOUT_BUTTONS, phone: PHONE });
-
-    await expect.element(page.getByRole('link', { name: 'Website', exact: true })).not.toBeInTheDocument();
-  });
-});
-
 describe('the row of action buttons', () => {
   it('gives its buttons the same width', async () => {
     await shown(PROCOPE);

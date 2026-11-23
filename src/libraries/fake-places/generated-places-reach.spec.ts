@@ -76,6 +76,20 @@ describe('the menus of generated places', () => {
   });
 });
 
+describe('the ways to reach a generated place', () => {
+  it('write its website after its name, without accents', () => {
+    expect(PLACES.find(({ id }) => id === 'fake-lyon-0031')?.website).toBe('https://hotel-moreau.example');
+  });
+
+  it('write its Instagram account after its name, without accents', () => {
+    expect(PLACES.find(({ id }) => id === 'fake-lyon-0031')?.instagram).toBe('https://instagram.example/hotelmoreau');
+  });
+
+  it('leave out what the place does not have', () => {
+    expect(PLACES.filter((place) => Object.values(place).some((value) => value === undefined))).toEqual([]);
+  });
+});
+
 describe('the social accounts of generated places', () => {
   it('give Instagram to some of them', () => {
     expect(shareWith('instagram')).toBeGreaterThan(0.1);

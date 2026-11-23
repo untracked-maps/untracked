@@ -15,6 +15,7 @@ describe('the link to a page of a place', () => {
     ['http://procope.example', 'http://procope.example'],
     ['HTTPS://procope.example', 'HTTPS://procope.example'],
     ['procope.example', 'https://procope.example'],
+    ['procope.example/?from=https://a.example', 'https://procope.example/?from=https://a.example'],
     ['javascript:alert(1)', '#'],
     [' JavaScript:alert(1)', '#'],
     ['data:text/html,hello', '#'],
@@ -31,7 +32,8 @@ describe('the name of the website of a place', () => {
     ['https://www.procope.example/carte?langue=fr', 'procope.example'],
     ['https://reservations.procope.example', 'reservations.procope.example'],
     ['procope.example/menu', 'procope.example'],
-    ['https://wwwprocope.example', 'wwwprocope.example']
+    ['https://wwwprocope.example', 'wwwprocope.example'],
+    ['https://boutique.www.example', 'boutique.www.example']
   ])('of %s is %s', (website, expected) => {
     expect(siteNameOf(website)).toBe(expected);
   });
@@ -56,7 +58,8 @@ describe('the Facebook page of a place', () => {
   it.each([
     [`${FACEBOOK}/procope`, 'procope'],
     [`${FACEBOOK}/procope/`, 'procope'],
-    ['procope', 'procope']
+    ['procope', 'procope'],
+    ['le@procope', 'le@procope']
   ])('of %s is %s', (facebook, expected) => {
     expect(facebookPageOf(facebook)).toBe(expected);
   });
