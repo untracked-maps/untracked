@@ -9,6 +9,36 @@ const FICTION_PHONE = /^\+33 1 99 00 \d{2} \d{2}$/u;
 
 const EXAMPLE_LINK = /^https:\/\/[a-z0-9.-]+\.example(?:\/[A-Za-z0-9-]*)?$/u;
 
+const TOLD = [
+  'tour-eiffel',
+  'musee-du-louvre',
+  'notre-dame-de-paris',
+  'arc-de-triomphe',
+  'sacre-coeur',
+  'musee-d-orsay',
+  'palais-de-l-elysee',
+  'centre-pompidou',
+  'opera-garnier',
+  'grand-palais',
+  'pantheon',
+  'invalides',
+  'jardin-du-luxembourg',
+  'pere-lachaise',
+  'sainte-chapelle',
+  'moulin-rouge',
+  'galeries-lafayette',
+  'buttes-chaumont',
+  'musee-rodin',
+  'cafe-de-flore',
+  'bibliotheque-francois-mitterrand',
+  'notre-dame-de-lorette'
+];
+
+const tagged = (key: string): readonly string[] =>
+  landmarks().flatMap(({ id, tags }) => (tags?.[key] === undefined ? [] : [id]));
+
+const tagsOf = (landmark: string): FakePlace['tags'] => landmarks().find(({ id }) => id === landmark)?.tags;
+
 const linksOf = ({ website, menu, instagram, facebook }: FakePlace): readonly string[] =>
   [website, menu, instagram, facebook].flatMap((link) => link ?? []);
 
@@ -18,7 +48,7 @@ describe('landmarks', () => {
   });
 
   it('are the places written by hand', () => {
-    expect(landmarks()[0]).toEqual({
+    expect(landmarks()[0]).toMatchObject({
       id: 'tour-eiffel',
       name: 'Tour Eiffel',
       kind: 'attraction',
@@ -40,7 +70,8 @@ describe('landmarks', () => {
         ['payment:cards', 'yes'],
         ['reservation', 'recommended'],
         ['toilets', 'yes'],
-        ['toilets:wheelchair', 'yes']
+        ['toilets:wheelchair', 'yes'],
+        ['man_made', 'tower']
       ]),
       coordinates: { longitude: 2.294_48, latitude: 48.858_26 },
       fame: 99
@@ -91,5 +122,31 @@ describe('landmarks', () => {
 
   it('have each their own id', () => {
     expect(new Set(landmarks().map(({ id }) => id)).size).toBe(LANDMARKS_FILE.length);
+  });
+});
+
+describe('what the landmarks tell about themselves', () => {
+  it('is a text in French for the famous places, and none for a station', () => {
+    expect(tagged('description:fr')).toEqual(TOLD);
+  });
+
+  it('is a text in English for the same places', () => {
+    expect(tagged('description:en')).toEqual(TOLD);
+  });
+
+  it('is a local name for two places', () => {
+    expect(tagged('name')).toEqual(['centre-pompidou', 'opera-garnier']);
+  });
+
+  it('is the name of the Opéra Garnier on the spot', () => {
+    expect(tagsOf('opera-garnier')?.['name']).toBe('Palais Garnier');
+  });
+
+  it('is a church that became a monument for the Panthéon', () => {
+    expect(tagsOf('pantheon')).toMatchObject({ building: 'church', historic: 'monument', tourism: 'attraction' });
+  });
+
+  it('is a cathedral where people worship for Notre-Dame', () => {
+    expect(tagsOf('notre-dame-de-paris')).toMatchObject({ amenity: 'place_of_worship', building: 'cathedral' });
   });
 });

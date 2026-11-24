@@ -1,7 +1,8 @@
 import { m } from '#i18n/messages';
 import type { SheetPlace } from '../../domain/open-place';
+import { type PreciseType, preciseTypeOf } from '../../domain/precise-type';
 
-type Typed = Pick<SheetPlace, 'kind' | 'cuisine'>;
+type Typed = Pick<SheetPlace, 'kind' | 'cuisine' | 'tags'>;
 
 type Label = () => string;
 
@@ -34,6 +35,22 @@ const TYPES: ReadonlyMap<string | undefined, Label> = new Map<string | undefined
   ['station', m.place_sheet_type_station]
 ]);
 
+const PRECISE_TYPES: Readonly<Record<PreciseType, Label>> = {
+  cathedral: m.place_sheet_type_cathedral,
+  basilica: m.place_sheet_type_basilica,
+  chapel: m.place_sheet_type_chapel,
+  church: m.place_sheet_type_church,
+  monument: m.place_sheet_type_monument,
+  palace: m.place_sheet_type_palace,
+  tower: m.place_sheet_type_tower,
+  museum: m.place_sheet_type_museum,
+  'cultural-centre': m.place_sheet_type_cultural_centre,
+  theatre: m.place_sheet_type_theatre,
+  library: m.place_sheet_type_library,
+  garden: m.place_sheet_type_garden,
+  park: m.place_sheet_type_park
+};
+
 const CUISINES: ReadonlyMap<string | undefined, Label> = new Map<string | undefined, Label>([
   ['french', m.place_sheet_cuisine_french],
   ['italian', m.place_sheet_cuisine_italian],
@@ -47,9 +64,14 @@ const CUISINES: ReadonlyMap<string | undefined, Label> = new Map<string | undefi
   ['mexican', m.place_sheet_cuisine_mexican]
 ]);
 
-const typeOf = ({ kind, cuisine }: Typed): string => {
-  const type = (TYPES.get(kind) ?? m.place_sheet_type_none)();
-  const cuisineName = CUISINES.get(cuisine);
+const labelOf = ({ kind, tags }: Typed): Label => {
+  const precise = preciseTypeOf(tags);
+  return precise === undefined ? (TYPES.get(kind) ?? m.place_sheet_type_none) : PRECISE_TYPES[precise];
+};
+
+const typeOf = (place: Typed): string => {
+  const type = labelOf(place)();
+  const cuisineName = CUISINES.get(place.cuisine);
   return cuisineName === undefined ? type : m.place_sheet_type_with_cuisine({ type, cuisine: cuisineName() });
 };
 
