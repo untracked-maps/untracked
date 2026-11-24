@@ -92,11 +92,29 @@ describe('the grip of a bottom sheet', () => {
     await expect.element(page.getByRole('button', { name: 'Enlarge the sheet' })).toBeVisible();
   });
 
-  it('grows the sheet to all the screen but 64 px', async () => {
+  it('grows the sheet to all the screen but 80 px', async () => {
     await onPhone({ children: TALL });
     await page.getByRole('button', { name: 'Enlarge the sheet' }).click();
 
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '780px' });
+    await expect.element(sheetElement()).toHaveStyle({ blockSize: '764px' });
+  });
+
+  it('marks a sheet grown to the top of the screen', async () => {
+    await onPhone({ children: TALL, opening: 'full' });
+
+    await expect.element(sheetElement()).toHaveAttribute('data-sheet-at-top');
+  });
+
+  it('leaves unmarked a full sheet held lower by its short content', async () => {
+    await onPhone({ children: tall(500), opening: 'full' });
+
+    await expect.element(sheetElement()).not.toHaveAttribute('data-sheet-at-top');
+  });
+
+  it('leaves unmarked a sheet open on half the screen', async () => {
+    await onPhone({ children: TALL });
+
+    await expect.element(sheetElement()).not.toHaveAttribute('data-sheet-at-top');
   });
 
   it('offers to reduce a full sheet', async () => {
