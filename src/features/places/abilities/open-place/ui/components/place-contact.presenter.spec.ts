@@ -16,6 +16,7 @@ describe('the link to a page of a place', () => {
     ['HTTPS://procope.example', 'HTTPS://procope.example'],
     ['procope.example', 'https://procope.example'],
     ['procope.example/?from=https://a.example', 'https://procope.example/?from=https://a.example'],
+    ['procope.example/?format=data:carte', 'https://procope.example/?format=data:carte'],
     ['javascript:alert(1)', '#'],
     [' JavaScript:alert(1)', '#'],
     ['data:text/html,hello', '#'],
