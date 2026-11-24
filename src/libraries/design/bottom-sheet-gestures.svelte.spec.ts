@@ -162,11 +162,15 @@ describe('the wheel over a bottom sheet', () => {
     await expect.element(sheetElement()).toHaveStyle({ blockSize: '388px' });
   });
 
-  it('leaves the sheet as it is when it does not turn', async () => {
+  it('leaves the sheet at half when it does not turn, so that the grip still grows it to full', async () => {
     await shown();
     scroller().dispatchEvent(new WheelEvent('wheel', { bubbles: true, deltaY: 0 }));
+    page
+      .getByRole('button', { name: 'Enlarge the sheet' })
+      .element()
+      .dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '388px' });
+    await expect.element(sheetElement()).toHaveStyle({ blockSize: '764px' });
   });
 });
 

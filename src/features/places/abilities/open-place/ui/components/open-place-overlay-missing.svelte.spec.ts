@@ -1,8 +1,8 @@
 import { LngLat, Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { type Observable, of } from 'rxjs';
-import { describe, expect, it, onTestFinished } from 'vitest';
+import { BehaviorSubject, type Observable, of } from 'rxjs';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import { page } from 'vitest/browser';
 import type { PlaceSheet } from '../../domain/open-place';
 import { openPlaceOverlay } from './open-place-overlay';
@@ -73,5 +73,17 @@ describe('a place open with a pictogram, unlike a place that cannot be found', (
     const point = map.project([LINKED_POINT.longitude, LINKED_POINT.latitude]);
 
     expect(Math.round(dot.top + dot.height / 2 - frame.top)).toBe(Math.round(point.y));
+  });
+});
+
+describe('a place opened again while it is open', () => {
+  it('keeps its dot as it is, without drawing it again', async () => {
+    const flore = { id: 'flore', name: 'Café de Flore', family: 'cafe', coordinates: LINKED_POINT };
+    const sheet = new BehaviorSubject<PlaceSheet>({ status: 'open', place: flore, from: 'search' });
+    shown(sheet);
+    const before = await vi.waitFor(() => page.getByRole('img', { name: 'Café de Flore' }).element());
+    sheet.next({ status: 'open', place: flore, from: 'map' });
+
+    expect(page.getByRole('img', { name: 'Café de Flore' }).element()).toBe(before);
   });
 });
