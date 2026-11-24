@@ -127,13 +127,8 @@ Use whatever tools you like, AI included. You are responsible for what you submi
 
 ## Merging
 
-Pull requests are merged by fast-forward from a local clone:
+Pull requests are merged with GitHub's « Squash and merge » button, once every required check is green. `main` requires the branch to be up to date: when `main` has moved on, bring the branch up to date with « Update with rebase », or rebase it locally and push it with `--force-with-lease`, which keeps the history linear.
 
-```bash
-git switch feat/something
-git rebase main
-git push --force-with-lease
-git push origin feat/something:main
-```
+The squash commit takes the pull request's title, or the commit's when the branch has only one, and the messages of the branch's commits, not its description: a line that must reach `main`, such as a trailer, goes in a commit of the branch.
 
-If `main` has moved on in the meantime, you may be asked to rebase your branch onto it, which keeps the history linear. A push to `main` that carries a `feat` or `fix` commit releases a new version and publishes the app and its documentation to GitHub Pages.
+A merge to `main` that carries a `feat` or `fix` commit releases a new version and publishes the app and its documentation to GitHub Pages.
