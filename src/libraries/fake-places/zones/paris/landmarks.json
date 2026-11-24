@@ -14,6 +14,15 @@
     "website": "https://www.toureiffel.example",
     "instagram": "https://instagram.example/toureiffel",
     "facebook": "https://facebook.example/TourEiffel",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "recommended",
+      "toilets": "yes",
+      "toilets:wheelchair": "yes"
+    },
     "coordinates": { "longitude": 2.29448, "latitude": 48.85826 },
     "fame": 99
   },
@@ -31,6 +40,16 @@
     "website": "https://www.louvre.example",
     "instagram": "https://instagram.example/museelouvre",
     "facebook": "https://facebook.example/MuseeDuLouvre",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "recommended",
+      "toilets": "yes",
+      "toilets:wheelchair": "yes",
+      "changing_table": "yes"
+    },
     "coordinates": { "longitude": 2.33764, "latitude": 48.86061 },
     "fame": 98
   },
@@ -46,6 +65,10 @@
       "addressCountry": "FR"
     },
     "website": "https://www.notredamedeparis.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs"
+    },
     "coordinates": { "longitude": 2.34992, "latitude": 48.85297 },
     "fame": 97
   },
@@ -60,6 +83,12 @@
       "addressCountry": "FR"
     },
     "website": "https://arc-de-triomphe.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes"
+    },
     "coordinates": { "longitude": 2.29504, "latitude": 48.8738 },
     "fame": 93
   },
@@ -75,6 +104,11 @@
       "addressCountry": "FR"
     },
     "website": "https://www.sacre-coeur-montmartre.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "toilets": "yes"
+    },
     "coordinates": { "longitude": 2.34306, "latitude": 48.88671 },
     "fame": 92
   },
@@ -92,6 +126,16 @@
     "phone": "+33 1 99 00 00 40",
     "website": "https://www.musee-orsay.example",
     "instagram": "https://instagram.example/museeorsay",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "recommended",
+      "toilets": "yes",
+      "toilets:wheelchair": "yes",
+      "changing_table": "yes"
+    },
     "coordinates": { "longitude": 2.32656, "latitude": 48.86 },
     "fame": 90
   },
@@ -107,6 +151,10 @@
       "addressCountry": "FR"
     },
     "website": "https://www.elysee.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs"
+    },
     "coordinates": { "longitude": 2.31659, "latitude": 48.87041 },
     "fame": 88
   },
@@ -124,6 +172,16 @@
     "website": "https://www.centrepompidou.example",
     "instagram": "https://instagram.example/centrepompidou",
     "facebook": "https://facebook.example/CentrePompidou",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "toilets": "yes",
+      "toilets:wheelchair": "yes",
+      "changing_table": "yes",
+      "internet_access": "wlan",
+      "internet_access:fee": "no",
+      "air_conditioning": "yes"
+    },
     "coordinates": { "longitude": 2.35222, "latitude": 48.86064 },
     "fame": 88
   },
@@ -141,6 +199,13 @@
     "phone": "+33 1 99 00 00 89",
     "website": "https://www.operadeparis.example",
     "instagram": "https://instagram.example/operadeparis",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "recommended"
+    },
     "coordinates": { "longitude": 2.33165, "latitude": 48.87197 },
     "fame": 86
   },
@@ -157,6 +222,14 @@
     },
     "website": "https://www.grandpalais.example",
     "instagram": "https://instagram.example/grandpalais",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "toilets": "yes",
+      "toilets:wheelchair": "yes"
+    },
     "coordinates": { "longitude": 2.31248, "latitude": 48.86613 },
     "fame": 85
   },
@@ -171,6 +244,12 @@
       "addressCountry": "FR"
     },
     "website": "https://pantheon.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes"
+    },
     "coordinates": { "longitude": 2.34619, "latitude": 48.84622 },
     "fame": 85
   },
@@ -187,6 +266,13 @@
     },
     "phone": "+33 1 99 00 00 44",
     "website": "https://www.musee-armee.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "toilets": "yes"
+    },
     "coordinates": { "longitude": 2.31253, "latitude": 48.85663 },
     "fame": 84
   },
@@ -201,6 +287,12 @@
       "addressCountry": "FR"
     },
     "website": "https://jardin.senat.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "toilets": "yes",
+      "dog": "no"
+    },
     "coordinates": { "longitude": 2.33716, "latitude": 48.84622 },
     "fame": 84
   },
@@ -228,6 +320,11 @@
       "postalCode": "75020",
       "addressLocality": "Paris",
       "addressCountry": "FR"
+    },
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "dog": "no"
     },
     "coordinates": { "longitude": 2.39333, "latitude": 48.86139 },
     "fame": 82
@@ -257,6 +354,13 @@
       "addressCountry": "FR"
     },
     "website": "https://www.sainte-chapelle.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "recommended"
+    },
     "coordinates": { "longitude": 2.34503, "latitude": 48.85544 },
     "fame": 80
   },
@@ -276,6 +380,12 @@
     "menu": "https://www.moulinrouge.example/menu",
     "instagram": "https://instagram.example/moulinrougeparis",
     "facebook": "https://facebook.example/MoulinRouge",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "required",
+      "air_conditioning": "yes"
+    },
     "coordinates": { "longitude": 2.33233, "latitude": 48.88411 },
     "fame": 80
   },
@@ -322,6 +432,16 @@
     "website": "https://haussmann.galerieslafayette.example",
     "instagram": "https://instagram.example/galerieslafayette",
     "facebook": "https://facebook.example/GaleriesLafayette",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "toilets": "yes",
+      "toilets:wheelchair": "yes",
+      "changing_table": "yes",
+      "air_conditioning": "yes",
+      "internet_access": "wlan",
+      "internet_access:fee": "no"
+    },
     "coordinates": { "longitude": 2.33199, "latitude": 48.87357 },
     "fame": 78
   },
@@ -348,6 +468,11 @@
       "postalCode": "75019",
       "addressLocality": "Paris",
       "addressCountry": "FR"
+    },
+    "tags": {
+      "toilets": "yes",
+      "dog": "leashed",
+      "changing_table": "yes"
     },
     "coordinates": { "longitude": 2.38278, "latitude": 48.88094 },
     "fame": 75
@@ -378,6 +503,13 @@
     },
     "phone": "+33 1 99 00 00 18",
     "website": "https://www.musee-rodin.example",
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs",
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "toilets": "yes"
+    },
     "coordinates": { "longitude": 2.31586, "latitude": 48.85531 },
     "fame": 72
   },
@@ -410,6 +542,13 @@
     "website": "https://cafe-de-flore.example",
     "menu": "https://cafe-de-flore.example/menu",
     "instagram": "https://instagram.example/cafedeflore",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "outdoor_seating": "yes",
+      "reservation": "no",
+      "dog": "yes"
+    },
     "coordinates": { "longitude": 2.33263, "latitude": 48.85404 },
     "fame": 70
   },
@@ -425,6 +564,14 @@
     },
     "phone": "+33 1 99 00 00 53",
     "website": "https://www.bnf.example",
+    "tags": {
+      "internet_access": "wlan",
+      "internet_access:fee": "no",
+      "air_conditioning": "yes",
+      "toilets": "yes",
+      "toilets:wheelchair": "yes",
+      "changing_table": "yes"
+    },
     "coordinates": { "longitude": 2.37594, "latitude": 48.83359 },
     "fame": 70
   },
@@ -441,6 +588,11 @@
     },
     "phone": "+33 1 99 00 02 33",
     "instagram": "https://instagram.example/elyseebeaute",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "recommended"
+    },
     "coordinates": { "longitude": 2.35356, "latitude": 48.85799 },
     "fame": 0
   },
@@ -470,6 +622,15 @@
     },
     "phone": "+33 1 99 00 00 58",
     "website": "https://www.hoteldulouvre.example",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "reservation": "yes",
+      "internet_access": "wlan",
+      "internet_access:fee": "no",
+      "air_conditioning": "yes",
+      "dog": "yes"
+    },
     "coordinates": { "longitude": 2.33598, "latitude": 48.86375 },
     "fame": 12
   },
@@ -485,6 +646,10 @@
       "addressCountry": "FR"
     },
     "phone": "+33 1 99 00 01 23",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes"
+    },
     "coordinates": { "longitude": 2.37192, "latitude": 48.84534 },
     "fame": 0
   },
@@ -501,6 +666,13 @@
     },
     "phone": "+33 1 99 00 03 05",
     "instagram": "https://instagram.example/boulangeriedupantheon",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "payment:meal_voucher": "yes",
+      "takeaway": "only",
+      "organic": "yes"
+    },
     "coordinates": { "longitude": 2.34488, "latitude": 48.84677 },
     "fame": 0
   },
@@ -514,6 +686,10 @@
       "postalCode": "75009",
       "addressLocality": "Paris",
       "addressCountry": "FR"
+    },
+    "tags": {
+      "heritage": "2",
+      "heritage:operator": "mhs"
     },
     "coordinates": { "longitude": 2.33847, "latitude": 48.87619 },
     "fame": 30
@@ -530,6 +706,10 @@
       "addressCountry": "FR"
     },
     "instagram": "https://instagram.example/orsayfleurs",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes"
+    },
     "coordinates": { "longitude": 2.33102, "latitude": 48.85817 },
     "fame": 0
   },
@@ -545,6 +725,17 @@
       "addressCountry": "FR"
     },
     "menu": "https://grand-cafe-du-palais.example/menu",
+    "tags": {
+      "payment:contactless": "yes",
+      "payment:cards": "yes",
+      "payment:meal_voucher": "yes",
+      "outdoor_seating": "yes",
+      "diet:vegetarian": "yes",
+      "reservation": "yes",
+      "internet_access": "wlan",
+      "internet_access:fee": "no",
+      "dog": "leashed"
+    },
     "coordinates": { "longitude": 2.34622, "latitude": 48.85619 },
     "fame": 0
   }

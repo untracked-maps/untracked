@@ -46,6 +46,7 @@ type FakePlace = {
   readonly menu?: string;
   readonly instagram?: string;
   readonly facebook?: string;
+  readonly tags?: Readonly<Record<string, string>>;
   readonly coordinates: { readonly longitude: number; readonly latitude: number };
   readonly fame: number;
 };

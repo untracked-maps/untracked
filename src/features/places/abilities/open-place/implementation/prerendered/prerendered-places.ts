@@ -34,6 +34,11 @@ const textFields = (fields: Fields): TextFields =>
     })
   );
 
+const tagsField = ({ tags }: Fields): Pick<SheetPlace, 'tags'> =>
+  isFields(tags)
+    ? { tags: Object.fromEntries(Object.entries(tags).filter((tag): tag is [string, string] => typeof tag[1] === 'string')) }
+    : {};
+
 const addressField = ({ address }: Fields): Pick<SheetPlace, 'address'> => (isPostalAddress(address) ? { address } : {});
 
 const placeOf = (value: unknown): readonly SheetPlace[] => {
@@ -48,6 +53,7 @@ const placeOf = (value: unknown): readonly SheetPlace[] => {
           name,
           ...textFields(value),
           ...addressField(value),
+          ...tagsField(value),
           coordinates
         }
       ]

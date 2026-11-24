@@ -33,6 +33,15 @@ describe('landmarks', () => {
       website: 'https://www.toureiffel.example',
       instagram: 'https://instagram.example/toureiffel',
       facebook: `${FACEBOOK}/TourEiffel`,
+      tags: Object.fromEntries([
+        ['heritage', '2'],
+        ['heritage:operator', 'mhs'],
+        ['payment:contactless', 'yes'],
+        ['payment:cards', 'yes'],
+        ['reservation', 'recommended'],
+        ['toilets', 'yes'],
+        ['toilets:wheelchair', 'yes']
+      ]),
       coordinates: { longitude: 2.294_48, latitude: 48.858_26 },
       fame: 99
     });
@@ -54,6 +63,14 @@ describe('landmarks', () => {
       menu: 'https://cafe-de-flore.example/menu',
       instagram: 'https://instagram.example/cafedeflore'
     });
+  });
+
+  it('give a terrace to the Café de Flore', () => {
+    expect(landmarks().find(({ id }) => id === 'cafe-de-flore')?.tags?.['outdoor_seating']).toBe('yes');
+  });
+
+  it('give nothing good to know to a station', () => {
+    expect(landmarks().filter(({ kind, tags }) => kind === 'station' && tags !== undefined)).toEqual([]);
   });
 
   it('call only numbers of the Paris range kept for fiction', () => {

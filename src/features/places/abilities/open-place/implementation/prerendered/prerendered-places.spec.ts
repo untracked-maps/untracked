@@ -38,6 +38,16 @@ const PROCOPE: SheetPlace = {
   coordinates: { longitude: 2.3388, latitude: 48.8531 }
 };
 
+const FLORE: SheetPlace = {
+  id: 'flore',
+  name: 'Café de Flore',
+  tags: Object.fromEntries([
+    ['outdoor_seating', 'yes'],
+    ['payment:contactless', 'yes']
+  ]),
+  coordinates: { longitude: 2.332_63, latitude: 48.854_04 }
+};
+
 const placesServed = (body: unknown, status = 200): Promise<readonly SheetPlace[]> =>
   firstValueFrom(prerenderedPlaces(() => Promise.resolve(Response.json(body, { status })), '/data/places.json')());
 
@@ -65,6 +75,25 @@ describe('prerendered places of the sheet', () => {
     expect(await placesServed([PROCOPE])).toEqual([PROCOPE]);
   });
 
+  it('reads a place with its OpenStreetMap tags', async () => {
+    expect(await placesServed([FLORE])).toEqual([FLORE]);
+  });
+
+  it('keeps only the tags written as text', async () => {
+    expect(
+      await placesServed([
+        {
+          ...VERT_GALANT,
+          tags: Object.fromEntries([
+            ['dog', 'leashed'],
+            ['toilets', true],
+            ['heritage', 2]
+          ])
+        }
+      ])
+    ).toEqual([{ ...VERT_GALANT, tags: Object.fromEntries([['dog', 'leashed']]) }]);
+  });
+
   it('reads an address without house number nor street', async () => {
     const square: SheetPlace = {
       ...VERT_GALANT,
@@ -87,6 +116,8 @@ describe('prerendered places of the sheet', () => {
     ['a menu that is not text', { menu: {} }],
     ['an Instagram account that is not text', { instagram: 7 }],
     ['a Facebook page that is not text', { facebook: 7 }],
+    ['tags that are not an object', { tags: 'dog=leashed' }],
+    ['no tags', { tags: null }],
     ['an address that is not an object', { address: '40 Rue Sainte-Anne, 75002 Paris' }],
     ['an address without postal code', { address: { ...LUIGI.address, postalCode: undefined } }],
     ['an address without locality', { address: { ...LUIGI.address, addressLocality: 7 } }],
