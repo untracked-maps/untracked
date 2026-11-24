@@ -27,7 +27,7 @@ Open the repository in an editor that reads [Dev Containers](https://containers.
 
 ### Behind a filtered network
 
-The setup reaches these hosts; allow them rather than install anything by hand:
+The setup and the checks reach these hosts; allow them rather than install anything by hand:
 
 | Hosts                                                                                                                                     | For                                 |
 | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
@@ -37,6 +37,7 @@ The setup reaches these hosts; allow them rather than install anything by hand:
 | `releases.astral.sh`, `pypi.org`, `files.pythonhosted.org`                                                                                | uv and Python, for zizmor and typos |
 | `cdn.playwright.dev`, `playwright.download.prss.microsoft.com`                                                                            | Playwright's Chromium               |
 | `nodejs.org`                                                                                                                              | Node.js 24, where it is missing     |
+| `tiles.openfreemap.org`                                                                                                                   | the basemap, for Lighthouse         |
 
 ### In Claude Code's cloud sessions
 
@@ -54,7 +55,11 @@ tar -xJf "$FILE" -C /opt/node24 --strip-components=1
 /opt/node24/bin/corepack enable pnpm
 ```
 
+Name this environment `untracked`, and check at the start of each session that it runs there: a session can start on another environment, such as `Default`, whose network refuses the hosts above.
+
 If a hook still fails to install, report the host the session refused: it belongs in the list above.
+
+`pnpm test:lighthouse:quick` fails on `/` in a cloud session, while `/privacy` passes: the allowed domains above leave out `tiles.openfreemap.org`, so the map is audited without its basemap. Say so in the pull request, and rely on the audit CI runs.
 
 ## Run it
 
