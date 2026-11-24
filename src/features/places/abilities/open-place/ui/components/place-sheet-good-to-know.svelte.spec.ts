@@ -21,7 +21,7 @@ const sections = (): readonly string[] =>
   [...document.querySelectorAll('section h3')].map(({ textContent }) => textContent.trim());
 
 describe('the sheet of a place with facts good to know', () => {
-  it('sets them above the details, as a shop would', async () => {
+  it('sets them above the details', async () => {
     await render(PlaceSheetCard, {
       sheet: of(BUTTES_CHAUMONT),
       onClose: (): void => undefined,

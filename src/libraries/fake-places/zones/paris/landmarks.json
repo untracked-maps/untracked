@@ -21,9 +21,14 @@
       "payment:cards": "yes",
       "reservation": "recommended",
       "toilets": "yes",
-      "toilets:wheelchair": "yes"
+      "toilets:wheelchair": "yes",
+      "man_made": "tower",
+      "tourism": "attraction"
     },
-    "coordinates": { "longitude": 2.29448, "latitude": 48.85826 },
+    "coordinates": {
+      "longitude": 2.29448,
+      "latitude": 48.85826
+    },
     "fame": 99
   },
   {
@@ -48,9 +53,13 @@
       "reservation": "recommended",
       "toilets": "yes",
       "toilets:wheelchair": "yes",
-      "changing_table": "yes"
+      "changing_table": "yes",
+      "tourism": "museum"
     },
-    "coordinates": { "longitude": 2.33764, "latitude": 48.86061 },
+    "coordinates": {
+      "longitude": 2.33764,
+      "latitude": 48.86061
+    },
     "fame": 98
   },
   {
@@ -67,9 +76,14 @@
     "website": "https://www.notredamedeparis.example",
     "tags": {
       "heritage": "2",
-      "heritage:operator": "mhs"
+      "heritage:operator": "mhs",
+      "amenity": "place_of_worship",
+      "building": "cathedral"
     },
-    "coordinates": { "longitude": 2.34992, "latitude": 48.85297 },
+    "coordinates": {
+      "longitude": 2.34992,
+      "latitude": 48.85297
+    },
     "fame": 97
   },
   {
@@ -87,9 +101,13 @@
       "heritage": "2",
       "heritage:operator": "mhs",
       "payment:contactless": "yes",
-      "payment:cards": "yes"
+      "payment:cards": "yes",
+      "historic": "monument"
     },
-    "coordinates": { "longitude": 2.29504, "latitude": 48.8738 },
+    "coordinates": {
+      "longitude": 2.29504,
+      "latitude": 48.8738
+    },
     "fame": 93
   },
   {
@@ -107,9 +125,14 @@
     "tags": {
       "heritage": "2",
       "heritage:operator": "mhs",
-      "toilets": "yes"
+      "toilets": "yes",
+      "amenity": "place_of_worship",
+      "building": "basilica"
     },
-    "coordinates": { "longitude": 2.34306, "latitude": 48.88671 },
+    "coordinates": {
+      "longitude": 2.34306,
+      "latitude": 48.88671
+    },
     "fame": 92
   },
   {
@@ -134,9 +157,13 @@
       "reservation": "recommended",
       "toilets": "yes",
       "toilets:wheelchair": "yes",
-      "changing_table": "yes"
+      "changing_table": "yes",
+      "tourism": "museum"
     },
-    "coordinates": { "longitude": 2.32656, "latitude": 48.86 },
+    "coordinates": {
+      "longitude": 2.32656,
+      "latitude": 48.86
+    },
     "fame": 90
   },
   {
@@ -153,9 +180,14 @@
     "website": "https://www.elysee.example",
     "tags": {
       "heritage": "2",
-      "heritage:operator": "mhs"
+      "heritage:operator": "mhs",
+      "historic": "castle",
+      "castle_type": "palace"
     },
-    "coordinates": { "longitude": 2.31659, "latitude": 48.87041 },
+    "coordinates": {
+      "longitude": 2.31659,
+      "latitude": 48.87041
+    },
     "fame": 88
   },
   {
@@ -180,9 +212,14 @@
       "changing_table": "yes",
       "internet_access": "wlan",
       "internet_access:fee": "no",
-      "air_conditioning": "yes"
+      "air_conditioning": "yes",
+      "amenity": "arts_centre",
+      "name": "Centre national d'art et de culture Georges-Pompidou"
     },
-    "coordinates": { "longitude": 2.35222, "latitude": 48.86064 },
+    "coordinates": {
+      "longitude": 2.35222,
+      "latitude": 48.86064
+    },
     "fame": 88
   },
   {
@@ -204,9 +241,14 @@
       "heritage:operator": "mhs",
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "reservation": "recommended"
+      "reservation": "recommended",
+      "amenity": "theatre",
+      "name": "Palais Garnier"
     },
-    "coordinates": { "longitude": 2.33165, "latitude": 48.87197 },
+    "coordinates": {
+      "longitude": 2.33165,
+      "latitude": 48.87197
+    },
     "fame": 86
   },
   {
@@ -230,7 +272,10 @@
       "toilets": "yes",
       "toilets:wheelchair": "yes"
     },
-    "coordinates": { "longitude": 2.31248, "latitude": 48.86613 },
+    "coordinates": {
+      "longitude": 2.31248,
+      "latitude": 48.86613
+    },
     "fame": 85
   },
   {
@@ -248,9 +293,15 @@
       "heritage": "2",
       "heritage:operator": "mhs",
       "payment:contactless": "yes",
-      "payment:cards": "yes"
+      "payment:cards": "yes",
+      "building": "church",
+      "historic": "monument",
+      "tourism": "attraction"
     },
-    "coordinates": { "longitude": 2.34619, "latitude": 48.84622 },
+    "coordinates": {
+      "longitude": 2.34619,
+      "latitude": 48.84622
+    },
     "fame": 85
   },
   {
@@ -271,9 +322,13 @@
       "heritage:operator": "mhs",
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "toilets": "yes"
+      "toilets": "yes",
+      "historic": "monument"
     },
-    "coordinates": { "longitude": 2.31253, "latitude": 48.85663 },
+    "coordinates": {
+      "longitude": 2.31253,
+      "latitude": 48.85663
+    },
     "fame": 84
   },
   {
@@ -291,9 +346,13 @@
       "heritage": "2",
       "heritage:operator": "mhs",
       "toilets": "yes",
-      "dog": "no"
+      "dog": "no",
+      "leisure": "garden"
     },
-    "coordinates": { "longitude": 2.33716, "latitude": 48.84622 },
+    "coordinates": {
+      "longitude": 2.33716,
+      "latitude": 48.84622
+    },
     "fame": 84
   },
   {
@@ -307,7 +366,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.35533, "latitude": 48.88094 },
+    "coordinates": {
+      "longitude": 2.35533,
+      "latitude": 48.88094
+    },
     "fame": 82
   },
   {
@@ -326,7 +388,10 @@
       "heritage:operator": "mhs",
       "dog": "no"
     },
-    "coordinates": { "longitude": 2.39333, "latitude": 48.86139 },
+    "coordinates": {
+      "longitude": 2.39333,
+      "latitude": 48.86139
+    },
     "fame": 82
   },
   {
@@ -339,7 +404,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.37301, "latitude": 48.84434 },
+    "coordinates": {
+      "longitude": 2.37301,
+      "latitude": 48.84434
+    },
     "fame": 80
   },
   {
@@ -359,9 +427,14 @@
       "heritage:operator": "mhs",
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "reservation": "recommended"
+      "reservation": "recommended",
+      "amenity": "place_of_worship",
+      "building": "chapel"
     },
-    "coordinates": { "longitude": 2.34503, "latitude": 48.85544 },
+    "coordinates": {
+      "longitude": 2.34503,
+      "latitude": 48.85544
+    },
     "fame": 80
   },
   {
@@ -384,9 +457,13 @@
       "payment:contactless": "yes",
       "payment:cards": "yes",
       "reservation": "required",
-      "air_conditioning": "yes"
+      "air_conditioning": "yes",
+      "amenity": "theatre"
     },
-    "coordinates": { "longitude": 2.33233, "latitude": 48.88411 },
+    "coordinates": {
+      "longitude": 2.33233,
+      "latitude": 48.88411
+    },
     "fame": 80
   },
   {
@@ -400,7 +477,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.32122, "latitude": 48.84122 },
+    "coordinates": {
+      "longitude": 2.32122,
+      "latitude": 48.84122
+    },
     "fame": 78
   },
   {
@@ -414,7 +494,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.32528, "latitude": 48.87631 },
+    "coordinates": {
+      "longitude": 2.32528,
+      "latitude": 48.87631
+    },
     "fame": 78
   },
   {
@@ -442,7 +525,10 @@
       "internet_access": "wlan",
       "internet_access:fee": "no"
     },
-    "coordinates": { "longitude": 2.33199, "latitude": 48.87357 },
+    "coordinates": {
+      "longitude": 2.33199,
+      "latitude": 48.87357
+    },
     "fame": 78
   },
   {
@@ -455,7 +541,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.35904, "latitude": 48.87675 },
+    "coordinates": {
+      "longitude": 2.35904,
+      "latitude": 48.87675
+    },
     "fame": 75
   },
   {
@@ -472,9 +561,13 @@
     "tags": {
       "toilets": "yes",
       "dog": "leashed",
-      "changing_table": "yes"
+      "changing_table": "yes",
+      "leisure": "park"
     },
-    "coordinates": { "longitude": 2.38278, "latitude": 48.88094 },
+    "coordinates": {
+      "longitude": 2.38278,
+      "latitude": 48.88094
+    },
     "fame": 75
   },
   {
@@ -487,7 +580,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.34698, "latitude": 48.86197 },
+    "coordinates": {
+      "longitude": 2.34698,
+      "latitude": 48.86197
+    },
     "fame": 72
   },
   {
@@ -508,9 +604,13 @@
       "heritage:operator": "mhs",
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "toilets": "yes"
+      "toilets": "yes",
+      "tourism": "museum"
     },
-    "coordinates": { "longitude": 2.31586, "latitude": 48.85531 },
+    "coordinates": {
+      "longitude": 2.31586,
+      "latitude": 48.85531
+    },
     "fame": 72
   },
   {
@@ -524,7 +624,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.36547, "latitude": 48.84199 },
+    "coordinates": {
+      "longitude": 2.36547,
+      "latitude": 48.84199
+    },
     "fame": 70
   },
   {
@@ -549,7 +652,10 @@
       "reservation": "no",
       "dog": "yes"
     },
-    "coordinates": { "longitude": 2.33263, "latitude": 48.85404 },
+    "coordinates": {
+      "longitude": 2.33263,
+      "latitude": 48.85404
+    },
     "fame": 70
   },
   {
@@ -570,9 +676,13 @@
       "air_conditioning": "yes",
       "toilets": "yes",
       "toilets:wheelchair": "yes",
-      "changing_table": "yes"
+      "changing_table": "yes",
+      "amenity": "library"
     },
-    "coordinates": { "longitude": 2.37594, "latitude": 48.83359 },
+    "coordinates": {
+      "longitude": 2.37594,
+      "latitude": 48.83359
+    },
     "fame": 70
   },
   {
@@ -593,7 +703,10 @@
       "payment:cards": "yes",
       "reservation": "recommended"
     },
-    "coordinates": { "longitude": 2.35356, "latitude": 48.85799 },
+    "coordinates": {
+      "longitude": 2.35356,
+      "latitude": 48.85799
+    },
     "fame": 0
   },
   {
@@ -607,7 +720,10 @@
       "addressLocality": "Paris",
       "addressCountry": "FR"
     },
-    "coordinates": { "longitude": 2.29312, "latitude": 48.85939 },
+    "coordinates": {
+      "longitude": 2.29312,
+      "latitude": 48.85939
+    },
     "fame": 0
   },
   {
@@ -631,7 +747,10 @@
       "air_conditioning": "yes",
       "dog": "yes"
     },
-    "coordinates": { "longitude": 2.33598, "latitude": 48.86375 },
+    "coordinates": {
+      "longitude": 2.33598,
+      "latitude": 48.86375
+    },
     "fame": 12
   },
   {
@@ -650,7 +769,10 @@
       "payment:contactless": "yes",
       "payment:cards": "yes"
     },
-    "coordinates": { "longitude": 2.37192, "latitude": 48.84534 },
+    "coordinates": {
+      "longitude": 2.37192,
+      "latitude": 48.84534
+    },
     "fame": 0
   },
   {
@@ -673,7 +795,10 @@
       "takeaway": "only",
       "organic": "yes"
     },
-    "coordinates": { "longitude": 2.34488, "latitude": 48.84677 },
+    "coordinates": {
+      "longitude": 2.34488,
+      "latitude": 48.84677
+    },
     "fame": 0
   },
   {
@@ -689,9 +814,14 @@
     },
     "tags": {
       "heritage": "2",
-      "heritage:operator": "mhs"
+      "heritage:operator": "mhs",
+      "amenity": "place_of_worship",
+      "building": "church"
     },
-    "coordinates": { "longitude": 2.33847, "latitude": 48.87619 },
+    "coordinates": {
+      "longitude": 2.33847,
+      "latitude": 48.87619
+    },
     "fame": 30
   },
   {
@@ -710,7 +840,10 @@
       "payment:contactless": "yes",
       "payment:cards": "yes"
     },
-    "coordinates": { "longitude": 2.33102, "latitude": 48.85817 },
+    "coordinates": {
+      "longitude": 2.33102,
+      "latitude": 48.85817
+    },
     "fame": 0
   },
   {
@@ -736,7 +869,10 @@
       "internet_access:fee": "no",
       "dog": "leashed"
     },
-    "coordinates": { "longitude": 2.34622, "latitude": 48.85619 },
+    "coordinates": {
+      "longitude": 2.34622,
+      "latitude": 48.85619
+    },
     "fame": 0
   }
 ]

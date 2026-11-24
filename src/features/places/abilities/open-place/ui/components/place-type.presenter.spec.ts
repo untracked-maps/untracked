@@ -71,4 +71,56 @@ describe('the type of a place', () => {
   it('knows no cuisine named after what every object holds', () => {
     expect(typeOf({ kind: 'restaurant', cuisine: 'toString' })).toBe('Restaurant');
   });
+
+  it.each<readonly [string, readonly (readonly [string, string])[]]>([
+    [
+      'Cathedral',
+      [
+        ['amenity', 'place_of_worship'],
+        ['building', 'cathedral']
+      ]
+    ],
+    [
+      'Basilica',
+      [
+        ['amenity', 'place_of_worship'],
+        ['building', 'basilica']
+      ]
+    ],
+    [
+      'Chapel',
+      [
+        ['amenity', 'place_of_worship'],
+        ['building', 'chapel']
+      ]
+    ],
+    [
+      'Church',
+      [
+        ['amenity', 'place_of_worship'],
+        ['building', 'church']
+      ]
+    ],
+    ['Monument', [['historic', 'monument']]],
+    [
+      'Palace',
+      [
+        ['historic', 'castle'],
+        ['castle_type', 'palace']
+      ]
+    ],
+    ['Tower', [['man_made', 'tower']]],
+    ['Museum', [['tourism', 'museum']]],
+    ['Cultural centre', [['amenity', 'arts_centre']]],
+    ['Theatre', [['amenity', 'theatre']]],
+    ['Library', [['amenity', 'library']]],
+    ['Garden', [['leisure', 'garden']]],
+    ['Park', [['leisure', 'park']]]
+  ])('names "%s" a place whose tags tell its precise type, whatever its kind', (type, pairs) => {
+    expect(typeOf({ kind: 'attraction', tags: Object.fromEntries(pairs) })).toBe(type);
+  });
+
+  it('names a place after its kind when its tags tell no precise type', () => {
+    expect(typeOf({ kind: 'attraction', tags: Object.fromEntries([['toilets', 'yes']]) })).toBe('Attraction');
+  });
 });

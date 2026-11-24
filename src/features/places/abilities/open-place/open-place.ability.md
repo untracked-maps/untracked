@@ -515,3 +515,108 @@
   | takeaway | yes |
   | wifi | yes |
   | dogs not allowed | no |
+
+## Rule: The sheet tells the precise type of the place, when its tags tell it
+
+### Scenario: The place is a cathedral
+
+- Given a place tagged
+  | amenity | place_of_worship |
+  | building | cathedral |
+- When the visitor opens "tagged" from the search
+- Then its precise type is "cathedral"
+
+### Scenario: A church that became a place to visit is a monument
+
+- Given a place tagged
+  | building | church |
+  | historic | monument |
+  | tourism | attraction |
+- When the visitor opens "tagged" from the search
+- Then its precise type is "monument"
+
+### Scenario: No tag tells the precise type
+
+- Given a place tagged
+  | amenity | bench |
+- When the visitor opens "tagged" from the search
+- Then it has no precise type
+
+## Rule: The sheet tells the local name of the place, when it is not the name shown
+
+### Scenario: The place has a local name
+
+- Given a place tagged
+  | name | 日本文化会館 |
+- When the visitor opens "tagged" from the search
+- Then its local name is "日本文化会館"
+
+### Scenario: The local name is the name shown
+
+- Given a place tagged
+  | name | Lieu |
+- When the visitor opens "tagged" from the search
+- Then it has no local name
+
+## Rule: The sheet tells about the place in the visitor's language, and cuts a long text
+
+### Scenario: The text is written in the visitor's language
+
+- Given a place tagged
+  | description:fr | Une tour de fer. |
+  | description:en | An iron tower. |
+- When the visitor opens "tagged" from the search
+- Then its text in "en" is "An iron tower."
+
+### Scenario: No text is written in the visitor's language
+
+- Given a place tagged
+  | description:fr | Une tour de fer. |
+- When the visitor opens "tagged" from the search
+- Then it has no text in "en"
+
+### Scenario: A text of 180 characters shows whole
+
+- Given a place tagged
+  | description:en | This tower of iron was raised for a fair and was to stand for twenty years only. It still stands above the river, and millions of visitors climb it every year to see all the roofs. |
+- When the visitor opens "tagged" from the search
+- Then its text in "en" shows whole
+
+### Scenario: A text of more than 180 characters is cut
+
+- Given a place tagged
+  | description:en | This tower of iron was raised for a fair and was to stand for twenty years only. It still stands above the river, and millions of visitors climb it every year to see all the roofs of the city. |
+- When the visitor opens "tagged" from the search
+- Then its text in "en" is cut
+
+## Rule: The text comes after the rest for a place expected to have opening hours, and first for any other
+
+### Background:
+
+- Given these places to open
+  | id     | name                  | kind     |
+  | ------ | --------------------- | -------- |
+  | flore  | Café de Flore         | cafe     |
+  | arc    | Arc de Triomphe       | monument |
+  | nord   | Gare du Nord          | station  |
+  | galant | Square du Vert-Galant |          |
+
+### Scenario: A café tells what is good to know first
+
+- When the visitor opens "flore" from the search
+- Then its text comes last
+
+### Scenario: A monument tells about itself first
+
+- When the visitor opens "arc" from the search
+- Then its text comes first
+
+### Scenario: A station tells about itself before the rest
+
+- When the visitor opens "nord" from the search
+- Then its text comes first
+
+### Scenario: A place without a kind tells about itself first
+
+- When the visitor opens "galant" from the search
+- Then its text comes first

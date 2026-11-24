@@ -4,16 +4,15 @@
   import BottomSheet from '#libraries/design/bottom-sheet.svelte';
   import { closedWhenAsked } from '#libraries/design/closable';
   import CloseButton from '#libraries/design/close-button.svelte';
-  import CopyIcon from '#libraries/design/copy-icon.svelte';
   import Floating from '#libraries/design/floating.svelte';
   import '#libraries/design/tokens.css';
   import ShareButton from '#libraries/design/share-button.svelte';
   import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import { openedPlaceOf, type PlaceSheet, type SheetPlace } from '../../domain/open-place';
+  import { localNameOf } from '../../domain/place-text';
   import PlaceActions from './place-actions.svelte';
   import { addressOf } from './place-address.presenter';
-  import PlaceDetails from './place-details.svelte';
-  import PlaceGoodToKnow from './place-good-to-know.svelte';
+  import PlaceSections from './place-sections.svelte';
   import { typeOf } from './place-type.presenter';
 
   type Props = {
@@ -39,6 +38,12 @@
   const address = $derived(addressOf($addressLine, place));
 </script>
 
+{#snippet local(name: string | undefined)}
+  {#if name !== undefined}
+    <p class="local">{m.place_sheet_local_name({ name })}</p>
+  {/if}
+{/snippet}
+
 <div class="place" aria-live="polite">
   {#if place !== undefined}
     <BottomSheet
@@ -54,6 +59,7 @@
             <hgroup>
               <h2 id="{uid}-name">{place.name}</h2>
               <p>{typeOf(place)}</p>
+              {@render local(localNameOf(place))}
             </hgroup>
             {#if onShare !== undefined}
               <div class="share">
@@ -68,13 +74,7 @@
             </div>
           </div>
           <PlaceActions {place} />
-          <PlaceGoodToKnow {place} />
-          <PlaceDetails {place} {address} {onCopy} {vibrate} />
-          {#if address !== undefined}
-            <div class="actions" data-sheet-actions>
-              <button type="button" onclick={(): void => onCopy(address)}><CopyIcon />{m.place_sheet_copy_address()}</button>
-            </div>
-          {/if}
+          <PlaceSections {place} {address} {onCopy} {vibrate} />
         </Floating>
       </section>
     </BottomSheet>
@@ -142,6 +142,10 @@
     text-transform: uppercase;
   }
 
+  hgroup .local {
+    font-size: 0.8125rem;
+  }
+
   hgroup .why {
     margin-block-start: var(--space-1);
     text-wrap: pretty;
@@ -169,29 +173,5 @@
   .close :global(button),
   .share :global(button) {
     position: relative;
-  }
-
-  .actions {
-    display: grid;
-    grid-auto-columns: 1fr;
-    grid-auto-flow: column;
-    gap: 0.375rem;
-    margin-block-start: 0.875rem;
-  }
-
-  .actions button {
-    display: grid;
-    gap: var(--space-1);
-    place-items: center;
-    min-block-size: 2.875rem;
-    padding: var(--space-2);
-    font: inherit;
-    font-size: clamp(0.65625rem, 2.9vw, 0.71875rem);
-    font-weight: var(--font-weight-strong);
-    color: var(--text);
-    cursor: pointer;
-    background: var(--surface-sunken);
-    border: 0;
-    border-radius: 0.875rem;
   }
 </style>
