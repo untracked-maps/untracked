@@ -165,16 +165,13 @@ Then('{string} is copied', function isCopied(this: OpenPlaceWorld, text: string)
   assert.deepEqual(this.copiedTexts, [text]);
 });
 
-Then('the visitor is told that the address is copied', function theVisitorIsToldItIsCopied(this: OpenPlaceWorld) {
+Then('the copy is reported done', function theCopyIsReportedDone(this: OpenPlaceWorld) {
   assert.equal(this.copied, 'copied');
 });
 
-Then(
-  'the visitor is told that the address could not be copied',
-  function theVisitorIsToldItCouldNotBeCopied(this: OpenPlaceWorld) {
-    assert.equal(this.copied, 'not copied');
-  }
-);
+Then('the copy is reported refused', function theCopyIsReportedRefused(this: OpenPlaceWorld) {
+  assert.equal(this.copied, 'not copied');
+});
 
 Then('the sheet was opened from the map', function theSheetWasOpenedFromTheMap(this: OpenPlaceWorld) {
   assert.equal(this.sheet.status === 'open' && this.sheet.from, 'map');

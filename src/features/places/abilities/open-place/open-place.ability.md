@@ -154,13 +154,13 @@
 
 - When the visitor copies "172 Boulevard Saint-Germain, 75006 Paris"
 - Then "172 Boulevard Saint-Germain, 75006 Paris" is copied
-- And the visitor is told that the address is copied
+- And the copy is reported done
 
 ### Scenario: The device refuses to copy it
 
 - Given the device cannot copy
 - When the visitor copies "172 Boulevard Saint-Germain, 75006 Paris"
-- Then the visitor is told that the address could not be copied
+- Then the copy is reported refused
 
 ## Rule: The sheet tells how to reach the place
 

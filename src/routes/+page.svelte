@@ -216,7 +216,7 @@
       <RecentSearches {recents} onChoose={chooseRecent(panel)} onClear={clearRecents(panel)} />
     {/snippet}
   </SearchPlaces>
-  <div class="kinds">
+  <div class="kinds" data-notice-under>
     <KindSearch
       search={kindSearch}
       onChoose={chooseKind}
@@ -401,6 +401,17 @@
     justify-self: center;
     inline-size: min(26.25rem, 100%);
     margin-block-start: calc(var(--space-2) - var(--space-3));
+  }
+
+  @media (width <= 699px) and (orientation: portrait), (width <= 559px) {
+    :global(main:has([data-sheet-at-top])) .notice {
+      position: fixed;
+      inset-block-start: max(var(--edge), env(safe-area-inset-top));
+      inset-inline: max(var(--edge), env(safe-area-inset-left)) max(var(--edge), env(safe-area-inset-right));
+      inline-size: auto;
+      max-inline-size: 26.25rem;
+      margin: 0 auto;
+    }
   }
 
   .afloat {

@@ -103,7 +103,7 @@ describe('a finger on a bottom sheet', () => {
   it('pulls a full sheet down from the top of its content', async () => {
     await dragged([100, 300], [100, 500], 'Details', { opening: 'full' });
 
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '580px' });
+    await expect.element(sheetElement()).toHaveStyle({ blockSize: '564px' });
   });
 
   it('scrolls the content of a full sheet back before it pulls the sheet down', async () => {
@@ -112,7 +112,7 @@ describe('a finger on a bottom sheet', () => {
     finger('touchstart', scroller(), [[100, 300]]);
     finger('touchmove', scroller(), [[100, 500]]);
 
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '780px' });
+    await expect.element(sheetElement()).toHaveStyle({ blockSize: '764px' });
   });
 });
 
@@ -121,7 +121,7 @@ describe('a finger lifted from a bottom sheet', () => {
     await dragged([100, 500], [100, 440]);
     finger('touchend', scroller(), []);
 
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '780px' });
+    await expect.element(sheetElement()).toHaveStyle({ blockSize: '764px' });
   });
 
   it('leaves the sheet on the nearest stop after a slow gesture', async () => {
@@ -143,7 +143,7 @@ describe('a finger lifted from a bottom sheet', () => {
     await dragged([100, 500], [100, 440]);
     finger('touchcancel', scroller(), []);
 
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '780px' });
+    await expect.element(sheetElement()).toHaveStyle({ blockSize: '764px' });
   });
 });
 
@@ -152,7 +152,7 @@ describe('the wheel over a bottom sheet', () => {
     await shown();
     scroller().dispatchEvent(new WheelEvent('wheel', { bubbles: true, deltaY: 40 }));
 
-    await expect.element(sheetElement()).toHaveStyle({ blockSize: '780px' });
+    await expect.element(sheetElement()).toHaveStyle({ blockSize: '764px' });
   });
 
   it('leaves the sheet as it is when it turns up', async () => {

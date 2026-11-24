@@ -16,7 +16,7 @@
     sheetReleased,
     sheetTouched
   } from './sheet-gesture';
-  import { hasGrip, type SheetStop, sheetHeights } from './sheet-heights';
+  import { hasGrip, reachesTop, type SheetStop, sheetHeights } from './sheet-heights';
   import './tokens.css';
 
   type Props = {
@@ -37,6 +37,8 @@
   const PHONE = '(max-width: 699px) and (orientation: portrait), (max-width: 559px)';
 
   const PEEK_GAP = 6;
+
+  const NOTICE_ROOM = 76;
 
   const events = new Subject<SheetEvent>();
 
@@ -64,7 +66,9 @@
     const actions = content.querySelector('[data-sheet-actions]');
     const peekEnd =
       actions === null ? undefined : actions.getBoundingClientRect().top - content.getBoundingClientRect().top - PEEK_GAP;
-    events.next(sheetMeasured(sheetHeights({ content: content.offsetHeight, viewport: innerHeight, peekEnd })));
+    const bar = document.querySelector('[data-notice-under]');
+    const noticeEnd = bar === null ? 0 : bar.getBoundingClientRect().bottom + NOTICE_ROOM;
+    events.next(sheetMeasured(sheetHeights({ content: content.offsetHeight, viewport: innerHeight, peekEnd, noticeEnd })));
   };
 
   const measured = (content: HTMLElement): (() => void) => {
@@ -105,9 +109,11 @@
   };
 
   const sized =
-    (pixels: number) =>
-    (element: HTMLElement): void =>
+    (pixels: number, hidden: boolean) =>
+    (element: HTMLElement): void => {
       element.style.setProperty('--sheet-height', `${pixels}px`);
+      element.toggleAttribute('data-sheet-at-top', !hidden && reachesTop(pixels, innerHeight));
+    };
 
   const unscrolled =
     (scrolls: boolean) =>
@@ -121,7 +127,7 @@
 <div
   class={['sheet', isDragged($sheet) && 'dragged', $sheet.closing && 'closing', covered && 'covered', height === 0 && 'shut']}
   data-sheet-open={!covered || undefined}
-  {@attach sized(height)}
+  {@attach sized(height, covered)}
 >
   <div
     class={['scroller', $sheet.stop === 'full' && 'scrolls']}

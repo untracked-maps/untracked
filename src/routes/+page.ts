@@ -1,4 +1,4 @@
-import { combineLatest, EMPTY, map, merge, type Observable, of, Subject, tap } from 'rxjs';
+import { combineLatest, EMPTY, map, merge, type Observable, Subject, tap } from 'rxjs';
 import type { ColourScheme } from '#features/appearance/abilities/choose-theme/domain/choose-theme';
 import { BASEMAPS, type Basemap, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
 import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
@@ -19,9 +19,10 @@ import {
 } from '#features/places/abilities/inspect-point/domain/inspect-point';
 import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
 import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
-import { copyAddress, type Opening, openPlace, type PlaceSheet } from '#features/places/abilities/open-place/domain/open-place';
+import { type Opening, openPlace, type PlaceSheet } from '#features/places/abilities/open-place/domain/open-place';
 import { clipboardCopy } from '#features/places/abilities/open-place/implementation/browser/clipboard';
 import { prerenderedPlaces as prerenderedPlacesOfSheet } from '#features/places/abilities/open-place/implementation/prerendered/prerendered-places';
+import { addressCopying } from '#features/places/abilities/open-place/ui/components/address-copying';
 import { shareSheet } from '#features/places/abilities/share-link/implementation/browser/share-sheet';
 import { linkSharing } from '#features/places/abilities/share-link/ui/components/link-sharing';
 import { type PlaceDot, showPlaces } from '#features/places/abilities/show-places/domain/show-places';
@@ -33,7 +34,6 @@ import type { IndexPlaces } from '#features/search/abilities/search-places/domai
 import { miniSearchIndex } from '#features/search/abilities/search-places/implementation/minisearch/minisearch-index';
 import type { LoadPlaces } from '#features/search/domain/place';
 import { prerenderedPlaces } from '#features/search/implementation/prerendered/prerendered-places';
-import { m } from '#i18n/messages';
 import { type TallestSheet, tallestSheet } from '#libraries/design/tallest-sheet';
 import { fetchedOnce } from '#libraries/fetched-once/fetched-once';
 import { browser } from '$app/env';
@@ -64,12 +64,9 @@ type PlaceSheets = {
   readonly vibrate: (milliseconds: number) => void;
 };
 
-const COPY_NOTICES = { copied: m.place_sheet_address_copied, 'not copied': m.place_sheet_address_not_copied };
-
 const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, dismissed: Subject<void>): PlaceSheets => {
   const opened = new Subject<Opening>();
   const closed = new Subject<void>();
-  const copy = copyAddress({ copyText: clipboardCopy(browser ? navigator.clipboard : undefined) });
   return {
     sheet: openPlace({ loadPlaces: prerenderedPlacesOfSheet(fetchPlaces, resolve('/data/places.json')) })({ opened, closed }),
     open: (opening): void => {
@@ -77,7 +74,7 @@ const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, dis
       opened.next(opening);
     },
     close: () => closed.next(),
-    copy: (text) => copy(of(text)).subscribe((copied) => notices.tell({ text: COPY_NOTICES[copied]() })),
+    copy: addressCopying({ copyText: clipboardCopy(browser ? navigator.clipboard : undefined) }, notices.tell),
     vibrate: (milliseconds) => navigator.vibrate?.(milliseconds)
   };
 };

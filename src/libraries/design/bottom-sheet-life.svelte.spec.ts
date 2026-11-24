@@ -146,6 +146,13 @@ describe('a bottom sheet', () => {
     await expect.element(sheetElement()).toHaveStyle({ visibility: 'hidden' });
   });
 
+  it('is not marked at the top of the screen while another sheet covers it', async () => {
+    await shown({ covered: true, opening: 'full' });
+    await tall('764px');
+
+    expect(sheetElement()?.hasAttribute('data-sheet-at-top')).toBe(false);
+  });
+
   it('goes back to its opening height when its subject changes', async () => {
     const { rerender } = await shown({ subject: 'Louvre' });
     await page.getByRole('button', { name: 'Enlarge the sheet' }).click();
