@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/untracked-maps/untracked/compare/v1.22.0...v1.23.0) (2026-11-24)
+
+
+### Features
+
+* short notices tell no copy done, and cover nothing ([#82](https://github.com/untracked-maps/untracked/issues/82)) ([a5af648](https://github.com/untracked-maps/untracked/commit/a5af6485af3ac3ae54737dd7c6176b586c61bbde)), closes [#76](https://github.com/untracked-maps/untracked/issues/76) [#76](https://github.com/untracked-maps/untracked/issues/76)
+
 # [1.22.0](https://github.com/untracked-maps/untracked/compare/v1.21.0...v1.22.0) (2026-11-24)
 
 
