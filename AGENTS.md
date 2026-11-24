@@ -18,7 +18,7 @@ While working, run the fast checks on what you touch: `pnpm check`, Biome, and `
 - **Generated code** never goes in `src`: `pnpm lint:generated` fails when git ignores any file under `src`, on every commit and in CI after the build. Tools write their output at the root, in a hidden folder, as SvelteKit and Paraglide do.
 - **Tests**: 100 % coverage, every mutant killed, tests in random order, no retry.
 - **Other checks** ([ADR-019](docs/adr/ADR-019-deterministic-checks-beyond-linting.md)): every message translated in every locale, French spelling with cspell, no duplicated code with jscpd, valid HTML with html-validate, no broken link (between Markdown files with remark-validate-links at each commit, to other sites with lychee every week), no unused Cucumber step.
-- **Biome** lints and formats; **knip** fails on unused files, exports and dependencies; **typos** checks spelling, except in French files.
+- **Biome** lints and formats; **knip** fails on unused files, exports and dependencies; **typos** checks spelling, except in French files: those `_typos.toml` names, such as `fr.json`. Put French text, the fake places' included, in a file of that name, or typos rewrites its words in English.
 
 ## Writing code
 
@@ -37,6 +37,7 @@ While working, run the fast checks on what you touch: `pnpm check`, Biome, and `
 - No mocks or spies: pass fakes for ports and observe returned values. One assertion per test, no loop or branch in a test body. The `.grit/` plugins enforce no mock and one assertion per test. Test names state the behaviour.
 - Component tests are `*.svelte.spec.ts` and run in Chromium; unit tests are `*.spec.ts`; an ability's rules are Gherkin scenarios in `<ability>.ability.md`.
 - Accessibility targets WCAG 2.2 AA; the end-to-end tests run axe-core.
+- In end-to-end tests, never wait for a text that depends on the map's centre while the map flies, and never time an animation.
 
 ## Decisions
 
