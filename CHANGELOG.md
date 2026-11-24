@@ -1,3 +1,11 @@
+# [1.22.0](https://github.com/untracked-maps/untracked/compare/v1.21.0...v1.22.0) (2026-11-24)
+
+
+### Features
+
+* tell about a place, its precise type and its local name ([#81](https://github.com/untracked-maps/untracked/issues/81)) ([509170c](https://github.com/untracked-maps/untracked/commit/509170c6d2b0de6ed54a70de25fecd97512c7ca9)), closes [#80](https://github.com/untracked-maps/untracked/issues/80)
+* tell what is good to know about a place ([#78](https://github.com/untracked-maps/untracked/issues/78)) ([f3fead2](https://github.com/untracked-maps/untracked/commit/f3fead28f3497cee36d2f7dad4ca612326cbf147)), closes [#75](https://github.com/untracked-maps/untracked/issues/75)
+
 # [1.21.0](https://github.com/untracked-maps/untracked/compare/v1.20.0...v1.21.0) (2026-11-23)
 
 
