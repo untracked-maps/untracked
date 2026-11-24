@@ -466,4 +466,25 @@
       margin-block-end: calc(-1 * (var(--control-size) + var(--space-3)));
     }
   }
+
+  @media (width <= 699px) and (orientation: portrait) {
+    :global(:has(> main)):has(.afloat) {
+      grid-template-rows: minmax(0, 1fr) auto;
+      block-size: 100dvh;
+    }
+
+    .afloat {
+      grid-template-rows: auto minmax(0, 1fr);
+      min-block-size: 0;
+    }
+
+    .corner {
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .welcome {
+      align-self: stretch;
+      min-block-size: 0;
+    }
+  }
 </style>
