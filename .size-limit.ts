@@ -26,7 +26,8 @@ const config: SizeLimitConfig = [
     path: ['build/_app/immutable/**/*.js', '!build/_app/immutable/workers/**', ...mapLibreChunks.map((path) => `!${path}`)],
     limit: '200 kB',
     gzip: true
-  }
+  },
+  { name: 'The places file', path: ['build/data/places.json'], limit: '120 kB', gzip: true }
 ];
 
 export default config;
