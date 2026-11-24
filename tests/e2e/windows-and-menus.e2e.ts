@@ -69,13 +69,13 @@ checkedIn('dark');
 
 test('closes the map menu when a kind of places is touched, without reaching it', async ({ page }) => {
   await menuOpened(page);
-  const restaurants = page.getByRole('button', { name: 'Restaurants', exact: true });
-  const chip = (await restaurants.boundingBox()) ?? NOWHERE;
+  const pharmacies = page.getByRole('button', { name: 'Pharmacies', exact: true });
+  const chip = (await pharmacies.boundingBox()) ?? NOWHERE;
 
   await mapMenu(page).click({ position: { x: chip.x + 4, y: chip.y + chip.height / 2 } });
   await mapMenu(page).waitFor({ state: 'hidden' });
 
-  await expect(restaurants).not.toBeFocused();
+  await expect(pharmacies).not.toBeFocused();
 });
 
 test('closes the map menu when its button is touched again', async ({ page }) => {

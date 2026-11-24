@@ -38,6 +38,8 @@
 
 <style>
   section {
+    display: flex;
+    flex-direction: column;
     inline-size: 100%;
     max-inline-size: 26rem;
   }
@@ -47,7 +49,9 @@
   }
 
   section > :global(*) {
+    min-block-size: 0;
     padding: var(--space-4);
+    overflow-y: auto;
     border-radius: var(--radius-l);
   }
 

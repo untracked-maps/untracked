@@ -73,3 +73,22 @@ test('has no detectable accessibility violation with the welcome shown on a phon
 
   expect(violations).toEqual([]);
 });
+
+test.describe('on a 375 × 667 phone, while the map background is not responding', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('./');
+    await welcome(page).waitFor();
+    await page.getByText('The map background is not responding at the moment').waitFor();
+  });
+
+  test('keeps the About button wholly on screen while welcoming the visitor', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'About this map' })).toBeInViewport({ ratio: 1 });
+  });
+
+  test('has no detectable accessibility violation with the welcome shortened', async ({ page }) => {
+    const violations = await violationsOf(page);
+
+    expect(violations).toEqual([]);
+  });
+});
