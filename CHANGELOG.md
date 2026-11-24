@@ -1,3 +1,10 @@
+## [1.23.1](https://github.com/untracked-maps/untracked/compare/v1.23.0...v1.23.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* keep the about button on screen on small phones ([#98](https://github.com/untracked-maps/untracked/issues/98)) ([ab0080f](https://github.com/untracked-maps/untracked/commit/ab0080f32e926fbc372a54cfe71480315ccf42ce)), closes [#86](https://github.com/untracked-maps/untracked/issues/86)
+
 # [1.23.0](https://github.com/untracked-maps/untracked/compare/v1.22.0...v1.23.0) (2026-11-24)
 
 
