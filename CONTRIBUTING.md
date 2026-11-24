@@ -59,7 +59,7 @@ Name this environment `untracked`, and check at the start of each session that i
 
 If a hook still fails to install, report the host the session refused: it belongs in the list above.
 
-The allowed domains above leave out `tiles.openfreemap.org`, so `pnpm test:lighthouse:quick` fails on `/` in a cloud session, while `/privacy` passes. Say so in the pull request, and rely on the audit CI runs.
+`pnpm test:lighthouse:quick` fails on `/` in a cloud session, while `/privacy` passes: the allowed domains above leave out `tiles.openfreemap.org`, so the map is audited without its basemap. Say so in the pull request, and rely on the audit CI runs.
 
 ## Run it
 
