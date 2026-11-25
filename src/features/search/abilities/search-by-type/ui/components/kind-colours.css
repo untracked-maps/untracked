@@ -2,6 +2,11 @@
   --kind-colour: rgb(107 113 120);
 }
 
+[data-kind="fast-food"],
+[data-kind="ice-cream"],
+[data-kind="chocolate"],
+[data-kind="deli"],
+[data-kind="nightclub"],
 [data-kind="restaurant"],
 [data-kind="cafe"],
 [data-kind="bar"],
@@ -9,6 +14,20 @@
   --kind-colour: rgb(232 116 47);
 }
 
+[data-kind="marketplace"],
+[data-kind="greengrocer"],
+[data-kind="cheese"],
+[data-kind="butcher"],
+[data-kind="wine"],
+[data-kind="clothes"],
+[data-kind="newsagent"],
+[data-kind="diy"],
+[data-kind="mobile-phone"],
+[data-kind="toys"],
+[data-kind="stationery"],
+[data-kind="music"],
+[data-kind="optician"],
+[data-kind="pet-shop"],
 [data-kind="supermarket"],
 [data-kind="bookshop"],
 [data-kind="florist"],
@@ -18,6 +37,7 @@
   --kind-colour: rgb(65 105 216);
 }
 
+[data-kind="escape-game"],
 [data-kind="museum"],
 [data-kind="cinema"],
 [data-kind="theatre"],
@@ -28,11 +48,15 @@
   --kind-colour: rgb(18 145 158);
 }
 
+[data-kind="playground"],
+[data-kind="cemetery"],
 [data-kind="park"],
 [data-kind="garden"] {
   --kind-colour: rgb(62 142 82);
 }
 
+[data-kind="doctor"],
+[data-kind="veterinary"],
 [data-kind="pharmacy"],
 [data-kind="hospital"] {
   --kind-colour: rgb(216 74 69);
@@ -40,4 +64,14 @@
 
 [data-kind="hotel"] {
   --kind-colour: rgb(154 85 160);
+}
+
+[data-kind="atm"],
+[data-kind="bank"] {
+  --kind-colour: rgb(79 122 107);
+}
+
+[data-kind="fuel"],
+[data-kind="charging-station"] {
+  --kind-colour: rgb(79 111 160);
 }

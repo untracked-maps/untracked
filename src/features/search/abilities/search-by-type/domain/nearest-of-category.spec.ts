@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Coordinates, Place, PlaceKind } from '../../../domain/place';
-import { nearestOfKind } from './nearest-of-kind';
+import { nearestOfCategory } from './nearest-of-category';
 
 const HERE: Coordinates = { longitude: 2.35, latitude: 48.85 };
 
@@ -17,11 +17,17 @@ const placeNorth = (id: string, kilometres: number, kind: PlaceKind = 'bakery'):
 
 const idsOf = (places: readonly Place[]): readonly string[] => places.map(({ id }) => id);
 
-const nearestBakeries = (places: readonly Place[]): readonly string[] => idsOf(nearestOfKind(places, 'bakery', HERE));
+const nearestBakeries = (places: readonly Place[]): readonly string[] => idsOf(nearestOfCategory(places, 'bakeries', HERE));
 
-describe('nearest places of a kind', () => {
-  it('are only those of the kind', () => {
+describe('nearest places of a category', () => {
+  it('are only those of the kinds of the category', () => {
     expect(nearestBakeries([placeNorth('pharmacy', 1, 'pharmacy'), placeNorth('bakery', 2)])).toEqual(['bakery']);
+  });
+
+  it('are of every kind of the category', () => {
+    expect(idsOf(nearestOfCategory([placeNorth('park', 1, 'park'), placeNorth('garden', 2, 'garden')], 'parks', HERE))).toEqual(
+      ['park', 'garden']
+    );
   });
 
   it('come nearest first', () => {
@@ -31,7 +37,7 @@ describe('nearest places of a kind', () => {
   it('include a place three and a half kilometres away', () => {
     expect(
       idsOf(
-        nearestOfKind([{ ...placeNorth('edge', 0), coordinates: { longitude: 0, latitude: 3500 / 110_540 } }], 'bakery', {
+        nearestOfCategory([{ ...placeNorth('edge', 0), coordinates: { longitude: 0, latitude: 3500 / 110_540 } }], 'bakeries', {
           longitude: 0,
           latitude: 0
         })

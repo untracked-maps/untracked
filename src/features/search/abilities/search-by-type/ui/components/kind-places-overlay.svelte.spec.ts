@@ -23,7 +23,7 @@ const NOEL: Place = {
   coordinates: { longitude: 2.36, latitude: 48.87 }
 };
 
-const FOUND: KindSearch = { status: 'found', placeKind: 'bakery', places: [GARCIA, NOEL] };
+const FOUND: KindSearch = { status: 'found', category: 'bakeries', places: [GARCIA, NOEL] };
 
 const EMPTY_STYLE: StyleSpecification = { version: 8, sources: {}, layers: [] };
 
@@ -81,7 +81,7 @@ describe('places of a kind on the map', () => {
   it('move nothing while searching', () => {
     const map = mapAt(13);
 
-    drawn(kindPlacesOverlay(new BehaviorSubject<KindSearch>({ status: 'searching', placeKind: 'bakery' }))(map));
+    drawn(kindPlacesOverlay(new BehaviorSubject<KindSearch>({ status: 'searching', category: 'bakeries' }))(map));
 
     expect(map.isMoving()).toBe(false);
   });

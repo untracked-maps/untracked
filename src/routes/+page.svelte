@@ -51,9 +51,10 @@
   import { type RecentPlace, recentSearches } from '#features/search/abilities/recent-searches/domain/recent-searches';
   import { localRecents } from '#features/search/abilities/recent-searches/implementation/browser/local-recents';
   import RecentSearches from '#features/search/abilities/recent-searches/ui/components/recent-searches.svelte';
-  import { namedKind } from '#features/search/abilities/search-by-type/domain/named-kind';
+  import type { CategoryKey } from '#features/search/abilities/search-by-type/domain/categories';
+  import { namedCategory } from '#features/search/abilities/search-by-type/domain/named-category';
   import { placesFoundAt, searchByType } from '#features/search/abilities/search-by-type/domain/search-by-type';
-  import { lazyKindWords } from '#features/search/abilities/search-by-type/implementation/lazy/lazy-kind-words';
+  import { lazyCategoryWords } from '#features/search/abilities/search-by-type/implementation/lazy/lazy-category-words';
   import KindNamed from '#features/search/abilities/search-by-type/ui/components/kind-named.svelte';
   import { kindPlacesOverlay } from '#features/search/abilities/search-by-type/ui/components/kind-places-overlay';
   import KindSearch from '#features/search/abilities/search-by-type/ui/components/kind-search.svelte';
@@ -61,7 +62,6 @@
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
   import type { SearchPanel } from '#features/search/abilities/search-places/ui/components/combobox.presenter';
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
-  import type { PlaceKind } from '#features/search/domain/place';
   import { m } from '#i18n/messages';
   import Checkbox from '#libraries/design/checkbox.svelte';
   import FieldGroup from '#libraries/design/field-group.svelte';
@@ -125,13 +125,13 @@
 
   const searchState = $derived(searchPlaces(data.search)({ ...searchInputs, mapView: views }));
 
-  const kindChoices = new Subject<PlaceKind | undefined>();
+  const kindChoices = new Subject<CategoryKey | undefined>();
 
   const kindSearch = $derived(searchByType(data.search)({ chosen: kindChoices, mapView: views }));
 
-  const kindNamed = namedKind({ loadKindFinder: lazyKindWords })(searchInputs);
+  const kindNamed = namedCategory({ loadCategoryFinder: lazyCategoryWords })(searchInputs);
 
-  const chooseKind = (kind?: PlaceKind): void => kindChoices.next(kind);
+  const chooseKind = (category?: CategoryKey): void => kindChoices.next(category);
 
   const wakeSearch = (): void => searchWakes.next();
 

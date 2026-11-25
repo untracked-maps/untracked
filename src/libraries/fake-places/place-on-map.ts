@@ -1,6 +1,19 @@
 import type { FakePlace } from './fake-place';
 
-type FakeFamily = 'bakery' | 'bar' | 'cafe' | 'culture' | 'food' | 'health' | 'nature' | 'shop' | 'sight' | 'stay' | 'train';
+type FakeFamily =
+  | 'bakery'
+  | 'bar'
+  | 'cafe'
+  | 'culture'
+  | 'food'
+  | 'fuel'
+  | 'health'
+  | 'money'
+  | 'nature'
+  | 'shop'
+  | 'sight'
+  | 'stay'
+  | 'train';
 
 type FakePlaceOnMap = FakePlace & {
   readonly family?: FakeFamily;
@@ -34,7 +47,44 @@ const FAMILIES: Readonly<Record<FakePlace['kind'], FakeFamily | undefined>> = {
   garden: 'nature',
   monument: 'sight',
   'place-of-worship': 'sight',
-  station: 'train'
+  station: 'train',
+  'fast-food': 'food',
+  'ice-cream': 'food',
+  chocolate: 'food',
+  deli: 'food',
+  nightclub: 'bar',
+  marketplace: 'shop',
+  greengrocer: 'shop',
+  cheese: 'shop',
+  butcher: 'shop',
+  wine: 'shop',
+  clothes: 'shop',
+  newsagent: 'shop',
+  diy: 'shop',
+  'mobile-phone': 'shop',
+  toys: 'shop',
+  stationery: 'shop',
+  music: 'shop',
+  atm: 'money',
+  bank: 'money',
+  optician: 'shop',
+  laundry: undefined,
+  townhall: undefined,
+  police: undefined,
+  coworking: undefined,
+  doctor: 'health',
+  veterinary: 'health',
+  'pet-shop': 'shop',
+  'escape-game': 'culture',
+  playground: 'nature',
+  'fitness-centre': undefined,
+  'swimming-pool': undefined,
+  cemetery: 'nature',
+  bicycle: undefined,
+  fuel: 'fuel',
+  'charging-station': 'fuel',
+  toilets: undefined,
+  'drinking-water': undefined
 };
 
 const MONUMENT_FAMILIES: ReadonlySet<FakeFamily | undefined> = new Set(['culture', 'nature', 'sight', 'train']);

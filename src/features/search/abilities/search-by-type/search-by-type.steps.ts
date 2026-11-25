@@ -3,20 +3,15 @@ import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumbe
 import { type Observable, of, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { type Coordinates, type LoadPlaces, PLACE_KINDS, type Place, type PlaceKind } from '../../domain/place';
-import { kindNamedIn } from './domain/kind-words';
+import { CATEGORY_KEYS, type CategoryKey } from './domain/categories';
+import { categoryNamedIn } from './domain/category-words';
 import { type KindSearch, placesFoundAt, searchByType } from './domain/search-by-type';
 
 type SearchByTypeWorld = World & {
   loadPlaces: LoadPlaces;
   mapView: Observable<{ readonly center: Coordinates }>;
-  named: PlaceKind | undefined;
+  named: CategoryKey | undefined;
   search: KindSearch;
-};
-
-const KINDS_SAID: Readonly<Record<string, PlaceKind>> = {
-  bakeries: 'bakery',
-  pharmacies: 'pharmacy',
-  hospitals: 'hospital'
 };
 
 const placesListed = (search: KindSearch): readonly string[] =>
@@ -26,6 +21,10 @@ const KNOWN_KINDS: ReadonlySet<string> = new Set(PLACE_KINDS);
 
 const isPlaceKind = (kind: string): kind is PlaceKind => KNOWN_KINDS.has(kind);
 
+const KNOWN_CATEGORIES: ReadonlySet<string> = new Set(CATEGORY_KEYS);
+
+const isCategory = (category: string): category is CategoryKey => KNOWN_CATEGORIES.has(category);
+
 const CENTRE_OF_PARIS: Coordinates = { longitude: 2.3522, latitude: 48.8566 };
 
 const DEGREES_BETWEEN_NEIGHBOURS = 0.0001;
@@ -33,6 +32,11 @@ const DEGREES_BETWEEN_NEIGHBOURS = 0.0001;
 const kindOf = (kind: string): PlaceKind => {
   assert.ok(isPlaceKind(kind));
   return kind;
+};
+
+const categoryOf = (category: string): CategoryKey => {
+  assert.ok(isCategory(category));
+  return category;
 };
 
 const aroundTheMap = (world: SearchByTypeWorld, places: readonly Place[]): void => {
@@ -92,28 +96,26 @@ Given('the places around the map cannot be loaded', function thePlacesCannotBeLo
 });
 
 When('the visitor types {string}', function theVisitorTypes(this: SearchByTypeWorld, query: string) {
-  this.named = kindNamedIn(query);
+  this.named = categoryNamedIn(query);
 });
 
-When('the visitor looks for {string}', function theVisitorLooksFor(this: SearchByTypeWorld, kind: string) {
+When('the visitor looks for {string}', function theVisitorLooksFor(this: SearchByTypeWorld, category: string) {
   new TestScheduler(assert.deepEqual).run(({ cold, flush }) => {
-    searchByType({ loadPlaces: this.loadPlaces })({ chosen: cold('-k', { k: kindOf(kind) }), mapView: this.mapView }).subscribe(
-      (search) => {
-        this.search = search;
-      }
-    );
+    searchByType({ loadPlaces: this.loadPlaces })({
+      chosen: cold('-k', { k: categoryOf(category) }),
+      mapView: this.mapView
+    }).subscribe((search) => {
+      this.search = search;
+    });
     flush();
   });
 });
 
-Then(
-  'the search field offers the {word} near the visitor',
-  function theSearchFieldOffers(this: SearchByTypeWorld, kinds: string) {
-    assert.equal(this.named, KINDS_SAID[kinds]);
-  }
-);
+Then('the search field offers the category {string}', function theSearchFieldOffers(this: SearchByTypeWorld, category: string) {
+  assert.equal(this.named, categoryOf(category));
+});
 
-Then('the search field offers no kind of place', function theSearchFieldOffersNoKind(this: SearchByTypeWorld) {
+Then('the search field offers no category', function theSearchFieldOffersNoCategory(this: SearchByTypeWorld) {
   assert.equal(this.named, undefined);
 });
 

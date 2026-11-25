@@ -2,29 +2,29 @@
   import type { Observable } from 'rxjs';
   import { m } from '#i18n/messages';
   import Suggestion from '#libraries/design/suggestion.svelte';
-  import type { PlaceKind } from '../../../../domain/place';
-  import KindDot from './kind-dot.svelte';
-  import { pluralOf } from './kind-plurals';
+  import type { CategoryKey } from '../../domain/categories';
+  import CategoryDot from './category-dot.svelte';
+  import { nameOf } from './category-names';
 
   type Props = {
-    readonly named: Observable<PlaceKind | undefined>;
-    readonly onChoose: (kind: PlaceKind) => void;
+    readonly named: Observable<CategoryKey | undefined>;
+    readonly onChoose: (category: CategoryKey) => void;
     readonly onClear: () => void;
   };
 
   const { named, onChoose, onClear }: Props = $props();
 
-  const choose = (kind: PlaceKind) => (): void => {
+  const choose = (category: CategoryKey) => (): void => {
     onClear();
-    onChoose(kind);
+    onChoose(category);
   };
 </script>
 
 {#if $named !== undefined}
   <button type="button" onclick={choose($named)}>
-    <Suggestion name={m.search_by_type_near_you({ types: pluralOf($named) })} details={m.search_by_type_near_centre()}>
+    <Suggestion name={m.search_by_type_near_you({ types: nameOf($named) })} details={m.search_by_type_near_centre()}>
       {#snippet icon()}
-        <KindDot kind={$named} />
+        <CategoryDot category={$named} />
       {/snippet}
     </Suggestion>
   </button>

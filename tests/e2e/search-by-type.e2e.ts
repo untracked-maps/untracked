@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
 import { violationsOf } from './accessibility';
+import { bakeries, bakeriesAtTheCentre } from './home-page';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const NOEL = /^Boulangerie Noel/u;
@@ -12,13 +13,10 @@ const STREET_LEVEL = /#map=16\.5\//u;
 
 const chip = (page: Page, name: string): Locator => page.getByRole('button', { name, exact: true });
 
-const bakeries = (page: Page): Locator => page.getByRole('region', { name: 'Bakeries' });
-
 const searchField = (page: Page): Locator => page.getByRole('combobox', { name: 'Search a place', disabled: false });
 
 const bakeriesShown = async (page: Page): Promise<void> => {
-  await page.goto('./#map=14/48.8566/2.3522');
-  await chip(page, 'Bakeries').click();
+  await bakeriesAtTheCentre(page);
   await bakeries(page).getByRole('button', { name: NOEL }).waitFor();
 };
 
@@ -34,10 +32,10 @@ const placesFilesRequested = (page: Page): readonly string[] => {
 
 test.beforeEach(refuseOpenFreeMap);
 
-test('offers the main kinds of places under the search field', async ({ page }) => {
+test('offers the chips of three categories under the search field', async ({ page }) => {
   await page.goto('./');
 
-  await expect(page.getByRole('list', { name: 'Kinds of places' }).getByRole('button')).toHaveCount(7);
+  await expect(page.getByRole('list', { name: 'Kinds of places' }).getByRole('button')).toHaveCount(3);
 });
 
 test('lists the 25 bakeries nearest to the centre of the map', async ({ page }) => {
@@ -101,18 +99,18 @@ test('loads the places once for both searches', async ({ page }) => {
   await page.getByRole('listbox', { name: 'Places and addresses found' }).waitFor();
   await searchField(page).press('Escape');
 
-  await chip(page, 'Bakeries').click();
-  await bakeries(page).getByRole('button', { name: NOEL }).waitFor();
+  await chip(page, 'Cafés').click();
+  await page.getByRole('region', { name: 'Cafés' }).getByText('25 places').waitFor();
 
   expect(requested).toHaveLength(1);
 });
 
-test('names the kinds in French under /fr', async ({ page }) => {
+test('names the categories in French under /fr', async ({ page }) => {
   await page.goto('fr');
 
-  await chip(page, 'Boulangeries').click();
+  await chip(page, 'Pharmacies').click();
 
-  await expect(page.getByRole('region', { name: 'Boulangeries' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Pharmacies' })).toBeVisible();
 });
 
 test('has no detectable accessibility violation with the bakeries listed', async ({ page }) => {

@@ -7,17 +7,18 @@
   import { NEVER, type Observable } from 'rxjs';
   import { m } from '#i18n/messages';
   import { addressLine } from '#libraries/postal-address/address-line.presenter';
-  import type { Place, PlaceKind } from '../../../../domain/place';
+  import type { Place } from '../../../../domain/place';
   import { detailsOf } from '../../../../ui/components/kind-labels';
-  import { MAIN_KINDS } from '../../domain/main-kinds';
+  import { type CategoryKey, CHIPS } from '../../domain/categories';
   import type { KindSearch } from '../../domain/search-by-type';
+  import CategoryDot from './category-dot.svelte';
+  import { nameOf } from './category-names';
   import KindDot from './kind-dot.svelte';
-  import { pluralOf } from './kind-plurals';
   import { statusOf } from './kind-search-status';
 
   type Props = {
     readonly search: Observable<KindSearch>;
-    readonly onChoose: (kind?: PlaceKind) => void;
+    readonly onChoose: (category?: CategoryKey) => void;
     readonly onChoosePlace: (place: Place) => void;
     readonly ready?: boolean;
     readonly covered?: boolean;
@@ -29,29 +30,30 @@
 
   const uid = $props.id();
 
-  const shownKind: PlaceKind | undefined = $derived('placeKind' in $search ? $search.placeKind : undefined);
+  const shownCategory: CategoryKey | undefined = $derived('category' in $search ? $search.category : undefined);
 
-  const chipId = (kind: PlaceKind): string => `${uid}-${kind}`;
+  const chipId = (category: CategoryKey): string => `${uid}-${category}`;
 
-  const focusChip = (kind: PlaceKind): void => document.querySelector<HTMLElement>(`#${CSS.escape(chipId(kind))}`)?.focus();
+  const focusChip = (category: CategoryKey): void =>
+    document.querySelector<HTMLElement>(`#${CSS.escape(chipId(category))}`)?.focus();
 
-  const toggle = (kind: PlaceKind) => (): void => onChoose(kind === shownKind ? undefined : kind);
+  const toggle = (category: CategoryKey) => (): void => onChoose(category === shownCategory ? undefined : category);
 
-  const close = (kind: PlaceKind) => (): void => {
-    focusChip(kind);
+  const close = (category: CategoryKey) => (): void => {
+    focusChip(category);
     onChoose();
   };
 
-  const choose = (kind: PlaceKind, place: Place) => (): void => {
-    focusChip(kind);
+  const choose = (category: CategoryKey, place: Place) => (): void => {
+    focusChip(category);
     onChoosePlace(place);
   };
 
   const closeFrom =
-    (kind: PlaceKind) =>
+    (category: CategoryKey) =>
     (list: HTMLElement): void => {
       if (list.contains(document.activeElement)) {
-        focusChip(kind);
+        focusChip(category);
       }
       onChoose();
     };
@@ -59,36 +61,37 @@
 
 <div class="kind-search">
   <ul class="kinds" aria-label={m.search_by_type_kinds()}>
-    {#each MAIN_KINDS as kind (kind)}
+    {#each CHIPS as category (category)}
       <li>
         <button
-          id={chipId(kind)}
+          id={chipId(category)}
           type="button"
           class="chip"
-          aria-pressed={kind === shownKind}
+          data-category={category}
+          aria-pressed={category === shownCategory}
           disabled={!ready}
-          onclick={toggle(kind)}
+          onclick={toggle(category)}
         >
-          <KindDot {kind} />
-          {pluralOf(kind)}
+          <CategoryDot {category} />
+          {nameOf(category)}
         </button>
       </li>
     {/each}
   </ul>
   <p role="status" class="announced">{statusOf($search)}</p>
-  {#if shownKind !== undefined}
+  {#if shownCategory !== undefined}
     <BottomSheet
       opening="peek"
-      subject={shownKind}
+      subject={shownCategory}
       {covered}
       growLabel={m.sheet_grow()}
       reduceLabel={m.sheet_reduce()}
       onHeight={onSheetHeight}
     >
-      <section class="places" aria-labelledby="{uid}-title" {@attach closedWhenAsked(closings, closeFrom(shownKind))}>
+      <section class="places" aria-labelledby="{uid}-title" {@attach closedWhenAsked(closings, closeFrom(shownCategory))}>
         <div class="heading">
-          <h2 id="{uid}-title">{pluralOf(shownKind)}</h2>
-          <button type="button" class="close" aria-label={m.search_by_type_close()} onclick={close(shownKind)}>
+          <h2 id="{uid}-title">{nameOf(shownCategory)}</h2>
+          <button type="button" class="close" aria-label={m.search_by_type_close()} onclick={close(shownCategory)}>
             <CloseIcon />
           </button>
         </div>
@@ -97,7 +100,7 @@
           <ul>
             {#each $search.places as place (place.id)}
               <li>
-                <button type="button" class="place" onclick={choose($search.placeKind, place)}>
+                <button type="button" class="place" onclick={choose($search.category, place)}>
                   <Suggestion name={place.name} details={detailsOf($addressLine)(place)}>
                     {#snippet icon()}
                       <KindDot kind={place.kind} />
@@ -130,28 +133,31 @@
     pointer-events: auto;
     list-style: none;
     scrollbar-width: none;
+    mask-image: linear-gradient(90deg, black calc(100% - 2rem), transparent);
   }
 
   .chip {
     display: inline-flex;
     flex: none;
-    gap: var(--space-2);
+    gap: 0.4375rem;
     align-items: center;
     min-block-size: 2rem;
-    padding: 0 var(--space-3) 0 var(--space-3);
-    font-size: var(--font-size-small);
-    font-weight: var(--font-weight-strong);
+    padding: 0 var(--space-3) 0 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 500;
     color: var(--text);
     cursor: pointer;
     background: var(--surface);
     border: 0;
     border-radius: var(--radius-full);
-    box-shadow: var(--shadow-near);
+    box-shadow:
+      0 0 0 0.5px light-dark(rgb(0 0 0 / 7%), rgb(255 255 255 / 8%)),
+      0 1px 4px light-dark(rgb(0 0 0 / 12%), rgb(0 0 0 / 50%));
   }
 
   .chip[aria-pressed="true"] {
     color: var(--text-on-accent);
-    background: var(--accent-strong);
+    background: color-mix(in srgb, var(--category-colour) 76%, black);
   }
 
   .chip[aria-pressed="true"] :global(.dot) {

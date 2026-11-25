@@ -10,8 +10,12 @@ describe('fake places', () => {
     expect(fakePlaces(ZONE)[0]?.id).toBe(PARIS.landmarks[0]?.id);
   });
 
-  it('hold two thousand generated places after the landmarks', () => {
-    expect(fakePlaces(ZONE).filter(({ id }) => id.startsWith('fake-zone-'))).toHaveLength(2000);
+  it('hold two thousand drawn places and six of each added kind after the landmarks', () => {
+    expect(fakePlaces(ZONE).filter(({ id }) => id.startsWith('fake-zone-'))).toHaveLength(2222);
+  });
+
+  it('number the added places after the drawn ones', () => {
+    expect(fakePlaces(ZONE).find(({ kind }) => kind === 'fast-food')?.id).toBe('fake-zone-2001');
   });
 
   it('give each landmark its family', () => {

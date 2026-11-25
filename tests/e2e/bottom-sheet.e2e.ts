@@ -1,18 +1,16 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
 import { violationsOf } from './accessibility';
+import { bakeries, bakeriesAtTheCentre, bakeriesChosen } from './home-page';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const NOEL = /^Boulangerie Noel/u;
-
-const bakeries = (page: Page): Locator => page.getByRole('region', { name: 'Bakeries' });
 
 const sheetOf = (region: Locator): Locator => region.locator('xpath=ancestor::*[contains(@class, "sheet")][1]');
 
 const about = (page: Page): Locator => page.getByRole('button', { name: 'About this map' });
 
 const bakeriesShown = async (page: Page): Promise<void> => {
-  await page.goto('./#map=14/48.8566/2.3522');
-  await page.getByRole('button', { name: 'Bakeries', exact: true }).click();
+  await bakeriesAtTheCentre(page);
   await bakeries(page).getByRole('button', { name: NOEL }).waitFor();
 };
 
@@ -66,7 +64,7 @@ test('puts the round buttons back once the list is closed', async ({ page }) => 
 
 test('names the grip in French under /fr', async ({ page }) => {
   await page.goto('./fr#map=14/48.8566/2.3522');
-  await page.getByRole('button', { name: 'Boulangeries', exact: true }).click();
+  await page.getByRole('button', { name: 'Cafés', exact: true }).click();
 
   await expect(page.getByRole('button', { name: 'Agrandir la fiche' })).toBeVisible();
 });
@@ -96,7 +94,7 @@ const noticeOverFullSheet = async (page: Page): Promise<void> => {
   await page.getByRole('combobox', { name: 'Search a place', disabled: false }).click();
   await page.getByRole('region', { name: 'Recent' }).getByRole('button', { name: 'Clear' }).click();
   await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'Bakeries', exact: true }).click();
+  await bakeriesChosen(page);
   await bakeries(page).getByRole('button', { name: NOEL }).waitFor();
   await page.getByRole('button', { name: 'Enlarge the sheet' }).click();
   await page.getByRole('button', { name: 'Reduce the sheet' }).waitFor();

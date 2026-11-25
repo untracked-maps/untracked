@@ -1,5 +1,6 @@
 import { kilometresBetween } from '../../../domain/distance';
-import type { Coordinates, Place, PlaceKind } from '../../../domain/place';
+import type { Coordinates, Place } from '../../../domain/place';
+import { type CategoryKey, kindsOf } from './categories';
 
 type Distant = {
   readonly place: Place;
@@ -18,13 +19,13 @@ const isWithinRadius = ({ kilometres }: Distant): boolean => kilometres <= RADIU
 
 const nearestFirst = (left: Distant, right: Distant): number => left.kilometres - right.kilometres;
 
-const nearestOfKind = (places: readonly Place[], placeKind: PlaceKind, reference: Coordinates): readonly Place[] =>
+const nearestOfCategory = (places: readonly Place[], category: CategoryKey, reference: Coordinates): readonly Place[] =>
   places
-    .filter(({ kind }) => kind === placeKind)
+    .filter(({ kind }) => kindsOf(category).includes(kind))
     .map(distantFrom(reference))
     .filter(isWithinRadius)
     .toSorted(nearestFirst)
     .slice(0, MOST_PLACES)
     .map(({ place }) => place);
 
-export { nearestOfKind };
+export { nearestOfCategory };

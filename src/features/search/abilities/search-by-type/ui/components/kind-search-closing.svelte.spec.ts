@@ -2,7 +2,8 @@ import { NEVER, type Observable, of, Subject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
-import type { Place, PlaceKind } from '../../../../domain/place';
+import type { Place } from '../../../../domain/place';
+import type { CategoryKey } from '../../domain/categories';
 import type { KindSearch } from '../../domain/search-by-type';
 import KindSearchPanel from './kind-search.svelte';
 
@@ -15,7 +16,7 @@ const HUBERT: Place = {
   fame: 0
 };
 
-const FOUND: KindSearch = { status: 'found', placeKind: 'pharmacy', places: [HUBERT] };
+const FOUND: KindSearch = { status: 'found', category: 'pharmacies', places: [HUBERT] };
 
 const HUBERT_BUTTON = /^Pharmacie Hubert/u;
 
@@ -27,7 +28,7 @@ const shown = async (search: KindSearch = FOUND, closings: Observable<unknown> =
   await render(KindSearchPanel, {
     search: of(search),
     closings,
-    onChoose: (kind?: PlaceKind): void => remember(kind ?? 'closed'),
+    onChoose: (category?: CategoryKey): void => remember(category ?? 'closed'),
     onChoosePlace: ({ id }: Place): void => remember(id)
   });
   return choices;
@@ -41,8 +42,8 @@ const hubertButton = (): HTMLElement | SVGElement => page.getByRole('button', { 
 
 const shadowOf = (element: Element | null | undefined): string => (element ? getComputedStyle(element).boxShadow : '');
 
-describe('card of the places of a kind, on a large screen', () => {
-  it('is drawn while a kind is shown', async () => {
+describe('card of the places of a category, on a large screen', () => {
+  it('is drawn while a category is shown', async () => {
     await page.viewport(1280, 800);
     await shown();
 
@@ -57,7 +58,7 @@ describe('card of the places of a kind, on a large screen', () => {
   });
 });
 
-describe('closing the places of a kind', () => {
+describe('closing the places of a category', () => {
   it('is offered by a button', async () => {
     const events = await shown();
 
@@ -66,7 +67,7 @@ describe('closing the places of a kind', () => {
     expect(events).toEqual(['closed']);
   });
 
-  it('gives the focus back to the chip of the kind', async () => {
+  it('gives the focus back to the chip of the category', async () => {
     await shown();
 
     await closeButton().click();
@@ -112,8 +113,8 @@ describe('closing the places of a kind', () => {
     expect(events).toEqual([]);
   });
 
-  it('is offered for a kind without a chip', async () => {
-    const events = await shown({ status: 'none-near', placeKind: 'hospital' });
+  it('is offered for a category without a chip', async () => {
+    const events = await shown({ status: 'none-near', category: 'hospitals' });
 
     await closeButton().click();
 
