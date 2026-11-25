@@ -1,4 +1,4 @@
-# ADR-071 — The OpenFreeMap planet, with its backup as a fallback
+# ADR-072 — The OpenFreeMap planet, with its backup as a fallback
 
 **Date**: 2026-11-25
 **Status**: accepted
