@@ -33,3 +33,7 @@ These reasons live here rather than in the workflows, which carry no comments; z
 ## Alternatives considered
 
 - **Tags without a release commit**: the README could not show the version.
+
+## Update, 2026-11-25: two jobs
+
+The site is now built in a `build` job and published by a `deploy` job that needs it, and their permissions are split accordingly, as [ADR-070](ADR-070-the-site-built-and-deployed-in-two-jobs.md) decides.
