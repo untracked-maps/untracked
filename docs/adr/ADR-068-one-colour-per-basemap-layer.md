@@ -20,7 +20,7 @@ Measured on 2026-11-25 with Chrome traces of the built site, the basemap of Open
 
 ## Consequences
 
-- The map compiles nine shader programs at startup instead of eleven. Over seven Lighthouse runs per page, alternating both builds on the same machine (medians), the longest task fell from 880 to 698 ms on `/` and from 1,016 to 694 ms on `/fr`, and the Total Blocking Time from 2,538 to 2,202 ms and from 2,556 to 2,323 ms. Scaled by each run's benchmark index, the gain on the Total Blocking Time is 20 to 170 ms, within the spread of the runs.
+- The map compiles nine shader programs at startup instead of eleven. Over seven Lighthouse runs per page, alternating both builds on the same machine (medians), the longest task fell from 880 to 698 ms on `/` and from 1,016 to 694 ms on `/fr`, and the Total Blocking Time from 2,538 to 2,202 ms and from 2,556 to 2,323 ms. Scaled by each run's benchmark index, the gain on the Total Blocking Time is 20 to 170 ms, within the spread of the runs. A second measure, five runs per page, found the longest task shorter by 75 ms on `/` and 169 ms on `/fr`, and no difference in the Total Blocking Time beyond the spread of the runs ([ADR-069](ADR-069-measuring-what-the-visitor-of-the-map-sees.md)).
 - Where a wood overlaps grass, the wood is now always drawn above it; before, the order of the features in the tile decided.
 - The names of the places shown on the map keep their colour per family: splitting them into one layer per family would change which names MapLibre hides when they collide, since it sorts symbols within a layer only.
 - Most of the blocking time remains the GPU work of each frame on a machine without a GPU, which the app does not control.
