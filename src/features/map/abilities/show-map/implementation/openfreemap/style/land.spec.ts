@@ -6,7 +6,14 @@ const LIGHT = basemapPalettes.light;
 
 describe('land layers', () => {
   it('stacks land, land uses, land cover and parks', () => {
-    expect(landLayers(LIGHT).map(({ id }) => id)).toStrictEqual(['land', 'landuse-alt', 'landuse-green', 'landcover', 'park']);
+    expect(landLayers(LIGHT).map(({ id }) => id)).toStrictEqual([
+      'land',
+      'landuse-alt',
+      'landuse-green',
+      'landcover',
+      'landcover-wood',
+      'park'
+    ]);
   });
 
   it('lightens the land when seen from afar', () => {
@@ -17,10 +24,25 @@ describe('land layers', () => {
     expect(landLayers(LIGHT)[1]).toHaveProperty('minzoom', 12);
   });
 
+  it('paints grass, farmland and wetland as parks', () => {
+    expect(landLayers(LIGHT)[3]).toHaveProperty(['paint', 'fill-color'], LIGHT.park);
+  });
+
   it('paints woods darker than other land cover', () => {
-    expect(landLayers(LIGHT)[3]).toHaveProperty(
-      ['paint', 'fill-color'],
-      ['match', ['get', 'class'], 'wood', LIGHT.wood, LIGHT.park]
-    );
+    expect(landLayers(LIGHT)[4]).toHaveProperty(['paint', 'fill-color'], LIGHT.wood);
+  });
+
+  it('keeps woods out of the other land cover', () => {
+    expect(landLayers(LIGHT)[3]).toHaveProperty('filter', [
+      'match',
+      ['get', 'class'],
+      ['grass', 'farmland', 'wetland'],
+      true,
+      false
+    ]);
+  });
+
+  it('draws only woods in their own layer', () => {
+    expect(landLayers(LIGHT)[4]).toHaveProperty('filter', ['match', ['get', 'class'], ['wood'], true, false]);
   });
 });
