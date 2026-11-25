@@ -18,15 +18,20 @@ const OPEN: StationView = {
 
 const STYLE: StyleSpecification = { version: 8, sources: {}, layers: [{ id: 'land', type: 'background' }] };
 
-const loadedMap = async (zoom = 12): Promise<MapLibreMap> => {
+const mapOn = (zoom: number, style?: StyleSpecification): MapLibreMap => {
   setWorkerUrl(workerUrl);
   const container = document.body.appendChild(document.createElement('div'));
   container.setAttribute('style', 'inline-size: 200px; block-size: 200px');
-  const map = new MapLibreMap({ container, center: [2.35, 48.87], zoom, style: STYLE });
+  const map = new MapLibreMap({ container, center: [2.35, 48.87], zoom, ...(style === undefined ? {} : { style }) });
   onTestFinished(() => {
     map.remove();
     container.remove();
   });
+  return map;
+};
+
+const loadedMap = async (zoom = 12): Promise<MapLibreMap> => {
+  const map = mapOn(zoom, STYLE);
   await map.once('load');
   return map;
 };
@@ -70,6 +75,17 @@ describe('the exits of the open station on the map', () => {
     });
     subscription.unsubscribe();
     expect(map.getSource('station-exits')).toBeUndefined();
+  });
+
+  it('are drawn once a map without style gets one', async () => {
+    const map = mapOn(12);
+    const subscription = stationExitsOverlay(new BehaviorSubject(OPEN), NEVER)(map).subscribe();
+    onTestFinished(() => subscription.unsubscribe());
+    await import('./station-exits-on-map');
+    map.setStyle(STYLE);
+    await map.once('style.load');
+    await vi.waitUntil(() => map.getLayer('station-exits') !== undefined);
+    expect(map.getLayer('station-exits')?.type).toBe('circle');
   });
 
   it('are drawn again when the style changes', async () => {
