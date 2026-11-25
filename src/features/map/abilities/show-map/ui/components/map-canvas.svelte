@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
+  import { type AddProtocolAction, addProtocol, Map as MapLibreMap, type StyleSpecification, setWorkerUrl } from 'maplibre-gl';
   import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
   import 'maplibre-gl/dist/maplibre-gl.css';
   import '#libraries/design/tokens.css';
@@ -9,18 +9,27 @@
 
   type MapOverlay = (map: MapLibreMap) => Observable<unknown>;
 
+  type MapProtocol = {
+    readonly name: string;
+    readonly load: AddProtocolAction;
+  };
+
   type Props = {
     readonly scene: Observable<MapScene<StyleSpecification>>;
     readonly label: string;
     readonly onMap?: (map: MapLibreMap) => void;
     readonly onViewChange?: (view: MapView) => void;
     readonly overlays?: readonly MapOverlay[];
+    readonly protocol?: MapProtocol;
   };
 
-  const { scene, label, onMap, onViewChange, overlays = [] }: Props = $props();
+  const { scene, label, onMap, onViewChange, overlays = [], protocol }: Props = $props();
 
   const mountMap = (container: HTMLElement): (() => void) => {
     setWorkerUrl(workerUrl);
+    if (protocol !== undefined) {
+      addProtocol(protocol.name, protocol.load);
+    }
     const map = new MapLibreMap({ container, attributionControl: false, locale: { 'Map.Title': label } });
     onMap?.(map);
     map.on('moveend', () => onViewChange?.(viewOf(map.getCenter().wrap(), map.getZoom())));

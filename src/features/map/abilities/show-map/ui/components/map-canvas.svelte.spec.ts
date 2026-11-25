@@ -1,4 +1,10 @@
-import { getWorkerUrl, type Map as MapLibreMap, type StyleSpecification } from 'maplibre-gl';
+import {
+  type AddProtocolAction,
+  getWorkerUrl,
+  type Map as MapLibreMap,
+  type StyleSpecification,
+  type VectorTileSource
+} from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { Observable, of, Subject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
@@ -75,6 +81,42 @@ describe('map canvas', () => {
     await render(MapCanvas, { scene: PARIS_SCENE, label: 'Map' });
 
     expect(getWorkerUrl()).toBe(workerUrl);
+  });
+});
+
+const DESCRIBED_TILES = 'https://tiles.example.org/{z}/{x}/{y}.pbf';
+
+const describeTiles: AddProtocolAction = () =>
+  Promise.resolve({ data: { tilejson: '3.0.0', tiles: [DESCRIBED_TILES], minzoom: 0, maxzoom: 14 } });
+
+const DESCRIBED_BASEMAP: StyleSpecification = {
+  version: 8,
+  sources: { streets: { type: 'vector', url: 'described://streets' } },
+  layers: []
+};
+
+const tilesDescribedBy = async (load: AddProtocolAction): Promise<readonly string[]> => {
+  const { promise, resolve } = Promise.withResolvers<readonly string[]>();
+  const onDescribed = (map: MapLibreMap): void => {
+    map.on('sourcedata', ({ sourceId, sourceDataType }) => {
+      const source = map.getSource<VectorTileSource>('streets');
+      return sourceId === 'streets' && sourceDataType === 'metadata' && source !== undefined
+        ? resolve(source.tiles)
+        : undefined;
+    });
+  };
+  await render(MapCanvas, {
+    scene: of({ basemap: DESCRIBED_BASEMAP, view: PARIS }),
+    label: 'Map',
+    onMap: onDescribed,
+    protocol: { name: 'described', load }
+  });
+  return promise;
+};
+
+describe('map canvas protocols', () => {
+  it('reads the addresses of its protocol through the handler it is given', async () => {
+    expect(await tilesDescribedBy(describeTiles)).toStrictEqual([DESCRIBED_TILES]);
   });
 });
 

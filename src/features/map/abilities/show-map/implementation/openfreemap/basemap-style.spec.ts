@@ -48,7 +48,7 @@ describe('basemap style', () => {
   });
 
   it('draws from the OpenFreeMap planet tiles', () => {
-    expect(basemapStyle(ASSETS, LIGHT).sources).toHaveProperty(['openmaptiles', 'url'], 'https://tiles.openfreemap.org/planet');
+    expect(basemapStyle(ASSETS, LIGHT).sources).toHaveProperty(['openmaptiles', 'url'], 'openfreemap://planet');
   });
 
   it('links to OpenFreeMap in its attribution', () => {

@@ -18,6 +18,25 @@ const answerWithEmptyTiles = (route: Route): Promise<void> =>
 const refuseTiles = (route: Route): Promise<void> =>
   route.request().url() === TILE_DESCRIPTION ? describeTiles(route) : route.abort();
 
+const BACKUP_DESCRIPTION = 'https://tiles.openfreemap.org/backup_planet';
+const BACKUP_TILES = 'https://tiles.openfreemap.org/backup_planet/**/*.pbf';
+
+const describeBackupTiles = (route: Route): Promise<void> =>
+  route.fulfill({
+    json: {
+      tilejson: '3.0.0',
+      tiles: ['https://tiles.openfreemap.org/backup_planet/{z}/{x}/{y}.pbf'],
+      minzoom: 0,
+      maxzoom: 14
+    }
+  });
+
+const answerFromBackup = (route: Route): Promise<void> =>
+  route.request().url() === BACKUP_DESCRIPTION ? describeBackupTiles(route) : route.fulfill({ body: '' });
+
+const blockPlanetOnly = (route: Route): Promise<void> =>
+  route.request().url().startsWith(BACKUP_DESCRIPTION) ? answerFromBackup(route) : route.abort('blockedbyclient');
+
 test.describe('when OpenFreeMap refuses every request', () => {
   test.beforeEach(async ({ page }) => {
     await page.route(TILES, refuse);
@@ -44,6 +63,27 @@ test.describe('when OpenFreeMap refuses every request', () => {
     const { violations } = await new AxeBuilder({ page }).analyze();
 
     expect(violations).toEqual([]);
+  });
+});
+
+test.describe('when a blocker refuses the OpenFreeMap planet but not its backup', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route(TILES, blockPlanetOnly);
+  });
+
+  test('draws the map from the backup', async ({ page }) => {
+    const backupTile = page.waitForRequest(BACKUP_TILES);
+    await page.goto('./');
+
+    expect((await backupTile).url()).toContain('/backup_planet/');
+  });
+
+  test('tells the visitor nothing', async ({ page }) => {
+    const backupTile = page.waitForResponse(BACKUP_TILES);
+    await page.goto('./');
+    await backupTile;
+
+    await expect(page.getByText(OUTAGE_MESSAGE)).toHaveCount(0);
   });
 });
 
