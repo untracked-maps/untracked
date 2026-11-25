@@ -45,19 +45,15 @@ jobs:
       - id: version
         run: echo "version=$(git tag --points-at HEAD --list 'v*' | head -1)" >> "$GITHUB_OUTPUT"
 
-  deploy:
-    name: Deploy
+  build:
+    name: Build the site
     needs: release
     if: needs.release.outputs.version != ''
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: write
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      pages: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -74,8 +70,6 @@ jobs:
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: build/
-      - id: deployment
-        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
       - run: |
           (cd build && zip -qr "../untracked-$VERSION.zip" .)
           pnpm sbom --sbom-format cyclonedx --prod > "untracked-$VERSION.cdx.json"
@@ -83,3 +77,18 @@ jobs:
         env:
           VERSION: ${{ needs.release.outputs.version }}
           GH_TOKEN: ${{ github.token }}
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
