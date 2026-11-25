@@ -22,6 +22,7 @@ const ELEMENTS: Readonly<Record<string, Closable>> = {
   'map menu': 'map menu',
   spot: 'spot',
   place: 'place',
+  district: 'district',
   'kind list': 'kind list',
   search: 'search'
 };

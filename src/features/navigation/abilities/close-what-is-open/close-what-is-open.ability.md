@@ -120,6 +120,13 @@
 - When the visitor presses Escape
 - Then the "kind list" is still open
 
+### Scenario: The sheet of a district closes before the list of a kind
+
+- Given the visitor has opened the "kind list"
+- And the visitor has opened the "district"
+- When the visitor presses Escape
+- Then the "kind list" is still open
+
 ### Scenario: The sheet of a spot closes before the sheet of a place
 
 - Given the visitor has opened the "spot"

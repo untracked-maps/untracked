@@ -134,7 +134,7 @@
 - When the visitor searches for "louvre"
 - Then the visitor is told that the search is unavailable
 
-## Rule: The map is told where an address chosen stands, the sheet of a place telling it for a place
+## Rule: The map is told where an address chosen stands, the sheet of a place or of a district telling it for the others
 
 ### Scenario: An address is chosen
 
@@ -149,7 +149,7 @@
 ### Scenario: A district is chosen
 
 - When the visitor chooses a district at 48.854, 2.333
-- Then the map is told to show a district at 48.854, 2.333
+- Then the map is told nothing by the search
 
 ### Scenario: A place is chosen
 

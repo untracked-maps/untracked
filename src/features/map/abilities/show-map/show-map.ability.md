@@ -57,11 +57,12 @@
 - When a place opens at 48.86061, 2.33764
 - Then the map shows the place at zoom level 18
 
-### Scenario: A district opens whole
+### Scenario: A district without an outline opens whole
 
 - Given a map of 400 by 800 pixels at zoom level 18
 - When a district opens at 48.86061, 2.33764
-- Then the map shows the place at zoom level 14
+- Then the map flies to 48.86061, 2.33764 in 900 ms
+- And the map shows the place at zoom level 14.3
 
 ## Rule: The map fits several places in what the top bar and the sheet leave visible
 
@@ -103,6 +104,38 @@
 - When the places are framed
 - Then it keeps 60 pixels free at the top and 60 at the bottom
 - And it keeps 460 pixels free on the left and 60 on the right
+
+## Rule: The map fits the outline of a district in what the top bar and the sheet leave visible
+
+### Background:
+
+- Given these places to frame
+  | longitude | latitude |
+  | 2.35 | 48.852 |
+  | 2.37 | 48.855 |
+  | 2.36 | 48.866 |
+
+### Scenario: A district fits above a sheet on a phone
+
+- Given a map of 400 by 800 pixels at zoom level 13
+- And a top bar down to 72 pixels
+- And a sheet 300 pixels tall at the bottom of the map
+- When the district outlined by these places opens
+- Then the map fits the district in 900 ms
+- And it fits the longitudes from 2.35 to 2.37
+- And it fits the latitudes from 48.852 to 48.866
+- And it keeps 112 pixels free at the top and 340 at the bottom
+- And it keeps 40 pixels free on the left and 40 on the right
+- And it goes no closer than zoom level 14.3
+
+### Scenario: A district fits right of the side panel on a large screen
+
+- Given a map of 1280 by 800 pixels at zoom level 13
+- And a top bar down to 72 pixels
+- And a side panel 400 pixels wide, ending 412 pixels from the left of the map
+- When the district outlined by these places opens
+- Then it keeps 40 pixels free at the top and 40 at the bottom
+- And it keeps 440 pixels free on the left and 40 on the right
 
 ## Rule: The map jumps without flying when the visitor asks for less motion
 

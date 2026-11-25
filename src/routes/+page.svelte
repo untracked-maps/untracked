@@ -46,6 +46,8 @@
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
+  import { districtOutlineLayers } from '#features/search/abilities/open-district/ui/components/district-outline';
+  import DistrictSheetCard from '#features/search/abilities/open-district/ui/components/district-sheet.svelte';
   import { type RecentPlace, recentSearches } from '#features/search/abilities/recent-searches/domain/recent-searches';
   import { localRecents } from '#features/search/abilities/recent-searches/implementation/browser/local-recents';
   import RecentSearches from '#features/search/abilities/recent-searches/ui/components/recent-searches.svelte';
@@ -55,7 +57,7 @@
   import KindNamed from '#features/search/abilities/search-by-type/ui/components/kind-named.svelte';
   import { kindPlacesOverlay } from '#features/search/abilities/search-by-type/ui/components/kind-places-overlay';
   import KindSearch from '#features/search/abilities/search-by-type/ui/components/kind-search.svelte';
-  import { addressesChosenAt, districtsChosenAt } from '#features/search/abilities/search-places/domain/chosen-place';
+  import { addressesChosenAt } from '#features/search/abilities/search-places/domain/chosen-place';
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
   import type { SearchPanel } from '#features/search/abilities/search-places/ui/components/combobox.presenter';
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
@@ -175,12 +177,13 @@
       inspectedSpot.pipe(tap(({ kind }) => data.closing.of('spot').onToggle(kind !== 'none'))),
       placeSheet.pipe(tap(({ status }) => data.closing.of('place').onToggle(status === 'open'))),
       kindSearch.pipe(tap(({ status }) => data.closing.of('kind list').onToggle(status !== 'closed'))),
+      districtSheet.pipe(tap(({ status }) => data.closing.of('district').onToggle(status === 'open'))),
       data.links.followed
     ).subscribe();
     return (): void => subscription.unsubscribe();
   });
 
-  const [placeSheet, inspectedSpot] = $derived([data.places.sheet, data.spots.spot]);
+  const [placeSheet, inspectedSpot, districtSheet] = $derived([data.places.sheet, data.spots.spot, data.districts.sheet]);
 
   const acknowledgement = browser ? localAcknowledgement(localStorage, WELCOME_STORAGE_KEY) : undefined;
 
@@ -190,10 +193,8 @@
   const acknowledge = (): void => acknowledgement?.acknowledge();
 
   const welcomeShown: Observable<boolean> = $derived(
-    combineLatest([welcome, inspectedSpot, kindSearch, placeSheet]).pipe(
-      map(
-        ([shown, spot, list, place]) => shown && spot.kind === 'none' && list.status === 'closed' && place.status === 'closed'
-      )
+    combineLatest([welcome, data.spots.sheetOpen, kindSearch]).pipe(
+      map(([shown, sheetOpen, list]) => shown && !sheetOpen && list.status === 'closed')
     )
   );
 </script>
@@ -223,7 +224,7 @@
       onChoose={chooseKind}
       onChoosePlace={choosePlace('kind list')}
       ready={browser}
-      covered={$inspectedSpot.kind !== 'none' || $placeSheet.status === 'open'}
+      covered={$inspectedSpot.kind !== 'none' || $placeSheet.status === 'open' || $districtSheet.status === 'open'}
       onSheetHeight={data.sheetHeights.of('list')}
       closings={data.closing.of('kind list').closings}
     />
@@ -254,6 +255,12 @@
     onSheetHeight={data.sheetHeights.of('spot')}
     closings={data.closing.of('spot').closings}
   />
+  <DistrictSheetCard
+    sheet={districtSheet}
+    onClose={data.districts.close}
+    onSheetHeight={data.sheetHeights.of('district')}
+    closings={data.closing.of('district').closings}
+  />
   <LanguageSuggestion
     suggestion={data.languageSuggestion.suggestion}
     path={page.url.pathname}
@@ -274,12 +281,13 @@
     stationExitsOverlay(data.station.view, data.station.touched),
     framingOverlay({
       placesOpened: merge(placesOpenedAt(placeSheet), addressesChosenAt(chosenPlaces)),
-      districtsOpened: districtsChosenAt(chosenPlaces),
+      districtsOpened: data.districts.framed,
       placesListed: placesFoundAt(kindSearch)
     }),
     zoomOverlay(zooms),
     layersOverlay(layers.transitLinesOnMap, loadTransitLinesLayers),
     layersOverlay(layers.bikeLanesOnMap, loadBikeLanesLayers),
+    layersOverlay(data.districts.outlined, districtOutlineLayers),
     inspectedSpotOverlay(inspectedSpot, { onInspect: data.spots.inspect }),
     touchedMapOverlay({
       placeAt: placeDotAt,

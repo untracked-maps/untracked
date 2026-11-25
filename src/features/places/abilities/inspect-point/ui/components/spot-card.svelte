@@ -9,6 +9,7 @@
   import { longPress, type Vibrate } from '#libraries/design/long-press';
   import ShareButton from '#libraries/design/share-button.svelte';
   import WarningIcon from '#libraries/design/warning-icon.svelte';
+  import '#libraries/design/sheet-card.css';
   import '#libraries/design/tokens.css';
   import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import type { Coordinates, InspectedSpot } from '../../domain/inspect-point';
@@ -43,9 +44,9 @@
       {onClose}
       onHeight={onSheetHeight}
     >
-      <section aria-labelledby="{uid}-title" {@attach closedWhenAsked(closings, onClose)}>
+      <section class="sheet-card" aria-labelledby="{uid}-title" {@attach closedWhenAsked(closings, onClose)}>
         <Floating>
-          <div class="heading">
+          <div class="sheet-card-heading">
             {#if onShare !== undefined}
               <ShareButton label={m.share_link()} onclick={(): void => onShare({ title: card.title, at: card.at })} />
             {/if}
@@ -77,43 +78,9 @@
     display: none;
   }
 
-  section {
-    inline-size: 100%;
-  }
-
-  section > :global(*) {
-    display: grid;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    border-radius: var(--radius-l);
-  }
-
-  .heading {
-    display: flex;
-    gap: var(--space-3);
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-
-  hgroup {
-    flex: 1;
-  }
-
   .address {
     user-select: none;
     -webkit-touch-callout: none;
-  }
-
-  h2 {
-    margin: 0;
-    font-size: var(--font-size-lead);
-    line-height: var(--line-height-tight);
-    color: var(--text);
-  }
-
-  hgroup p {
-    margin: var(--space-1) 0 0;
-    color: var(--text-muted);
   }
 
   .contribute {

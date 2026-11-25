@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { EMPTY, firstValueFrom, type Observable, of } from 'rxjs';
-import { type CameraMove, frameMap, type MapMeasures } from './domain/frame-map';
+import { type CameraMove, type FramingInputs, frameMap, type MapMeasures } from './domain/frame-map';
 import { type Coordinates, type MapScene, type MapView, showMap } from './domain/show-map';
 
 const CENTRE_OF_PARIS = { longitude: 2.3522, latitude: 48.8566 };
@@ -25,7 +25,7 @@ const coordinatesFrom = (row: Readonly<Record<string, string>>): Coordinates => 
 
 type Framing = {
   readonly placesOpened?: Observable<Coordinates>;
-  readonly districtsOpened?: Observable<Coordinates>;
+  readonly districtsOpened?: FramingInputs['districtsOpened'];
   readonly placesListed?: Observable<readonly [Coordinates, ...Coordinates[]]>;
 };
 
@@ -117,9 +117,13 @@ When('a place opens at {float}, {float}', async function aPlaceOpens(this: MapWo
 When(
   'a district opens at {float}, {float}',
   async function aDistrictOpens(this: MapWorld, latitude: number, longitude: number) {
-    await framedBy(this, { districtsOpened: of({ longitude, latitude }) });
+    await framedBy(this, { districtsOpened: of({ at: { longitude, latitude }, outline: [] }) });
   }
 );
+
+When('the district outlined by these places opens', async function theOutlinedDistrictOpens(this: MapWorld) {
+  await framedBy(this, { districtsOpened: of({ at: this.framedPlaces[0], outline: this.framedPlaces }) });
+});
 
 When('the places are framed', async function thePlacesAreFramed(this: MapWorld) {
   await framedBy(this, { placesListed: of(this.framedPlaces) });
@@ -180,7 +184,11 @@ Then(
   }
 );
 
-Then('it goes no closer than zoom level {int}', function itGoesNoCloserThan(this: MapWorld, zoom: number) {
+Then('the map fits the district in {int} ms', function theMapFitsTheDistrict(this: MapWorld, duration: number) {
+  assert.equal(fitOf(this.move).duration, duration);
+});
+
+Then('it goes no closer than zoom level {float}', function itGoesNoCloserThan(this: MapWorld, zoom: number) {
   assert.equal(fitOf(this.move).maxZoom, zoom);
 });
 

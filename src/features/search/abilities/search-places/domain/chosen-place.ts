@@ -12,10 +12,4 @@ const addressesChosenAt = (chosen$: Observable<Chosen>): Observable<Coordinates>
     map(({ coordinates }) => coordinates)
   );
 
-const districtsChosenAt = (chosen$: Observable<Chosen>): Observable<Coordinates> =>
-  chosen$.pipe(
-    filter(isDistrict),
-    map(({ coordinates }) => coordinates)
-  );
-
-export { addressesChosenAt, districtsChosenAt };
+export { addressesChosenAt };

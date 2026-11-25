@@ -18,12 +18,13 @@ const LARGE: MapMeasures = {
 };
 
 type Framed =
-  | { readonly kind: 'place' | 'district'; readonly at: Coordinates }
+  | { readonly kind: 'place'; readonly at: Coordinates }
+  | { readonly kind: 'district'; readonly at: Coordinates; readonly outline?: readonly Coordinates[] }
   | { readonly kind: 'places'; readonly at: readonly [Coordinates, ...Coordinates[]] };
 
 const inputsOf = (framed: Framed): FramingInputs => ({
   placesOpened: framed.kind === 'place' ? of(framed.at) : EMPTY,
-  districtsOpened: framed.kind === 'district' ? of(framed.at) : EMPTY,
+  districtsOpened: framed.kind === 'district' ? of({ at: framed.at, outline: framed.outline ?? [] }) : EMPTY,
   placesListed: framed.kind === 'places' ? of(framed.at) : EMPTY
 });
 
@@ -45,14 +46,6 @@ describe('the flight to one place', () => {
 
   it('keeps a closer zoom', async () => {
     expect(await moveOf({ kind: 'place', at: LOUVRE }, { ...PHONE, zoom: 18 })).toMatchObject({ zoom: 18 });
-  });
-
-  it('shows a district at zoom 14', async () => {
-    expect(await moveOf({ kind: 'district', at: LOUVRE }, { ...PHONE, zoom: 18 })).toMatchObject({ zoom: 14 });
-  });
-
-  it('flies to the district', async () => {
-    expect(await moveOf({ kind: 'district', at: LOUVRE }, PHONE)).toMatchObject({ center: LOUVRE });
   });
 
   it('sets the place in the middle of what the top bar and a bottom sheet leave visible', async () => {
@@ -114,5 +107,55 @@ describe('the fit of several places', () => {
 
   it('can be left out of the animation', async () => {
     expect(await moveOf(framed, PHONE)).toMatchObject({ essential: false });
+  });
+});
+
+const MARAIS_OUTLINE: readonly Coordinates[] = [
+  { longitude: 2.35, latitude: 48.852 },
+  { longitude: 2.37, latitude: 48.855 },
+  { longitude: 2.362, latitude: 48.866 },
+  { longitude: 2.35, latitude: 48.852 }
+];
+
+describe('the frame of a district without an outline', () => {
+  it('flies to the district', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE }, PHONE)).toMatchObject({ kind: 'flight', center: LOUVRE });
+  });
+
+  it('shows the district at zoom 14.3', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE }, { ...PHONE, zoom: 18 })).toMatchObject({ zoom: 14.3 });
+  });
+
+  it('flies in 900 ms', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE }, PHONE)).toMatchObject({ duration: 900 });
+  });
+});
+
+describe('the frame of a district with its outline', () => {
+  it('fits the outline of the district', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE, outline: MARAIS_OUTLINE }, PHONE)).toMatchObject({
+      kind: 'fit',
+      bounds: { west: 2.35, south: 48.852, east: 2.37, north: 48.866 }
+    });
+  });
+
+  it('zooms in no closer than 14.3', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE, outline: MARAIS_OUTLINE }, PHONE)).toMatchObject({ maxZoom: 14.3 });
+  });
+
+  it('fits in 900 ms', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE, outline: MARAIS_OUTLINE }, PHONE)).toMatchObject({ duration: 900 });
+  });
+
+  it('keeps 40 px around the outline, above a bottom sheet and under the top bar', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE, outline: MARAIS_OUTLINE }, PHONE)).toMatchObject({
+      padding: { top: 112, right: 40, bottom: 408, left: 40 }
+    });
+  });
+
+  it('keeps 40 px around the outline, beside a side panel', async () => {
+    expect(await moveOf({ kind: 'district', at: LOUVRE, outline: MARAIS_OUTLINE }, LARGE)).toMatchObject({
+      padding: { top: 40, right: 40, bottom: 40, left: 440 }
+    });
   });
 });

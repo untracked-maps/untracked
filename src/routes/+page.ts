@@ -32,6 +32,7 @@ import { fetchedOnce } from '#libraries/fetched-once/fetched-once';
 import { browser } from '$app/env';
 import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
+import { type Districts, districtSheets } from './districts';
 import { type HomeStation, homeStation } from './home-station';
 import { type Chosen, chosenOpened, type Spots, spotsInspected } from './spots';
 
@@ -59,13 +60,13 @@ type PlaceSheets = {
   readonly vibrate: (milliseconds: number) => void;
 };
 
-const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, dismissed: Subject<void>): PlaceSheets => {
+const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, closeOthers: () => void): PlaceSheets => {
   const opened = new Subject<Opening>();
   const closed = new Subject<void>();
   return {
     sheet: openPlace({ loadPlaces: prerenderedPlacesOfSheet(fetchPlaces, resolve('/data/places.json')) })({ opened, closed }),
     open: (opening): void => {
-      dismissed.next();
+      closeOthers();
       opened.next(opening);
     },
     close: () => closed.next(),
@@ -118,6 +119,7 @@ type Loaded = {
   readonly places: PlaceSheets;
   readonly station: HomeStation;
   readonly spots: Spots;
+  readonly districts: Districts;
   readonly openChosen: Chosen;
   readonly links: Links;
   readonly placesShown: (zoom$: Observable<number>) => Observable<readonly PlaceDot[]>;
@@ -142,15 +144,25 @@ const mapLayers = (colourScheme: Observable<ColourScheme>): MapLayers => {
   };
 };
 
+const placesShownBeside = (fetchPlaces: () => Promise<Response>, places: PlaceSheets): Loaded['placesShown'] => {
+  const openId = places.sheet.pipe(map((sheet) => (sheet.status === 'open' ? sheet.place.id : undefined)));
+  const shownOnMap = showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) });
+  return (zoom$) => shownOnMap(zoom$, openId);
+};
+
+const othersClosed = (dismissed: Subject<void>, districts: Districts) => (): void => {
+  dismissed.next();
+  districts.close();
+};
+
 export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
   const { theme } = await parent();
   const fetchPlaces = fetchedOnce(fetchFile, resolve('/data/places.json'));
   const notices = noticeBoard();
   const dismissed = new Subject<void>();
-  const places = placeSheets(fetchPlaces, notices, dismissed);
-  const spots = spotsInspected(places, dismissed, fetchFile, resolve('/data/addresses.json'));
-  const openId = places.sheet.pipe(map((sheet) => (sheet.status === 'open' ? sheet.place.id : undefined)));
-  const shownOnMap = showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) });
+  const districts = districtSheets(fetchFile, resolve('/data/districts.json'));
+  const places = placeSheets(fetchPlaces, notices, othersClosed(dismissed, districts));
+  const spots = spotsInspected({ places, districts, dismissed }, fetchFile, resolve('/data/addresses.json'));
   return {
     ...data,
     search: searchSources(fetchPlaces),
@@ -159,9 +171,10 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
     places,
     station: homeStation(places.sheet),
     spots,
-    openChosen: chosenOpened(places, spots),
+    districts,
+    openChosen: chosenOpened({ places, districts, spots }),
     links: sharedLinks(places, spots, notices),
-    placesShown: (zoom$) => shownOnMap(zoom$, openId),
+    placesShown: placesShownBeside(fetchPlaces, places),
     layers: mapLayers(theme.colourScheme)
   };
 };
