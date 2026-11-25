@@ -1,3 +1,11 @@
+# [1.24.0](https://github.com/untracked-maps/untracked/compare/v1.23.1...v1.24.0) (2026-11-25)
+
+
+### Features
+
+* open the sheet of an address or a street chosen in the search ([#103](https://github.com/untracked-maps/untracked/issues/103)) ([9ad300a](https://github.com/untracked-maps/untracked/commit/9ad300a60b3b7a4c811c29d4738ad204a2bee87d)), closes [#67](https://github.com/untracked-maps/untracked/issues/67)
+* tell the next departures and the exits of a station ([#102](https://github.com/untracked-maps/untracked/issues/102)) ([37016d3](https://github.com/untracked-maps/untracked/commit/37016d3a649aafa724ae22dcd676c0e83a13600f)), closes [#96](https://github.com/untracked-maps/untracked/issues/96) [#96](https://github.com/untracked-maps/untracked/issues/96) [#103](https://github.com/untracked-maps/untracked/issues/103)
+
 ## [1.23.1](https://github.com/untracked-maps/untracked/compare/v1.23.0...v1.23.1) (2026-11-24)
 
 

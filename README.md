@@ -1,6 +1,6 @@
 # Untracked Maps
 
-Current version: 1.23.1
+Current version: 1.24.0
 
 ## 🪧 About
 
