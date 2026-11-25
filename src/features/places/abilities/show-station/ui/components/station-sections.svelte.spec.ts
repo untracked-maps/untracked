@@ -68,6 +68,11 @@ describe('the badges of the lines of a station', () => {
     await expect.element(page.getByRole('img', { name: 'RER B' })).not.toHaveClass('round');
   });
 
+  it('round the corners of a line other than the metro by 7 px', async () => {
+    await shown(KNOWN);
+    await expect.element(page.getByRole('img', { name: 'RER B' })).toHaveStyle({ borderTopLeftRadius: '7px' });
+  });
+
   it('write the number of a line in its text colour', async () => {
     await shown(KNOWN);
     await expect.element(page.getByRole('img', { name: 'Metro 4' })).toHaveStyle({ color: 'rgb(255, 255, 255)' });

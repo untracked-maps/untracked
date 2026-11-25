@@ -24,6 +24,13 @@ describe('the exits of a station', () => {
     ]);
   });
 
+  it('put an exit without number after one with a letter', () => {
+    expect(stationExits([exit({ name: 'Rue de Compiègne' }), exit({ ref: 'V' })]).map(({ ref }) => ref)).toEqual([
+      'V',
+      undefined
+    ]);
+  });
+
   it('give no number to an exit without one', () => {
     expect(stationExits([exit({ name: 'Rue de Compiègne' })])).toStrictEqual([{ name: 'Rue de Compiègne', coordinates: AT }]);
   });
