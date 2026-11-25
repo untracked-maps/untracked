@@ -1,0 +1,445 @@
+{
+  "gare-du-nord": {
+    "lines": ["metro-4", "metro-5", "rer-b", "rer-d", "transilien-h", "transilien-k"],
+    "skippedDirections": [],
+    "exits": [
+      {
+        "coordinates": {
+          "longitude": 2.3547,
+          "latitude": 48.8805
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "1",
+          "name": "Rue de Dunkerque",
+          "wheelchair": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3533,
+          "latitude": 48.8799
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "2",
+          "name": "Boulevard de Denain",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3525,
+          "latitude": 48.8811
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "3",
+          "name": "Rue de Maubeuge"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3561,
+          "latitude": 48.8799
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "4",
+          "name": "Rue de Saint-Quentin"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3538,
+          "latitude": 48.8819
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "5",
+          "name": "Rue de Compiègne"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3569,
+          "latitude": 48.8806
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "6",
+          "name": "Boulevard de Magenta",
+          "conveying": "yes"
+        }
+      }
+    ]
+  },
+  "gare-de-lyon": {
+    "lines": ["metro-1", "metro-14", "rer-a", "rer-d", "transilien-r"],
+    "skippedDirections": [],
+    "exits": [
+      {
+        "coordinates": {
+          "longitude": 2.3723,
+          "latitude": 48.8453
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "1",
+          "name": "Boulevard Diderot",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3712,
+          "latitude": 48.8447
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "2",
+          "name": "Rue de Lyon"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3744,
+          "latitude": 48.8439
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "3",
+          "name": "Rue de Bercy",
+          "wheelchair": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3739,
+          "latitude": 48.8452
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "4",
+          "name": "Place Louis-Armand"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.375,
+          "latitude": 48.8432
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "5",
+          "name": "Rue Van Gogh"
+        }
+      }
+    ]
+  },
+  "gare-montparnasse": {
+    "lines": ["metro-4", "metro-6", "metro-12", "metro-13", "transilien-n"],
+    "skippedDirections": [],
+    "exits": [
+      {
+        "coordinates": {
+          "longitude": 2.3218,
+          "latitude": 48.8423
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "1",
+          "name": "Place Raoul-Dautry",
+          "wheelchair": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3199,
+          "latitude": 48.8415
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "2",
+          "name": "Boulevard de Vaugirard",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3235,
+          "latitude": 48.8427
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "3",
+          "name": "Rue de l'Arrivée"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3243,
+          "latitude": 48.843
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "4",
+          "name": "Boulevard du Montparnasse"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.323,
+          "latitude": 48.842
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "5",
+          "name": "Rue du Départ"
+        }
+      }
+    ]
+  },
+  "gare-saint-lazare": {
+    "lines": ["metro-3", "metro-12", "metro-13", "metro-14", "transilien-j", "transilien-l"],
+    "skippedDirections": [],
+    "exits": [
+      {
+        "coordinates": {
+          "longitude": 2.3239,
+          "latitude": 48.8758
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "1",
+          "name": "Cour de Rome",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3264,
+          "latitude": 48.8756
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "2",
+          "name": "Cour du Havre",
+          "wheelchair": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3263,
+          "latitude": 48.8772
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "3",
+          "name": "Rue d'Amsterdam"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.327,
+          "latitude": 48.8753
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "4",
+          "name": "Rue Saint-Lazare"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3234,
+          "latitude": 48.877
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "5",
+          "name": "Rue de Rome"
+        }
+      }
+    ]
+  },
+  "gare-de-l-est": {
+    "lines": ["metro-4", "metro-5", "metro-7", "transilien-p"],
+    "skippedDirections": [],
+    "exits": [
+      {
+        "coordinates": {
+          "longitude": 2.3588,
+          "latitude": 48.8758
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "1",
+          "name": "Place du 11-Novembre-1918",
+          "wheelchair": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3572,
+          "latitude": 48.8772
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "2",
+          "name": "Rue d'Alsace"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3582,
+          "latitude": 48.8754
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "3",
+          "name": "Boulevard de Strasbourg",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3599,
+          "latitude": 48.8762
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "4",
+          "name": "Rue du 8-Mai-1945"
+        }
+      }
+    ]
+  },
+  "chatelet-les-halles": {
+    "lines": ["metro-1", "metro-4", "metro-7", "metro-11", "metro-14", "rer-a", "rer-b", "rer-d"],
+    "skippedDirections": ["Châtelet"],
+    "exits": [
+      {
+        "coordinates": {
+          "longitude": 2.3465,
+          "latitude": 48.8623
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "1",
+          "name": "Place Carrée",
+          "wheelchair": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.348,
+          "latitude": 48.8615
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "2",
+          "name": "Rue Pierre-Lescot",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3483,
+          "latitude": 48.8629
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "3",
+          "name": "Rue Rambuteau"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3456,
+          "latitude": 48.8614
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "4",
+          "name": "Rue Berger"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.347,
+          "latitude": 48.8606
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "5",
+          "name": "Place Marguerite-de-Navarre",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3476,
+          "latitude": 48.8608
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "6",
+          "name": "Rue de la Ferronnerie"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3453,
+          "latitude": 48.8629
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "7",
+          "name": "Porte Saint-Eustache"
+        }
+      }
+    ]
+  },
+  "gare-d-austerlitz": {
+    "lines": ["metro-5", "metro-10", "rer-c"],
+    "skippedDirections": ["Gare d'Austerlitz"],
+    "exits": [
+      {
+        "coordinates": {
+          "longitude": 2.3646,
+          "latitude": 48.8422
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "1",
+          "name": "Boulevard de l'Hôpital",
+          "conveying": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.3664,
+          "latitude": 48.8426
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "2",
+          "name": "Quai d'Austerlitz",
+          "wheelchair": "yes"
+        }
+      },
+      {
+        "coordinates": {
+          "longitude": 2.364,
+          "latitude": 48.8413
+        },
+        "tags": {
+          "railway": "subway_entrance",
+          "ref": "3",
+          "name": "Rue Buffon"
+        }
+      }
+    ]
+  }
+}

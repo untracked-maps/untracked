@@ -40,6 +40,8 @@
   import PlaceSheetCard from '#features/places/abilities/open-place/ui/components/place-sheet.svelte';
   import { placeDotAt } from '#features/places/abilities/show-places/ui/components/place-dot-at';
   import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
+  import { stationExitsOverlay } from '#features/places/abilities/show-station/ui/components/station-exits-overlay';
+  import StationSections from '#features/places/abilities/show-station/ui/components/station-sections.svelte';
   import { touchedMapOverlay } from '#features/places/abilities/touch-the-map/ui/components/touched-map-overlay';
   import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
   import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
@@ -231,13 +233,18 @@
   </div>
   <PlaceSheetCard
     sheet={placeSheet}
+    typed={data.station.lines}
     onClose={data.places.close}
     onCopy={data.places.copy}
     onShare={data.links.share}
     vibrate={data.places.vibrate}
     onSheetHeight={data.sheetHeights.of('place')}
     closings={data.closing.of('place').closings}
-  />
+  >
+    {#snippet first()}
+      <StationSections station={data.station.view} onExit={data.station.touch} />
+    {/snippet}
+  </PlaceSheetCard>
   <SpotCard
     spot={inspectedSpot}
     onClose={data.spots.dismiss}
@@ -264,6 +271,7 @@
     positionOverlay(located),
     kindPlacesOverlay(kindSearch),
     openPlaceOverlay(placeSheet, data.theme.colourScheme),
+    stationExitsOverlay(data.station.view, data.station.touched),
     framingOverlay({
       placesOpened: merge(placesOpenedAt(placeSheet), addressesChosenAt(chosenPlaces)),
       districtsOpened: districtsChosenAt(chosenPlaces),

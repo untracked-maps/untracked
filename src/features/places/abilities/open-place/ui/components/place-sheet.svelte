@@ -1,5 +1,6 @@
 <script lang="ts">
   import { NEVER, type Observable } from 'rxjs';
+  import type { Snippet } from 'svelte';
   import { m } from '#i18n/messages';
   import BottomSheet from '#libraries/design/bottom-sheet.svelte';
   import { closedWhenAsked } from '#libraries/design/closable';
@@ -22,6 +23,8 @@
     readonly vibrate: (milliseconds: number) => void;
     readonly onSheetHeight?: (height: number) => void;
     readonly closings?: Observable<unknown>;
+    readonly typed?: Observable<string | undefined>;
+    readonly first?: Snippet;
     readonly onShare?: (shared: {
       readonly title: string;
       readonly at: SheetPlace['coordinates'];
@@ -29,7 +32,7 @@
     }) => void;
   };
 
-  const { sheet, onClose, onCopy, vibrate, onSheetHeight, closings = NEVER, onShare }: Props = $props();
+  const { sheet, onClose, onCopy, vibrate, onSheetHeight, closings = NEVER, onShare, typed = NEVER, first }: Props = $props();
 
   const uid = $props.id();
 
@@ -58,7 +61,7 @@
           <div class="heading">
             <hgroup>
               <h2 id="{uid}-name">{place.name}</h2>
-              <p>{typeOf(place)}</p>
+              <p>{$typed ?? typeOf(place)}</p>
               {@render local(localNameOf(place))}
             </hgroup>
             {#if onShare !== undefined}
@@ -74,6 +77,7 @@
             </div>
           </div>
           <PlaceActions {place} />
+          {@render first?.()}
           <PlaceSections {place} {address} {onCopy} {vibrate} />
         </Floating>
       </section>

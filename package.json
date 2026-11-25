@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@fragaria/address-formatter": "7.1.2",
+    "colorjs.io": "0.7.1",
     "maplibre-gl": "6.16.0",
     "minisearch": "7.2.0",
     "rxjs": "7.8.2",

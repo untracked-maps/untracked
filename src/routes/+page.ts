@@ -32,6 +32,7 @@ import { fetchedOnce } from '#libraries/fetched-once/fetched-once';
 import { browser } from '$app/env';
 import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
+import { type HomeStation, homeStation } from './home-station';
 import { type Chosen, chosenOpened, type Spots, spotsInspected } from './spots';
 
 type MapLayers = {
@@ -115,6 +116,7 @@ type Loaded = {
   readonly notices: Notices;
   readonly sheetHeights: TallestSheet;
   readonly places: PlaceSheets;
+  readonly station: HomeStation;
   readonly spots: Spots;
   readonly openChosen: Chosen;
   readonly links: Links;
@@ -155,6 +157,7 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
     notices,
     sheetHeights: tallestSheet(),
     places,
+    station: homeStation(places.sheet),
     spots,
     openChosen: chosenOpened(places, spots),
     links: sharedLinks(places, spots, notices),
