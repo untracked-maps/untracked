@@ -59,7 +59,7 @@ const directionDepartures =
   (line: FileLine, now: number) =>
   (direction: string): readonly Departure[] => {
     const headway = headwayOf(line);
-    const offset = (seedOf(`${line.id}${direction}`) % (headway / MINUTE)) * MINUTE;
+    const offset = seedOf(`${line.id}${direction}`) * MINUTE;
     const start = Math.floor((now - GONE_AFTER - offset) / headway) * headway + offset + headway;
     return Array.from({ length: DEPARTURES_PER_DIRECTION }, (_, index) => index).map(
       departureOf(line, direction, start, headway)

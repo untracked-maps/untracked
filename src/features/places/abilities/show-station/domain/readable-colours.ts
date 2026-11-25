@@ -20,9 +20,11 @@ type Wanted = {
   readonly textColour?: string | undefined;
 };
 
-const SRGB = ColorSpace.register(sRGB);
+ColorSpace.register(sRGB);
 
-const READABLE = 4.5;
+const HUNDREDTHS = 100;
+
+const READABLE_IN_HUNDREDTHS = 450;
 
 const MOST_KEPT = 0.95;
 
@@ -42,12 +44,13 @@ const hexOf = (colour: PlainColorObject): string => serialize(colour, { format: 
 const shaded =
   (colour: PlainColorObject, toward: string) =>
   (keep: number): PlainColorObject =>
-    mix(colour, toward, 1 - keep, { space: SRGB, outputSpace: SRGB });
+    mix(colour, toward, 1 - keep);
 
 const readableColours = ({ colour, textColour }: Wanted): Colours => {
   const background = colourOf(colour, '#5B6573');
   const text = colourOf(textColour, '#FFFFFF');
-  const readable = (candidate: PlainColorObject): boolean => contrastWCAG21(candidate, text) >= READABLE;
+  const readable = (candidate: PlainColorObject): boolean =>
+    Math.floor(contrastWCAG21(candidate, text) * HUNDREDTHS) >= READABLE_IN_HUNDREDTHS;
   const toward = getLuminance(text) > getLuminance(background) ? '#000000' : '#FFFFFF';
   const shade = shaded(background, toward);
   const chosen = [background, ...KEPT.map(shade)].find(readable) ?? shade(LEAST_KEPT);

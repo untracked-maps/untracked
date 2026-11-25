@@ -71,8 +71,13 @@ describe('an exit told', () => {
 describe('the lines served by a station', () => {
   it('are grouped by mode, each line once, in the order of the departures', () => {
     expect(
-      linesServed(open({ status: 'known', lines: [line('4', 'subway'), line('4', 'subway'), line('B', 'train', 'RER')] }))
-    ).toBe('Metro 4 · RER B');
+      linesServed(
+        open({
+          status: 'known',
+          lines: [line('4', 'subway'), line('7', 'subway'), line('4', 'subway'), line('B', 'train', 'RER')]
+        })
+      )
+    ).toBe('Metro 4, 7 · RER B');
   });
 
   it.each([

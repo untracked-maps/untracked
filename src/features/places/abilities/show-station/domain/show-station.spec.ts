@@ -98,10 +98,18 @@ const viewOf = (run: Run, marbles: Marbles): Observable<StationView> =>
     shown: replayed(run, marbles.shown ?? 'v', { v: true, h: false })
   });
 
-const askedWith = (marbles: Omit<Marbles, 'departures'>): readonly string[] => {
+const askedWith = (
+  marbles: Omit<Marbles, 'departures'>,
+  watchers: readonly (number | undefined)[] = [undefined]
+): readonly string[] => {
   const departures = counted();
-  scheduler().run((run) => {
-    viewOf(run, { ...marbles, departures: departures.load }).subscribe();
+  const testing = new TestScheduler(() => undefined);
+  testing.run((run) => {
+    const view = viewOf(run, { ...marbles, departures: departures.load });
+    watchers.map((until) => {
+      const watching = view.subscribe();
+      return until === undefined ? watching : testing.schedule(() => watching.unsubscribe(), until);
+    });
   });
   return departures.asked;
 };
@@ -169,6 +177,14 @@ describe('the departures of a station', () => {
 
   it('are asked again at once when the page is shown again', () => {
     expect(askedWith({ opened: '-o', time: 't-h', shown: 'v-h--v' })).toEqual(['asked', 'asked']);
+  });
+
+  it('are asked once for everyone who watches the station', () => {
+    expect(askedWith({ opened: '-o', time: 't' }, [undefined, undefined])).toEqual(['asked']);
+  });
+
+  it('are asked no more once nobody watches the station', () => {
+    expect(askedWith({ opened: '-o', time: 't---r' }, [2])).toEqual(['asked']);
   });
 
   it('are not asked once the station closes', () => {

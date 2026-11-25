@@ -10,6 +10,10 @@ describe('the page shown', () => {
     expect(await firstValueFrom(pageShown(undefined))).toBe(true);
   });
 
+  it('tells at once that the page is shown', async () => {
+    expect(await firstValueFrom(pageShown(page('visible')))).toBe(true);
+  });
+
   it('tells at once whether the page is shown', async () => {
     expect(await firstValueFrom(pageShown(page('hidden')))).toBe(false);
   });

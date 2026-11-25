@@ -1,4 +1,4 @@
-import { fromEvent, map, type Observable, of, shareReplay, startWith } from 'rxjs';
+import { fromEvent, map, type Observable, of, startWith } from 'rxjs';
 
 type ShownPage = Pick<Document, 'visibilityState'> & EventTarget;
 
@@ -9,8 +9,7 @@ const pageShown = (page: ShownPage | undefined): Observable<boolean> =>
     ? of(true)
     : fromEvent(page, 'visibilitychange').pipe(
         map(() => isShown(page)),
-        startWith(isShown(page)),
-        shareReplay({ bufferSize: 1, refCount: true })
+        startWith(isShown(page))
       );
 
 export { pageShown };

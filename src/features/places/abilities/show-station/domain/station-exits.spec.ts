@@ -17,6 +17,17 @@ describe('the exits of a station', () => {
     ]);
   });
 
+  it('put an exit without number after one with a number', () => {
+    expect(stationExits([exit({ ref: '1' }), exit({ name: 'Rue de Compiègne' })]).map(({ ref }) => ref)).toEqual([
+      '1',
+      undefined
+    ]);
+  });
+
+  it('give no number to an exit without one', () => {
+    expect(stationExits([exit({ name: 'Rue de Compiègne' })])).toStrictEqual([{ name: 'Rue de Compiègne', coordinates: AT }]);
+  });
+
   it('keep the exits without number among themselves', () => {
     expect(stationExits([exit({ name: 'A' }), exit({ name: 'B' })]).map(({ name }) => name)).toEqual(['A', 'B']);
   });

@@ -60,6 +60,18 @@ describe('the passages of a station', () => {
     await shown(KNOWN);
     await expect.element(page.getByRole('img', { name: 'Metro 4' })).toHaveClass('round');
   });
+});
+
+describe('the badges of the lines of a station', () => {
+  it('draw a line other than the metro as a rounded rectangle', async () => {
+    await shown(KNOWN);
+    await expect.element(page.getByRole('img', { name: 'RER B' })).not.toHaveClass('round');
+  });
+
+  it('write the number of a line in its text colour', async () => {
+    await shown(KNOWN);
+    await expect.element(page.getByRole('img', { name: 'Metro 4' })).toHaveStyle({ color: 'rgb(255, 255, 255)' });
+  });
 
   it('draw a line in its colours', async () => {
     await shown(KNOWN);
@@ -69,6 +81,16 @@ describe('the passages of a station', () => {
   it('tell the first time in bold', async () => {
     await shown(open({ status: 'known', lines: [METRO_4] }));
     await expect.element(page.getByText('at platform')).toHaveStyle({ fontWeight: '700' });
+  });
+
+  it('are titled', async () => {
+    await shown(KNOWN);
+    await expect.element(page.getByRole('heading', { name: 'Next departures' })).toBeInTheDocument();
+  });
+
+  it('tell the next times in a lighter way', async () => {
+    await shown(open({ status: 'known', lines: [METRO_4] }));
+    await expect.element(page.getByText('4 min')).toHaveClass('next');
   });
 
   it('tell the next times after the first one', async () => {
@@ -105,6 +127,11 @@ describe('the exits of a station', () => {
   it('are left out when it has none', async () => {
     await shown(open({ status: 'asked' }, []));
     await expect.element(page.getByRole('region', { name: 'Exits' })).not.toBeInTheDocument();
+  });
+
+  it('are titled', async () => {
+    await shown(open({ status: 'asked' }));
+    await expect.element(page.getByRole('heading', { name: 'Exits' })).toBeInTheDocument();
   });
 
   it('show the first four', async () => {

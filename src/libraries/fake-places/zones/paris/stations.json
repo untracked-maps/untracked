@@ -1,6 +1,7 @@
 {
   "gare-du-nord": {
     "lines": ["metro-4", "metro-5", "rer-b", "rer-d", "transilien-h", "transilien-k"],
+    "skippedDirections": [],
     "exits": [
       {
         "coordinates": {
@@ -75,6 +76,7 @@
   },
   "gare-de-lyon": {
     "lines": ["metro-1", "metro-14", "rer-a", "rer-d", "transilien-r"],
+    "skippedDirections": [],
     "exits": [
       {
         "coordinates": {
@@ -137,6 +139,7 @@
   },
   "gare-montparnasse": {
     "lines": ["metro-4", "metro-6", "metro-12", "metro-13", "transilien-n"],
+    "skippedDirections": [],
     "exits": [
       {
         "coordinates": {
@@ -199,6 +202,7 @@
   },
   "gare-saint-lazare": {
     "lines": ["metro-3", "metro-12", "metro-13", "metro-14", "transilien-j", "transilien-l"],
+    "skippedDirections": [],
     "exits": [
       {
         "coordinates": {
@@ -261,6 +265,7 @@
   },
   "gare-de-l-est": {
     "lines": ["metro-4", "metro-5", "metro-7", "transilien-p"],
+    "skippedDirections": [],
     "exits": [
       {
         "coordinates": {
@@ -312,6 +317,7 @@
   },
   "chatelet-les-halles": {
     "lines": ["metro-1", "metro-4", "metro-7", "metro-11", "metro-14", "rer-a", "rer-b", "rer-d"],
+    "skippedDirections": ["Châtelet"],
     "exits": [
       {
         "coordinates": {
@@ -393,11 +399,11 @@
           "name": "Porte Saint-Eustache"
         }
       }
-    ],
-    "skippedDirections": ["Châtelet"]
+    ]
   },
   "gare-d-austerlitz": {
     "lines": ["metro-5", "metro-10", "rer-c"],
+    "skippedDirections": ["Gare d'Austerlitz"],
     "exits": [
       {
         "coordinates": {
@@ -434,7 +440,6 @@
           "name": "Rue Buffon"
         }
       }
-    ],
-    "skippedDirections": ["Gare d'Austerlitz"]
+    ]
   }
 }

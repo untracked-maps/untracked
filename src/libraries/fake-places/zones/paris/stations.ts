@@ -6,7 +6,7 @@ import STATIONS_FILE from './stations.json' with { type: 'json' };
 type StationEntry = {
   readonly lines: readonly string[];
   readonly exits: FakeStation['exits'];
-  readonly skippedDirections?: readonly string[];
+  readonly skippedDirections: readonly string[];
 };
 
 const ENTRIES: Readonly<Record<string, StationEntry>> = STATIONS_FILE;
@@ -26,7 +26,7 @@ const servedBy =
       }))
     );
 
-const stationOf = ([id, { lines, exits, skippedDirections = [] }]: readonly [string, StationEntry]): FakeStation => ({
+const stationOf = ([id, { lines, exits, skippedDirections }]: readonly [string, StationEntry]): FakeStation => ({
   id,
   lines: lines.flatMap(servedBy(skippedDirections)),
   exits

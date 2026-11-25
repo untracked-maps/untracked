@@ -5,7 +5,7 @@ import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import type { StationView } from '../../domain/show-station';
 import type { Coordinates } from '../../domain/station-exits';
 import { stationExitsOverlay } from './station-exits-overlay';
-import { exitsData } from './station-exits-style';
+import { exitsData, stationExitsLayers } from './station-exits-style';
 
 const AT = { longitude: 2.355, latitude: 48.88 };
 
@@ -48,6 +48,14 @@ const drawnOn = async (
 
 const dataOn = (map: MapLibreMap): unknown => map.getSource<GeoJSONSource>('station-exits')?.serialize().data;
 
+const endedOverlay = async (): Promise<MapLibreMap> => {
+  const map = await loadedMap();
+  const subscription = stationExitsOverlay(new BehaviorSubject(OPEN), NEVER)(map).subscribe();
+  await vi.waitUntil(() => map.getSource('station-exits') !== undefined);
+  subscription.unsubscribe();
+  return map;
+};
+
 describe('the exits of the open station on the map', () => {
   it('are drawn as circles', async () => {
     const map = await loadedMap();
@@ -68,13 +76,13 @@ describe('the exits of the open station on the map', () => {
   });
 
   it('are taken off the map once the overlay ends', async () => {
-    const map = await loadedMap();
-    const subscription = stationExitsOverlay(new BehaviorSubject(OPEN), NEVER)(map).subscribe();
-    await new Promise((settled) => {
-      setTimeout(settled, 50);
-    });
-    subscription.unsubscribe();
+    const map = await endedOverlay();
     expect(map.getSource('station-exits')).toBeUndefined();
+  });
+
+  it('take their layers off the map once the overlay ends', async () => {
+    const map = await endedOverlay();
+    expect(stationExitsLayers.map(({ id }) => map.getLayer(id))).toEqual([undefined, undefined]);
   });
 
   it('are drawn once a map without style gets one', async () => {

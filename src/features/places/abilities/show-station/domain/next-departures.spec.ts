@@ -153,7 +153,9 @@ describe('the next departures, their order and their lines', () => {
       live: false
     });
   });
+});
 
+describe('the next departures, more', () => {
   it('give a line its network', () => {
     expect(
       nextDepartures(

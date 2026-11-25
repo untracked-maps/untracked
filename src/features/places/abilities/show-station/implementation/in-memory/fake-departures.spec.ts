@@ -96,6 +96,30 @@ describe('the fake departures of a line', () => {
       monitored: true
     });
   });
+});
+
+describe('the fake departures delayed or cancelled', () => {
+  it('delay no departure of the metro', async () => {
+    expect((await askedAt([METRO], NOW)).map(({ departureStatus }) => departureStatus)).toEqual([
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    ]);
+  });
+
+  it('leave the first departure of the RER on time', async () => {
+    expect((await askedAt([RER], NOW))[0]?.expectedDepartureTime).toBeUndefined();
+  });
+
+  it('cancel only the third departure of a Transilien line', async () => {
+    expect((await askedAt([TRANSILIEN], NOW)).map(({ departureStatus }) => departureStatus)).toEqual([
+      undefined,
+      undefined,
+      'cancelled',
+      undefined
+    ]);
+  });
 
   it('cancel the third departure of a Transilien line', async () => {
     expect((await askedAt([TRANSILIEN], NOW))[2]?.departureStatus).toBe('cancelled');
