@@ -2,15 +2,15 @@ import { type Observable, of } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { type Locator, page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
-import type { PlaceKind } from '../../../../domain/place';
+import type { CategoryKey } from '../../domain/categories';
 import KindNamed from './kind-named.svelte';
 
-const shown = async (named: Observable<PlaceKind | undefined>): Promise<readonly string[]> => {
+const shown = async (named: Observable<CategoryKey | undefined>): Promise<readonly string[]> => {
   const seen: string[] = [];
   await render(KindNamed, {
     named,
-    onChoose: (kind: PlaceKind): void => {
-      seen.push(kind);
+    onChoose: (category: CategoryKey): void => {
+      seen.push(category);
     },
     onClear: (): void => {
       seen.push('cleared');
@@ -25,13 +25,13 @@ const row = (): Locator => page.getByRole('button', { name: BAKERIES_NEAR_YOU })
 
 describe('kind named in the search field', () => {
   it('offers the places of the kind near the visitor', async () => {
-    await shown(of('bakery'));
+    await shown(of('bakeries'));
 
     await expect.element(row()).toBeVisible();
   });
 
   it('says they are around the centre of the map', async () => {
-    await shown(of('bakery'));
+    await shown(of('bakeries'));
 
     await expect.element(row()).toHaveAccessibleName('Bakeries near you Around the centre of the map');
   });
@@ -43,10 +43,10 @@ describe('kind named in the search field', () => {
   });
 
   it('clears the field, then chooses the kind', async () => {
-    const seen = await shown(of('bakery'));
+    const seen = await shown(of('bakeries'));
 
     await row().click();
 
-    expect(seen).toEqual(['cleared', 'bakery']);
+    expect(seen).toEqual(['cleared', 'bakeries']);
   });
 });

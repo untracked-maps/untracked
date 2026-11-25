@@ -1,22 +1,23 @@
 import { catchError, filter, map, type Observable, of, shareReplay, startWith, switchMap, take, withLatestFrom } from 'rxjs';
-import type { Coordinates, LoadPlaces, Place, PlaceKind } from '../../../domain/place';
-import { nearestOfKind } from './nearest-of-kind';
+import type { Coordinates, LoadPlaces, Place } from '../../../domain/place';
+import type { CategoryKey } from './categories';
+import { nearestOfCategory } from './nearest-of-category';
 
 type SearchByTypePorts = {
   readonly loadPlaces: LoadPlaces;
 };
 
 type SearchByTypeInputs = {
-  readonly chosen: Observable<PlaceKind | undefined>;
+  readonly chosen: Observable<CategoryKey | undefined>;
   readonly mapView: Observable<{ readonly center: Coordinates }>;
 };
 
 type KindSearch =
   | { readonly status: 'closed' }
-  | { readonly status: 'searching'; readonly placeKind: PlaceKind }
-  | { readonly status: 'found'; readonly placeKind: PlaceKind; readonly places: readonly [Place, ...Place[]] }
-  | { readonly status: 'none-near'; readonly placeKind: PlaceKind }
-  | { readonly status: 'unavailable'; readonly placeKind: PlaceKind };
+  | { readonly status: 'searching'; readonly category: CategoryKey }
+  | { readonly status: 'found'; readonly category: CategoryKey; readonly places: readonly [Place, ...Place[]] }
+  | { readonly status: 'none-near'; readonly category: CategoryKey }
+  | { readonly status: 'unavailable'; readonly category: CategoryKey };
 
 const CENTRE_OF_PARIS: Coordinates = { longitude: 2.3522, latitude: 48.8566 };
 
@@ -24,15 +25,15 @@ const CLOSED: KindSearch = { status: 'closed' };
 
 const isNotEmpty = (places: readonly Place[]): places is readonly [Place, ...Place[]] => places.length > 0;
 
-const resultOf = (placeKind: PlaceKind, places: readonly Place[]): KindSearch =>
-  isNotEmpty(places) ? { status: 'found', placeKind, places } : { status: 'none-near', placeKind };
+const resultOf = (category: CategoryKey, places: readonly Place[]): KindSearch =>
+  isNotEmpty(places) ? { status: 'found', category, places } : { status: 'none-near', category };
 
-const searchOf = (loadPlaces: LoadPlaces, placeKind: PlaceKind, reference: Coordinates): Observable<KindSearch> =>
+const searchOf = (loadPlaces: LoadPlaces, category: CategoryKey, reference: Coordinates): Observable<KindSearch> =>
   loadPlaces().pipe(
     take(1),
-    map((places) => resultOf(placeKind, nearestOfKind(places, placeKind, reference))),
-    catchError(() => of<KindSearch>({ status: 'unavailable', placeKind })),
-    startWith<KindSearch>({ status: 'searching', placeKind })
+    map((places) => resultOf(category, nearestOfCategory(places, category, reference))),
+    catchError(() => of<KindSearch>({ status: 'unavailable', category })),
+    startWith<KindSearch>({ status: 'searching', category })
   );
 
 const searchByType =
@@ -45,9 +46,7 @@ const searchByType =
           startWith(CENTRE_OF_PARIS)
         )
       ),
-      switchMap(([placeKind, reference]) =>
-        placeKind === undefined ? of(CLOSED) : searchOf(loadPlaces, placeKind, reference)
-      ),
+      switchMap(([category, reference]) => (category === undefined ? of(CLOSED) : searchOf(loadPlaces, category, reference))),
       startWith(CLOSED),
       shareReplay({ bufferSize: 1, refCount: true })
     );

@@ -1,7 +1,7 @@
 import { base, fr } from '@faker-js/faker';
 import { describe, expect, it } from 'vitest';
 import type { FakeZone } from './fake-zone';
-import { generatedPlaces } from './generated-places';
+import { addedPlaces, generatedPlaces } from './generated-places';
 
 const SAINT_MALO: FakeZone = {
   id: 'fake-saint-malo',
@@ -119,5 +119,54 @@ describe('the fame of generated places', () => {
 describe('the kinds of generated places', () => {
   it('are many', () => {
     expect(new Set(PLACES.map(({ kind }) => kind)).size).toBe(20);
+  });
+});
+
+const ADDED = addedPlaces(SAINT_MALO, 500);
+
+describe('added places', () => {
+  it('are six of each of the 37 added kinds', () => {
+    expect(ADDED).toHaveLength(222);
+  });
+
+  it('are six of the first added kind', () => {
+    expect(ADDED.filter(({ kind }) => kind === 'fast-food')).toHaveLength(6);
+  });
+
+  it('are six of the last added kind', () => {
+    expect(ADDED.filter(({ kind }) => kind === 'drinking-water')).toHaveLength(6);
+  });
+
+  it('are numbered after the index they start from', () => {
+    expect(ADDED[0]?.id).toBe('fake-saint-malo-0501');
+  });
+
+  it('are numbered one after the other', () => {
+    expect(ADDED.at(-1)?.id).toBe('fake-saint-malo-0722');
+  });
+
+  it('are the same at every build', () => {
+    expect(addedPlaces(SAINT_MALO, 500)).toEqual(ADDED);
+  });
+
+  it('do not change the drawn places', () => {
+    expect(generatedPlaces(SAINT_MALO, 500)).toEqual(PLACES);
+  });
+
+  it('are drawn apart from the drawn places', () => {
+    expect(ADDED[0]?.coordinates).not.toEqual(PLACES[0]?.coordinates);
+  });
+
+  it('lie within their zone', () => {
+    expect(
+      ADDED.filter(
+        ({ coordinates: { longitude, latitude } }) =>
+          longitude < -2.04 || longitude > -1.95 || latitude < 48.62 || latitude > 48.66
+      )
+    ).toEqual([]);
+  });
+
+  it('have no cuisine', () => {
+    expect(ADDED.filter(({ cuisine }) => cuisine !== undefined)).toEqual([]);
   });
 });

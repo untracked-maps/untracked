@@ -1,18 +1,22 @@
 import type { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
-import type { PlaceKind } from '../../../domain/place';
-import type { FindKind } from './kind-words';
-import { type LoadKindFinder, namedKind } from './named-kind';
+import type { CategoryKey } from './categories';
+import type { FindCategory } from './category-words';
+import { type LoadCategoryFinder, namedCategory } from './named-category';
 
-const KINDS: Readonly<Record<string, PlaceKind>> = { boulangerie: 'bakery', boulangeries: 'bakery', pharmacie: 'pharmacy' };
+const CATEGORIES: Readonly<Record<string, CategoryKey>> = {
+  boulangerie: 'bakeries',
+  boulangeries: 'bakeries',
+  pharmacie: 'pharmacies'
+};
 
-const findKind: FindKind = (query) => KINDS[query];
+const findCategory: FindCategory = (query) => CATEGORIES[query];
 
 type Inputs = {
   readonly wake?: string;
   readonly query: string;
-  readonly loadKindFinder?: LoadKindFinder;
+  readonly loadCategoryFinder?: LoadCategoryFinder;
 };
 
 const QUERIES: Readonly<Record<string, string>> = {
@@ -28,8 +32,10 @@ const scheduler = (): TestScheduler => new TestScheduler((actual, expected) => e
 
 const kindsOf =
   ({ hot, cold }: Helpers) =>
-  ({ wake = 'w', query, loadKindFinder }: Inputs): Observable<PlaceKind | undefined> =>
-    namedKind({ loadKindFinder: loadKindFinder ?? ((): Observable<FindKind> => cold('f', { f: findKind })) })({
+  ({ wake = 'w', query, loadCategoryFinder }: Inputs): Observable<CategoryKey | undefined> =>
+    namedCategory({
+      loadCategoryFinder: loadCategoryFinder ?? ((): Observable<FindCategory> => cold('f', { f: findCategory }))
+    })({
       wake: hot(wake, { w: undefined }),
       query: hot(query, QUERIES)
     });
@@ -43,13 +49,13 @@ describe('kind named in the search field', () => {
 
   it('is the kind the visitor types', () => {
     scheduler().run((helpers) => {
-      helpers.expectObservable(kindsOf(helpers)({ query: '-b' })).toBe('nb', { n: undefined, b: 'bakery' });
+      helpers.expectObservable(kindsOf(helpers)({ query: '-b' })).toBe('nb', { n: undefined, b: 'bakeries' });
     });
   });
 
   it('is none once the visitor types more than a kind', () => {
     scheduler().run((helpers) => {
-      helpers.expectObservable(kindsOf(helpers)({ query: '-b-g' })).toBe('nb-n', { n: undefined, b: 'bakery' });
+      helpers.expectObservable(kindsOf(helpers)({ query: '-b-g' })).toBe('nb-n', { n: undefined, b: 'bakeries' });
     });
   });
 
@@ -57,8 +63,8 @@ describe('kind named in the search field', () => {
     scheduler().run((helpers) => {
       helpers.expectObservable(kindsOf(helpers)({ query: '-b-s-p' })).toBe('nb---p', {
         n: undefined,
-        b: 'bakery',
-        p: 'pharmacy'
+        b: 'bakeries',
+        p: 'pharmacies'
       });
     });
   });
@@ -66,15 +72,17 @@ describe('kind named in the search field', () => {
   it('is found once the words arrive, for what the visitor typed before', () => {
     scheduler().run((helpers) => {
       helpers
-        .expectObservable(kindsOf(helpers)({ query: '-b', loadKindFinder: () => helpers.cold('---f', { f: findKind }) }))
-        .toBe('n--b', { n: undefined, b: 'bakery' });
+        .expectObservable(
+          kindsOf(helpers)({ query: '-b', loadCategoryFinder: () => helpers.cold('---f', { f: findCategory }) })
+        )
+        .toBe('n--b', { n: undefined, b: 'bakeries' });
     });
   });
 
   it('is none when the words cannot be loaded', () => {
     scheduler().run((helpers) => {
       helpers
-        .expectObservable(kindsOf(helpers)({ query: '-b', loadKindFinder: () => helpers.cold('#') }))
+        .expectObservable(kindsOf(helpers)({ query: '-b', loadCategoryFinder: () => helpers.cold('#') }))
         .toBe('n', { n: undefined });
     });
   });
@@ -89,8 +97,8 @@ describe('kind named in the search field', () => {
 describe('words of the kinds', () => {
   it('wait for the search to wake', () => {
     scheduler().run((helpers) => {
-      const finder$ = helpers.cold('f', { f: findKind });
-      helpers.expectObservable(kindsOf(helpers)({ wake: '--w', query: '', loadKindFinder: () => finder$ }));
+      const finder$ = helpers.cold('f', { f: findCategory });
+      helpers.expectObservable(kindsOf(helpers)({ wake: '--w', query: '', loadCategoryFinder: () => finder$ }));
       helpers.expectSubscriptions(finder$.subscriptions).toBe('--(^!)');
     });
   });
@@ -99,7 +107,10 @@ describe('words of the kinds', () => {
     scheduler().run((helpers) => {
       const query$ = helpers.hot('-b');
       helpers.expectObservable(
-        namedKind({ loadKindFinder: () => helpers.cold('f', { f: findKind }) })({ wake: helpers.hot('w'), query: query$ }),
+        namedCategory({ loadCategoryFinder: () => helpers.cold('f', { f: findCategory }) })({
+          wake: helpers.hot('w'),
+          query: query$
+        }),
         '^--!'
       );
       helpers.expectSubscriptions(query$.subscriptions).toBe('^--!');
@@ -108,8 +119,8 @@ describe('words of the kinds', () => {
 
   it('are loaded once, however often the search wakes and is watched', () => {
     scheduler().run((helpers) => {
-      const finder$ = helpers.cold('f', { f: findKind });
-      const kinds$ = kindsOf(helpers)({ wake: '-ww', query: '--b', loadKindFinder: () => finder$ });
+      const finder$ = helpers.cold('f', { f: findCategory });
+      const kinds$ = kindsOf(helpers)({ wake: '-ww', query: '--b', loadCategoryFinder: () => finder$ });
       helpers.expectObservable(kinds$);
       helpers.expectObservable(kinds$);
       helpers.expectSubscriptions(finder$.subscriptions).toBe('-(^!)');

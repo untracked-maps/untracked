@@ -1,0 +1,121 @@
+[data-category="restaurants"],
+[data-category="cafes"],
+[data-category="bars"],
+[data-category="fast-food"],
+[data-category="bakeries"],
+[data-category="ice-cream"],
+[data-category="chocolate"],
+[data-category="delis"],
+[data-category="nightclubs"] {
+  --category-colour: rgb(232 116 47);
+}
+
+[data-category="groceries"],
+[data-category="markets"],
+[data-category="greengrocers"],
+[data-category="cheese"],
+[data-category="butchers"],
+[data-category="wine"],
+[data-category="clothes"],
+[data-category="bookshops"],
+[data-category="newsagents"],
+[data-category="phones"],
+[data-category="toys"],
+[data-category="stationery"],
+[data-category="music"],
+[data-category="opticians"] {
+  --category-colour: rgb(65 105 216);
+}
+
+[data-category="florists"] {
+  --category-colour: rgb(201 73 126);
+}
+
+[data-category="diy"] {
+  --category-colour: rgb(122 106 88);
+}
+
+[data-category="cash-machines"],
+[data-category="banks"] {
+  --category-colour: rgb(79 122 107);
+}
+
+[data-category="post-offices"] {
+  --category-colour: rgb(199 151 43);
+}
+
+[data-category="hairdressers"],
+[data-category="beauty"] {
+  --category-colour: rgb(160 86 159);
+}
+
+[data-category="laundries"],
+[data-category="coworking"],
+[data-category="toilets"] {
+  --category-colour: rgb(95 125 149);
+}
+
+[data-category="town-halls"],
+[data-category="police"] {
+  --category-colour: rgb(45 62 115);
+}
+
+[data-category="pharmacies"],
+[data-category="doctors"],
+[data-category="hospitals"] {
+  --category-colour: rgb(216 74 69);
+}
+
+[data-category="vets"],
+[data-category="pet-shops"] {
+  --category-colour: rgb(138 107 78);
+}
+
+[data-category="museums"],
+[data-category="monuments"],
+[data-category="cinemas"],
+[data-category="theatres"],
+[data-category="libraries"],
+[data-category="places-of-worship"] {
+  --category-colour: rgb(18 145 158);
+}
+
+[data-category="escape-games"],
+[data-category="gyms"] {
+  --category-colour: rgb(224 102 47);
+}
+
+[data-category="parks"],
+[data-category="playgrounds"] {
+  --category-colour: rgb(62 142 82);
+}
+
+[data-category="swimming-pools"],
+[data-category="drinking-water"] {
+  --category-colour: rgb(44 134 201);
+}
+
+[data-category="cemeteries"] {
+  --category-colour: rgb(110 139 116);
+}
+
+[data-category="metro"] {
+  --category-colour: rgb(43 71 147);
+}
+
+[data-category="bikes"],
+[data-category="charging"] {
+  --category-colour: rgb(30 142 62);
+}
+
+[data-category="fuel"] {
+  --category-colour: rgb(79 111 160);
+}
+
+[data-category="car-parks"] {
+  --category-colour: rgb(63 99 181);
+}
+
+[data-category="hotels"] {
+  --category-colour: rgb(154 85 160);
+}

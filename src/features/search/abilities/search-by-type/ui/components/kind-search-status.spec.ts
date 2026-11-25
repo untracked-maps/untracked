@@ -17,27 +17,27 @@ describe('status of a search by type', () => {
   });
 
   it('tells the visitor it is searching', () => {
-    expect(statusOf({ status: 'searching', placeKind: 'bakery' })).toBe('Searching…');
+    expect(statusOf({ status: 'searching', category: 'bakeries' })).toBe('Searching…');
   });
 
   it('counts the places found', () => {
-    expect(statusOf({ status: 'found', placeKind: 'bakery', places: [BAKERY, { ...BAKERY, id: 'other' }] })).toBe(
+    expect(statusOf({ status: 'found', category: 'bakeries', places: [BAKERY, { ...BAKERY, id: 'other' }] })).toBe(
       '2 places near the centre of the map, the nearest first.'
     );
   });
 
   it('tells the visitor a single place is found', () => {
-    expect(statusOf({ status: 'found', placeKind: 'bakery', places: [BAKERY] })).toBe('1 place near the centre of the map.');
+    expect(statusOf({ status: 'found', category: 'bakeries', places: [BAKERY] })).toBe('1 place near the centre of the map.');
   });
 
   it('tells the visitor no such place is near', () => {
-    expect(statusOf({ status: 'none-near', placeKind: 'bakery' })).toBe(
+    expect(statusOf({ status: 'none-near', category: 'bakeries' })).toBe(
       'No such place near the centre of the map. Move the map and try again.'
     );
   });
 
   it('tells the visitor the list is unavailable', () => {
-    expect(statusOf({ status: 'unavailable', placeKind: 'bakery' })).toBe(
+    expect(statusOf({ status: 'unavailable', category: 'bakeries' })).toBe(
       'This list is not available right now. Try again later.'
     );
   });

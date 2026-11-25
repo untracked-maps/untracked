@@ -2,6 +2,7 @@ import type { Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
 import type { Coordinates, LoadPlaces, Place, PlaceKind } from '../../../domain/place';
+import type { CategoryKey } from './categories';
 import { type KindSearch, placesFoundAt, searchByType } from './search-by-type';
 
 const KILOMETRES_PER_DEGREE_OF_LATITUDE = 110.54;
@@ -40,7 +41,12 @@ type Inputs = {
   readonly loadPlaces?: LoadPlaces;
 };
 
-const CHOICES: Readonly<Record<string, PlaceKind | undefined>> = { b: 'bakery', p: 'pharmacy', h: 'hospital', x: undefined };
+const CHOICES: Readonly<Record<string, CategoryKey | undefined>> = {
+  b: 'bakeries',
+  p: 'pharmacies',
+  h: 'hospitals',
+  x: undefined
+};
 
 const searchesOf =
   ({ hot, cold }: Helpers) =>
@@ -50,12 +56,12 @@ const searchesOf =
       mapView: hot(mapView, { s: { center: SOUTH } })
     });
 
-const searching = (placeKind: PlaceKind): KindSearch => ({ status: 'searching', placeKind });
+const searching = (category: CategoryKey): KindSearch => ({ status: 'searching', category });
 
 const CENTRAL_BAKERIES = {
   c: CLOSED,
-  s: searching('bakery'),
-  f: { status: 'found', placeKind: 'bakery', places: [CENTRAL, CENTRAL_FURTHER] }
+  s: searching('bakeries'),
+  f: { status: 'found', category: 'bakeries', places: [CENTRAL, CENTRAL_FURTHER] }
 } as const;
 
 describe('search by type', () => {
@@ -75,8 +81,8 @@ describe('search by type', () => {
     scheduler().run((helpers) => {
       helpers.expectObservable(searchesOf(helpers)({ mapView: 's', chosen: '-b' })).toBe('c(sf)', {
         c: CLOSED,
-        s: searching('bakery'),
-        f: { status: 'found', placeKind: 'bakery', places: [SOUTHERN] }
+        s: searching('bakeries'),
+        f: { status: 'found', category: 'bakeries', places: [SOUTHERN] }
       });
     });
   });
@@ -93,8 +99,8 @@ describe('search by type', () => {
         .expectObservable(searchesOf(helpers)({ chosen: '-p', loadPlaces: () => helpers.cold('--p', { p: PLACES }) }))
         .toBe('cs-f', {
           c: CLOSED,
-          s: searching('pharmacy'),
-          f: { status: 'found', placeKind: 'pharmacy', places: [PHARMACY] }
+          s: searching('pharmacies'),
+          f: { status: 'found', category: 'pharmacies', places: [PHARMACY] }
         });
     });
   });
@@ -103,7 +109,7 @@ describe('search by type', () => {
     scheduler().run((helpers) => {
       helpers
         .expectObservable(searchesOf(helpers)({ chosen: '-h' }))
-        .toBe('c(sn)', { c: CLOSED, s: searching('hospital'), n: { status: 'none-near', placeKind: 'hospital' } });
+        .toBe('c(sn)', { c: CLOSED, s: searching('hospitals'), n: { status: 'none-near', category: 'hospitals' } });
     });
   });
 
@@ -111,7 +117,7 @@ describe('search by type', () => {
     scheduler().run((helpers) => {
       helpers
         .expectObservable(searchesOf(helpers)({ chosen: '-b', loadPlaces: () => helpers.cold('#') }))
-        .toBe('c(su)', { c: CLOSED, s: searching('bakery'), u: { status: 'unavailable', placeKind: 'bakery' } });
+        .toBe('c(su)', { c: CLOSED, s: searching('bakeries'), u: { status: 'unavailable', category: 'bakeries' } });
     });
   });
 
@@ -127,9 +133,9 @@ describe('search by type', () => {
         .expectObservable(searchesOf(helpers)({ chosen: '-b-p', loadPlaces: () => helpers.cold('---p', { p: PLACES }) }))
         .toBe('cb-p--f', {
           c: CLOSED,
-          b: searching('bakery'),
-          p: searching('pharmacy'),
-          f: { status: 'found', placeKind: 'pharmacy', places: [PHARMACY] }
+          b: searching('bakeries'),
+          p: searching('pharmacies'),
+          f: { status: 'found', category: 'pharmacies', places: [PHARMACY] }
         });
     });
   });
@@ -161,10 +167,10 @@ describe('places watched by the search by type', () => {
 describe('where the places found stand', () => {
   const Searches: Readonly<Record<string, KindSearch>> = {
     c: CLOSED,
-    s: { status: 'searching', placeKind: 'bakery' },
-    f: { status: 'found', placeKind: 'bakery', places: [CENTRAL, SOUTHERN] },
-    n: { status: 'none-near', placeKind: 'bakery' },
-    u: { status: 'unavailable', placeKind: 'bakery' }
+    s: { status: 'searching', category: 'bakeries' },
+    f: { status: 'found', category: 'bakeries', places: [CENTRAL, SOUTHERN] },
+    n: { status: 'none-near', category: 'bakeries' },
+    u: { status: 'unavailable', category: 'bakeries' }
   };
 
   it('is told once places are found', () => {

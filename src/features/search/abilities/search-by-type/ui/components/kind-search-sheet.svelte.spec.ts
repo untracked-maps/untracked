@@ -18,7 +18,7 @@ const bakery = (index: number): Place => ({
 
 const BAKERIES: KindSearch & { readonly status: 'found' } = {
   status: 'found',
-  placeKind: 'bakery',
+  category: 'bakeries',
   places: [bakery(0), ...Array.from({ length: 24 }, (_, index) => bakery(index + 1))]
 };
 
@@ -54,7 +54,7 @@ describe('places of a kind on a phone', () => {
 
   it('build no sheet until a kind is shown, so that the page starts lighter', async () => {
     await onPhone({ status: 'closed' });
-    await page.getByRole('button', { name: 'Bakeries' }).hover();
+    await page.getByRole('button', { name: 'Cafés' }).hover();
 
     expect(sheet()).toBeNull();
   });
@@ -81,7 +81,7 @@ describe('places of a kind on a phone', () => {
   it('go back to a peek when another kind is shown', async () => {
     const { search } = await onPhone(BAKERIES);
     await page.getByRole('button', { name: 'Enlarge the sheet' }).click();
-    search.next({ ...BAKERIES, placeKind: 'pharmacy' });
+    search.next({ ...BAKERIES, category: 'pharmacies' });
 
     await expect.element(sheet()).toHaveStyle({ blockSize: '150px' });
   });

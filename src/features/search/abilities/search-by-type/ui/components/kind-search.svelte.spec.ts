@@ -2,22 +2,23 @@ import { BehaviorSubject, of } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { type Locator, page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
-import type { Place, PlaceKind } from '../../../../domain/place';
+import type { Place } from '../../../../domain/place';
+import type { CategoryKey } from '../../domain/categories';
 import type { KindSearch } from '../../domain/search-by-type';
 import KindSearchPanel from './kind-search.svelte';
 
 const GARCIA: Place = {
-  id: 'boulangerie-garcia',
-  name: 'Boulangerie Garcia',
-  kind: 'bakery',
+  id: 'cafe-garcia',
+  name: 'Café Garcia',
+  kind: 'cafe',
   address: { houseNumber: '97', street: 'Rue de Paris', postalCode: '75019', addressLocality: 'Paris', addressCountry: 'FR' },
   coordinates: { longitude: 2.35, latitude: 48.86 },
   fame: 0
 };
 
-const NOEL: Place = { ...GARCIA, id: 'boulangerie-noel', name: 'Boulangerie Noel' };
+const NOEL: Place = { ...GARCIA, id: 'cafe-noel', name: 'Café Noel' };
 
-const FOUND: KindSearch = { status: 'found', placeKind: 'bakery', places: [GARCIA, NOEL] };
+const FOUND: KindSearch = { status: 'found', category: 'cafes', places: [GARCIA, NOEL] };
 
 type Seen = {
   readonly events: readonly string[];
@@ -29,8 +30,8 @@ const shown = async (initial: KindSearch = { status: 'closed' }): Promise<Seen> 
   const search = new BehaviorSubject(initial);
   await render(KindSearchPanel, {
     search,
-    onChoose: (kind?: PlaceKind): void => {
-      events.push(kind ?? 'closed');
+    onChoose: (category?: CategoryKey): void => {
+      events.push(category ?? 'closed');
     },
     onChoosePlace: (place: Place): void => {
       events.push(place.id);
@@ -43,17 +44,17 @@ const chips = (): Locator => page.getByRole('list', { name: 'Kinds of places' })
 
 const chip = (name: string): Locator => page.getByRole('button', { name, exact: true });
 
-const panel = (): Locator => page.getByRole('region', { name: 'Bakeries' });
+const panel = (): Locator => page.getByRole('region', { name: 'Cafés' });
 
-const GARCIA_BUTTON = /^Boulangerie Garcia/u;
+const GARCIA_BUTTON = /^Café Garcia/u;
 
 const garcia = (): Locator => page.getByRole('button', { name: GARCIA_BUTTON });
 
-describe('chips of the main kinds', () => {
-  it('offer restaurants, cafés, bakeries, pharmacies, supermarkets, bars and museums', async () => {
+describe('chips of the categories', () => {
+  it('offer restaurants, cafés and pharmacies, in that order', async () => {
     await shown();
 
-    await expect.element(chips()).toHaveTextContent('Restaurants Cafés Bakeries Pharmacies Supermarkets Bars Museums');
+    await expect.element(chips()).toHaveTextContent('Restaurants Cafés Pharmacies');
   });
 
   it('wait for the page to be ready', async () => {
@@ -64,59 +65,69 @@ describe('chips of the main kinds', () => {
       ready: false
     });
 
-    await expect.element(chip('Bakeries')).toBeDisabled();
+    await expect.element(chip('Cafés')).toBeDisabled();
   });
 
-  it('are not pressed while no kind is shown', async () => {
+  it('are not pressed while no category is shown', async () => {
     await shown();
 
-    await expect.element(chip('Bakeries')).toHaveAttribute('aria-pressed', 'false');
+    await expect.element(chip('Cafés')).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('show which kind is shown', async () => {
+  it('show which category is shown', async () => {
     await shown(FOUND);
 
-    await expect.element(chip('Bakeries')).toHaveAttribute('aria-pressed', 'true');
+    await expect.element(chip('Cafés')).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('choose the kind pressed', async () => {
+  it('take a darker shade of the colour of the category shown', async () => {
+    await shown(FOUND);
+
+    expect(getComputedStyle(chip('Cafés').element()).backgroundColor).toBe('color(srgb 0.691451 0.345726 0.140078)');
+  });
+
+  it('write the category shown in white', async () => {
+    await shown(FOUND);
+
+    await expect.element(chip('Cafés')).toHaveStyle({ color: 'rgb(255, 255, 255)' });
+  });
+
+  it('choose the category pressed', async () => {
     const { events } = await shown();
 
     await chip('Pharmacies').click();
 
-    expect(events).toEqual(['pharmacy']);
+    expect(events).toEqual(['pharmacies']);
   });
 
-  it('close the kind shown when pressed again', async () => {
+  it('close the category shown when pressed again', async () => {
     const { events } = await shown(FOUND);
 
-    await chip('Bakeries').click();
+    await chip('Cafés').click();
 
     expect(events).toEqual(['closed']);
   });
 });
 
-describe('places of the kind shown', () => {
-  it('are not shown while no kind is chosen', async () => {
+describe('places of the category shown', () => {
+  it('are not shown while no category is chosen', async () => {
     await shown();
 
     await expect.element(page.getByRole('region')).not.toBeInTheDocument();
   });
 
-  it('are listed under the name of the kind', async () => {
+  it('are listed under the name of the category', async () => {
     await shown(FOUND);
 
     await expect
       .element(panel().getByRole('list'))
-      .toHaveTextContent(
-        'Boulangerie Garcia Bakery · 97 Rue de Paris, 75019 Paris Boulangerie Noel Bakery · 97 Rue de Paris, 75019 Paris'
-      );
+      .toHaveTextContent('Café Garcia Café · 97 Rue de Paris, 75019 Paris Café Noel Café · 97 Rue de Paris, 75019 Paris');
   });
 
   it('give the kind and address of each place', async () => {
     await shown(FOUND);
 
-    await expect.element(garcia()).toHaveAccessibleName('Boulangerie Garcia Bakery · 97 Rue de Paris, 75019 Paris');
+    await expect.element(garcia()).toHaveAccessibleName('Café Garcia Café · 97 Rue de Paris, 75019 Paris');
   });
 
   it('tell the visitor how many are found', async () => {
@@ -126,7 +137,7 @@ describe('places of the kind shown', () => {
   });
 
   it('tell the visitor the search is on its way, without a list', async () => {
-    await shown({ status: 'searching', placeKind: 'bakery' });
+    await shown({ status: 'searching', category: 'cafes' });
 
     await expect.element(panel().getByRole('list')).not.toBeInTheDocument();
   });
@@ -142,19 +153,19 @@ describe('places of the kind shown', () => {
 
     await garcia().click();
 
-    expect(events).toEqual(['boulangerie-garcia']);
+    expect(events).toEqual(['cafe-garcia']);
   });
 
-  it('give the focus back to the chip of the kind once a place is chosen', async () => {
+  it('give the focus back to the chip of the category once a place is chosen', async () => {
     await shown(FOUND);
 
     await garcia().click();
 
-    await expect.element(chip('Bakeries')).toHaveFocus();
+    await expect.element(chip('Cafés')).toHaveFocus();
   });
 });
 
-describe('closing the places of a kind', () => {
+describe('closing the places of a category', () => {
   it('happens once the search is closed', async () => {
     const { search } = await shown(FOUND);
 

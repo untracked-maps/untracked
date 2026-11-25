@@ -35,12 +35,53 @@ describe('the family of a fake place', () => {
     ['pharmacy', 'health'],
     ['hospital', 'health'],
     ['hotel', 'stay'],
-    ['station', 'train']
+    ['station', 'train'],
+    ['fast-food', 'food'],
+    ['ice-cream', 'food'],
+    ['chocolate', 'food'],
+    ['deli', 'food'],
+    ['nightclub', 'bar'],
+    ['marketplace', 'shop'],
+    ['greengrocer', 'shop'],
+    ['cheese', 'shop'],
+    ['butcher', 'shop'],
+    ['wine', 'shop'],
+    ['clothes', 'shop'],
+    ['newsagent', 'shop'],
+    ['diy', 'shop'],
+    ['mobile-phone', 'shop'],
+    ['toys', 'shop'],
+    ['stationery', 'shop'],
+    ['music', 'shop'],
+    ['optician', 'shop'],
+    ['pet-shop', 'shop'],
+    ['atm', 'money'],
+    ['bank', 'money'],
+    ['doctor', 'health'],
+    ['veterinary', 'health'],
+    ['escape-game', 'culture'],
+    ['playground', 'nature'],
+    ['cemetery', 'nature'],
+    ['fuel', 'fuel'],
+    ['charging-station', 'fuel']
   ] as const)('of a %s is %s', (kind, family) => {
     expect(onMap(place(kind, 0)).family).toBe(family);
   });
 
-  it.each(['parking', 'post-office', 'school'] as const)('is missing for a %s', (kind) => {
+  it.each([
+    'parking',
+    'post-office',
+    'school',
+    'laundry',
+    'townhall',
+    'police',
+    'coworking',
+    'fitness-centre',
+    'swimming-pool',
+    'bicycle',
+    'toilets',
+    'drinking-water'
+  ] as const)('is missing for a %s', (kind) => {
     expect(onMap(place(kind, 0))).not.toHaveProperty('family');
   });
 });

@@ -1,5 +1,5 @@
 import { Faker } from '@faker-js/faker';
-import type { FakePlace, FakePostalAddress, GeneratedKind } from './fake-place';
+import { ADDED_KINDS, type DrawnKind, type FakePlace, type FakePostalAddress, type GeneratedKind } from './fake-place';
 import { fakeReach } from './fake-reach';
 import { fakeTags } from './fake-tags';
 import type { FakeZone } from './fake-zone';
@@ -13,6 +13,10 @@ const REACH_SEED = 1871;
 
 const TAGS_SEED = 1905;
 
+const ADDED_SEEDS = { places: 1944, reach: 1958, tags: 1968 };
+
+const PLACES_PER_ADDED_KIND = 6;
+
 const PRECISION = 5;
 
 const FAMOUS_SHARE = 0.05;
@@ -23,7 +27,7 @@ const HIGHEST_NUMBER = 150;
 
 const ID_DIGITS = 4;
 
-const KIND_WEIGHTS: readonly { readonly weight: number; readonly value: GeneratedKind }[] = [
+const KIND_WEIGHTS: readonly { readonly weight: number; readonly value: DrawnKind }[] = [
   { weight: 18, value: 'restaurant' },
   { weight: 12, value: 'cafe' },
   { weight: 8, value: 'bar' },
@@ -85,10 +89,9 @@ const cuisineOf = (faker: Faker, kind: GeneratedKind): Pick<FakePlace, 'cuisine'
 const fameOf = (faker: Faker): number =>
   faker.datatype.boolean({ probability: FAMOUS_SHARE }) ? faker.number.int({ min: 1, max: MOST_FAME }) : 0;
 
-const generatedPlace =
+const placeOf =
   ({ faker, cuisines, reach, tags }: Fakers, zone: FakeZone) =>
-  (index: number): FakePlace => {
-    const kind = faker.helpers.weightedArrayElement(KIND_WEIGHTS);
+  (kind: GeneratedKind, index: number): FakePlace => {
     const name = placeNameOf(kind, { firstName: faker.person.firstName(), lastName: faker.person.lastName() });
     return {
       id: idOf(zone, index),
@@ -106,14 +109,27 @@ const generatedPlace =
     };
   };
 
+const fakersOf = (
+  zone: FakeZone,
+  seeds: { readonly places: number; readonly reach: number; readonly tags: number }
+): Fakers => ({
+  faker: new Faker({ locale: [...zone.locale], seed: seeds.places }),
+  cuisines: new Faker({ locale: [...zone.locale], seed: CUISINE_SEED }),
+  reach: new Faker({ locale: [...zone.locale], seed: seeds.reach }),
+  tags: new Faker({ locale: [...zone.locale], seed: seeds.tags })
+});
+
 const generatedPlaces = (zone: FakeZone, count: number): readonly FakePlace[] => {
-  const fakers: Fakers = {
-    faker: new Faker({ locale: [...zone.locale], seed: SEED }),
-    cuisines: new Faker({ locale: [...zone.locale], seed: CUISINE_SEED }),
-    reach: new Faker({ locale: [...zone.locale], seed: REACH_SEED }),
-    tags: new Faker({ locale: [...zone.locale], seed: TAGS_SEED })
-  };
-  return Array.from({ length: count }, (_, index) => generatedPlace(fakers, zone)(index));
+  const fakers = fakersOf(zone, { places: SEED, reach: REACH_SEED, tags: TAGS_SEED });
+  const place = placeOf(fakers, zone);
+  return Array.from({ length: count }, (_, index) => place(fakers.faker.helpers.weightedArrayElement(KIND_WEIGHTS), index));
 };
 
-export { generatedPlaces };
+const addedPlaces = (zone: FakeZone, firstIndex: number): readonly FakePlace[] => {
+  const place = placeOf(fakersOf(zone, ADDED_SEEDS), zone);
+  return ADDED_KINDS.flatMap((kind, rank) =>
+    Array.from({ length: PLACES_PER_ADDED_KIND }, (_, index) => place(kind, firstIndex + rank * PLACES_PER_ADDED_KIND + index))
+  );
+};
+
+export { addedPlaces, generatedPlaces };

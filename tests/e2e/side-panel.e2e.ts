@@ -1,18 +1,16 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
 import { violationsOf } from './accessibility';
+import { bakeries, bakeriesAtTheCentre } from './home-page';
 import { refuseOpenFreeMap } from './openfreemap';
 
 const PANEL_END = 16 + 400;
-
-const bakeries = (page: Page): Locator => page.getByRole('region', { name: 'Bakeries' });
 
 const panelOf = (region: Locator): Locator => region.locator('xpath=ancestor::*[contains(@class, "sheet")][1]');
 
 const credit = (page: Page): Locator => page.getByRole('link', { name: '© OpenStreetMap' });
 
 const bakeriesShown = async (page: Page): Promise<void> => {
-  await page.goto('./#map=14/48.8566/2.3522');
-  await page.getByRole('list', { name: 'Kinds of places' }).getByText('Bakeries').click();
+  await bakeriesAtTheCentre(page);
   await expect(bakeries(page)).toContainText('25 places');
 };
 

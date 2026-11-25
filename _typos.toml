@@ -2,5 +2,5 @@
 extend-exclude = ["LICENSE", "CHANGELOG.md", "pnpm-lock.yaml"]
 
 [type.localized]
-extend-glob = ["fr.json", "fr.md", "kind-words.json", "street-words.json"]
+extend-glob = ["fr.json", "fr.md", "category-words.json", "street-words.json"]
 check-file = false

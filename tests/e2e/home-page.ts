@@ -10,6 +10,8 @@ const BEFORE_THE_APP: string = 'about:blank';
 
 const NOEL = /^Boulangerie Noel/u;
 
+const BAKERIES_NEAR_YOU = /^Bakeries near you/u;
+
 const theMap = (page: Page): Locator => page.getByRole('region', { name: 'Map', exact: true });
 
 const spotCard = (page: Page): Locator => page.getByRole('region', { name: 'Rue de Rivoli' });
@@ -50,8 +52,18 @@ const spotInspected = async (page: Page): Promise<void> => {
   await spotCard(page).waitFor();
 };
 
+const bakeriesChosen = async (page: Page): Promise<void> => {
+  await searchField(page).fill('boulangerie');
+  await page.getByRole('button', { name: BAKERIES_NEAR_YOU }).click();
+};
+
+const bakeriesAtTheCentre = async (page: Page): Promise<void> => {
+  await page.goto('./#map=14/48.8566/2.3522');
+  await bakeriesChosen(page);
+};
+
 const bakeriesListed = async (page: Page): Promise<void> => {
-  await page.getByRole('button', { name: 'Bakeries', exact: true }).click();
+  await bakeriesChosen(page);
   await bakeries(page).getByRole('button', { name: NOEL }).waitFor();
 };
 
@@ -73,6 +85,8 @@ export {
   anySpotCard,
   BEFORE_THE_APP,
   bakeries,
+  bakeriesAtTheCentre,
+  bakeriesChosen,
   bakeriesListed,
   IN_THE_APP,
   louvreOpened,

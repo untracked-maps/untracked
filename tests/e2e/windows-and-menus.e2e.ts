@@ -72,7 +72,7 @@ test('closes the map menu when a kind of places is touched, without reaching it'
   const pharmacies = page.getByRole('button', { name: 'Pharmacies', exact: true });
   const chip = (await pharmacies.boundingBox()) ?? NOWHERE;
 
-  await mapMenu(page).click({ position: { x: chip.x + 4, y: chip.y + chip.height / 2 } });
+  await mapMenu(page).click({ position: { x: chip.x + chip.width - 4, y: chip.y + chip.height / 2 } });
   await mapMenu(page).waitFor({ state: 'hidden' });
 
   await expect(pharmacies).not.toBeFocused();

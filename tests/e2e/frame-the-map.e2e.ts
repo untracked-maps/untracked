@@ -1,6 +1,16 @@
 import { expect, type Locator, type Page, test } from '@playwright/test';
 import { EIFFEL_TOWER_FROM_THE_CENTRE, eiffelTowerDrawn, WEST_OF_THE_EIFFEL_TOWER } from './eiffel-tower';
-import { IN_THE_APP, louvreOpened, louvreSearched, louvreSheet, opened, placesFound, theMap } from './home-page';
+import {
+  bakeries,
+  bakeriesAtTheCentre,
+  IN_THE_APP,
+  louvreOpened,
+  louvreSearched,
+  louvreSheet,
+  opened,
+  placesFound,
+  theMap
+} from './home-page';
 import { refuseOpenFreeMap } from './openfreemap';
 
 type Area = {
@@ -53,11 +63,8 @@ const outside = async (marks: Locator, { top, right, bottom, left }: Area): Prom
   ).length;
 };
 
-const bakeries = (page: Page): Locator => page.getByRole('region', { name: 'Bakeries' });
-
 const bakeriesListed = async (page: Page): Promise<void> => {
-  await page.goto('./#map=14/48.8566/2.3522');
-  await page.getByRole('button', { name: 'Bakeries', exact: true }).click();
+  await bakeriesAtTheCentre(page);
   await expect(bakeries(page)).toContainText('25 places');
 };
 
