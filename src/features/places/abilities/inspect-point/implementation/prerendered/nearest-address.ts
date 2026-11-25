@@ -1,9 +1,9 @@
 import { map, type Observable, shareReplay } from 'rxjs';
-import type { Coordinates, ReverseGeocode, SpotAddress } from '../../domain/inspect-point';
+import type { Coordinates, PostalAddress, ReverseGeocode, SpotAddress } from '../../domain/inspect-point';
 import type { KnownAddress, LoadAddresses } from './prerendered-addresses';
 
 type Nearest = {
-  readonly address: string;
+  readonly address: PostalAddress;
   readonly metres: number;
 };
 

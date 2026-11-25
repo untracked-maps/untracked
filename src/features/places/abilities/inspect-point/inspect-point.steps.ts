@@ -30,7 +30,13 @@ Given('these addresses on the map', function theseAddressesOnTheMap(this: Inspec
   this.addresses = of(
     table.hashes().map(
       (row): KnownAddress => ({
-        address: row['address'] ?? '',
+        address: {
+          ...(row['number'] ? { houseNumber: row['number'] } : {}),
+          street: row['street'] ?? '',
+          postalCode: row['postcode'] ?? '',
+          addressLocality: row['city'] ?? '',
+          addressCountry: 'FR'
+        },
         coordinates: { longitude: Number(row['longitude']), latitude: Number(row['latitude']) }
       })
     )
@@ -57,9 +63,15 @@ When('the visitor dismisses the spot', function theVisitorDismisses(this: Inspec
   this.dismissed.next();
 });
 
-Then('the visitor reads the address {string}', function theVisitorReadsTheAddress(this: InspectPointWorld, address: string) {
-  assert.equal(this.spot.kind === 'address' && this.spot.address, address);
-});
+Then(
+  'the visitor reads the address {string} in {string}',
+  function theVisitorReadsTheAddress(this: InspectPointWorld, street: string, postcode: string) {
+    assert.deepEqual(this.spot.kind === 'address' && [this.spot.address.street, this.spot.address.postalCode], [
+      street,
+      postcode
+    ]);
+  }
+);
 
 Then(
   'the visitor is told that there is no address at longitude {float} and latitude {float}',

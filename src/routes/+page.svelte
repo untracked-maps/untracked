@@ -243,6 +243,8 @@
     spot={inspectedSpot}
     onClose={data.spots.dismiss}
     onShare={data.links.share}
+    onCopy={data.places.copy}
+    vibrate={data.places.vibrate}
     onSheetHeight={data.sheetHeights.of('spot')}
     closings={data.closing.of('spot').closings}
   />

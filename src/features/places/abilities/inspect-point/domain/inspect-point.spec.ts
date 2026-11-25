@@ -1,7 +1,14 @@
 import { type Observable, of, Subject, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
-import { type Coordinates, type InspectedSpot, inspectPoint, type ReverseGeocode, type SpotAddress } from './inspect-point';
+import {
+  type Coordinates,
+  type InspectedSpot,
+  inspectPoint,
+  type PostalAddress,
+  type ReverseGeocode,
+  type SpotAddress
+} from './inspect-point';
 
 const LOUVRE: Coordinates = { longitude: 2.337_64, latitude: 48.860_61 };
 
@@ -9,12 +16,19 @@ const SEINE: Coordinates = { longitude: 2.34, latitude: 48.858 };
 
 const SPOTS: Readonly<Record<string, Coordinates>> = { l: LOUVRE, s: SEINE };
 
-const RIVOLI: SpotAddress = { kind: 'address', address: 'Rue de Rivoli, 75001 Paris' };
+const RIVOLI_STREET: PostalAddress = {
+  street: 'Rue de Rivoli',
+  postalCode: '75001',
+  addressLocality: 'Paris',
+  addressCountry: 'FR'
+};
+
+const RIVOLI: SpotAddress = { kind: 'address', address: RIVOLI_STREET };
 
 const STATES: Readonly<Record<string, InspectedSpot>> = {
   n: { kind: 'none' },
   l: { kind: 'looking', spot: LOUVRE },
-  a: { kind: 'address', spot: LOUVRE, address: 'Rue de Rivoli, 75001 Paris' },
+  a: { kind: 'address', spot: LOUVRE, address: RIVOLI_STREET },
   k: { kind: 'looking', spot: SEINE },
   x: { kind: 'no-address', spot: SEINE },
   u: { kind: 'unavailable', spot: LOUVRE }
@@ -103,7 +117,7 @@ describe('inspect point, over time', () => {
       .unsubscribe();
     first.unsubscribe();
 
-    expect(seen).toEqual([{ kind: 'address', spot: LOUVRE, address: 'Rue de Rivoli, 75001 Paris' }]);
+    expect(seen).toEqual([{ kind: 'address', spot: LOUVRE, address: RIVOLI_STREET }]);
   });
 
   it('stops inspecting once nobody views the spot', () => {

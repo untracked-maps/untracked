@@ -8,13 +8,13 @@ import SpotCard from './spot-card.svelte';
 const RIVOLI: InspectedSpot = {
   kind: 'address',
   spot: { longitude: 2.337_64, latitude: 48.860_61 },
-  address: 'Rue de Rivoli, 75001 Paris'
+  address: { street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' }
 };
 
 const RENNES: InspectedSpot = {
   kind: 'address',
   spot: { longitude: 2.329, latitude: 48.851 },
-  address: '57 Rue de Rennes, 75006 Paris'
+  address: { houseNumber: '57', street: 'Rue de Rennes', postalCode: '75006', addressLocality: 'Paris', addressCountry: 'FR' }
 };
 
 const sheet = (): HTMLElement | null => document.querySelector<HTMLElement>('.sheet');

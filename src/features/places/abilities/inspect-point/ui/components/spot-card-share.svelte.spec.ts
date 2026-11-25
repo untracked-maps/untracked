@@ -7,7 +7,11 @@ import SpotCard from './spot-card.svelte';
 
 const PALAIS_ROYAL: Coordinates = { longitude: 2.3371, latitude: 48.8635 };
 
-const RIVOLI: InspectedSpot = { kind: 'address', spot: PALAIS_ROYAL, address: 'Rue de Rivoli, 75001 Paris' };
+const RIVOLI: InspectedSpot = {
+  kind: 'address',
+  spot: PALAIS_ROYAL,
+  address: { street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' }
+};
 
 const sharedFrom = async (): Promise<readonly unknown[]> => {
   const shared: unknown[] = [];

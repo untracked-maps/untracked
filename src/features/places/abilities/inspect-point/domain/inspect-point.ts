@@ -5,7 +5,7 @@ type Coordinates = {
   readonly latitude: number;
 };
 
-type SpotAddress = { readonly kind: 'address'; readonly address: string } | { readonly kind: 'no-address' };
+type SpotAddress = { readonly kind: 'address'; readonly address: PostalAddress } | { readonly kind: 'no-address' };
 
 type ReverseGeocode = (spot: Coordinates) => Observable<SpotAddress>;
 
@@ -18,10 +18,18 @@ type InspectPointInputs = {
   readonly dismissed: Observable<void>;
 };
 
+type PostalAddress = {
+  readonly houseNumber?: string;
+  readonly street?: string;
+  readonly postalCode: string;
+  readonly addressLocality: string;
+  readonly addressCountry: string;
+};
+
 type InspectedSpot =
   | { readonly kind: 'none' }
   | { readonly kind: 'looking'; readonly spot: Coordinates }
-  | { readonly kind: 'address'; readonly spot: Coordinates; readonly address: string }
+  | { readonly kind: 'address'; readonly spot: Coordinates; readonly address: PostalAddress }
   | { readonly kind: 'no-address'; readonly spot: Coordinates }
   | { readonly kind: 'unavailable'; readonly spot: Coordinates };
 
@@ -51,4 +59,4 @@ const inspectPoint =
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-export { type Coordinates, type InspectedSpot, inspectPoint, type ReverseGeocode, type SpotAddress };
+export { type Coordinates, type InspectedSpot, inspectPoint, type PostalAddress, type ReverseGeocode, type SpotAddress };

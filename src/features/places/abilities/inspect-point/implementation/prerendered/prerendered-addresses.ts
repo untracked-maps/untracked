@@ -1,8 +1,8 @@
 import { defer, map, type Observable } from 'rxjs';
-import type { Coordinates } from '../../domain/inspect-point';
+import type { Coordinates, PostalAddress } from '../../domain/inspect-point';
 
 type KnownAddress = {
-  readonly address: string;
+  readonly address: PostalAddress;
   readonly coordinates: Coordinates;
 };
 
@@ -10,21 +10,36 @@ type LoadAddresses = () => Observable<readonly KnownAddress[]>;
 
 type FetchFile = (url: string) => Promise<Response>;
 
+type Fields = Readonly<Record<string, unknown>>;
+
+const isFields = (value: unknown): value is Fields => typeof value === 'object' && value !== null;
+
 const isCoordinates = (value: unknown): value is Coordinates =>
-  value instanceof Object &&
-  'longitude' in value &&
-  typeof value.longitude === 'number' &&
-  'latitude' in value &&
-  typeof value.latitude === 'number';
+  isFields(value) && typeof value['longitude'] === 'number' && typeof value['latitude'] === 'number';
 
-const isKnownAddress = (value: unknown): value is KnownAddress =>
-  value instanceof Object &&
-  'address' in value &&
-  typeof value.address === 'string' &&
-  'coordinates' in value &&
-  isCoordinates(value.coordinates);
+const houseNumberOf = ({ houseNumber }: Fields): readonly Pick<PostalAddress, 'houseNumber'>[] => {
+  if (houseNumber === undefined) {
+    return [{}];
+  }
+  return typeof houseNumber === 'string' ? [{ houseNumber }] : [];
+};
 
-const addressesIn = (file: unknown): readonly KnownAddress[] => (Array.isArray(file) ? file.filter(isKnownAddress) : []);
+const knownOf = (fields: Fields): readonly KnownAddress[] => {
+  const { street, postalCode, addressLocality, addressCountry, coordinates } = fields;
+  return typeof street === 'string' &&
+    typeof postalCode === 'string' &&
+    typeof addressLocality === 'string' &&
+    typeof addressCountry === 'string' &&
+    isCoordinates(coordinates)
+    ? houseNumberOf(fields).map((number) => ({
+        address: { ...number, street, postalCode, addressLocality, addressCountry },
+        coordinates: { longitude: coordinates.longitude, latitude: coordinates.latitude }
+      }))
+    : [];
+};
+
+const addressesIn = (file: unknown): readonly KnownAddress[] =>
+  Array.isArray(file) ? file.flatMap((value: unknown) => (isFields(value) ? knownOf(value) : [])) : [];
 
 const contentOf = async (response: Response): Promise<unknown> => {
   if (!response.ok) {

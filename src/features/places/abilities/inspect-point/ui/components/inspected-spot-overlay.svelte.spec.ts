@@ -6,7 +6,11 @@ import { page, userEvent } from 'vitest/browser';
 import type { Coordinates, InspectedSpot } from '../../domain/inspect-point';
 import { inspectedSpotOverlay } from './inspected-spot-overlay';
 
-const RIVOLI: InspectedSpot = { kind: 'address', spot: { longitude: 2.337_64, latitude: 48.860_61 }, address: 'Rue de Rivoli' };
+const RIVOLI: InspectedSpot = {
+  kind: 'address',
+  spot: { longitude: 2.337_64, latitude: 48.860_61 },
+  address: { street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' }
+};
 
 const NONE: InspectedSpot = { kind: 'none' };
 

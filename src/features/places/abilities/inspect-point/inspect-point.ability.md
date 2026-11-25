@@ -9,16 +9,16 @@
 ### Background:
 
 - Given these addresses on the map
-  | address                        | longitude | latitude |
-  | ------------------------------ | --------- | -------- |
-  | 12 Rue de Tolbiac, 75013 Paris | 2.3600    | 48.8300  |
-  | Rue de Rivoli, 75001 Paris     | 2.3380    | 48.8605  |
-  | 97 Rue de Paris, 75019 Paris   | 2.4400    | 48.9000  |
+  | number | street         | postcode | city  | longitude | latitude |
+  | ------ | -------------- | -------- | ----- | --------- | -------- |
+  | 12     | Rue de Tolbiac | 75013    | Paris | 2.3600    | 48.8300  |
+  |        | Rue de Rivoli  | 75001    | Paris | 2.3380    | 48.8605  |
+  | 97     | Rue de Paris   | 75019    | Paris | 2.4400    | 48.9000  |
 
 ### Scenario: The visitor inspects a spot by the Louvre
 
 - When the visitor inspects the spot at longitude 2.3377 and latitude 48.8606
-- Then the visitor reads the address "Rue de Rivoli, 75001 Paris"
+- Then the visitor reads the address "Rue de Rivoli" in "75001"
 
 ### Scenario: The visitor inspects a spot far from any address
 
@@ -44,17 +44,17 @@
 ### Background:
 
 - Given these addresses on the map
-  | address                        | longitude | latitude |
-  | ------------------------------ | --------- | -------- |
-  | 12 Rue de Tolbiac, 75013 Paris | 2.3600    | 48.8300  |
-  | Rue de Rivoli, 75001 Paris     | 2.3380    | 48.8605  |
-  | 97 Rue de Paris, 75019 Paris   | 2.4400    | 48.9000  |
+  | number | street         | postcode | city  | longitude | latitude |
+  | ------ | -------------- | -------- | ----- | --------- | -------- |
+  | 12     | Rue de Tolbiac | 75013    | Paris | 2.3600    | 48.8300  |
+  |        | Rue de Rivoli  | 75001    | Paris | 2.3380    | 48.8605  |
+  | 97     | Rue de Paris   | 75019    | Paris | 2.4400    | 48.9000  |
 
 ### Scenario: The visitor inspects another spot
 
 - When the visitor inspects the spot at longitude 2.6 and latitude 48.95
 - And the visitor inspects the spot at longitude 2.3377 and latitude 48.8606
-- Then the visitor reads the address "Rue de Rivoli, 75001 Paris"
+- Then the visitor reads the address "Rue de Rivoli" in "75001"
 
 ### Scenario: The visitor dismisses the spot
 

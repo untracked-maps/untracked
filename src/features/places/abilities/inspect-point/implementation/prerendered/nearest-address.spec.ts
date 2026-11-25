@@ -8,8 +8,15 @@ const METRES_PER_DEGREE = 111_320;
 
 const EQUATOR: Coordinates = { longitude: 0, latitude: 0 };
 
-const northOfTheEquator = (address: string, metres: number): KnownAddress => ({
-  address,
+const streetNamed = (street: string): KnownAddress['address'] => ({
+  street,
+  postalCode: '00000',
+  addressLocality: 'Null Island',
+  addressCountry: 'FR'
+});
+
+const northOfTheEquator = (street: string, metres: number): KnownAddress => ({
+  address: streetNamed(street),
   coordinates: { longitude: 0, latitude: metres / METRES_PER_DEGREE }
 });
 
@@ -34,38 +41,38 @@ describe('nearest address, by distance', () => {
   it('gives the nearest address', async () => {
     expect(await addressAt(EQUATOR, [northOfTheEquator('2 Rue Far', 150), northOfTheEquator('1 Rue Near', 50)])).toEqual({
       kind: 'address',
-      address: '1 Rue Near'
+      address: streetNamed('1 Rue Near')
     });
   });
 
   it('keeps the nearest address when farther ones follow', async () => {
     expect(await addressAt(EQUATOR, [northOfTheEquator('1 Rue Near', 50), northOfTheEquator('2 Rue Far', 150)])).toEqual({
       kind: 'address',
-      address: '1 Rue Near'
+      address: streetNamed('1 Rue Near')
     });
   });
 
   it('measures from a spot away from the prime meridian', async () => {
     const spot: Coordinates = { longitude: 2, latitude: 0 };
     const eastward: KnownAddress = {
-      address: '1 East Street',
+      address: streetNamed('1 East Street'),
       coordinates: { longitude: 2 + 150 / METRES_PER_DEGREE, latitude: 0 }
     };
 
-    expect(await addressAt(spot, [eastward])).toEqual({ kind: 'address', address: '1 East Street' });
+    expect(await addressAt(spot, [eastward])).toEqual({ kind: 'address', address: streetNamed('1 East Street') });
   });
 
   it('gives the first of two addresses as near as each other', async () => {
     expect(await addressAt(EQUATOR, [northOfTheEquator('1 Rue First', 50), northOfTheEquator('2 Rue Second', 50)])).toEqual({
       kind: 'address',
-      address: '1 Rue First'
+      address: streetNamed('1 Rue First')
     });
   });
 
   it('gives an address 200 metres away', async () => {
     expect(await addressAt(EQUATOR, [northOfTheEquator('1 Rue Edge', 200)])).toEqual({
       kind: 'address',
-      address: '1 Rue Edge'
+      address: streetNamed('1 Rue Edge')
     });
   });
 
@@ -76,16 +83,16 @@ describe('nearest address, by distance', () => {
   it('measures longitudes shorter away from the equator', async () => {
     const sixtyNorth: Coordinates = { longitude: 0, latitude: 60 };
     const eastward: KnownAddress = {
-      address: '1 Nordic Street',
+      address: streetNamed('1 Nordic Street'),
       coordinates: { longitude: 380 / METRES_PER_DEGREE, latitude: 60 }
     };
 
-    expect(await addressAt(sixtyNorth, [eastward])).toEqual({ kind: 'address', address: '1 Nordic Street' });
+    expect(await addressAt(sixtyNorth, [eastward])).toEqual({ kind: 'address', address: streetNamed('1 Nordic Street') });
   });
 
   it('measures longitudes westward too', async () => {
     const westward: KnownAddress = {
-      address: '1 West Street',
+      address: streetNamed('1 West Street'),
       coordinates: { longitude: -250 / METRES_PER_DEGREE, latitude: 0 }
     };
 
@@ -117,7 +124,7 @@ describe('nearest address, once loaded', () => {
     const reverseGeocode = nearestAddress(loadAddresses);
     await firstValueFrom(reverseGeocode(EQUATOR)).catch(() => undefined);
 
-    expect(await firstValueFrom(reverseGeocode(EQUATOR))).toEqual({ kind: 'address', address: '1 Rue Near' });
+    expect(await firstValueFrom(reverseGeocode(EQUATOR))).toEqual({ kind: 'address', address: streetNamed('1 Rue Near') });
   });
 
   it('loads no address before a spot is inspected', () => {

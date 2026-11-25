@@ -6,9 +6,11 @@
   import { closedWhenAsked } from '#libraries/design/closable';
   import CloseButton from '#libraries/design/close-button.svelte';
   import Floating from '#libraries/design/floating.svelte';
+  import { longPress, type Vibrate } from '#libraries/design/long-press';
   import ShareButton from '#libraries/design/share-button.svelte';
   import WarningIcon from '#libraries/design/warning-icon.svelte';
   import '#libraries/design/tokens.css';
+  import { addressLine } from '#libraries/postal-address/address-line.presenter';
   import type { Coordinates, InspectedSpot } from '../../domain/inspect-point';
   import { spotCardOf } from './spot-card.presenter';
 
@@ -18,13 +20,26 @@
     readonly onSheetHeight?: (height: number) => void;
     readonly closings?: Observable<unknown>;
     readonly onShare?: (shared: { readonly title: string; readonly at: Coordinates }) => void;
+    readonly onCopy?: (text: string) => void;
+    readonly vibrate?: Vibrate;
   };
 
-  const { spot, onClose, onSheetHeight, closings = NEVER, onShare }: Props = $props();
+  const {
+    spot,
+    onClose,
+    onSheetHeight,
+    closings = NEVER,
+    onShare,
+    onCopy = (): void => undefined,
+    vibrate = (): void => undefined
+  }: Props = $props();
 
   const uid = $props.id();
 
-  const card = $derived($spot.kind === 'none' ? undefined : { ...spotCardOf($spot), at: $spot.spot });
+  const card = $derived($spot.kind === 'none' ? undefined : { ...spotCardOf($spot, $addressLine), at: $spot.spot });
+
+  const copying = (address: string | undefined): ReturnType<typeof longPress> | undefined =>
+    address === undefined ? undefined : longPress({ onPress: (): void => onCopy(address), vibrate });
 </script>
 
 <div class="spot" aria-live="polite">
@@ -42,7 +57,7 @@
             {#if onShare !== undefined}
               <ShareButton label={m.share_link()} onclick={(): void => onShare({ title: card.title, at: card.at })} />
             {/if}
-            <hgroup>
+            <hgroup class={{ address: card.address !== undefined }} {@attach copying(card.address)}>
               <h2 id="{uid}-title">{card.title}</h2>
               <p>{card.subtitle}</p>
             </hgroup>
@@ -90,6 +105,11 @@
 
   hgroup {
     flex: 1;
+  }
+
+  .address {
+    user-select: none;
+    -webkit-touch-callout: none;
   }
 
   h2 {
