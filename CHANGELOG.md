@@ -1,3 +1,10 @@
+## [1.26.1](https://github.com/untracked-maps/untracked/compare/v1.26.0...v1.26.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* draw the basemap from OpenFreeMap's backup when blocked ([#110](https://github.com/untracked-maps/untracked/issues/110)) ([5cc9c09](https://github.com/untracked-maps/untracked/commit/5cc9c09018235c8627b9d713ae2e46730a7863a2)), closes [#109](https://github.com/untracked-maps/untracked/issues/109)
+
 # [1.26.0](https://github.com/untracked-maps/untracked/compare/v1.25.0...v1.26.0) (2026-11-25)
 
 
