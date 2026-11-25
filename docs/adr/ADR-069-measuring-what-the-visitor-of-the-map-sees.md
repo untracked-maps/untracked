@@ -47,7 +47,7 @@ oertio chose option A on 2026-11-25, and set C aside.
 
 ## Consequences
 
-- The deployment is no longer blocked by a Total Blocking Time between 3,500 and 5,000 ms on the map pages.
+- The deployment is no longer blocked by a Total Blocking Time between 3,500 and 7,000 ms on the map pages.
 - The budget guards against an aberrant page rather than against a regression of a few hundred milliseconds: the weight of the script, the same on every machine, stays the guard against the latter, and the review of each pull request reads the reported measures.
 - The measure still counts the software drawing four times over: it does not tell what a visitor with a GPU feels.
 
@@ -56,3 +56,7 @@ oertio chose option A on 2026-11-25, and set C aside.
 - **A runner with a GPU**: the measure closest to a phone, but paid; set aside for now, and open again if the options above are not enough.
 - **Measuring on visitors' devices**: what the native platforms rely on most, but it would collect data from visitors, against the app's purpose.
 - **Loading the map after the page is interactive**: already set aside by [ADR-022](ADR-022-lighthouse-budgets-per-page.md): the map is the page's content.
+
+## Update, 2026-11-25: 7,000 ms
+
+The first Release run of `main` under this budget, for #105, measured `/` at 5,470, 2,986 and 5,205 ms, with benchmark indexes from 1,669 to 2,188, and `/fr` at 1,850, 2,030 and 2,844 ms. Over the two runs of that day, three of the six runs of `/` went over 5,000 ms: the budget held only through the one faster run in each. oertio asked to raise the budget while it stays that tight. The map pages' Total Blocking Time may now reach **7,000 ms**, about 28 % above the slowest single run seen, 5,470 ms, so that one fast run in three is no longer needed for the audit to pass.
