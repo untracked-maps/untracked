@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/untracked-maps/untracked/compare/v1.25.0...v1.26.0) (2026-11-25)
+
+
+### Features
+
+* offer the former app's categories and its first chips ([#109](https://github.com/untracked-maps/untracked/issues/109)) ([3a0e314](https://github.com/untracked-maps/untracked/commit/3a0e31468e1aea82342cb811c230abc542b9e112)), closes [#106](https://github.com/untracked-maps/untracked/issues/106) [#106](https://github.com/untracked-maps/untracked/issues/106)
+
 # [1.25.0](https://github.com/untracked-maps/untracked/compare/v1.24.0...v1.25.0) (2026-11-25)
 
 
