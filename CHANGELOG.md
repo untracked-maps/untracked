@@ -1,3 +1,15 @@
+# [1.25.0](https://github.com/untracked-maps/untracked/compare/v1.24.0...v1.25.0) (2026-11-25)
+
+
+### Features
+
+* open the sheet of a district chosen in the search, outlined ([#104](https://github.com/untracked-maps/untracked/issues/104)) ([b961aac](https://github.com/untracked-maps/untracked/commit/b961aac0a133730d4c241fb5634ba19c9f8155af)), closes [#D93A2F](https://github.com/untracked-maps/untracked/issues/D93A2F) [#67](https://github.com/untracked-maps/untracked/issues/67)
+
+
+### Performance Improvements
+
+* lighten the map's startup, and let its pages block for 5,000 ms ([#105](https://github.com/untracked-maps/untracked/issues/105)) ([5e2c2e0](https://github.com/untracked-maps/untracked/commit/5e2c2e0790cda9d48447b1645cd8101173791b1d)), closes [#104](https://github.com/untracked-maps/untracked/issues/104)
+
 # [1.24.0](https://github.com/untracked-maps/untracked/compare/v1.23.1...v1.24.0) (2026-11-25)
 
 
