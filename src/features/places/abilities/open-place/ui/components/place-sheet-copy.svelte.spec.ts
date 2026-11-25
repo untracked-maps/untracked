@@ -19,8 +19,6 @@ const FLORE: SheetPlace = {
   coordinates: { longitude: 2.332_63, latitude: 48.854_04 }
 };
 
-const STATUE: SheetPlace = { id: 'statue', name: 'Statue', coordinates: { longitude: 2.34, latitude: 48.857 } };
-
 const ADDRESS = '172 Boulevard Saint-Germain, 75006 Paris';
 
 type Copying = {
@@ -62,17 +60,10 @@ const pressedFor = async (milliseconds: number, after: PointerEvent = pointer('p
   await pause(milliseconds);
 };
 
-describe('copying the address of a place', () => {
-  it('copies the address shown', async () => {
-    const copies = await copiesOf(FLORE);
-
-    await page.getByRole('button', { name: 'Copy the address' }).click();
-
-    expect(copies).toEqual([ADDRESS]);
-  });
-
-  it('is not offered for a place without an address', async () => {
-    await copiesOf(STATUE);
+describe('the address of a place', () => {
+  it('has no button to copy it', async () => {
+    await copiesOf(FLORE);
+    await vi.waitFor(() => page.getByText(ADDRESS).element());
 
     await expect.element(page.getByRole('button', { name: 'Copy the address' })).not.toBeInTheDocument();
   });
