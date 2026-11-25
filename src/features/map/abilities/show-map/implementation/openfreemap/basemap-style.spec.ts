@@ -65,6 +65,7 @@ describe('basemap style', () => {
       'landuse-alt',
       'landuse-green',
       'landcover',
+      'landcover-wood',
       'park',
       'water',
       'waterway',
@@ -105,7 +106,7 @@ describe('basemap style with imagery', () => {
     expect(
       basemapStyle(ASSETS, LIGHT, IMAGERY)
         .layers.map(({ id }) => id)
-        .slice(23, 26)
+        .slice(24, 27)
     ).toStrictEqual(['boundary-city', 'photos', 'road-name-major']);
   });
 

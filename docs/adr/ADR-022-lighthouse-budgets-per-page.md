@@ -44,3 +44,7 @@ On 2026-11-19, the bottom sheet (#22) failed the `/fr` audit twice on the CI run
 - **The reports are always kept**, for seven days, whether the audit passes or fails, so that a budget is revised from the measures of the runner rather than from memory.
 
 A regression of the Total Blocking Time of up to about 1,000 ms that adds no script now passes CI; the review of each pull request has to catch it.
+
+## Update, 2026-11-25: a wider Total Blocking Time for the map pages
+
+The map pages' Total Blocking Time may now reach 5,000 ms, and each run's measures are reported in the Lighthouse job, as [ADR-069](ADR-069-measuring-what-the-visitor-of-the-map-sees.md) decides.

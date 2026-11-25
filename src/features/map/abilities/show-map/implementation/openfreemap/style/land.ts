@@ -37,8 +37,15 @@ const landCovers = (palette: Palette): FillLayerSpecification[] => [
     id: 'landcover',
     type: 'fill',
     ...fromTiles('landcover'),
-    filter: isOneOf('class', ['grass', 'wood', 'farmland', 'wetland']),
-    paint: { 'fill-color': ['match', ['get', 'class'], 'wood', palette.wood, palette.park] }
+    filter: isOneOf('class', ['grass', 'farmland', 'wetland']),
+    paint: { 'fill-color': palette.park }
+  },
+  {
+    id: 'landcover-wood',
+    type: 'fill',
+    ...fromTiles('landcover'),
+    filter: isOneOf('class', ['wood']),
+    paint: { 'fill-color': palette.wood }
   },
   { id: 'park', type: 'fill', ...fromTiles('park'), paint: { 'fill-color': palette.park } }
 ];

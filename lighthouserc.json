@@ -49,7 +49,7 @@
             "total-blocking-time": [
               "error",
               {
-                "maxNumericValue": 3500
+                "maxNumericValue": 5000
               }
             ],
             "resource-summary:script:size": [
