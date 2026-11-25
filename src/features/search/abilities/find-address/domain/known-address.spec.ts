@@ -37,7 +37,13 @@ describe('entry of a house address', () => {
       id: 'address-75009-18-bis-rue-de-chateaudun',
       name: '18 bis rue de Châteaudun',
       kind: 'address',
-      address: { postalCode: '75009', addressLocality: 'Paris', addressCountry: 'FR' },
+      address: {
+        houseNumber: '18 bis',
+        street: 'Rue de Châteaudun',
+        postalCode: '75009',
+        addressLocality: 'Paris',
+        addressCountry: 'FR'
+      },
       coordinates: HERE
     });
   });
@@ -71,9 +77,22 @@ describe('entry of a street', () => {
   it('has no number', () => {
     expect(entryOf(STREET).number).toBeUndefined();
   });
+
+  it('holds its street in its address, written with a capital', () => {
+    expect(entryOf(STREET).found.address).toEqual({
+      street: 'Rue de Châteaudun',
+      postalCode: '75009',
+      addressLocality: 'Paris',
+      addressCountry: 'FR'
+    });
+  });
 });
 
 describe('entry of an arrondissement', () => {
+  it('holds only its postcode, city and country in its address', () => {
+    expect(entryOf(DISTRICT).found.address).toEqual({ postalCode: '75009', addressLocality: 'Paris', addressCountry: 'FR' });
+  });
+
   it('is found by its name', () => {
     expect(entryOf(DISTRICT).found.name).toBe('Paris 9e Arrondissement');
   });

@@ -73,7 +73,7 @@ describe('the row of action buttons', () => {
   it('is left out for a place without phone nor website', async () => {
     await shown(WITHOUT_BUTTONS);
 
-    await expect.poll(() => document.querySelector('[data-sheet-actions]')?.textContent).toContain('Copy the address');
+    await expect.poll(() => document.querySelector('[data-sheet-actions]')).toBeNull();
   });
 });
 

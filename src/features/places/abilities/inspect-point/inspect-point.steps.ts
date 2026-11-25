@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { NEVER, type Observable, of, Subject, throwError } from 'rxjs';
-import { type Coordinates, type InspectedSpot, inspectPoint } from './domain/inspect-point';
+import { type Coordinates, type InspectedSpot, inspectPoint, type LocatedSpot } from './domain/inspect-point';
 import { nearestAddress } from './implementation/prerendered/nearest-address';
 import type { KnownAddress } from './implementation/prerendered/prerendered-addresses';
 
 type InspectPointWorld = World & {
   addresses: Observable<readonly KnownAddress[]>;
   inspected: Subject<Coordinates>;
+  located: Subject<LocatedSpot>;
   dismissed: Subject<void>;
   spot: InspectedSpot;
 };
@@ -17,9 +18,11 @@ const inspectionStarted = (world: InspectPointWorld): void => {
     return;
   }
   world.inspected = new Subject<Coordinates>();
+  world.located = new Subject<LocatedSpot>();
   world.dismissed = new Subject<void>();
   inspectPoint({ reverseGeocode: nearestAddress(() => world.addresses) })({
     inspected: world.inspected,
+    located: world.located,
     dismissed: world.dismissed
   }).subscribe((spot) => {
     world.spot = spot;
@@ -30,7 +33,13 @@ Given('these addresses on the map', function theseAddressesOnTheMap(this: Inspec
   this.addresses = of(
     table.hashes().map(
       (row): KnownAddress => ({
-        address: row['address'] ?? '',
+        address: {
+          ...(row['number'] ? { houseNumber: row['number'] } : {}),
+          street: row['street'] ?? '',
+          postalCode: row['postcode'] ?? '',
+          addressLocality: row['city'] ?? '',
+          addressCountry: 'FR'
+        },
         coordinates: { longitude: Number(row['longitude']), latitude: Number(row['latitude']) }
       })
     )
@@ -53,13 +62,40 @@ When(
   }
 );
 
+const HOUSE_NUMBER = /^(?<number>\d+) (?<street>.+)$/u;
+
+const chosenAddressOf = (chosen: string, postcode: string): LocatedSpot['address'] => {
+  const { number, street } = HOUSE_NUMBER.exec(chosen)?.groups ?? {};
+  return {
+    ...(number === undefined ? {} : { houseNumber: number }),
+    street: street ?? chosen,
+    postalCode: postcode,
+    addressLocality: 'Paris',
+    addressCountry: 'FR'
+  };
+};
+
+When(
+  'the visitor chooses {string} in {string} in the search',
+  function theVisitorChooses(this: InspectPointWorld, chosen: string, postcode: string) {
+    inspectionStarted(this);
+    this.located.next({ spot: { longitude: 2.3274, latitude: 48.8478 }, address: chosenAddressOf(chosen, postcode) });
+  }
+);
+
 When('the visitor dismisses the spot', function theVisitorDismisses(this: InspectPointWorld) {
   this.dismissed.next();
 });
 
-Then('the visitor reads the address {string}', function theVisitorReadsTheAddress(this: InspectPointWorld, address: string) {
-  assert.equal(this.spot.kind === 'address' && this.spot.address, address);
-});
+Then(
+  'the visitor reads the address {string} in {string}',
+  function theVisitorReadsTheAddress(this: InspectPointWorld, street: string, postcode: string) {
+    assert.deepEqual(this.spot.kind === 'address' && [this.spot.address.street, this.spot.address.postalCode], [
+      street,
+      postcode
+    ]);
+  }
+);
 
 Then(
   'the visitor is told that there is no address at longitude {float} and latitude {float}',

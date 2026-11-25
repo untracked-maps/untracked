@@ -8,8 +8,6 @@ const NOEL = /^Boulangerie Noel/u;
 
 const SEARCH_IN_FRENCH = 'Rechercher un lieu';
 
-const COPY_IN_FRENCH = /^Copier l’/u;
-
 const bakeryOpened = async (page: Page): Promise<void> => {
   await opened(page);
   await bakeriesListed(page);
@@ -69,7 +67,7 @@ test.describe('copying the address of a place', () => {
   test('puts the address shown in the clipboard', async ({ page }) => {
     await louvreOpened(page);
 
-    await page.getByRole('button', { name: 'Copy the address' }).click();
+    await louvreSheet(page).getByText('Rue de Rivoli, 75001 Paris').dispatchEvent('pointerdown');
 
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('Rue de Rivoli, 75001 Paris');
   });
@@ -93,11 +91,5 @@ test.describe('the sheet of a place under /fr', () => {
     await louvreOpenedInFrench(page);
 
     await expect(louvreSheet(page).getByRole('region', { name: 'Détails' })).toBeVisible();
-  });
-
-  test('offers to copy the address in French', async ({ page }) => {
-    await louvreOpenedInFrench(page);
-
-    await expect(louvreSheet(page).getByRole('button', { name: COPY_IN_FRENCH })).toBeVisible();
   });
 });

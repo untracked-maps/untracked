@@ -53,13 +53,20 @@ const nameOf = (known: KnownAddress): string => {
 
 const wordsOf = (known: KnownAddress): string => (known.kind === 'district' ? known.name : known.street);
 
+const streetPartOf = (known: KnownAddress): Pick<FoundAddress['address'], 'houseNumber' | 'street'> => {
+  if (known.kind === 'address') {
+    return { houseNumber: known.number, street: capitalised(known.street) };
+  }
+  return known.kind === 'street' ? { street: capitalised(known.street) } : {};
+};
+
 const foundOf = (known: KnownAddress): FoundAddress => {
   const name = nameOf(known);
   return {
     id: `${known.kind}-${known.postcode}-${slugOf(name)}`,
     name,
     kind: known.kind,
-    address: { postalCode: known.postcode, addressLocality: known.city, addressCountry: known.country },
+    address: { ...streetPartOf(known), postalCode: known.postcode, addressLocality: known.city, addressCountry: known.country },
     coordinates: known.coordinates
   };
 };

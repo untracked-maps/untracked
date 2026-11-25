@@ -1,4 +1,5 @@
 import { m } from '#i18n/messages';
+import type { AddressLine } from '#libraries/postal-address/address-line.presenter';
 import type { Coordinates, InspectedSpot } from '../../domain/inspect-point';
 
 type ShownSpot = Exclude<InspectedSpot, { readonly kind: 'none' }>;
@@ -6,6 +7,7 @@ type ShownSpot = Exclude<InspectedSpot, { readonly kind: 'none' }>;
 type SpotCard = {
   readonly title: string;
   readonly subtitle: string;
+  readonly address: string | undefined;
   readonly reportHref: string;
 };
 
@@ -39,15 +41,26 @@ const UNADDRESSED_SUBTITLES: Readonly<Record<Exclude<ShownSpot['kind'], 'address
   unavailable: m.inspect_point_unavailable
 };
 
-const titleOf = (spot: ShownSpot): string => (spot.kind === 'address' ? linesOf(spot.address).street : m.inspect_point_spot());
+const addressesOf = (spot: ShownSpot, line: AddressLine | undefined): readonly string[] =>
+  spot.kind === 'address' && line !== undefined ? [line(spot.address)] : [];
 
-const subtitleOf = (spot: ShownSpot): string =>
-  spot.kind === 'address' ? linesOf(spot.address).locality || coordinatesOf(spot.spot) : UNADDRESSED_SUBTITLES[spot.kind]();
-
-const spotCardOf = (spot: ShownSpot): SpotCard => ({
-  title: titleOf(spot),
-  subtitle: subtitleOf(spot),
-  reportHref: noteHrefOf(spot.spot)
+const unaddressed = (spot: ShownSpot): Pick<SpotCard, 'title' | 'subtitle'> => ({
+  title: m.inspect_point_spot(),
+  subtitle: spot.kind === 'address' ? m.inspect_point_address() : UNADDRESSED_SUBTITLES[spot.kind]()
 });
+
+const addressed = (spot: ShownSpot, address: string): Pick<SpotCard, 'title' | 'subtitle'> => {
+  const { street, locality } = linesOf(address);
+  return { title: street, subtitle: locality || coordinatesOf(spot.spot) };
+};
+
+const spotCardOf = (spot: ShownSpot, line: AddressLine | undefined): SpotCard => {
+  const address = addressesOf(spot, line).at(0);
+  return {
+    ...(address === undefined ? unaddressed(spot) : addressed(spot, address)),
+    address,
+    reportHref: noteHrefOf(spot.spot)
+  };
+};
 
 export { spotCardOf };

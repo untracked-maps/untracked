@@ -8,7 +8,6 @@ type FakeLocality = Pick<FakePostalAddress, 'postalCode' | 'addressLocality' | '
 
 type FakeStreetAddress = FakeLocality & {
   readonly kind: 'address' | 'street';
-  readonly address: string;
   readonly houseNumber?: string;
   readonly street: string;
   readonly coordinates: FakeCoordinates;
@@ -22,12 +21,9 @@ type FakeDistrict = FakeLocality & {
 
 type FakeAddress = FakeStreetAddress | FakeDistrict;
 
-const lineOf = ({ houseNumber, street, postalCode, addressLocality }: FakePostalAddress): string =>
-  [[houseNumber, street].filter((part) => part !== undefined).join(' '), `${postalCode} ${addressLocality}`].join(', ');
-
 const streetAddressOf = ({ address, coordinates }: FakePlace): readonly FakeStreetAddress[] => {
   const { houseNumber, street, postalCode, addressLocality, addressCountry } = address;
-  const located = { address: lineOf(address), street, postalCode, addressLocality, addressCountry, coordinates };
+  const located = { street, postalCode, addressLocality, addressCountry, coordinates };
   return [houseNumber === undefined ? { kind: 'street', ...located } : { kind: 'address', houseNumber, ...located }];
 };
 

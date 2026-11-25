@@ -7,11 +7,17 @@ import SpotCard from './spot-card.svelte';
 
 const PALAIS_ROYAL: Coordinates = { longitude: 2.3371, latitude: 48.8635 };
 
-const RIVOLI: InspectedSpot = { kind: 'address', spot: PALAIS_ROYAL, address: 'Rue de Rivoli, 75001 Paris' };
+const RIVOLI: InspectedSpot = {
+  kind: 'address',
+  spot: PALAIS_ROYAL,
+  address: { street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' }
+};
 
 const sharedFrom = async (): Promise<readonly unknown[]> => {
   const shared: unknown[] = [];
   await render(SpotCard, {
+    onCopy: (): void => undefined,
+    vibrate: (): void => undefined,
     spot: of(RIVOLI),
     onClose: () => undefined,
     onShare: (spot: unknown): void => {
@@ -47,7 +53,7 @@ describe('sharing a spot', () => {
   });
 
   it('is not offered when the page cannot share', async () => {
-    await render(SpotCard, { spot: of(RIVOLI), onClose: () => undefined });
+    await render(SpotCard, { spot: of(RIVOLI), onClose: () => undefined, onCopy: () => undefined, vibrate: () => undefined });
 
     await expect.element(page.getByRole('button', { name: 'Share' })).not.toBeInTheDocument();
   });

@@ -7,13 +7,22 @@ import SpotCard from './spot-card.svelte';
 
 const LOUVRE: Coordinates = { longitude: 2.337_64, latitude: 48.860_61 };
 
-const RIVOLI: InspectedSpot = { kind: 'address', spot: LOUVRE, address: 'Rue de Rivoli, 75001 Paris' };
+const RIVOLI: InspectedSpot = {
+  kind: 'address',
+  spot: LOUVRE,
+  address: { street: 'Rue de Rivoli', postalCode: '75001', addressLocality: 'Paris', addressCountry: 'FR' }
+};
 
 const NOTE_AT_THE_LOUVRE = 'https://www.openstreetmap.org/note/new#map=19/48.86061/2.33764';
 
 const MISSING_OR_WRONG = /^Is something missing or wrong\? Report it on OpenStreetMap ↗, the free map we use\./u;
 
-const props = { spot: of(RIVOLI), onClose: (): void => undefined };
+const props = {
+  spot: of(RIVOLI),
+  onClose: (): void => undefined,
+  onCopy: (): void => undefined,
+  vibrate: (): void => undefined
+};
 
 const recordingCloses = (): { readonly closes: string[]; readonly onClose: () => void } => {
   const closes: string[] = [];

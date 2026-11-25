@@ -1,7 +1,14 @@
 import { type Observable, of, Subject, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
-import { type Coordinates, type InspectedSpot, inspectPoint, type ReverseGeocode, type SpotAddress } from './inspect-point';
+import {
+  type Coordinates,
+  type InspectedSpot,
+  inspectPoint,
+  type PostalAddress,
+  type ReverseGeocode,
+  type SpotAddress
+} from './inspect-point';
 
 const LOUVRE: Coordinates = { longitude: 2.337_64, latitude: 48.860_61 };
 
@@ -9,12 +16,19 @@ const SEINE: Coordinates = { longitude: 2.34, latitude: 48.858 };
 
 const SPOTS: Readonly<Record<string, Coordinates>> = { l: LOUVRE, s: SEINE };
 
-const RIVOLI: SpotAddress = { kind: 'address', address: 'Rue de Rivoli, 75001 Paris' };
+const RIVOLI_STREET: PostalAddress = {
+  street: 'Rue de Rivoli',
+  postalCode: '75001',
+  addressLocality: 'Paris',
+  addressCountry: 'FR'
+};
+
+const RIVOLI: SpotAddress = { kind: 'address', address: RIVOLI_STREET };
 
 const STATES: Readonly<Record<string, InspectedSpot>> = {
   n: { kind: 'none' },
   l: { kind: 'looking', spot: LOUVRE },
-  a: { kind: 'address', spot: LOUVRE, address: 'Rue de Rivoli, 75001 Paris' },
+  a: { kind: 'address', spot: LOUVRE, address: RIVOLI_STREET },
   k: { kind: 'looking', spot: SEINE },
   x: { kind: 'no-address', spot: SEINE },
   u: { kind: 'unavailable', spot: LOUVRE }
@@ -25,6 +39,7 @@ type Run = Parameters<Parameters<TestScheduler['run']>[0]>[0];
 type Marbles = {
   readonly inspected: string;
   readonly dismissed?: string;
+  readonly located?: string;
   readonly answers?: Readonly<Record<string, string>>;
 };
 
@@ -38,6 +53,7 @@ const expectInspection = (marbles: Marbles, expected: string): void =>
   new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted)).run((run: Run) => {
     const spot$ = inspectPoint({ reverseGeocode: answersOf(run, marbles) })({
       inspected: run.cold(marbles.inspected, SPOTS),
+      located: run.cold(marbles.located ?? '', { r: { spot: LOUVRE, address: RIVOLI_STREET } }),
       dismissed: run.cold(marbles.dismissed ?? '', { d: undefined })
     });
     run.expectObservable(spot$).toBe(expected, STATES);
@@ -75,6 +91,24 @@ describe('inspect point, for one spot', () => {
   });
 });
 
+describe('inspect point, for an address already known', () => {
+  it('gives the address without looking for it', () => {
+    expectInspection({ inspected: '', located: '-r' }, 'na');
+  });
+
+  it('moves to a spot inspected afterwards', () => {
+    expectInspection({ inspected: '--s', located: '-r' }, 'nakx');
+  });
+
+  it('forgets the address once dismissed', () => {
+    expectInspection({ inspected: '', located: '-r', dismissed: '--d' }, 'nan');
+  });
+
+  it('takes the place of a spot being looked for', () => {
+    expectInspection({ inspected: '-l', located: '--r', answers: { l: '---r' } }, 'nla');
+  });
+});
+
 describe('inspect point, over time', () => {
   it('moves to the last spot inspected', () => {
     expectInspection({ inspected: '-ls' }, 'nlkx');
@@ -103,7 +137,7 @@ describe('inspect point, over time', () => {
       .unsubscribe();
     first.unsubscribe();
 
-    expect(seen).toEqual([{ kind: 'address', spot: LOUVRE, address: 'Rue de Rivoli, 75001 Paris' }]);
+    expect(seen).toEqual([{ kind: 'address', spot: LOUVRE, address: RIVOLI_STREET }]);
   });
 
   it('stops inspecting once nobody views the spot', () => {

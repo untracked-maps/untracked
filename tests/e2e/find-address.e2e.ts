@@ -6,9 +6,11 @@ const ADDRESSES_FILE = '**/data/addresses.json';
 
 const MOUFFETARD = /^40 Rue Mouffetard/u;
 
-const MOUFFETARD_VIEW = /#map=16\.5\/48\.850\d*\/2\.267\d*$/u;
+const MOUFFETARD_VIEW = /#map=16\.5\/48\.850\d*\/2\.265\d*$/u;
 
 const FIRST_OPTION = /-place-0$/u;
+
+const RIVOLI = /^Rue de Rivoli Street · 75001 Paris/u;
 
 const RIVOLI_IN_FRENCH = /^Rue de Rivoli Voie · 75001 Paris/u;
 
@@ -53,7 +55,46 @@ test('marks the address chosen with the keyboard', async ({ page }) => {
   await searchField(page).press('ArrowDown');
   await searchField(page).press('Enter');
 
-  await expect(page.getByRole('img', { name: '40 Rue Mouffetard' })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Selected spot' })).toBeVisible();
+});
+
+const mouffetardSheet = (page: Page): Locator => page.getByRole('region', { name: '40 Rue Mouffetard' });
+
+const mouffetardChosen = async (page: Page): Promise<void> => {
+  await searchFor(page, '40 rue mouffetard');
+  await page.getByRole('option', { name: MOUFFETARD }).click();
+};
+
+test('opens the sheet of the address chosen, titled by its number and street', async ({ page }) => {
+  await mouffetardChosen(page);
+
+  await expect(mouffetardSheet(page)).toBeVisible();
+});
+
+test('gives the postcode and city under the address chosen', async ({ page }) => {
+  await mouffetardChosen(page);
+
+  await expect(mouffetardSheet(page).getByText('75008 Paris')).toBeVisible();
+});
+
+test('opens the sheet of the street chosen, titled by its name alone', async ({ page }) => {
+  await searchFor(page, 'rue de rivoli 75001');
+
+  await page.getByRole('option', { name: RIVOLI }).click();
+
+  await expect(page.getByRole('region', { name: 'Rue de Rivoli' }).getByText('75001 Paris')).toBeVisible();
+});
+
+test.describe('the sheet of an address chosen', () => {
+  test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
+
+  test('copies the whole address on a long press', async ({ page }) => {
+    await mouffetardChosen(page);
+
+    await mouffetardSheet(page).getByText('75008 Paris').dispatchEvent('pointerdown');
+
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('40 Rue Mouffetard, 75008 Paris');
+  });
 });
 
 test('keeps the address chosen among the recent searches', async ({ page }) => {

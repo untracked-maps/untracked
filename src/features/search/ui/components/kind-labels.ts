@@ -1,6 +1,6 @@
 import { m } from '#i18n/messages';
 import type { AddressLine } from '#libraries/postal-address/address-line.presenter';
-import type { AddressKind } from '../../domain/found';
+import { type AddressKind, isAddress } from '../../domain/found';
 import type { PlaceKind, PostalAddress } from '../../domain/place';
 
 const KIND_LABELS: Readonly<Record<PlaceKind | AddressKind, () => string>> = {
@@ -40,9 +40,19 @@ type Described = {
   readonly address: PostalAddress;
 };
 
+const localityOf = ({ postalCode, addressLocality, addressCountry }: PostalAddress): PostalAddress => ({
+  postalCode,
+  addressLocality,
+  addressCountry
+});
+
+const shownOf = ({ kind, address }: Described): PostalAddress => (isAddress({ kind }) ? localityOf(address) : address);
+
 const detailsOf =
   (line: AddressLine | undefined) =>
-  ({ kind, address }: Described): string =>
-    line === undefined ? KIND_LABELS[kind]() : m.search_places_details({ kind: KIND_LABELS[kind](), address: line(address) });
+  (described: Described): string =>
+    line === undefined
+      ? KIND_LABELS[described.kind]()
+      : m.search_places_details({ kind: KIND_LABELS[described.kind](), address: line(shownOf(described)) });
 
 export { detailsOf };

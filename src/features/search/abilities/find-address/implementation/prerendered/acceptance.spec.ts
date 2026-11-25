@@ -1,6 +1,6 @@
 import { firstValueFrom } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import type { Found } from '../../../../domain/found';
+import { type Found, isAddress } from '../../../../domain/found';
 import type { Coordinates, Place } from '../../../../domain/place';
 import { withAddressesOf } from '../../domain/with-addresses';
 import { prerenderedAddressBook } from './prerendered-address-book';
@@ -89,8 +89,12 @@ const findFound = withAddressesOf(knownAddresses)((query) => (query.includes('ma
 const streetLineOf = ({ houseNumber, street }: Found['address']): readonly string[] =>
   street === undefined ? [] : [[houseNumber, street].filter((part) => part !== undefined).join(' ')];
 
-const lineOf = ({ name, address }: Found): string =>
-  [name, ...streetLineOf(address), `${address.postalCode} ${address.addressLocality}`].join(', ');
+const lineOf = (found: Found): string =>
+  [
+    found.name,
+    ...(isAddress(found) ? [] : streetLineOf(found.address)),
+    `${found.address.postalCode} ${found.address.addressLocality}`
+  ].join(', ');
 
 const firstFound = (query: string, reference: Coordinates = CENTRE_OF_PARIS): string | undefined => {
   const [first] = findFound(query, reference);

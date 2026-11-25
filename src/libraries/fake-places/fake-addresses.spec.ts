@@ -16,7 +16,6 @@ describe('fake addresses', () => {
   it('start with the address of the first place, in components', () => {
     expect(ADDRESSES[0]).toEqual({
       kind: 'address',
-      address: '5 avenue Anatole France, 75007 Paris',
       houseNumber: '5',
       street: 'avenue Anatole France',
       postalCode: '75007',
@@ -29,7 +28,6 @@ describe('fake addresses', () => {
   it('name a street when the address of a place has no number', () => {
     expect(ADDRESSES[1]).toEqual({
       kind: 'street',
-      address: 'Rue de Rivoli, 75001 Paris',
       street: 'Rue de Rivoli',
       postalCode: '75001',
       addressLocality: 'Paris',

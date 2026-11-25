@@ -1,0 +1,72 @@
+import { combineLatest, map, type Observable, Subject } from 'rxjs';
+import {
+  type Coordinates,
+  type InspectedSpot,
+  inspectPoint,
+  type LocatedSpot
+} from '#features/places/abilities/inspect-point/domain/inspect-point';
+import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
+import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
+import type { PlaceSheet } from '#features/places/abilities/open-place/domain/open-place';
+import type { RecentPlace } from '#features/search/abilities/recent-searches/domain/recent-searches';
+
+type FetchFile = (url: string) => Promise<Response>;
+
+type Places = {
+  readonly sheet: Observable<PlaceSheet>;
+  readonly close: () => void;
+};
+
+type Spots = {
+  readonly spot: Observable<InspectedSpot>;
+  readonly sheetOpen: Observable<boolean>;
+  readonly inspect: (spot: Coordinates) => void;
+  readonly locate: (located: LocatedSpot) => void;
+  readonly dismiss: () => void;
+  readonly closeSheets: () => void;
+};
+
+const spotsInspected = (places: Places, dismissed: Subject<void>, fetchFile: FetchFile, addressesUrl: string): Spots => {
+  const inspected = new Subject<Coordinates>();
+  const located = new Subject<LocatedSpot>();
+  const reverseGeocode = nearestAddress(prerenderedAddresses(fetchFile, addressesUrl));
+  const spot = inspectPoint({ reverseGeocode })({ inspected, located, dismissed });
+  return {
+    spot,
+    sheetOpen: combineLatest([places.sheet, spot]).pipe(
+      map(([{ status }, { kind }]) => status !== 'closed' || kind !== 'none')
+    ),
+    inspect: (at): void => {
+      places.close();
+      inspected.next(at);
+    },
+    locate: (at): void => {
+      places.close();
+      located.next(at);
+    },
+    dismiss: () => dismissed.next(),
+    closeSheets: (): void => {
+      places.close();
+      dismissed.next();
+    }
+  };
+};
+
+type Chosen = (place: RecentPlace, from: 'search' | 'kind list') => void;
+
+const STREET_KINDS: ReadonlySet<string> = new Set(['address', 'street']);
+
+const chosenOpened =
+  (
+    places: { readonly open: (opening: { readonly id: string; readonly from: 'search' | 'kind list' }) => void },
+    spots: Spots
+  ): Chosen =>
+  (place, from): void => {
+    if (STREET_KINDS.has(place.kind)) {
+      spots.locate({ spot: place.coordinates, address: place.address });
+    } else {
+      places.open({ id: place.id, from });
+    }
+  };
+
+export { type Chosen, chosenOpened, type Spots, spotsInspected };
