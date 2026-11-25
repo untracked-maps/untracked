@@ -1,0 +1,200 @@
+[
+  {
+    "id": "metro-1",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "1",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-3",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "3",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-4",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "4",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-5",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "5",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-6",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "6",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-7",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "7",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-10",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "10",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-11",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "11",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-12",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "12",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-13",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "13",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "metro-14",
+    "tags": {
+      "type": "route_master",
+      "route_master": "subway",
+      "ref": "14",
+      "network": "Métro de Paris"
+    }
+  },
+  {
+    "id": "rer-a",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "A",
+      "network": "RER"
+    }
+  },
+  {
+    "id": "rer-b",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "B",
+      "network": "RER"
+    }
+  },
+  {
+    "id": "rer-c",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "C",
+      "network": "RER"
+    }
+  },
+  {
+    "id": "rer-d",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "D",
+      "network": "RER"
+    }
+  },
+  {
+    "id": "transilien-h",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "H",
+      "network": "Transilien"
+    }
+  },
+  {
+    "id": "transilien-j",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "J",
+      "network": "Transilien"
+    }
+  },
+  {
+    "id": "transilien-k",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "K",
+      "network": "Transilien"
+    }
+  },
+  {
+    "id": "transilien-l",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "L",
+      "network": "Transilien"
+    }
+  },
+  {
+    "id": "transilien-n",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "N",
+      "network": "Transilien"
+    }
+  },
+  {
+    "id": "transilien-p",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "P",
+      "network": "Transilien"
+    }
+  },
+  {
+    "id": "transilien-r",
+    "tags": {
+      "type": "route_master",
+      "route_master": "train",
+      "ref": "R",
+      "network": "Transilien"
+    }
+  }
+]

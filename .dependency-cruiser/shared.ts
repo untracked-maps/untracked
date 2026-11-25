@@ -7,7 +7,7 @@ export const ENTRY_POINTS: string[] = [
   '^[^/]+[.]config[.]ts$'
 ];
 
-export const DOMAIN_PACKAGES: readonly string[] = ['rxjs'];
+export const DOMAIN_PACKAGES: readonly string[] = ['rxjs', 'colorjs.io'];
 
 export const DOMAIN_PACKAGE_PATHS: readonly string[] = DOMAIN_PACKAGES.map((name) => `node_modules/${name}/`);
 
