@@ -8,8 +8,8 @@ describe('tiles', () => {
     expect(fromTiles('water')).toStrictEqual({ source: 'openmaptiles', 'source-layer': 'water' });
   });
 
-  it('serves the OpenFreeMap planet', () => {
-    expect(openMapTilesSource.url).toBe('https://tiles.openfreemap.org/planet');
+  it('describes the OpenFreeMap planet through the protocol that falls back on its backup', () => {
+    expect(openMapTilesSource.url).toBe('openfreemap://planet');
   });
 
   it('credits the OpenStreetMap contributors', () => {

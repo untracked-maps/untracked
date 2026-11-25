@@ -1,4 +1,5 @@
 import type { VectorSourceSpecification } from '@maplibre/maplibre-gl-style-spec';
+import { tileDescriptionProtocol } from '../tile-description';
 
 type TileLayer = {
   readonly source: string;
@@ -9,7 +10,7 @@ const openMapTilesId = 'openmaptiles';
 
 const openMapTilesSource: VectorSourceSpecification = {
   type: 'vector',
-  url: 'https://tiles.openfreemap.org/planet',
+  url: `${tileDescriptionProtocol}://planet`,
   attribution: [
     '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>',
     '<a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>',

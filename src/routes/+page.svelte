@@ -24,6 +24,7 @@
   import { openFreeMapBasemap } from '#features/map/abilities/show-map/implementation/openfreemap/load-basemap';
   import { basemapPalettes } from '#features/map/abilities/show-map/implementation/openfreemap/style/colours';
   import { openMapTilesId } from '#features/map/abilities/show-map/implementation/openfreemap/style/tiles';
+  import { openFreeMapProtocol } from '#features/map/abilities/show-map/implementation/openfreemap/tile-description';
   import { framingOverlay } from '#features/map/abilities/show-map/ui/components/framing-overlay';
   import MapCanvas from '#features/map/abilities/show-map/ui/components/map-canvas.svelte';
   import MapCredit from '#features/map/abilities/show-map/ui/components/map-credit.svelte';
@@ -272,6 +273,7 @@
   {scene}
   label={m.map_label()}
   onMap={basemap.watch}
+  protocol={openFreeMapProtocol((url, init) => fetch(url, init))}
   onViewChange={(view): void => views.next(view)}
   overlays={[
     placeDotsOverlay(data.placesShown, data.theme.colourScheme),
