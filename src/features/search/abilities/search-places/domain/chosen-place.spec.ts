@@ -1,7 +1,7 @@
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
 import type { Found } from '../../../domain/found';
-import { addressesChosenAt, districtsChosenAt } from './chosen-place';
+import { addressesChosenAt } from './chosen-place';
 
 type Chosen = Pick<Found, 'kind' | 'coordinates'>;
 
@@ -40,20 +40,6 @@ describe('where an address chosen stands', () => {
   it('is told apart for a district', () => {
     scheduler().run(({ cold, expectObservable }) => {
       expectObservable(addressesChosenAt(cold('d', CHOSEN))).toBe('-');
-    });
-  });
-});
-
-describe('where a district chosen stands', () => {
-  it('is told for a district', () => {
-    scheduler().run(({ cold, expectObservable }) => {
-      expectObservable(districtsChosenAt(cold('d', CHOSEN))).toBe('g', { g: GERMAIN });
-    });
-  });
-
-  it('is not told for an address', () => {
-    scheduler().run(({ cold, expectObservable }) => {
-      expectObservable(districtsChosenAt(cold('a', CHOSEN))).toBe('-');
     });
   });
 });

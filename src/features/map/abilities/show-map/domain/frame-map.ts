@@ -1,13 +1,20 @@
 import { map, merge, type Observable, switchMap } from 'rxjs';
 import type { Coordinates } from './show-map';
 
+type FramedDistrict = {
+  readonly at: Coordinates;
+  readonly outline: readonly Coordinates[];
+};
+
 type Framed =
-  | { readonly kind: 'place' | 'district'; readonly at: Coordinates }
-  | { readonly kind: 'places'; readonly at: readonly [Coordinates, ...Coordinates[]] };
+  | { readonly kind: 'place'; readonly at: Coordinates }
+  | { readonly kind: 'district'; readonly at: Coordinates }
+  | { readonly kind: 'places'; readonly at: readonly [Coordinates, ...Coordinates[]] }
+  | { readonly kind: 'outline'; readonly at: readonly [Coordinates, ...Coordinates[]] };
 
 type FramingInputs = {
   readonly placesOpened: Observable<Coordinates>;
-  readonly districtsOpened: Observable<Coordinates>;
+  readonly districtsOpened: Observable<FramedDistrict>;
   readonly placesListed: Observable<readonly [Coordinates, ...Coordinates[]]>;
 };
 
@@ -61,9 +68,13 @@ type FrameMapPorts = {
 
 const PLACE_ZOOM = 16.5;
 
-const DISTRICT_ZOOM = 14;
+const DISTRICT_ZOOM = 14.3;
 
 const FLIGHT_DURATION = 800;
+
+const DISTRICT_DURATION = 900;
+
+const DISTRICT_MARGIN = 40;
 
 const FIT_DURATION = 700;
 
@@ -103,48 +114,70 @@ const widened = (bounds: Bounds, { longitude, latitude }: Coordinates): Bounds =
 const boundsOf = ([first, ...others]: readonly [Coordinates, ...Coordinates[]]): Bounds =>
   others.reduce(widened, pointBounds(first));
 
-const besideThePanel = (width: number): Padding => ({
-  top: LARGE_SCREEN_MARGIN,
-  right: LARGE_SCREEN_MARGIN,
-  bottom: LARGE_SCREEN_MARGIN,
-  left: width + LARGE_SCREEN_MARGIN
+type Margins = {
+  readonly phone: { readonly block: number; readonly inline: number };
+  readonly large: number;
+};
+
+const PLACES_MARGINS: Margins = { phone: PHONE_MARGIN, large: LARGE_SCREEN_MARGIN };
+
+const DISTRICT_MARGINS: Margins = { phone: { block: DISTRICT_MARGIN, inline: DISTRICT_MARGIN }, large: DISTRICT_MARGIN };
+
+const besideThePanel = (width: number, margin: number): Padding => ({
+  top: margin,
+  right: margin,
+  bottom: margin,
+  left: width + margin
 });
 
-const aboveTheSheet = ({ height, topBarBottom }: MapMeasures, sheetHeight: number): Padding => ({
-  top: topBarBottom + PHONE_MARGIN.block,
-  right: PHONE_MARGIN.inline,
-  bottom: Math.min(sheetHeight, Math.round(height * SHEET_MOST_SHARE)) + PHONE_MARGIN.block,
-  left: PHONE_MARGIN.inline
+const aboveTheSheet = (
+  { height, topBarBottom }: MapMeasures,
+  sheetHeight: number,
+  margin: { readonly block: number; readonly inline: number }
+): Padding => ({
+  top: topBarBottom + margin.block,
+  right: margin.inline,
+  bottom: Math.min(sheetHeight, Math.round(height * SHEET_MOST_SHARE)) + margin.block,
+  left: margin.inline
 });
 
-const paddingOf = (measures: MapMeasures): Padding =>
-  measures.sheet.layout === 'side' ? besideThePanel(measures.sheet.width) : aboveTheSheet(measures, measures.sheet.height);
+const paddingOf = (measures: MapMeasures, margins: Margins): Padding =>
+  measures.sheet.layout === 'side'
+    ? besideThePanel(measures.sheet.width, margins.large)
+    : aboveTheSheet(measures, measures.sheet.height, margins.phone);
 
-const moveOf = (framed: Framed, measures: MapMeasures): CameraMove =>
-  framed.kind === 'places'
-    ? {
-        kind: 'fit',
-        bounds: boundsOf(framed.at),
-        padding: paddingOf(measures),
-        maxZoom: FIT_MOST_ZOOM,
-        duration: FIT_DURATION,
-        essential: false
-      }
-    : {
-        kind: 'flight',
-        center: framed.at,
-        zoom: framed.kind === 'district' ? DISTRICT_ZOOM : Math.max(measures.zoom, PLACE_ZOOM),
-        offset: offsetOf(measures),
-        duration: FLIGHT_DURATION,
-        essential: false
-      };
+const fitOf = (at: readonly [Coordinates, ...Coordinates[]], padding: Padding, framing: 'places' | 'outline'): CameraMove => ({
+  kind: 'fit',
+  bounds: boundsOf(at),
+  padding,
+  maxZoom: framing === 'places' ? FIT_MOST_ZOOM : DISTRICT_ZOOM,
+  duration: framing === 'places' ? FIT_DURATION : DISTRICT_DURATION,
+  essential: false
+});
+
+const moveOf = (framed: Framed, measures: MapMeasures): CameraMove => {
+  if (framed.kind === 'places' || framed.kind === 'outline') {
+    return fitOf(framed.at, paddingOf(measures, framed.kind === 'places' ? PLACES_MARGINS : DISTRICT_MARGINS), framed.kind);
+  }
+  return {
+    kind: 'flight',
+    center: framed.at,
+    zoom: framed.kind === 'district' ? DISTRICT_ZOOM : Math.max(measures.zoom, PLACE_ZOOM),
+    offset: offsetOf(measures),
+    duration: framed.kind === 'district' ? DISTRICT_DURATION : FLIGHT_DURATION,
+    essential: false
+  };
+};
+
+const districtFramed = ({ at, outline: [first, ...others] }: FramedDistrict): Framed =>
+  first === undefined ? { kind: 'district', at } : { kind: 'outline', at: [first, ...others] };
 
 const frameMap =
   ({ measure }: FrameMapPorts) =>
   ({ placesOpened, districtsOpened, placesListed }: FramingInputs): Observable<CameraMove> =>
     merge(
       placesOpened.pipe(map((at): Framed => ({ kind: 'place', at }))),
-      districtsOpened.pipe(map((at): Framed => ({ kind: 'district', at }))),
+      districtsOpened.pipe(map(districtFramed)),
       placesListed.pipe(map((at): Framed => ({ kind: 'places', at })))
     ).pipe(switchMap((framed) => measure().pipe(map((measures) => moveOf(framed, measures)))));
 

@@ -4,7 +4,7 @@ import { firstValueFrom, NEVER, type Observable, of, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { ADDRESS_KINDS, type Found } from '../../domain/found';
 import { PLACE_KINDS, type Place } from '../../domain/place';
-import { addressesChosenAt, districtsChosenAt } from './domain/chosen-place';
+import { addressesChosenAt } from './domain/chosen-place';
 import { type FindPlaces, type SearchState, searchPlaces } from './domain/search-places';
 import { miniSearchIndex } from './implementation/minisearch/minisearch-index';
 
@@ -15,7 +15,6 @@ type SearchPlacesWorld = World & {
   mapView: Observable<{ readonly center: Place['coordinates'] }>;
   state: SearchState;
   addressesShown: readonly Place['coordinates'][];
-  districtsShown: readonly Place['coordinates'][];
 };
 
 const placesFound = (state: SearchState): readonly string[] =>
@@ -146,24 +145,16 @@ When(
       return all;
     };
     this.addressesShown = shown(addressesChosenAt(chosen));
-    this.districtsShown = shown(districtsChosenAt(chosen));
   }
 );
 
 Then(
   'the map is told to show an address at {float}, {float}',
   function theMapIsToldToShowTheAddress(this: SearchPlacesWorld, latitude: number, longitude: number) {
-    assert.deepEqual([this.addressesShown, this.districtsShown], [[{ longitude, latitude }], []]);
-  }
-);
-
-Then(
-  'the map is told to show a district at {float}, {float}',
-  function theMapIsToldToShowTheDistrict(this: SearchPlacesWorld, latitude: number, longitude: number) {
-    assert.deepEqual([this.addressesShown, this.districtsShown], [[], [{ longitude, latitude }]]);
+    assert.deepEqual(this.addressesShown, [{ longitude, latitude }]);
   }
 );
 
 Then('the map is told nothing by the search', function theMapIsToldNothing(this: SearchPlacesWorld) {
-  assert.deepEqual([this.addressesShown, this.districtsShown], [[], []]);
+  assert.deepEqual(this.addressesShown, []);
 });

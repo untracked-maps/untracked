@@ -16,7 +16,9 @@ const RIVOLI_IN_FRENCH = /^Rue de Rivoli Voie · 75001 Paris/u;
 
 const ELEVENTH = /^Paris 11e Arrondissement/u;
 
-const DISTRICT_VIEW = /#map=14\//u;
+const DISTRICT_VIEW = /#map=1[34](?:\.\d+)?\//u;
+
+const DISTRICTS_FILE = '**/data/districts.json';
 
 const searchField = (page: Page): Locator =>
   page.getByRole('combobox', { name: 'Search a place or an address', disabled: false });
@@ -113,6 +115,50 @@ test('shows the whole arrondissement of a postcode', async ({ page }) => {
   await page.getByRole('option', { name: ELEVENTH }).click();
 
   await expect(page).toHaveURL(DISTRICT_VIEW);
+});
+
+const eleventhChosen = async (page: Page): Promise<void> => {
+  await searchFor(page, '75011');
+  await page.getByRole('option', { name: ELEVENTH }).click();
+};
+
+const eleventhSheet = (page: Page): Locator => page.getByRole('region', { name: 'Paris 11e Arrondissement' });
+
+test('opens the sheet of the arrondissement chosen', async ({ page }) => {
+  await eleventhChosen(page);
+
+  await expect(eleventhSheet(page)).toBeVisible();
+});
+
+test('gives the city under the arrondissement chosen', async ({ page }) => {
+  await eleventhChosen(page);
+
+  await expect(eleventhSheet(page).getByText('Paris', { exact: true })).toBeVisible();
+});
+
+test('loads the outlines of the districts once one is chosen', async ({ page }) => {
+  await searchFor(page, '75011');
+  const loading = page.waitForRequest(DISTRICTS_FILE);
+
+  await page.getByRole('option', { name: ELEVENTH }).click();
+
+  await expect(loading).resolves.toBeDefined();
+});
+
+test('closes the sheet of the arrondissement with Escape', async ({ page }) => {
+  await eleventhChosen(page);
+  await eleventhSheet(page).waitFor();
+
+  await page.keyboard.press('Escape');
+
+  await expect(eleventhSheet(page)).toBeHidden();
+});
+
+test('has no detectable accessibility violation with the sheet of an arrondissement', async ({ page }) => {
+  await eleventhChosen(page);
+  await eleventhSheet(page).waitFor();
+
+  expect(await violationsOf(page)).toEqual([]);
 });
 
 test('loads the addresses once the search field gets the focus', async ({ page }) => {

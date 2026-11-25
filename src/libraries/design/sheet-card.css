@@ -1,0 +1,33 @@
+.sheet-card {
+  inline-size: 100%;
+}
+
+.sheet-card > * {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-l);
+}
+
+.sheet-card-heading {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sheet-card-heading hgroup {
+  flex: 1;
+}
+
+.sheet-card-heading h2 {
+  margin: 0;
+  font-size: var(--font-size-lead);
+  line-height: var(--line-height-tight);
+  color: var(--text);
+}
+
+.sheet-card-heading hgroup p {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+}

@@ -9,6 +9,7 @@ import { nearestAddress } from '#features/places/abilities/inspect-point/impleme
 import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
 import type { PlaceSheet } from '#features/places/abilities/open-place/domain/open-place';
 import type { RecentPlace } from '#features/search/abilities/recent-searches/domain/recent-searches';
+import type { Districts } from './districts';
 
 type FetchFile = (url: string) => Promise<Response>;
 
@@ -26,27 +27,42 @@ type Spots = {
   readonly closeSheets: () => void;
 };
 
-const spotsInspected = (places: Places, dismissed: Subject<void>, fetchFile: FetchFile, addressesUrl: string): Spots => {
+type Sheets = {
+  readonly places: Places;
+  readonly districts: Pick<Districts, 'sheet' | 'close'>;
+  readonly dismissed: Subject<void>;
+};
+
+const anySheetOpen = ({ places, districts }: Sheets, spot: Observable<InspectedSpot>): Observable<boolean> =>
+  combineLatest([places.sheet, spot, districts.sheet]).pipe(
+    map(([place, { kind }, district]) => place.status !== 'closed' || kind !== 'none' || district.status !== 'closed')
+  );
+
+const afterClosing =
+  <Value>(closeOthers: () => void, opened: Subject<Value>) =>
+  (value: Value): void => {
+    closeOthers();
+    opened.next(value);
+  };
+
+const spotsInspected = (sheets: Sheets, fetchFile: FetchFile, addressesUrl: string): Spots => {
+  const { places, districts, dismissed } = sheets;
   const inspected = new Subject<Coordinates>();
   const located = new Subject<LocatedSpot>();
   const reverseGeocode = nearestAddress(prerenderedAddresses(fetchFile, addressesUrl));
   const spot = inspectPoint({ reverseGeocode })({ inspected, located, dismissed });
+  const closeOthers = (): void => {
+    places.close();
+    districts.close();
+  };
   return {
     spot,
-    sheetOpen: combineLatest([places.sheet, spot]).pipe(
-      map(([{ status }, { kind }]) => status !== 'closed' || kind !== 'none')
-    ),
-    inspect: (at): void => {
-      places.close();
-      inspected.next(at);
-    },
-    locate: (at): void => {
-      places.close();
-      located.next(at);
-    },
+    sheetOpen: anySheetOpen(sheets, spot),
+    inspect: afterClosing(closeOthers, inspected),
+    locate: afterClosing(closeOthers, located),
     dismiss: () => dismissed.next(),
     closeSheets: (): void => {
-      places.close();
+      closeOthers();
       dismissed.next();
     }
   };
@@ -56,16 +72,29 @@ type Chosen = (place: RecentPlace, from: 'search' | 'kind list') => void;
 
 const STREET_KINDS: ReadonlySet<string> = new Set(['address', 'street']);
 
+type Openings = {
+  readonly places: Places & {
+    readonly open: (opening: { readonly id: string; readonly from: 'search' | 'kind list' }) => void;
+  };
+  readonly districts: Pick<Districts, 'open'>;
+  readonly spots: Spots;
+};
+
+const districtOpened = ({ places, districts, spots }: Openings, { name, address, coordinates }: RecentPlace): void => {
+  places.close();
+  spots.dismiss();
+  districts.open({ name, postalCode: address.postalCode, addressLocality: address.addressLocality, coordinates });
+};
+
 const chosenOpened =
-  (
-    places: { readonly open: (opening: { readonly id: string; readonly from: 'search' | 'kind list' }) => void },
-    spots: Spots
-  ): Chosen =>
+  (openings: Openings): Chosen =>
   (place, from): void => {
     if (STREET_KINDS.has(place.kind)) {
-      spots.locate({ spot: place.coordinates, address: place.address });
+      openings.spots.locate({ spot: place.coordinates, address: place.address });
+    } else if (place.kind === 'district') {
+      districtOpened(openings, place);
     } else {
-      places.open({ id: place.id, from });
+      openings.places.open({ id: place.id, from });
     }
   };
 
