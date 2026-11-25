@@ -5,7 +5,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "1",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#FFBE00",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01371"
     }
   },
   {
@@ -14,7 +17,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "3",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#6E6E00",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01373"
     }
   },
   {
@@ -23,7 +29,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "4",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#A0006E",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01374"
     }
   },
   {
@@ -32,7 +41,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "5",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#FF5A00",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01375"
     }
   },
   {
@@ -41,7 +53,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "6",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#82DC73",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01376"
     }
   },
   {
@@ -50,7 +65,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "7",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#FF82B4",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01377"
     }
   },
   {
@@ -59,7 +77,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "10",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#DC9600",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01380"
     }
   },
   {
@@ -68,7 +89,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "11",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#6E491E",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01381"
     }
   },
   {
@@ -77,7 +101,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "12",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#00643C",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01382"
     }
   },
   {
@@ -86,7 +113,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "13",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#82C8E6",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01383"
     }
   },
   {
@@ -95,7 +125,10 @@
       "type": "route_master",
       "route_master": "subway",
       "ref": "14",
-      "network": "Métro de Paris"
+      "network": "Métro de Paris",
+      "colour": "#640082",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01384"
     }
   },
   {
@@ -104,7 +137,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "A",
-      "network": "RER"
+      "network": "RER",
+      "colour": "#FF1400",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01742"
     }
   },
   {
@@ -113,7 +149,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "B",
-      "network": "RER"
+      "network": "RER",
+      "colour": "#3C91DC",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01743"
     }
   },
   {
@@ -122,7 +161,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "C",
-      "network": "RER"
+      "network": "RER",
+      "colour": "#FFBE00",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01727"
     }
   },
   {
@@ -131,7 +173,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "D",
-      "network": "RER"
+      "network": "RER",
+      "colour": "#00643C",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01728"
     }
   },
   {
@@ -140,7 +185,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "H",
-      "network": "Transilien"
+      "network": "Transilien",
+      "colour": "#6E491E",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01737"
     }
   },
   {
@@ -149,7 +197,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "J",
-      "network": "Transilien"
+      "network": "Transilien",
+      "colour": "#D2D200",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01739"
     }
   },
   {
@@ -158,7 +209,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "K",
-      "network": "Transilien"
+      "network": "Transilien",
+      "colour": "#6E6E00",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01738"
     }
   },
   {
@@ -167,7 +221,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "L",
-      "network": "Transilien"
+      "network": "Transilien",
+      "colour": "#D282BE",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01740"
     }
   },
   {
@@ -176,7 +233,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "N",
-      "network": "Transilien"
+      "network": "Transilien",
+      "colour": "#00A092",
+      "text_colour": "#FFFFFF",
+      "ref:FR:STIF": "C01736"
     }
   },
   {
@@ -185,7 +245,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "P",
-      "network": "Transilien"
+      "network": "Transilien",
+      "colour": "#FF5A00",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01730"
     }
   },
   {
@@ -194,7 +257,10 @@
       "type": "route_master",
       "route_master": "train",
       "ref": "R",
-      "network": "Transilien"
+      "network": "Transilien",
+      "colour": "#FF82B4",
+      "text_colour": "#000000",
+      "ref:FR:STIF": "C01731"
     }
   }
 ]

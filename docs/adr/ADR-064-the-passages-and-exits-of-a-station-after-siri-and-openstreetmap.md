@@ -11,7 +11,7 @@ Step 18 of the rebuild (#96) shows, in the sheet of a station, its next departur
 
 - **A new ability, `show-station`**, in the `places` feature: a use case from a port that loads a station, a port that asks its departures, and three input streams, the station opened, the clock and whether the page is shown.
 - **Departures after SIRI StopMonitoring** (CEN/TS 15531), the standard the Paris transit authority publishes its next departures in: `lineRef`, `destinationName`, `aimedDepartureTime`, `expectedDepartureTime`, `monitored`, `departureStatus`. SIRI names its fields in PascalCase; Biome asks for camelCase, so the names are SIRI's with a lower-case first letter.
-- **Lines and exits after OpenStreetMap's tagging**: a line is a `route_master` with `ref`, `colour`, `text_colour` and `network`; an exit is a `railway=subway_entrance` with `ref`, `name` and `wheelchair`. No key says that an exit has an escalator; `conveying=yes`, OpenStreetMap's key for moving steps, is the closest.
+- **Lines and exits after OpenStreetMap's tagging**: a line is a `route_master` with `ref`, `colour`, `text_colour`, `network` and `ref:FR:STIF`, the line's identifier in Île-de-France Mobilités' reference; an exit is a `railway=subway_entrance` with `ref`, `name` and `wheelchair`. No key says that an exit has an escalator; `conveying=yes`, OpenStreetMap's key for moving steps, is the closest.
 - **Refreshing from the clock as an input stream**: the departures are asked at the first time given and whenever 30 seconds have passed since; the reference time moves on by steps of 10 seconds. Nothing is asked while the page is hidden (Page Visibility API), and the departures are asked again at once when it is shown again: a defect of the former app, which left it to the browser, fixed rather than copied.
 - **Readable colours with colorjs.io**, by the editors of CSS Color, which implements the WCAG 2.1 contrast and the mixing of colours: below 4.5:1 the background is darkened toward black, or lightened toward white, by steps of 5 %, never the text, as the former app did. `colorjs.io` joins `DOMAIN_PACKAGES`; its procedural API is imported, so only sRGB is bundled.
 - **A station's data in a file of its own**, `/data/stations/<id>.json`, prerendered and loaded when its sheet opens, rather than in `places.json`, the way out [ADR-058](ADR-058-the-text-type-and-local-name-of-a-place-after-openstreetmap-tags.md) names. The real lines are written once, in `lines.json`, so that the Métro list (step 25) can reuse them.
@@ -20,7 +20,7 @@ Step 18 of the rebuild (#96) shows, in the sheet of a station, its next departur
 ## Consequences
 
 - Nothing is called outside the site: the Content Security Policy and « Who sees what » do not change.
-- The real colours of the lines must be checked against Île-de-France Mobilités' reference of lines before they are written; until then a line is drawn in the former app's grey.
+- The colours of the lines are Île-de-France Mobilités' official ones, read once on 2026-11-25 from its open dataset _référentiel des lignes_ (fields `colourweb_hexa` and `textcolourweb_hexa`, at `data.iledefrance-mobilites.fr`) and written by hand in `lines.json`. The app does not call that service; a change of colour there is copied by hand.
 - The 170 m within which the former app looked for a station's exits is not needed: each station lists its own exits.
 
 ## Alternatives considered
