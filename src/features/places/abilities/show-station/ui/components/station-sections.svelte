@@ -82,9 +82,7 @@
             <button type="button" onclick={(): void => onExit(exit.coordinates)}>
               <span class="square" aria-hidden="true"></span>
               <span class="exit">{exitText(exit)}</span>
-              {#if accessText(exit) !== undefined}
-                <span class="access">{accessText(exit)}</span>
-              {/if}
+              <span class="access">{accessText(exit)}</span>
             </button>
           </li>
         {/each}

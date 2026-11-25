@@ -40,13 +40,15 @@ const exitOf = ({ coordinates, tags }: Exit): StationExit => ({
   coordinates
 });
 
-const byNumber = (one: StationExit, other: StationExit): number => {
-  if (one.ref === undefined || other.ref === undefined) {
-    return Number(one.ref === undefined) - Number(other.ref === undefined);
-  }
-  return REFS.compare(one.ref, other.ref);
-};
+type NumberedExit = StationExit & { readonly ref: string };
 
-const stationExits = (exits: readonly Exit[]): readonly StationExit[] => exits.map(exitOf).toSorted(byNumber);
+const isNumbered = (exit: StationExit): exit is NumberedExit => exit.ref !== undefined;
+
+const byNumber = (one: NumberedExit, other: NumberedExit): number => REFS.compare(one.ref, other.ref);
+
+const stationExits = (exits: readonly Exit[]): readonly StationExit[] => {
+  const all = exits.map(exitOf);
+  return [...all.filter(isNumbered).toSorted(byNumber), ...all.filter((exit) => !isNumbered(exit))];
+};
 
 export { type Coordinates, type Exit, type StationExit, stationExits };

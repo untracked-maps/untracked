@@ -28,9 +28,9 @@ const exitText = ({ ref, name }: StationExit): string => {
   return name === undefined ? m.station_exit_number({ ref }) : m.station_exit({ ref, name });
 };
 
-const accessText = ({ access }: StationExit): string | undefined => {
+const accessText = ({ access }: StationExit): string => {
   if (access === undefined) {
-    return undefined;
+    return '';
   }
   return access === 'accessible' ? m.station_exit_accessible() : m.station_exit_escalator();
 };

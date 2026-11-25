@@ -96,6 +96,18 @@ describe('the exits of the open station on the map', () => {
     expect(map.getLayer('station-exits')?.type).toBe('circle');
   });
 
+  it('are taken off a style that no longer has them without error', async () => {
+    const map = await loadedMap();
+    const errors: unknown[] = [];
+    map.on('error', (error) => {
+      errors.push(error);
+    });
+    await drawnOn(map, new BehaviorSubject(OPEN));
+    map.setStyle({ ...STYLE, layers: [{ id: 'water', type: 'background' }] }, { diff: false });
+    await map.once('style.load');
+    expect(errors).toEqual([]);
+  });
+
   it('are drawn again when the style changes', async () => {
     const map = await loadedMap();
     await drawnOn(map, new BehaviorSubject(OPEN));

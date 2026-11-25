@@ -62,7 +62,7 @@ describe('an exit told', () => {
   it.each([
     [{ access: 'accessible', coordinates: AT } as const, 'accessible'],
     [{ access: 'escalator', coordinates: AT } as const, 'escalator'],
-    [{ coordinates: AT }, undefined]
+    [{ coordinates: AT }, '']
   ])('with %o tells its access as %s', (exit, text) => {
     expect(accessText(exit)).toBe(text);
   });

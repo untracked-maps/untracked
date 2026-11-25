@@ -99,7 +99,7 @@ const refOf = ({ first }: Group): string => first.line.tags['ref'] ?? '';
 const modeRankOf = ({ first }: Group): number => MODE_ORDER.indexOf(first.line.mode);
 
 const byLine = (one: Group, other: Group): number =>
-  modeRankOf(one) - modeRankOf(other) || REFS.compare(refOf(one), refOf(other)) || one.first.at - other.first.at;
+  modeRankOf(one) - modeRankOf(other) || REFS.compare(refOf(one), refOf(other));
 
 const networkOf = (tags: Tags): Pick<LineDepartures, 'network'> => {
   const network = tags['network'];
