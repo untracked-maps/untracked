@@ -1,4 +1,4 @@
-# ADR-068 — Categories of places gather kinds
+# ADR-071 — Categories of places gather kinds
 
 **Date**: 2026-11-25
 **Status**: accepted
