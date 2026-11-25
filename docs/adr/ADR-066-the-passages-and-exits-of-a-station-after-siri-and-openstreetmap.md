@@ -1,4 +1,4 @@
-# ADR-064 — The passages and exits of a station, after SIRI and OpenStreetMap
+# ADR-066 — The passages and exits of a station, after SIRI and OpenStreetMap
 
 **Date**: 2026-11-24
 **Status**: proposed
