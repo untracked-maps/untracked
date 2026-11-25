@@ -2,7 +2,8 @@
 
 > The visitor clicks a spot of the map, long-presses it on a touch screen, or
 > presses Enter on the map to inspect its centre. A marker shows the spot and a
-> card gives its address, or says there is none nearby.
+> card gives its address, or says there is none nearby. An address or a street
+> chosen in the search opens the same card, with the address already known.
 
 ## Rule: The visitor learns the address of the spot
 
@@ -38,6 +39,22 @@
 - Given the addresses on the map cannot be loaded
 - When the visitor inspects the spot at longitude 2.3377 and latitude 48.8606
 - Then the visitor is told that the address is unavailable
+
+## Rule: The visitor reads the address chosen in the search, without waiting for the addresses on the map
+
+### Background:
+
+- Given the addresses on the map are on their way
+
+### Scenario: The visitor chooses an address
+
+- When the visitor chooses "57 Rue de Rennes" in "75006" in the search
+- Then the visitor reads the address "Rue de Rennes" in "75006"
+
+### Scenario: The visitor chooses a street
+
+- When the visitor chooses "Rue de Rennes" in "75006" in the search
+- Then the visitor reads the address "Rue de Rennes" in "75006"
 
 ## Rule: One spot at a time, until the visitor dismisses it
 

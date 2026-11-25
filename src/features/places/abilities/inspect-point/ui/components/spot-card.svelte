@@ -20,19 +20,11 @@
     readonly onSheetHeight?: (height: number) => void;
     readonly closings?: Observable<unknown>;
     readonly onShare?: (shared: { readonly title: string; readonly at: Coordinates }) => void;
-    readonly onCopy?: (text: string) => void;
-    readonly vibrate?: Vibrate;
+    readonly onCopy: (text: string) => void;
+    readonly vibrate: Vibrate;
   };
 
-  const {
-    spot,
-    onClose,
-    onSheetHeight,
-    closings = NEVER,
-    onShare,
-    onCopy = (): void => undefined,
-    vibrate = (): void => undefined
-  }: Props = $props();
+  const { spot, onClose, onSheetHeight, closings = NEVER, onShare, onCopy, vibrate }: Props = $props();
 
   const uid = $props.id();
 

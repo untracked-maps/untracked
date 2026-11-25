@@ -52,6 +52,8 @@ const onPhone = async (): Promise<Seen> => {
   const spot = new BehaviorSubject<InspectedSpot>(RIVOLI);
   await page.viewport(390, 844);
   await render(SpotCard, {
+    onCopy: (): void => undefined,
+    vibrate: (): void => undefined,
     spot,
     onClose: (): void => {
       events.push('closed');

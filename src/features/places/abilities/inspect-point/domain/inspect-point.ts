@@ -1,4 +1,4 @@
-import { catchError, map, merge, type Observable, of, shareReplay, startWith, switchMap, take } from 'rxjs';
+import { catchError, EMPTY, map, merge, type Observable, of, shareReplay, startWith, switchMap, take } from 'rxjs';
 
 type Coordinates = {
   readonly longitude: number;
@@ -13,8 +13,14 @@ type InspectPointPorts = {
   readonly reverseGeocode: ReverseGeocode;
 };
 
+type LocatedSpot = {
+  readonly spot: Coordinates;
+  readonly address: PostalAddress;
+};
+
 type InspectPointInputs = {
   readonly inspected: Observable<Coordinates>;
+  readonly located?: Observable<LocatedSpot>;
   readonly dismissed: Observable<void>;
 };
 
@@ -52,11 +58,23 @@ const inspect =
 
 const inspectPoint =
   (ports: InspectPointPorts) =>
-  ({ inspected, dismissed }: InspectPointInputs): Observable<InspectedSpot> =>
-    merge(inspected.pipe(map(inspect(ports))), dismissed.pipe(map(() => of(NONE)))).pipe(
+  ({ inspected, located = EMPTY, dismissed }: InspectPointInputs): Observable<InspectedSpot> =>
+    merge(
+      inspected.pipe(map(inspect(ports))),
+      located.pipe(map(({ spot, address }) => of<InspectedSpot>({ kind: 'address', spot, address }))),
+      dismissed.pipe(map(() => of(NONE)))
+    ).pipe(
       switchMap((inspection) => inspection),
       startWith(NONE),
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-export { type Coordinates, type InspectedSpot, inspectPoint, type PostalAddress, type ReverseGeocode, type SpotAddress };
+export {
+  type Coordinates,
+  type InspectedSpot,
+  inspectPoint,
+  type LocatedSpot,
+  type PostalAddress,
+  type ReverseGeocode,
+  type SpotAddress
+};

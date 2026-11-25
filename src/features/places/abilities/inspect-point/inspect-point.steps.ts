@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { NEVER, type Observable, of, Subject, throwError } from 'rxjs';
-import { type Coordinates, type InspectedSpot, inspectPoint } from './domain/inspect-point';
+import { type Coordinates, type InspectedSpot, inspectPoint, type LocatedSpot } from './domain/inspect-point';
 import { nearestAddress } from './implementation/prerendered/nearest-address';
 import type { KnownAddress } from './implementation/prerendered/prerendered-addresses';
 
 type InspectPointWorld = World & {
   addresses: Observable<readonly KnownAddress[]>;
   inspected: Subject<Coordinates>;
+  located: Subject<LocatedSpot>;
   dismissed: Subject<void>;
   spot: InspectedSpot;
 };
@@ -17,9 +18,11 @@ const inspectionStarted = (world: InspectPointWorld): void => {
     return;
   }
   world.inspected = new Subject<Coordinates>();
+  world.located = new Subject<LocatedSpot>();
   world.dismissed = new Subject<void>();
   inspectPoint({ reverseGeocode: nearestAddress(() => world.addresses) })({
     inspected: world.inspected,
+    located: world.located,
     dismissed: world.dismissed
   }).subscribe((spot) => {
     world.spot = spot;
@@ -56,6 +59,27 @@ When(
   function theVisitorInspects(this: InspectPointWorld, longitude: number, latitude: number) {
     inspectionStarted(this);
     this.inspected.next({ longitude, latitude });
+  }
+);
+
+const HOUSE_NUMBER = /^(?<number>\d+) (?<street>.+)$/u;
+
+const chosenAddressOf = (chosen: string, postcode: string): LocatedSpot['address'] => {
+  const { number, street } = HOUSE_NUMBER.exec(chosen)?.groups ?? {};
+  return {
+    ...(number === undefined ? {} : { houseNumber: number }),
+    street: street ?? chosen,
+    postalCode: postcode,
+    addressLocality: 'Paris',
+    addressCountry: 'FR'
+  };
+};
+
+When(
+  'the visitor chooses {string} in {string} in the search',
+  function theVisitorChooses(this: InspectPointWorld, chosen: string, postcode: string) {
+    inspectionStarted(this);
+    this.located.next({ spot: { longitude: 2.3274, latitude: 48.8478 }, address: chosenAddressOf(chosen, postcode) });
   }
 );
 

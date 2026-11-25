@@ -1,4 +1,4 @@
-import { combineLatest, EMPTY, map, merge, type Observable, Subject, tap } from 'rxjs';
+import { EMPTY, map, merge, type Observable, Subject, tap } from 'rxjs';
 import type { ColourScheme } from '#features/appearance/abilities/choose-theme/domain/choose-theme';
 import { BASEMAPS, type Basemap, chooseBasemap } from '#features/map/abilities/choose-basemap/domain/choose-basemap';
 import { ignOrthophotos } from '#features/map/abilities/choose-basemap/implementation/ign/ign-orthophotos';
@@ -12,13 +12,6 @@ import { showTransitLines, type TransitLine } from '#features/map/abilities/show
 import { idfmTransitLines } from '#features/map/abilities/show-transit-lines/implementation/idfm/idfm-transit-lines';
 import { type KeptOnDevice, keptInMemory, keptOnDevice } from '#features/map/implementation/browser/kept-on-device';
 import { type Notices, noticeBoard } from '#features/notices/abilities/show-notice/ui/components/notice-board';
-import {
-  type Coordinates,
-  type InspectedSpot,
-  inspectPoint
-} from '#features/places/abilities/inspect-point/domain/inspect-point';
-import { nearestAddress } from '#features/places/abilities/inspect-point/implementation/prerendered/nearest-address';
-import { prerenderedAddresses } from '#features/places/abilities/inspect-point/implementation/prerendered/prerendered-addresses';
 import { type Opening, openPlace, type PlaceSheet } from '#features/places/abilities/open-place/domain/open-place';
 import { clipboardCopy } from '#features/places/abilities/open-place/implementation/browser/clipboard';
 import { prerenderedPlaces as prerenderedPlacesOfSheet } from '#features/places/abilities/open-place/implementation/prerendered/prerendered-places';
@@ -39,6 +32,7 @@ import { fetchedOnce } from '#libraries/fetched-once/fetched-once';
 import { browser } from '$app/env';
 import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
+import { type Chosen, chosenOpened, type Spots, spotsInspected } from './spots';
 
 type MapLayers = {
   readonly basemap: KeptOnDevice<Basemap>;
@@ -76,35 +70,6 @@ const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, dis
     close: () => closed.next(),
     copy: addressCopying({ copyText: clipboardCopy(browser ? navigator.clipboard : undefined) }, notices.tell),
     vibrate: (milliseconds) => navigator.vibrate?.(milliseconds)
-  };
-};
-
-type Spots = {
-  readonly spot: Observable<InspectedSpot>;
-  readonly sheetOpen: Observable<boolean>;
-  readonly inspect: (spot: Coordinates) => void;
-  readonly dismiss: () => void;
-  readonly closeSheets: () => void;
-};
-
-const spotsInspected = (places: PlaceSheets, dismissed: Subject<void>): Spots => {
-  const inspected = new Subject<Coordinates>();
-  const reverseGeocode = nearestAddress(prerenderedAddresses(fetchFile, resolve('/data/addresses.json')));
-  const spot = inspectPoint({ reverseGeocode })({ inspected, dismissed });
-  return {
-    spot,
-    sheetOpen: combineLatest([places.sheet, spot]).pipe(
-      map(([{ status }, { kind }]) => status !== 'closed' || kind !== 'none')
-    ),
-    inspect: (at): void => {
-      places.close();
-      inspected.next(at);
-    },
-    dismiss: () => dismissed.next(),
-    closeSheets: (): void => {
-      places.close();
-      dismissed.next();
-    }
   };
 };
 
@@ -151,6 +116,7 @@ type Loaded = {
   readonly sheetHeights: TallestSheet;
   readonly places: PlaceSheets;
   readonly spots: Spots;
+  readonly openChosen: Chosen;
   readonly links: Links;
   readonly placesShown: (zoom$: Observable<number>) => Observable<readonly PlaceDot[]>;
 };
@@ -180,7 +146,7 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
   const notices = noticeBoard();
   const dismissed = new Subject<void>();
   const places = placeSheets(fetchPlaces, notices, dismissed);
-  const spots = spotsInspected(places, dismissed);
+  const spots = spotsInspected(places, dismissed, fetchFile, resolve('/data/addresses.json'));
   const openId = places.sheet.pipe(map((sheet) => (sheet.status === 'open' ? sheet.place.id : undefined)));
   const shownOnMap = showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) });
   return {
@@ -190,6 +156,7 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
     sheetHeights: tallestSheet(),
     places,
     spots,
+    openChosen: chosenOpened(places, spots),
     links: sharedLinks(places, spots, notices),
     placesShown: (zoom$) => shownOnMap(zoom$, openId),
     layers: mapLayers(theme.colourScheme)

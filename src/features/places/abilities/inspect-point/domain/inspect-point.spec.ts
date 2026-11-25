@@ -39,6 +39,7 @@ type Run = Parameters<Parameters<TestScheduler['run']>[0]>[0];
 type Marbles = {
   readonly inspected: string;
   readonly dismissed?: string;
+  readonly located?: string;
   readonly answers?: Readonly<Record<string, string>>;
 };
 
@@ -52,6 +53,7 @@ const expectInspection = (marbles: Marbles, expected: string): void =>
   new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted)).run((run: Run) => {
     const spot$ = inspectPoint({ reverseGeocode: answersOf(run, marbles) })({
       inspected: run.cold(marbles.inspected, SPOTS),
+      located: run.cold(marbles.located ?? '', { r: { spot: LOUVRE, address: RIVOLI_STREET } }),
       dismissed: run.cold(marbles.dismissed ?? '', { d: undefined })
     });
     run.expectObservable(spot$).toBe(expected, STATES);
@@ -86,6 +88,24 @@ describe('inspect point, for one spot', () => {
         STATES
       );
     });
+  });
+});
+
+describe('inspect point, for an address already known', () => {
+  it('gives the address without looking for it', () => {
+    expectInspection({ inspected: '', located: '-r' }, 'na');
+  });
+
+  it('moves to a spot inspected afterwards', () => {
+    expectInspection({ inspected: '--s', located: '-r' }, 'nakx');
+  });
+
+  it('forgets the address once dismissed', () => {
+    expectInspection({ inspected: '', located: '-r', dismissed: '--d' }, 'nan');
+  });
+
+  it('takes the place of a spot being looked for', () => {
+    expectInspection({ inspected: '-l', located: '--r', answers: { l: '---r' } }, 'nla');
   });
 });
 

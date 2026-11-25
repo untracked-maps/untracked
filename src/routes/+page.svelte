@@ -55,7 +55,6 @@
   import KindSearch from '#features/search/abilities/search-by-type/ui/components/kind-search.svelte';
   import { addressesChosenAt, districtsChosenAt } from '#features/search/abilities/search-places/domain/chosen-place';
   import { searchPlaces } from '#features/search/abilities/search-places/domain/search-places';
-  import { chosenPlaceOverlay } from '#features/search/abilities/search-places/ui/components/chosen-place-overlay';
   import type { SearchPanel } from '#features/search/abilities/search-places/ui/components/combobox.presenter';
   import SearchPlaces from '#features/search/abilities/search-places/ui/components/search-places.svelte';
   import type { PlaceKind } from '#features/search/domain/place';
@@ -138,7 +137,7 @@
     (from: 'search' | 'kind list') =>
     (place: RecentPlace): void => {
       chosenPlaces.next(place);
-      data.places.open({ id: place.id, from });
+      data.openChosen(place, from);
       if (from === 'search') {
         chooseKind();
       }
@@ -264,7 +263,6 @@
     placeDotsOverlay(data.placesShown, data.theme.colourScheme),
     positionOverlay(located),
     kindPlacesOverlay(kindSearch),
-    chosenPlaceOverlay(chosenPlaces),
     openPlaceOverlay(placeSheet, data.theme.colourScheme),
     framingOverlay({
       placesOpened: merge(placesOpenedAt(placeSheet), addressesChosenAt(chosenPlaces)),

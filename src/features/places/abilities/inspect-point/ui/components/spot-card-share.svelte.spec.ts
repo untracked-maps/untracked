@@ -16,6 +16,8 @@ const RIVOLI: InspectedSpot = {
 const sharedFrom = async (): Promise<readonly unknown[]> => {
   const shared: unknown[] = [];
   await render(SpotCard, {
+    onCopy: (): void => undefined,
+    vibrate: (): void => undefined,
     spot: of(RIVOLI),
     onClose: () => undefined,
     onShare: (spot: unknown): void => {
@@ -51,7 +53,7 @@ describe('sharing a spot', () => {
   });
 
   it('is not offered when the page cannot share', async () => {
-    await render(SpotCard, { spot: of(RIVOLI), onClose: () => undefined });
+    await render(SpotCard, { spot: of(RIVOLI), onClose: () => undefined, onCopy: () => undefined, vibrate: () => undefined });
 
     await expect.element(page.getByRole('button', { name: 'Share' })).not.toBeInTheDocument();
   });
