@@ -33,17 +33,6 @@ test.describe('the opening hours of a place', () => {
     await expect(openingHours(page).locator('[aria-current="date"]')).toHaveText('TuesdayClosed');
   });
 
-  test('come after what is good to know', async ({ page }) => {
-    await louvreOpened(page);
-
-    await expect(louvreSheet(page).getByRole('heading', { level: 3 })).toHaveText([
-      'Good to know',
-      'Opening hours',
-      'Details',
-      'About'
-    ]);
-  });
-
   test('keep the sheet accessible', async ({ page }) => {
     await louvreOpened(page);
     await openingHours(page).waitFor();

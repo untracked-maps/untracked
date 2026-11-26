@@ -10,7 +10,12 @@ test.describe('the text about a place', () => {
   test('comes after the details of a museum, which is expected to have opening hours', async ({ page }) => {
     await louvreOpened(page);
 
-    await expect(louvreSheet(page).getByRole('heading', { level: 3 })).toHaveText(['Good to know', 'Details', 'About']);
+    await expect(louvreSheet(page).getByRole('heading', { level: 3 })).toHaveText([
+      'Good to know',
+      'Opening hours',
+      'Details',
+      'About'
+    ]);
   });
 
   test('is written in the language of the visitor', async ({ page }) => {
