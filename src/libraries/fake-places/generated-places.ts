@@ -1,4 +1,5 @@
 import { Faker } from '@faker-js/faker';
+import { fakeHours } from './fake-hours';
 import { ADDED_KINDS, type DrawnKind, type FakePlace, type FakePostalAddress, type GeneratedKind } from './fake-place';
 import { fakeReach } from './fake-reach';
 import { fakeTags } from './fake-tags';
@@ -13,7 +14,9 @@ const REACH_SEED = 1871;
 
 const TAGS_SEED = 1905;
 
-const ADDED_SEEDS = { places: 1944, reach: 1958, tags: 1968 };
+const HOURS_SEED = 1936;
+
+const ADDED_SEEDS = { places: 1944, reach: 1958, tags: 1968, hours: 1981 };
 
 const PLACES_PER_ADDED_KIND = 6;
 
@@ -69,6 +72,7 @@ type Fakers = {
   readonly cuisines: Faker;
   readonly reach: Faker;
   readonly tags: Faker;
+  readonly hours: Faker;
 };
 
 const idOf = (zone: FakeZone, index: number): string => `${zone.id}-${String(index + 1).padStart(ID_DIGITS, '0')}`;
@@ -89,9 +93,15 @@ const cuisineOf = (faker: Faker, kind: GeneratedKind): Pick<FakePlace, 'cuisine'
 const fameOf = (faker: Faker): number =>
   faker.datatype.boolean({ probability: FAMOUS_SHARE }) ? faker.number.int({ min: 1, max: MOST_FAME }) : 0;
 
+const tagsOf = (fakers: Fakers, kind: GeneratedKind): Pick<FakePlace, 'tags'> => {
+  const tags = { ...fakeTags(fakers.tags, { kind }).tags, ...fakeHours(fakers.hours, { kind }) };
+  return Object.keys(tags).length === 0 ? {} : { tags };
+};
+
 const placeOf =
-  ({ faker, cuisines, reach, tags }: Fakers, zone: FakeZone) =>
+  (fakers: Fakers, zone: FakeZone) =>
   (kind: GeneratedKind, index: number): FakePlace => {
+    const { faker, cuisines, reach } = fakers;
     const name = placeNameOf(kind, { firstName: faker.person.firstName(), lastName: faker.person.lastName() });
     return {
       id: idOf(zone, index),
@@ -100,7 +110,7 @@ const placeOf =
       ...cuisineOf(cuisines, kind),
       address: addressOf(faker, zone),
       ...fakeReach(reach, { name, kind }),
-      ...fakeTags(tags, { kind }),
+      ...tagsOf(fakers, kind),
       coordinates: {
         longitude: faker.location.longitude({ min: zone.bounds.west, max: zone.bounds.east, precision: PRECISION }),
         latitude: faker.location.latitude({ min: zone.bounds.south, max: zone.bounds.north, precision: PRECISION })
@@ -111,16 +121,17 @@ const placeOf =
 
 const fakersOf = (
   zone: FakeZone,
-  seeds: { readonly places: number; readonly reach: number; readonly tags: number }
+  seeds: { readonly places: number; readonly reach: number; readonly tags: number; readonly hours: number }
 ): Fakers => ({
   faker: new Faker({ locale: [...zone.locale], seed: seeds.places }),
   cuisines: new Faker({ locale: [...zone.locale], seed: CUISINE_SEED }),
   reach: new Faker({ locale: [...zone.locale], seed: seeds.reach }),
-  tags: new Faker({ locale: [...zone.locale], seed: seeds.tags })
+  tags: new Faker({ locale: [...zone.locale], seed: seeds.tags }),
+  hours: new Faker({ locale: [...zone.locale], seed: seeds.hours })
 });
 
 const generatedPlaces = (zone: FakeZone, count: number): readonly FakePlace[] => {
-  const fakers = fakersOf(zone, { places: SEED, reach: REACH_SEED, tags: TAGS_SEED });
+  const fakers = fakersOf(zone, { places: SEED, reach: REACH_SEED, tags: TAGS_SEED, hours: HOURS_SEED });
   const place = placeOf(fakers, zone);
   return Array.from({ length: count }, (_, index) => place(fakers.faker.helpers.weightedArrayElement(KIND_WEIGHTS), index));
 };

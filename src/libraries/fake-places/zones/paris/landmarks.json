@@ -23,7 +23,8 @@
       "toilets": "yes",
       "toilets:wheelchair": "yes",
       "man_made": "tower",
-      "tourism": "attraction"
+      "tourism": "attraction",
+      "opening_hours": "Mo-Su 09:30-23:45"
     },
     "coordinates": {
       "longitude": 2.29448,
@@ -54,7 +55,8 @@
       "toilets": "yes",
       "toilets:wheelchair": "yes",
       "changing_table": "yes",
-      "tourism": "museum"
+      "tourism": "museum",
+      "opening_hours": "Mo,Th,Sa,Su 09:00-18:00; We,Fr 09:00-21:00; Tu off; Jan 01,May 01,Dec 25 off"
     },
     "coordinates": {
       "longitude": 2.33764,
@@ -78,7 +80,8 @@
       "heritage": "2",
       "heritage:operator": "mhs",
       "amenity": "place_of_worship",
-      "building": "cathedral"
+      "building": "cathedral",
+      "opening_hours": "Mo-Fr 07:50-18:45; Sa,Su 08:15-19:15"
     },
     "coordinates": {
       "longitude": 2.34992,
@@ -102,7 +105,8 @@
       "heritage:operator": "mhs",
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "historic": "monument"
+      "historic": "monument",
+      "opening_hours": "Apr-Sep: Mo-Su 10:00-23:00; Oct-Mar: Mo-Su 10:00-22:30"
     },
     "coordinates": {
       "longitude": 2.29504,
@@ -127,7 +131,8 @@
       "heritage:operator": "mhs",
       "toilets": "yes",
       "amenity": "place_of_worship",
-      "building": "basilica"
+      "building": "basilica",
+      "opening_hours": "Mo-Su 06:30-22:30"
     },
     "coordinates": {
       "longitude": 2.34306,
@@ -158,7 +163,8 @@
       "toilets": "yes",
       "toilets:wheelchair": "yes",
       "changing_table": "yes",
-      "tourism": "museum"
+      "tourism": "museum",
+      "opening_hours": "Tu,We,Fr-Su 09:30-18:00; Th 09:30-21:45; Mo off; PH off"
     },
     "coordinates": {
       "longitude": 2.32656,
@@ -214,7 +220,8 @@
       "internet_access:fee": "no",
       "air_conditioning": "yes",
       "amenity": "arts_centre",
-      "name": "Centre national d'art et de culture Georges-Pompidou"
+      "name": "Centre national d'art et de culture Georges-Pompidou",
+      "opening_hours": "We-Mo 11:00-21:00; Th 11:00-23:00; Tu off"
     },
     "coordinates": {
       "longitude": 2.35222,
@@ -243,7 +250,8 @@
       "payment:cards": "yes",
       "reservation": "recommended",
       "amenity": "theatre",
-      "name": "Palais Garnier"
+      "name": "Palais Garnier",
+      "opening_hours": "Mo-Su 10:00-17:00"
     },
     "coordinates": {
       "longitude": 2.33165,
@@ -270,7 +278,8 @@
       "payment:contactless": "yes",
       "payment:cards": "yes",
       "toilets": "yes",
-      "toilets:wheelchair": "yes"
+      "toilets:wheelchair": "yes",
+      "opening_hours": "Tu-Su 10:00-20:00; We 10:00-22:00"
     },
     "coordinates": {
       "longitude": 2.31248,
@@ -296,7 +305,8 @@
       "payment:cards": "yes",
       "building": "church",
       "historic": "monument",
-      "tourism": "attraction"
+      "tourism": "attraction",
+      "opening_hours": "Apr-Sep: Mo-Su 10:00-18:30; Oct-Mar: Mo-Su 10:00-18:00; Jan 01,May 01,Dec 25 off"
     },
     "coordinates": {
       "longitude": 2.34619,
@@ -323,7 +333,8 @@
       "payment:contactless": "yes",
       "payment:cards": "yes",
       "toilets": "yes",
-      "historic": "monument"
+      "historic": "monument",
+      "opening_hours": "Mo-Su 10:00-18:00; Tu 10:00-21:00"
     },
     "coordinates": {
       "longitude": 2.31253,
@@ -347,7 +358,8 @@
       "heritage:operator": "mhs",
       "toilets": "yes",
       "dog": "no",
-      "leisure": "garden"
+      "leisure": "garden",
+      "opening_hours": "Mo-Su 07:30-20:30 unknown"
     },
     "coordinates": {
       "longitude": 2.33716,
@@ -386,7 +398,8 @@
     "tags": {
       "heritage": "2",
       "heritage:operator": "mhs",
-      "dog": "no"
+      "dog": "no",
+      "opening_hours": "Mo-Fr 08:00-18:00; Sa 08:30-18:00; Su 09:00-18:00"
     },
     "coordinates": {
       "longitude": 2.39333,
@@ -429,7 +442,8 @@
       "payment:cards": "yes",
       "reservation": "recommended",
       "amenity": "place_of_worship",
-      "building": "chapel"
+      "building": "chapel",
+      "opening_hours": "Mo-Su 09:00-19:00; Jan 01,May 01,Dec 25 off"
     },
     "coordinates": {
       "longitude": 2.34503,
@@ -458,7 +472,8 @@
       "payment:cards": "yes",
       "reservation": "required",
       "air_conditioning": "yes",
-      "amenity": "theatre"
+      "amenity": "theatre",
+      "opening_hours": "Mo-Su 21:00-01:00"
     },
     "coordinates": {
       "longitude": 2.33233,
@@ -523,7 +538,8 @@
       "changing_table": "yes",
       "air_conditioning": "yes",
       "internet_access": "wlan",
-      "internet_access:fee": "no"
+      "internet_access:fee": "no",
+      "opening_hours": "Mo-Sa 10:00-20:30; Su 11:00-20:00"
     },
     "coordinates": {
       "longitude": 2.33199,
@@ -562,7 +578,8 @@
       "toilets": "yes",
       "dog": "leashed",
       "changing_table": "yes",
-      "leisure": "park"
+      "leisure": "park",
+      "opening_hours": "Mo-Su 07:00-22:00"
     },
     "coordinates": {
       "longitude": 2.38278,
@@ -605,7 +622,8 @@
       "payment:contactless": "yes",
       "payment:cards": "yes",
       "toilets": "yes",
-      "tourism": "museum"
+      "tourism": "museum",
+      "opening_hours": "Tu-Su 10:00-18:30; Mo off; PH off"
     },
     "coordinates": {
       "longitude": 2.31586,
@@ -650,7 +668,8 @@
       "payment:cards": "yes",
       "outdoor_seating": "yes",
       "reservation": "no",
-      "dog": "yes"
+      "dog": "yes",
+      "opening_hours": "Mo-Su 07:30-01:30"
     },
     "coordinates": {
       "longitude": 2.33263,
@@ -677,7 +696,8 @@
       "toilets": "yes",
       "toilets:wheelchair": "yes",
       "changing_table": "yes",
-      "amenity": "library"
+      "amenity": "library",
+      "opening_hours": "Mo 14:00-20:00; Tu-Sa 09:00-20:00; Su 13:00-19:00; PH off"
     },
     "coordinates": {
       "longitude": 2.37594,
@@ -745,7 +765,8 @@
       "internet_access": "wlan",
       "internet_access:fee": "no",
       "air_conditioning": "yes",
-      "dog": "yes"
+      "dog": "yes",
+      "opening_hours": "24/7"
     },
     "coordinates": {
       "longitude": 2.33598,
@@ -767,7 +788,8 @@
     "phone": "+33 1 99 00 01 23",
     "tags": {
       "payment:contactless": "yes",
-      "payment:cards": "yes"
+      "payment:cards": "yes",
+      "opening_hours": "Mo-Su 08:00-24:00"
     },
     "coordinates": {
       "longitude": 2.37192,
@@ -793,7 +815,8 @@
       "payment:cards": "yes",
       "payment:meal_voucher": "yes",
       "takeaway": "only",
-      "organic": "yes"
+      "organic": "yes",
+      "opening_hours": "Tu-Sa 07:00-20:00; Su 07:00-13:00"
     },
     "coordinates": {
       "longitude": 2.34488,
@@ -838,7 +861,8 @@
     "instagram": "https://instagram.example/orsayfleurs",
     "tags": {
       "payment:contactless": "yes",
-      "payment:cards": "yes"
+      "payment:cards": "yes",
+      "opening_hours": "Tu-Sa 10:00-19:30"
     },
     "coordinates": {
       "longitude": 2.33102,
@@ -867,7 +891,8 @@
       "reservation": "yes",
       "internet_access": "wlan",
       "internet_access:fee": "no",
-      "dog": "leashed"
+      "dog": "leashed",
+      "opening_hours": "Mo-Su 07:00-02:00"
     },
     "coordinates": {
       "longitude": 2.34622,

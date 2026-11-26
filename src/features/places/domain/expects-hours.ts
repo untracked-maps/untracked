@@ -15,7 +15,32 @@ const KINDS_WITH_HOURS: ReadonlySet<string | undefined> = new Set([
   'library',
   'post-office',
   'theatre',
-  'department-store'
+  'department-store',
+  'fast-food',
+  'ice-cream',
+  'chocolate',
+  'deli',
+  'greengrocer',
+  'cheese',
+  'butcher',
+  'wine',
+  'clothes',
+  'newsagent',
+  'diy',
+  'mobile-phone',
+  'toys',
+  'stationery',
+  'music',
+  'optician',
+  'pet-shop',
+  'laundry',
+  'bicycle',
+  'marketplace',
+  'bank',
+  'townhall',
+  'doctor',
+  'fitness-centre',
+  'swimming-pool'
 ]);
 
 const expectsHours = (kind: string | undefined): boolean => KINDS_WITH_HOURS.has(kind);

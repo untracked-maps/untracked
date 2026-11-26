@@ -8,6 +8,8 @@ const BORDEAUX: FakeZone = {
   id: 'fake-bordeaux',
   city: 'Bordeaux',
   country: 'FR',
+  region: 'Nouvelle-Aquitaine',
+  timeZone: 'Europe/Paris',
   locale: [fr, base],
   postcodes: ['33000', '33100', '33200', '33300', '33800'],
   bounds: { west: -0.64, south: 44.81, east: -0.53, north: 44.9 },
@@ -41,7 +43,8 @@ const VALUES: Readonly<Record<string, readonly string[]>> = Object.fromEntries([
   ['organic', ['yes', 'only']]
 ]);
 
-const tagsOf = ({ tags }: FakePlace): readonly (readonly [string, string])[] => Object.entries(tags ?? {});
+const tagsOf = ({ tags }: FakePlace): readonly (readonly [string, string])[] =>
+  Object.entries(tags ?? {}).filter(([key]) => key !== 'opening_hours');
 
 const ofKinds = (...kinds: readonly FakePlace['kind'][]): readonly FakePlace[] =>
   PLACES.filter(({ kind }) => kinds.includes(kind));
@@ -72,8 +75,8 @@ describe('the tags of generated places', () => {
     ).toEqual([]);
   });
 
-  it('give no tag to schools, car parks nor post offices', () => {
-    expect(ofKinds('school', 'parking', 'post-office').filter(({ tags }) => tags !== undefined)).toEqual([]);
+  it('give nothing good to know to schools, car parks nor post offices', () => {
+    expect(ofKinds('school', 'parking', 'post-office').flatMap(tagsOf)).toEqual([]);
   });
 
   it('give no dish to a place where one does not eat', () => {
@@ -130,7 +133,7 @@ describe('the places given tags', () => {
     expect(shareTagged(ofKinds('cinema', 'theatre', 'museum', 'library'), 'toilets')).toBeGreaterThan(0.1);
   });
 
-  it('leave some places without any', () => {
-    expect(PLACES.filter(({ tags }) => tags === undefined).length / PLACES.length).toBeGreaterThan(0.25);
+  it('leave some places without anything good to know', () => {
+    expect(PLACES.filter((place) => tagsOf(place).length === 0).length / PLACES.length).toBeGreaterThan(0.25);
   });
 });

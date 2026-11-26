@@ -48,3 +48,7 @@ A regression of the Total Blocking Time of up to about 1,000 ms that adds no scr
 ## Update, 2026-11-25: a wider Total Blocking Time for the map pages
 
 The map pages' Total Blocking Time may now reach 7,000 ms, and each run's measures are reported in the Lighthouse job, as [ADR-069](ADR-069-measuring-what-the-visitor-of-the-map-sees.md) decides.
+
+## Update, 2026-11-26: a third budget, for the opening-hours library
+
+The opening-hours library gets a budget of its own, 120 kB, and is loaded once the map gives its first view, as [ADR-073](ADR-073-opening-hours-read-in-the-time-zone-of-the-place-by-a-library-loaded-apart.md) decides. Lighthouse measured the map page at 541.9 kB of script on 2026-11-26, 117 kB of it the library's chunk. The owner chose to keep the load after the first view: Lighthouse's script assertion on the map pages becomes the sum of the three budgets, **620 kB**.

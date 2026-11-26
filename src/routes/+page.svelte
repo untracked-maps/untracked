@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { StyleSpecification } from '@maplibre/maplibre-gl-style-spec';
   import { combineLatest, map, merge, NEVER, type Observable, of, ReplaySubject, Subject, tap } from 'rxjs';
-  import { WELCOME_STORAGE_KEY } from '#configuration/welcome';
   import ThemeSwitcher from '#features/appearance/abilities/choose-theme/ui/components/theme-switcher.svelte';
   import LanguageSuggestion from '#features/languages/abilities/suggest-language/ui/components/language-suggestion.svelte';
   import BasemapSwitcher from '#features/map/abilities/choose-basemap/ui/components/basemap-switcher.svelte';
@@ -39,13 +38,12 @@
   import { placesOpenedAt } from '#features/places/abilities/open-place/domain/open-place';
   import { openPlaceOverlay } from '#features/places/abilities/open-place/ui/components/open-place-overlay';
   import PlaceSheetCard from '#features/places/abilities/open-place/ui/components/place-sheet.svelte';
+  import OpeningHours from '#features/places/abilities/show-opening-hours/ui/components/opening-hours.svelte';
   import { placeDotAt } from '#features/places/abilities/show-places/ui/components/place-dot-at';
   import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
   import { stationExitsOverlay } from '#features/places/abilities/show-station/ui/components/station-exits-overlay';
   import StationSections from '#features/places/abilities/show-station/ui/components/station-sections.svelte';
   import { touchedMapOverlay } from '#features/places/abilities/touch-the-map/ui/components/touched-map-overlay';
-  import { welcomeVisitor } from '#features/privacy/abilities/welcome-visitor/domain/welcome-visitor';
-  import { localAcknowledgement } from '#features/privacy/abilities/welcome-visitor/implementation/browser/local-acknowledgement';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
   import { districtOutlineLayers } from '#features/search/abilities/open-district/ui/components/district-outline';
   import DistrictSheetCard from '#features/search/abilities/open-district/ui/components/district-sheet.svelte';
@@ -75,6 +73,7 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { PageProps } from './$types';
+  import { welcomed } from './welcome';
 
   const { data }: PageProps = $props();
 
@@ -179,22 +178,18 @@
       placeSheet.pipe(tap(({ status }) => data.closing.of('place').onToggle(status === 'open'))),
       kindSearch.pipe(tap(({ status }) => data.closing.of('kind list').onToggle(status !== 'closed'))),
       districtSheet.pipe(tap(({ status }) => data.closing.of('district').onToggle(status === 'open'))),
-      data.links.followed
+      data.links.followed,
+      data.hours.preloaded(views)
     ).subscribe();
     return (): void => subscription.unsubscribe();
   });
 
   const [placeSheet, inspectedSpot, districtSheet] = $derived([data.places.sheet, data.spots.spot, data.districts.sheet]);
 
-  const acknowledgement = browser ? localAcknowledgement(localStorage, WELCOME_STORAGE_KEY) : undefined;
-
-  const welcome: Observable<boolean> =
-    acknowledgement === undefined ? of(true) : welcomeVisitor({ acknowledged: acknowledgement.acknowledged })();
-
-  const acknowledge = (): void => acknowledgement?.acknowledge();
+  const welcome = welcomed();
 
   const welcomeShown: Observable<boolean> = $derived(
-    combineLatest([welcome, data.spots.sheetOpen, kindSearch]).pipe(
+    combineLatest([welcome.shown, data.spots.sheetOpen, kindSearch]).pipe(
       map(([shown, sheetOpen, list]) => shown && !sheetOpen && list.status === 'closed')
     )
   );
@@ -245,6 +240,9 @@
   >
     {#snippet first()}
       <StationSections station={data.station.view} onExit={data.station.touch} />
+    {/snippet}
+    {#snippet hours()}
+      <OpeningHours hours={data.hours.view} />
     {/snippet}
   </PlaceSheetCard>
   <SpotCard
@@ -310,7 +308,7 @@
       <WelcomeCard
         welcome={welcomeShown}
         privacyHref={localizeHref(resolve('/(content)/privacy'))}
-        onAcknowledge={acknowledge}
+        onAcknowledge={welcome.acknowledge}
         ready={browser}
       />
     </div>
