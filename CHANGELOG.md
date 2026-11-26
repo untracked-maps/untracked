@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/untracked-maps/untracked/compare/v1.27.1...v1.28.0) (2026-11-26)
+
+
+### Features
+
+* show a place at a glance, with the freshness of its information ([#117](https://github.com/untracked-maps/untracked/issues/117)) ([64afb14](https://github.com/untracked-maps/untracked/commit/64afb145c4a41afcb3ca08c3b1bee74ed6c1c28c)), closes [#116](https://github.com/untracked-maps/untracked/issues/116)
+
 ## [1.27.1](https://github.com/untracked-maps/untracked/compare/v1.27.0...v1.27.1) (2026-11-26)
 
 
