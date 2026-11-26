@@ -26,6 +26,7 @@ The former app's sentence of the state of a place (« Ouvert · ferme à 19 h »
 ## Consequences
 
 - The places file goes from 108.6 kB to 114.6 kB with gzip, of its 120 kB budget ([ADR-063](ADR-063-a-weight-budget-for-the-places-file.md)).
+- The app uses version 3.15.0 of the library. Version 3.16.0, measured in #90, was published on 2026-11-16, less than the 10 days the package manager waits for before a new version; Renovate brings it later. With 3.15.0, the library's chunk weighs 114.5 kB with gzip, of its 120 kB budget.
 - The opening-hours chunk is loaded on every visit of the map, after its first view, so Lighthouse counts it: the map page measured 541.9 kB of script on 2026-11-26, over the 500 kB of [ADR-022](ADR-022-lighthouse-budgets-per-page.md). The product owner chose, on 2026-11-26, to keep the load and to make Lighthouse's script assertion of the map pages the sum of the three budgets, 620 kB.
 - ADR-041's consequence on unknown countries is replaced by the decision above.
 - The library is under the LGPL-3.0-only, and is bundled in an app under the AGPL-3.0 ([ADR-015](ADR-015-agpl-3.0.md)). Section 4 of the LGPL asks a combined work to say that the library is used and is under the LGPL, to come with the texts of the GPL and the LGPL, and to let the user rebuild it with a changed library. The source of the app is public, with its lockfile, which allows the rebuild; the notice and the texts are to be settled in review.
