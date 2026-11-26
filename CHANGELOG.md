@@ -1,3 +1,10 @@
+## [1.28.1](https://github.com/untracked-maps/untracked/compare/v1.28.0...v1.28.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **deps:** update minor and patch updates ([#48](https://github.com/untracked-maps/untracked/issues/48)) ([ee34d1a](https://github.com/untracked-maps/untracked/commit/ee34d1a1f65ca6c96f11cbfc8cc82622be854397))
+
 # [1.28.0](https://github.com/untracked-maps/untracked/compare/v1.27.1...v1.28.0) (2026-11-26)
 
 
