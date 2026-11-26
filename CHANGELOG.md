@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/untracked-maps/untracked/compare/v1.26.1...v1.27.0) (2026-11-26)
+
+
+### Features
+
+* show the opening hours of a place ([#113](https://github.com/untracked-maps/untracked/issues/113)) ([7d645da](https://github.com/untracked-maps/untracked/commit/7d645dae1a15b4c2ccb7285148e650a796e61d8b)), closes [#111](https://github.com/untracked-maps/untracked/issues/111) [#90](https://github.com/untracked-maps/untracked/issues/90)
+
 ## [1.26.1](https://github.com/untracked-maps/untracked/compare/v1.26.0...v1.26.1) (2026-11-25)
 
 
