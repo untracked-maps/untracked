@@ -26,6 +26,8 @@
     readonly typed?: Observable<string | undefined>;
     readonly first?: Snippet;
     readonly hours?: Snippet;
+    readonly freshness?: Snippet;
+    readonly glance?: Snippet;
     readonly onShare?: (shared: {
       readonly title: string;
       readonly at: SheetPlace['coordinates'];
@@ -43,7 +45,9 @@
     onShare,
     typed = NEVER,
     first,
-    hours
+    hours,
+    freshness,
+    glance
   }: Props = $props();
 
   const uid = $props.id();
@@ -76,6 +80,7 @@
               <p>{$typed ?? typeOf(place)}</p>
               {@render local(localNameOf(place))}
             </hgroup>
+            {@render freshness?.()}
             {#if onShare !== undefined}
               <div class="share">
                 <ShareButton
@@ -89,6 +94,7 @@
             </div>
           </div>
           <PlaceActions {place} />
+          {@render glance?.()}
           {@render first?.()}
           <PlaceSections {place} {address} {onCopy} {vibrate} {hours} />
         </Floating>

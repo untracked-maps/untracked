@@ -20,6 +20,7 @@ type Visit = {
 const ELEMENTS: Readonly<Record<string, Closable>> = {
   about: 'about',
   'map menu': 'map menu',
+  'place window': 'place window',
   spot: 'spot',
   place: 'place',
   district: 'district',

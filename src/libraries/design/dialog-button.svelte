@@ -15,9 +15,10 @@
     readonly icon: Snippet;
     readonly children: Snippet;
     readonly closable?: Closable;
+    readonly trigger?: 'round' | 'inline';
   };
 
-  const { label, title, description, closeLabel, icon, children, closable = NEVER_ASKED }: Props = $props();
+  const { label, title, description, closeLabel, icon, children, closable = NEVER_ASKED, trigger = 'round' }: Props = $props();
 
   const uid = $props.id();
 
@@ -74,7 +75,13 @@
   const released = (event: TouchEvent): void => events.next(releasedAt(event.timeStamp));
 </script>
 
-<IconButton {label} opens="{uid}-dialog" tone="neutral">{@render icon()}</IconButton>
+{#if trigger === 'round'}
+  <IconButton {label} opens="{uid}-dialog" tone="neutral">{@render icon()}</IconButton>
+{:else}
+  <button type="button" class="inline" aria-label={label} aria-haspopup="dialog" commandfor="{uid}-dialog" command="show-modal">
+    {@render icon()}
+  </button>
+{/if}
 
 <dialog
   id="{uid}-dialog"
@@ -109,6 +116,27 @@
 </dialog>
 
 <style>
+  .inline {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.375rem;
+    block-size: 1.375rem;
+    padding: 0;
+    vertical-align: middle;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: 0;
+    border-radius: 50%;
+  }
+
+  .inline::after {
+    position: absolute;
+    inset: -0.6875rem;
+    content: "";
+  }
+
   dialog {
     --swipe-offset: 0;
     --backdrop-share: 1;
