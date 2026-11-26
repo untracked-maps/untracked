@@ -5,20 +5,19 @@ import type { StationExit } from '../../domain/station-exits';
 
 type Named = Pick<LineDepartures, 'ref' | 'mode' | 'network'>;
 
-const PARIS_TIME: Intl.DateTimeFormatOptions = {
+const CLOCK_TIME: Intl.DateTimeFormatOptions = {
   hour: '2-digit',
   minute: '2-digit',
-  hourCycle: 'h23',
-  timeZone: 'Europe/Paris'
+  hourCycle: 'h23'
 };
 
-const toldText = (told: Told, locale: string): string => {
+const toldText = (told: Told, locale: string, timeZone: string): string => {
   if (told.told === 'at platform') {
     return m.station_at_platform();
   }
   return told.told === 'minutes'
     ? m.station_minutes({ minutes: told.minutes })
-    : new Intl.DateTimeFormat(locale, PARIS_TIME).format(new Date(told.at));
+    : new Intl.DateTimeFormat(locale, { ...CLOCK_TIME, timeZone }).format(new Date(told.at));
 };
 
 const exitText = ({ ref, name }: StationExit): string => {

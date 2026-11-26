@@ -32,7 +32,7 @@ const open = (departures: Extract<StationView, { status: 'open' }>['departures']
 });
 
 const shown = async (view: StationView, onExit = (_at: Coordinates): void => undefined): Promise<unknown> =>
-  await render(StationSections, { station: new BehaviorSubject(view), onExit, locale: 'en' });
+  await render(StationSections, { station: new BehaviorSubject(view), onExit, timeZone: 'Europe/Paris', locale: 'en' });
 
 const AN_EXIT = /^Exit/u;
 
