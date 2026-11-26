@@ -21,8 +21,8 @@
       "allowedVersions": "<7"
     },
     {
-      "description": "The Playwright image of the CI must match @playwright/test, whose browsers it carries: both move in one pull request.",
-      "matchPackageNames": ["@playwright/test", "mcr.microsoft.com/playwright"],
+      "description": "The Playwright image of the CI must match @playwright/test and playwright, whose browsers it carries: both move in one pull request.",
+      "matchPackageNames": ["@playwright/test", "playwright", "mcr.microsoft.com/playwright"],
       "groupName": "Playwright"
     }
   ],
