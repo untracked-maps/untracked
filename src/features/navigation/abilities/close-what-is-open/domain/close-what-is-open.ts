@@ -1,6 +1,6 @@
 import { concat, concatMap, EMPTY, ignoreElements, map, merge, type Observable, of, scan } from 'rxjs';
 
-const CLOSING_ORDER = ['about', 'map menu', 'spot', 'place', 'district', 'kind list', 'search'] as const;
+const CLOSING_ORDER = ['about', 'map menu', 'place window', 'spot', 'place', 'district', 'kind list', 'search'] as const;
 
 type Closable = (typeof CLOSING_ORDER)[number];
 

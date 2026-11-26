@@ -24,7 +24,10 @@
       "toilets:wheelchair": "yes",
       "man_made": "tower",
       "tourism": "attraction",
-      "opening_hours": "Mo-Su 09:30-23:45"
+      "opening_hours": "Mo-Su 09:30-23:45",
+      "wheelchair": "limited",
+      "fee": "yes",
+      "check_date": "2026-09-14"
     },
     "coordinates": {
       "longitude": 2.29448,
@@ -56,7 +59,10 @@
       "toilets:wheelchair": "yes",
       "changing_table": "yes",
       "tourism": "museum",
-      "opening_hours": "Mo,Th,Sa,Su 09:00-18:00; We,Fr 09:00-21:00; Tu off; Jan 01,May 01,Dec 25 off"
+      "opening_hours": "Mo,Th,Sa,Su 09:00-18:00; We,Fr 09:00-21:00; Tu off; Jan 01,May 01,Dec 25 off",
+      "wheelchair": "yes",
+      "fee": "yes",
+      "check_date": "2026-10-03"
     },
     "coordinates": {
       "longitude": 2.33764,
@@ -81,7 +87,10 @@
       "heritage:operator": "mhs",
       "amenity": "place_of_worship",
       "building": "cathedral",
-      "opening_hours": "Mo-Fr 07:50-18:45; Sa,Su 08:15-19:15"
+      "opening_hours": "Mo-Fr 07:50-18:45; Sa,Su 08:15-19:15",
+      "wheelchair": "yes",
+      "fee": "no",
+      "check_date": "2025-12-08"
     },
     "coordinates": {
       "longitude": 2.34992,
@@ -106,7 +115,10 @@
       "payment:contactless": "yes",
       "payment:cards": "yes",
       "historic": "monument",
-      "opening_hours": "Apr-Sep: Mo-Su 10:00-23:00; Oct-Mar: Mo-Su 10:00-22:30"
+      "opening_hours": "Apr-Sep: Mo-Su 10:00-23:00; Oct-Mar: Mo-Su 10:00-22:30",
+      "wheelchair": "limited",
+      "fee": "yes",
+      "check_date": "2025-04-22"
     },
     "coordinates": {
       "longitude": 2.29504,
@@ -132,7 +144,10 @@
       "toilets": "yes",
       "amenity": "place_of_worship",
       "building": "basilica",
-      "opening_hours": "Mo-Su 06:30-22:30"
+      "opening_hours": "Mo-Su 06:30-22:30",
+      "wheelchair": "limited",
+      "fee": "no",
+      "check_date": "2023-05-17"
     },
     "coordinates": {
       "longitude": 2.34306,
@@ -164,7 +179,10 @@
       "toilets:wheelchair": "yes",
       "changing_table": "yes",
       "tourism": "museum",
-      "opening_hours": "Tu,We,Fr-Su 09:30-18:00; Th 09:30-21:45; Mo off; PH off"
+      "opening_hours": "Tu,We,Fr-Su 09:30-18:00; Th 09:30-21:45; Mo off; PH off",
+      "wheelchair": "yes",
+      "fee": "yes",
+      "check_date": "2026-06-11"
     },
     "coordinates": {
       "longitude": 2.32656,
@@ -221,7 +239,10 @@
       "air_conditioning": "yes",
       "amenity": "arts_centre",
       "name": "Centre national d'art et de culture Georges-Pompidou",
-      "opening_hours": "We-Mo 11:00-21:00; Th 11:00-23:00; Tu off"
+      "opening_hours": "We-Mo 11:00-21:00; Th 11:00-23:00; Tu off",
+      "wheelchair": "yes",
+      "fee": "yes",
+      "check_date": "2024-02-19"
     },
     "coordinates": {
       "longitude": 2.35222,
@@ -251,7 +272,10 @@
       "reservation": "recommended",
       "amenity": "theatre",
       "name": "Palais Garnier",
-      "opening_hours": "Mo-Su 10:00-17:00"
+      "opening_hours": "Mo-Su 10:00-17:00",
+      "wheelchair": "limited",
+      "fee": "yes",
+      "check_date": "2025-11-02"
     },
     "coordinates": {
       "longitude": 2.33165,
@@ -279,7 +303,10 @@
       "payment:cards": "yes",
       "toilets": "yes",
       "toilets:wheelchair": "yes",
-      "opening_hours": "Tu-Su 10:00-20:00; We 10:00-22:00"
+      "opening_hours": "Tu-Su 10:00-20:00; We 10:00-22:00",
+      "wheelchair": "yes",
+      "fee": "yes",
+      "check_date": "2026-07-30"
     },
     "coordinates": {
       "longitude": 2.31248,
@@ -306,7 +333,10 @@
       "building": "church",
       "historic": "monument",
       "tourism": "attraction",
-      "opening_hours": "Apr-Sep: Mo-Su 10:00-18:30; Oct-Mar: Mo-Su 10:00-18:00; Jan 01,May 01,Dec 25 off"
+      "opening_hours": "Apr-Sep: Mo-Su 10:00-18:30; Oct-Mar: Mo-Su 10:00-18:00; Jan 01,May 01,Dec 25 off",
+      "wheelchair": "limited",
+      "fee": "yes",
+      "check_date": "2025-08-26"
     },
     "coordinates": {
       "longitude": 2.34619,
@@ -334,7 +364,10 @@
       "payment:cards": "yes",
       "toilets": "yes",
       "historic": "monument",
-      "opening_hours": "Mo-Su 10:00-18:00; Tu 10:00-21:00"
+      "opening_hours": "Mo-Su 10:00-18:00; Tu 10:00-21:00",
+      "wheelchair": "limited",
+      "fee": "yes",
+      "check_date": "2022-10-04"
     },
     "coordinates": {
       "longitude": 2.31253,
@@ -359,7 +392,10 @@
       "toilets": "yes",
       "dog": "no",
       "leisure": "garden",
-      "opening_hours": "Mo-Su 07:30-20:30 unknown"
+      "opening_hours": "Mo-Su 07:30-20:30 unknown",
+      "wheelchair": "yes",
+      "fee": "no",
+      "check_date": "2026-04-12"
     },
     "coordinates": {
       "longitude": 2.33716,
@@ -399,7 +435,10 @@
       "heritage": "2",
       "heritage:operator": "mhs",
       "dog": "no",
-      "opening_hours": "Mo-Fr 08:00-18:00; Sa 08:30-18:00; Su 09:00-18:00"
+      "opening_hours": "Mo-Fr 08:00-18:00; Sa 08:30-18:00; Su 09:00-18:00",
+      "wheelchair": "limited",
+      "fee": "no",
+      "check_date": "2021-06-15"
     },
     "coordinates": {
       "longitude": 2.39333,
@@ -443,7 +482,10 @@
       "reservation": "recommended",
       "amenity": "place_of_worship",
       "building": "chapel",
-      "opening_hours": "Mo-Su 09:00-19:00; Jan 01,May 01,Dec 25 off"
+      "opening_hours": "Mo-Su 09:00-19:00; Jan 01,May 01,Dec 25 off",
+      "wheelchair": "no",
+      "fee": "yes",
+      "check_date": "2025-02-27"
     },
     "coordinates": {
       "longitude": 2.34503,
@@ -473,7 +515,9 @@
       "reservation": "required",
       "air_conditioning": "yes",
       "amenity": "theatre",
-      "opening_hours": "Mo-Su 21:00-01:00"
+      "opening_hours": "Mo-Su 21:00-01:00",
+      "fee": "yes",
+      "check_date": "2024-09-01"
     },
     "coordinates": {
       "longitude": 2.33233,
@@ -539,7 +583,9 @@
       "air_conditioning": "yes",
       "internet_access": "wlan",
       "internet_access:fee": "no",
-      "opening_hours": "Mo-Sa 10:00-20:30; Su 11:00-20:00"
+      "opening_hours": "Mo-Sa 10:00-20:30; Su 11:00-20:00",
+      "wheelchair": "yes",
+      "check_date": "2026-10-20"
     },
     "coordinates": {
       "longitude": 2.33199,
@@ -579,7 +625,10 @@
       "dog": "leashed",
       "changing_table": "yes",
       "leisure": "park",
-      "opening_hours": "Mo-Su 07:00-22:00"
+      "opening_hours": "Mo-Su 07:00-22:00",
+      "wheelchair": "limited",
+      "fee": "no",
+      "check_date": "2025-09-13"
     },
     "coordinates": {
       "longitude": 2.38278,
@@ -623,7 +672,10 @@
       "payment:cards": "yes",
       "toilets": "yes",
       "tourism": "museum",
-      "opening_hours": "Tu-Su 10:00-18:30; Mo off; PH off"
+      "opening_hours": "Tu-Su 10:00-18:30; Mo off; PH off",
+      "wheelchair": "yes",
+      "fee": "yes",
+      "check_date": "2026-05-08"
     },
     "coordinates": {
       "longitude": 2.31586,
@@ -669,7 +721,9 @@
       "outdoor_seating": "yes",
       "reservation": "no",
       "dog": "yes",
-      "opening_hours": "Mo-Su 07:30-01:30"
+      "opening_hours": "Mo-Su 07:30-01:30",
+      "wheelchair": "no",
+      "check_date": "2026-02-14"
     },
     "coordinates": {
       "longitude": 2.33263,
@@ -697,7 +751,10 @@
       "toilets:wheelchair": "yes",
       "changing_table": "yes",
       "amenity": "library",
-      "opening_hours": "Mo 14:00-20:00; Tu-Sa 09:00-20:00; Su 13:00-19:00; PH off"
+      "opening_hours": "Mo 14:00-20:00; Tu-Sa 09:00-20:00; Su 13:00-19:00; PH off",
+      "wheelchair": "yes",
+      "fee": "no",
+      "check_date": "2025-07-01"
     },
     "coordinates": {
       "longitude": 2.37594,
@@ -721,7 +778,8 @@
     "tags": {
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "reservation": "recommended"
+      "reservation": "recommended",
+      "check_date": "2024-12-03"
     },
     "coordinates": {
       "longitude": 2.35356,
@@ -766,7 +824,9 @@
       "internet_access:fee": "no",
       "air_conditioning": "yes",
       "dog": "yes",
-      "opening_hours": "24/7"
+      "opening_hours": "24/7",
+      "wheelchair": "yes",
+      "check_date": "2026-09-02"
     },
     "coordinates": {
       "longitude": 2.33598,
@@ -789,7 +849,9 @@
     "tags": {
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "opening_hours": "Mo-Su 08:00-24:00"
+      "opening_hours": "Mo-Su 08:00-24:00",
+      "wheelchair": "yes",
+      "check_date:opening_hours": "2026-10-15"
     },
     "coordinates": {
       "longitude": 2.37192,
@@ -816,7 +878,9 @@
       "payment:meal_voucher": "yes",
       "takeaway": "only",
       "organic": "yes",
-      "opening_hours": "Tu-Sa 07:00-20:00; Su 07:00-13:00"
+      "opening_hours": "Tu-Sa 07:00-20:00; Su 07:00-13:00",
+      "wheelchair": "no",
+      "check_date:opening_hours": "2020-03-10"
     },
     "coordinates": {
       "longitude": 2.34488,
@@ -839,7 +903,9 @@
       "heritage": "2",
       "heritage:operator": "mhs",
       "amenity": "place_of_worship",
-      "building": "church"
+      "building": "church",
+      "wheelchair": "limited",
+      "fee": "no"
     },
     "coordinates": {
       "longitude": 2.33847,
@@ -862,7 +928,8 @@
     "tags": {
       "payment:contactless": "yes",
       "payment:cards": "yes",
-      "opening_hours": "Tu-Sa 10:00-19:30"
+      "opening_hours": "Tu-Sa 10:00-19:30",
+      "check_date": "2025-06-19"
     },
     "coordinates": {
       "longitude": 2.33102,
@@ -892,7 +959,9 @@
       "internet_access": "wlan",
       "internet_access:fee": "no",
       "dog": "leashed",
-      "opening_hours": "Mo-Su 07:00-02:00"
+      "opening_hours": "Mo-Su 07:00-02:00",
+      "wheelchair": "limited",
+      "check_date": "2026-08-05"
     },
     "coordinates": {
       "longitude": 2.34622,

@@ -43,8 +43,16 @@ const VALUES: Readonly<Record<string, readonly string[]>> = Object.fromEntries([
   ['organic', ['yes', 'only']]
 ]);
 
+const NOT_GOOD_TO_KNOW: ReadonlySet<string> = new Set([
+  'opening_hours',
+  'check_date',
+  'check_date:opening_hours',
+  'wheelchair',
+  'fee'
+]);
+
 const tagsOf = ({ tags }: FakePlace): readonly (readonly [string, string])[] =>
-  Object.entries(tags ?? {}).filter(([key]) => key !== 'opening_hours');
+  Object.entries(tags ?? {}).filter(([key]) => !NOT_GOOD_TO_KNOW.has(key));
 
 const ofKinds = (...kinds: readonly FakePlace['kind'][]): readonly FakePlace[] =>
   PLACES.filter(({ kind }) => kinds.includes(kind));

@@ -1,8 +1,9 @@
 # Feature: Close what is open
 
 > The Escape key and the back button close what is open, one element at each
-> press, the one on top first: the "About" window, the map menu, the sheet of a
-> spot, the sheet of a place, the list of a kind of places, then the search. The
+> press, the one on top first: the "About" window, the map menu, the window
+> opened from a place, the sheet of a spot, the sheet of a place, the list of a
+> kind of places, then the search. The
 > back button leaves the app only when nothing is open.
 
 ## Rule: Escape closes the element on top, and nothing else
@@ -105,6 +106,13 @@
 - And the visitor has opened the "spot"
 - When the visitor presses Escape
 - Then the "spot" is still open
+
+### Scenario: The window opened from a place closes before its sheet
+
+- Given the visitor has opened the "place"
+- And the visitor has opened the "place window"
+- When the visitor presses Escape
+- Then the "place" is still open
 
 ### Scenario: The sheet of a spot closes before the list of a kind
 

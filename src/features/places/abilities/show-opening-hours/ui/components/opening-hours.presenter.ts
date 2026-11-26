@@ -35,4 +35,4 @@ const hoursOf = (hours: DayHours): string => {
 
 const dayOf = (weekday: Weekday): string => DAYS[weekday]();
 
-export { dayOf, hoursOf };
+export { clockOf, dayOf, hoursOf };

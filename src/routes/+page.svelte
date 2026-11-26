@@ -10,8 +10,6 @@
     locationFragment,
     replacedFragment
   } from '#features/map/abilities/keep-view-in-url/implementation/browser/url-fragment';
-  import { locateMe } from '#features/map/abilities/locate-me/domain/locate-me';
-  import { inMemoryLocate } from '#features/map/abilities/locate-me/implementation/in-memory/in-memory-locate';
   import LocateButton from '#features/map/abilities/locate-me/ui/components/locate-button.svelte';
   import { positionOverlay } from '#features/map/abilities/locate-me/ui/components/position-overlay';
   import { reportBasemapOutage } from '#features/map/abilities/report-basemap-outage/domain/report-basemap-outage';
@@ -33,12 +31,15 @@
   import { loadTransitLinesLayers } from '#features/map/abilities/show-transit-lines/ui/components/transit-lines-overlay';
   import { layersOverlay } from '#features/map/ui/components/layers-on-map';
   import NoticeCard from '#features/notices/abilities/show-notice/ui/components/notice.svelte';
+  import PlaceFreshness from '#features/places/abilities/glance-at-place/ui/components/place-freshness.svelte';
+  import PlaceGlance from '#features/places/abilities/glance-at-place/ui/components/place-glance.svelte';
   import { inspectedSpotOverlay } from '#features/places/abilities/inspect-point/ui/components/inspected-spot-overlay';
   import SpotCard from '#features/places/abilities/inspect-point/ui/components/spot-card.svelte';
   import { placesOpenedAt } from '#features/places/abilities/open-place/domain/open-place';
   import { openPlaceOverlay } from '#features/places/abilities/open-place/ui/components/open-place-overlay';
   import PlaceSheetCard from '#features/places/abilities/open-place/ui/components/place-sheet.svelte';
   import OpeningHours from '#features/places/abilities/show-opening-hours/ui/components/opening-hours.svelte';
+  import OpeningStatus from '#features/places/abilities/show-opening-hours/ui/components/opening-status.svelte';
   import { placeDotAt } from '#features/places/abilities/show-places/ui/components/place-dot-at';
   import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
   import { stationExitsOverlay } from '#features/places/abilities/show-station/ui/components/station-exits-overlay';
@@ -73,6 +74,8 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { PageProps } from './$types';
+  import { locating } from './locating';
+  import { placeGlance } from './place-glance';
   import { welcomed } from './welcome';
 
   const { data }: PageProps = $props();
@@ -99,11 +102,7 @@
 
   const outage: Observable<boolean> = reportBasemapOutage({ basemapEvents: basemap.basemapEvents })();
 
-  const locateRequests = new Subject<void>();
-
-  const located = locateMe({ locate: () => inMemoryLocate(data.position)() })(locateRequests);
-
-  const locate = (): void => locateRequests.next();
+  const { located, locate, position } = locating(() => data.position);
 
   const zooms = new Subject<ZoomStep>();
 
@@ -179,12 +178,15 @@
       kindSearch.pipe(tap(({ status }) => data.closing.of('kind list').onToggle(status !== 'closed'))),
       districtSheet.pipe(tap(({ status }) => data.closing.of('district').onToggle(status === 'open'))),
       data.links.followed,
-      data.hours.preloaded(views)
+      data.hours.preloaded(views),
+      position
     ).subscribe();
     return (): void => subscription.unsubscribe();
   });
 
   const [placeSheet, inspectedSpot, districtSheet] = $derived([data.places.sheet, data.spots.spot, data.districts.sheet]);
+
+  const glanced = $derived(placeGlance(data.places.sheet, data.hours.view, position));
 
   const welcome = welcomed();
 
@@ -243,6 +245,16 @@
     {/snippet}
     {#snippet hours()}
       <OpeningHours hours={data.hours.view} />
+    {/snippet}
+    {#snippet freshness()}
+      <PlaceFreshness glance={glanced} closable={data.closing.of('place window')} />
+    {/snippet}
+    {#snippet glance()}
+      <PlaceGlance glance={glanced}>
+        {#snippet hours()}
+          <OpeningStatus hours={data.hours.view} />
+        {/snippet}
+      </PlaceGlance>
     {/snippet}
   </PlaceSheetCard>
   <SpotCard
