@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { getLocale, overwriteGetLocale } from '#i18n/runtime';
 import { dayOf, hoursOf } from './opening-hours.presenter';
 
 describe('the hours of a day', () => {
@@ -51,5 +52,29 @@ describe('the name of a day', () => {
     ['sunday', 'Sunday']
   ] as const)('tells %s', (weekday, name) => {
     expect(dayOf(weekday)).toBe(name);
+  });
+});
+
+const LOCALE = getLocale;
+
+describe('the hours of a day in French', () => {
+  beforeEach(() => {
+    overwriteGetLocale(() => 'fr');
+  });
+
+  afterEach(() => {
+    overwriteGetLocale(LOCALE);
+  });
+
+  it('writes an hour on the hour without its minutes', () => {
+    expect(hoursOf({ kind: 'open', ranges: [{ from: { hour: 9, minute: 0 }, to: { hour: 19, minute: 0 } }] })).toBe(
+      '9\u00a0h\u00a0– 19\u00a0h'
+    );
+  });
+
+  it('writes the minutes of an hour after the hour', () => {
+    expect(hoursOf({ kind: 'open', ranges: [{ from: { hour: 9, minute: 5 }, to: { hour: 19, minute: 30 } }] })).toBe(
+      '9\u00a0h\u00a005\u00a0– 19\u00a0h\u00a030'
+    );
   });
 });

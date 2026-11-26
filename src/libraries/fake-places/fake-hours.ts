@@ -18,7 +18,6 @@ const SHARE_BADLY_WRITTEN = 0.0007;
 
 const BADLY_WRITTEN: readonly Weighted[] = [
   { weight: 1, value: '9h-18h sauf dimanche' },
-  { weight: 1, value: 'tlj 10h-19h' },
   { weight: 1, value: 'Mo-Fr 09:00-18:00 et Sa matin' }
 ];
 

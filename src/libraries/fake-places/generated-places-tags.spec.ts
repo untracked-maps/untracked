@@ -8,6 +8,7 @@ const BORDEAUX: FakeZone = {
   id: 'fake-bordeaux',
   city: 'Bordeaux',
   country: 'FR',
+  region: 'Nouvelle-Aquitaine',
   timeZone: 'Europe/Paris',
   locale: [fr, base],
   postcodes: ['33000', '33100', '33200', '33300', '33800'],

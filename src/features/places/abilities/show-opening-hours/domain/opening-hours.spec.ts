@@ -3,13 +3,13 @@ import { type OpeningStatus, type OsmOpeningHours, readOpeningHours, statusAt, t
 
 const PARIS: Where = {
   coordinates: { longitude: 2.3522, latitude: 48.8566 },
-  country: 'FR',
+  country: { code: 'FR', region: 'Île-de-France' },
   timeZone: 'Europe/Paris'
 };
 
 const LOS_ANGELES: Where = {
   coordinates: { longitude: -118.2437, latitude: 34.0522 },
-  country: 'US',
+  country: { code: 'US', region: 'California' },
   timeZone: 'America/Los_Angeles'
 };
 
@@ -36,13 +36,31 @@ describe('reading opening hours', () => {
 
   it('cannot read public holidays of a country the library does not know', () => {
     expect(
-      readOpeningHours('Mo-Fr 09:00-18:00; PH off', { ...PARIS, country: 'ZZ' }, at('2026-11-24T12:00:00Z'))
+      readOpeningHours(
+        'Mo-Fr 09:00-18:00; PH off',
+        { ...PARIS, country: { code: 'ZZ', region: 'Nowhere' } },
+        at('2026-11-24T12:00:00Z')
+      )
     ).toBeUndefined();
   });
 
   it('cannot read public holidays of a place without country', () => {
     expect(
       readOpeningHours('Mo-Fr 09:00-18:00; PH off', { coordinates: PARIS.coordinates }, at('2026-11-24T12:00:00Z'))
+    ).toBeUndefined();
+  });
+
+  it('reads school holidays of a region the library knows', () => {
+    expect(readOpeningHours('Mo-Fr 09:00-18:00; SH off', PARIS, at('2026-11-24T12:00:00Z'))).toBeDefined();
+  });
+
+  it('cannot read school holidays of a region the library does not know', () => {
+    expect(
+      readOpeningHours(
+        'Mo-Fr 09:00-18:00; SH off',
+        { ...PARIS, country: { code: 'FR', region: 'Nowhere' } },
+        at('2026-11-24T12:00:00Z')
+      )
     ).toBeUndefined();
   });
 
@@ -98,6 +116,13 @@ describe('the state of a place now', () => {
     expect(statusOf('Dec 08 10:00-12:00', '2026-11-24T10:00:00Z')).toEqual({
       state: 'closed',
       opens: { day: 'date', date: { day: 8, month: 12 } }
+    });
+  });
+
+  it('is closed until a date, without hour, when it opens again in seven days', () => {
+    expect(statusOf('Tu 09:00-12:00', '2026-11-24T12:00:00Z')).toEqual({
+      state: 'closed',
+      opens: { day: 'date', date: { day: 1, month: 12 } }
     });
   });
 

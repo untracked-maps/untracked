@@ -1,4 +1,4 @@
-import { lastValueFrom, type Observable, of, throwError, toArray } from 'rxjs';
+import { lastValueFrom, type Observable, of, Subject, throwError, toArray } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
 import { readOpeningHours, type Where } from './opening-hours';
@@ -10,17 +10,23 @@ const MINUTE = 60_000;
 
 const START = Date.parse('2026-11-24T10:00:00Z');
 
-const WHERE: Where = { coordinates: { longitude: 2.35, latitude: 48.85 }, country: 'FR', timeZone: 'Europe/Paris' };
+const WHERE: Where = {
+  coordinates: { longitude: 2.35, latitude: 48.85 },
+  country: { code: 'FR', region: 'Île-de-France' },
+  timeZone: 'Europe/Paris'
+};
 
 const SHOP: HoursPlace = { id: 'shop', kind: 'bakery', openingHours: 'Mo-Sa 07:00-20:00', where: WHERE };
 
 const reader = (readable: boolean): HoursReader => ({
   readOpeningHours: (value, where, time) => (readable ? readOpeningHours(value, where, time) : undefined),
-  statusAt: () => ({ state: 'open' }),
+  statusAt: (_, time) => ({ state: time === START ? 'open' : 'closed' }),
   weekAt: () => []
 });
 
 const KNOWN: HoursView = { status: 'known', week: [], now: { state: 'open' } };
+
+const A_MINUTE_LATER: HoursView = { status: 'known', week: [], now: { state: 'closed' } };
 
 const viewsOf = (
   place: HoursPlace | undefined,
@@ -76,7 +82,7 @@ describe('keeping the opening hours up to date', () => {
       const time = cold('a-b-c', { a: START, b: START + MINUTE / 2, c: START + MINUTE });
       expectObservable(
         showOpeningHours({ loadHoursReader: () => of(reader(true)) })({ opened: cold('p', { p: SHOP }), time })
-      ).toBe('(nk)m', { n: { status: 'none' }, k: KNOWN, m: KNOWN });
+      ).toBe('(nk)m', { n: { status: 'none' }, k: KNOWN, m: A_MINUTE_LATER });
     });
   });
 
@@ -100,5 +106,14 @@ describe('keeping the opening hours up to date', () => {
         })
       ).toBe('(nk)u', { n: { status: 'none' }, k: KNOWN, u: { status: 'unknown' } });
     });
+  });
+
+  it('lets go of the place opened once nobody shows them', () => {
+    const opened = new Subject<HoursPlace | undefined>();
+    showOpeningHours({ loadHoursReader: () => of(reader(true)) })({ opened, time: of(START) })
+      .subscribe()
+      .unsubscribe();
+
+    expect(opened.observed).toBe(false);
   });
 });

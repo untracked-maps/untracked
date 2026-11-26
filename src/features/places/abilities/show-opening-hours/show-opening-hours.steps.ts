@@ -19,8 +19,22 @@ type HoursWorld = World & {
 };
 
 const CITIES: ReadonlyMap<string, Where> = new Map([
-  ['Paris', { coordinates: { longitude: 2.3522, latitude: 48.8566 }, country: 'FR', timeZone: 'Europe/Paris' }],
-  ['Los Angeles', { coordinates: { longitude: -118.2437, latitude: 34.0522 }, country: 'US', timeZone: 'America/Los_Angeles' }]
+  [
+    'Paris',
+    {
+      coordinates: { longitude: 2.3522, latitude: 48.8566 },
+      country: { code: 'FR', region: 'Île-de-France' },
+      timeZone: 'Europe/Paris'
+    }
+  ],
+  [
+    'Los Angeles',
+    {
+      coordinates: { longitude: -118.2437, latitude: 34.0522 },
+      country: { code: 'US', region: 'California' },
+      timeZone: 'America/Los_Angeles'
+    }
+  ]
 ]);
 
 const whereIn = (city: string): Where => CITIES.get(city) ?? { coordinates: { longitude: 0, latitude: 0 } };

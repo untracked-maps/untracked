@@ -3,7 +3,7 @@ import { wallClockOf } from './wall-clock';
 
 type Where = {
   readonly coordinates: { readonly longitude: number; readonly latitude: number };
-  readonly country?: string;
+  readonly country?: { readonly code: string; readonly region: string };
   readonly timeZone?: string;
 };
 
@@ -65,7 +65,11 @@ const WEEK = 7;
 const locationOf = ({ coordinates, country }: Where): Location | undefined =>
   country === undefined
     ? undefined
-    : { lat: coordinates.latitude, lon: coordinates.longitude, address: { [COUNTRY_CODE]: country.toLowerCase(), state: '' } };
+    : {
+        lat: coordinates.latitude,
+        lon: coordinates.longitude,
+        address: { [COUNTRY_CODE]: country.code.toLowerCase(), state: country.region }
+      };
 
 const evaluated = (value: string, location: Location | undefined, now: Date): OpeningHours => {
   const hours = new OpeningHours(value, location);

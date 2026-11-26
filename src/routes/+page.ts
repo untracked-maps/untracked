@@ -34,7 +34,7 @@ import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
 import { type Districts, districtSheets } from './districts';
 import { type HomeStation, homeStation } from './home-station';
-import { type PlaceHours, placeHours } from './opening-hours';
+import { type PlaceHours, placeHours, type Zone } from './opening-hours';
 import { type Chosen, chosenOpened, type Spots, spotsInspected } from './spots';
 
 type MapLayers = {
@@ -113,7 +113,7 @@ const searchSources = (fetchPlaces: () => Promise<Response>): SearchSources => {
 
 type Loaded = {
   readonly position: Located;
-  readonly timeZone: string;
+  readonly zone: Zone;
   readonly hours: PlaceHours;
   readonly layers: MapLayers;
   readonly search: SearchSources;
@@ -153,9 +153,9 @@ const placesShownBeside = (fetchPlaces: () => Promise<Response>, places: PlaceSh
   return (zoom$) => shownOnMap(zoom$, openId);
 };
 
-const sheetSections = (sheet: Observable<PlaceSheet>, timeZone: string): Pick<Loaded, 'station' | 'hours'> => ({
+const sheetSections = (sheet: Observable<PlaceSheet>, zone: Zone): Pick<Loaded, 'station' | 'hours'> => ({
   station: homeStation(sheet),
-  hours: placeHours(sheet, timeZone)
+  hours: placeHours(sheet, zone)
 });
 
 const othersClosed = (dismissed: Subject<void>, districts: Districts) => (): void => {
@@ -177,7 +177,7 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
     notices,
     sheetHeights: tallestSheet(),
     places,
-    ...sheetSections(places.sheet, data.timeZone),
+    ...sheetSections(places.sheet, data.zone),
     spots,
     districts,
     openChosen: chosenOpened({ places, districts, spots }),

@@ -7,7 +7,11 @@ describe('opening hours read by a library loaded on demand', () => {
     const reader = await firstValueFrom(lazyOpeningHours());
 
     expect(
-      reader.readOpeningHours('24/7', { coordinates: { longitude: 2.35, latitude: 48.85 }, country: 'FR' }, Date.now())
+      reader.readOpeningHours(
+        '24/7',
+        { coordinates: { longitude: 2.35, latitude: 48.85 }, country: { code: 'FR', region: 'Île-de-France' } },
+        Date.now()
+      )
     ).toBeDefined();
   });
 });

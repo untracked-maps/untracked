@@ -7,6 +7,7 @@ const LYON: FakeZone = {
   bounds: { west: 4.79, south: 45.71, east: 4.9, north: 45.8 },
   city: 'Lyon',
   country: 'FR',
+  region: 'Auvergne-Rhône-Alpes',
   timeZone: 'Europe/Paris',
   districts: [],
   id: 'fake-lyon',

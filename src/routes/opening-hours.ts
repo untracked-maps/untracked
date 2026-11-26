@@ -9,6 +9,11 @@ import { lazyOpeningHours } from '#features/places/abilities/show-opening-hours/
 import { clock } from '#features/places/abilities/show-station/implementation/browser/clock';
 import { browser } from '$app/env';
 
+type Zone = {
+  readonly region: string;
+  readonly timeZone: string;
+};
+
 type PlaceHours = {
   readonly view: Observable<HoursView>;
   readonly preloaded: (shown: Observable<unknown>) => Observable<never>;
@@ -17,7 +22,7 @@ type PlaceHours = {
 const now = (): number => Date.now();
 
 const hoursPlaceOf =
-  (timeZone: string) =>
+  ({ region, timeZone }: Zone) =>
   (sheet: PlaceSheet): HoursPlace | undefined => {
     if (sheet.status !== 'open') {
       return undefined;
@@ -28,14 +33,14 @@ const hoursPlaceOf =
       id,
       ...(kind === undefined ? {} : { kind }),
       ...(openingHours === undefined ? {} : { openingHours }),
-      where: { coordinates, timeZone, ...(address === undefined ? {} : { country: address.addressCountry }) }
+      where: { coordinates, timeZone, ...(address === undefined ? {} : { country: { code: address.addressCountry, region } }) }
     };
   };
 
-const placeHours = (sheet: Observable<PlaceSheet>, timeZone: string): PlaceHours => ({
+const placeHours = (sheet: Observable<PlaceSheet>, zone: Zone): PlaceHours => ({
   view: browser
     ? showOpeningHours({ loadHoursReader: lazyOpeningHours })({
-        opened: sheet.pipe(map(hoursPlaceOf(timeZone))),
+        opened: sheet.pipe(map(hoursPlaceOf(zone))),
         time: clock(now)
       })
     : of({ status: 'none' }),
@@ -47,4 +52,4 @@ const placeHours = (sheet: Observable<PlaceSheet>, timeZone: string): PlaceHours
     )
 });
 
-export { type PlaceHours, placeHours };
+export { type PlaceHours, placeHours, type Zone };

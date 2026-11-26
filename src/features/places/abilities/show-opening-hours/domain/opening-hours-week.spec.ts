@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { type DayHours, readOpeningHours, type WeekDay, type Where, weekAt } from './opening-hours';
 
-const PARIS: Where = { timeZone: 'Europe/Paris', country: 'FR', coordinates: { latitude: 48.8584, longitude: 2.2945 } };
+const PARIS: Where = {
+  timeZone: 'Europe/Paris',
+  country: { code: 'FR', region: 'Île-de-France' },
+  coordinates: { latitude: 48.8584, longitude: 2.2945 }
+};
 
 const VANCOUVER: Where = {
   timeZone: 'America/Vancouver',
-  country: 'CA',
+  country: { code: 'CA', region: 'British Columbia' },
   coordinates: { latitude: 49.2827, longitude: -123.1207 }
 };
 
@@ -74,9 +78,15 @@ describe('the week of a place', () => {
       CLOSED
     ]);
   });
+});
 
+describe('the special days of the week of a place', () => {
   it('tells a day open all day long', () => {
     expect(weekOf('24/7', '2026-11-24T10:00:00Z')).toEqual(Array.from({ length: 7 }, () => ({ kind: 'all day' })));
+  });
+
+  it('gives the hours of a day that opens at midnight', () => {
+    expect(weekOf('We 00:00-06:00', '2026-11-24T10:00:00Z')[2]).toEqual(open([0, 0, 6, 0]));
   });
 
   it('tells days open from midnight to midnight as open all day long', () => {
