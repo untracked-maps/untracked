@@ -239,7 +239,7 @@
     closings={data.closing.of('place').closings}
   >
     {#snippet first()}
-      <StationSections station={data.station.view} onExit={data.station.touch} />
+      <StationSections station={data.station.view} onExit={data.station.touch} timeZone={data.zone.timeZone} />
     {/snippet}
     {#snippet hours()}
       <OpeningHours hours={data.hours.view} />

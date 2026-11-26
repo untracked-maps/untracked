@@ -10,10 +10,11 @@
   type Props = {
     readonly station: Observable<StationView>;
     readonly onExit: (at: Coordinates) => void;
+    readonly timeZone: string;
     readonly locale?: string;
   };
 
-  const { station, onExit, locale = getLocale() }: Props = $props();
+  const { station, onExit, timeZone, locale = getLocale() }: Props = $props();
 
   const uid = $props.id();
 
@@ -59,9 +60,9 @@
                 {/if}
                 {#each line.times as time, index (index)}
                   {#if index === 0}
-                    <strong>{toldText(time, locale)}</strong>
+                    <strong>{toldText(time, locale, timeZone)}</strong>
                   {:else}
-                    <span class="next">{toldText(time, locale)}</span>
+                    <span class="next">{toldText(time, locale, timeZone)}</span>
                   {/if}
                 {/each}
               </span>

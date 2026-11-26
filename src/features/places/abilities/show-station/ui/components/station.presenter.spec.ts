@@ -41,11 +41,15 @@ describe('a departure told', () => {
     [{ told: 'minutes', minutes: 2 } as const, '2 min'],
     [{ told: 'time', at: '2026-11-24T13:20:00Z' } as const, '14:20']
   ])('as %o reads "%s"', (told, text) => {
-    expect(toldText(told, 'en')).toBe(text);
+    expect(toldText(told, 'en', 'Europe/Paris')).toBe(text);
   });
 
   it('beyond an hour reads its hour in Paris with a colon in French', () => {
-    expect(toldText({ told: 'time', at: '2026-11-24T13:20:00Z' }, 'fr')).toBe('14:20');
+    expect(toldText({ told: 'time', at: '2026-11-24T13:20:00Z' }, 'fr', 'Europe/Paris')).toBe('14:20');
+  });
+
+  it('beyond an hour reads its hour in the time zone of its city, west of Greenwich', () => {
+    expect(toldText({ told: 'time', at: '2026-11-24T13:20:00Z' }, 'en', 'America/Los_Angeles')).toBe('05:20');
   });
 });
 
