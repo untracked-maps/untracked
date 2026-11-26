@@ -25,6 +25,7 @@
     readonly closings?: Observable<unknown>;
     readonly typed?: Observable<string | undefined>;
     readonly first?: Snippet;
+    readonly hours?: Snippet;
     readonly onShare?: (shared: {
       readonly title: string;
       readonly at: SheetPlace['coordinates'];
@@ -32,7 +33,18 @@
     }) => void;
   };
 
-  const { sheet, onClose, onCopy, vibrate, onSheetHeight, closings = NEVER, onShare, typed = NEVER, first }: Props = $props();
+  const {
+    sheet,
+    onClose,
+    onCopy,
+    vibrate,
+    onSheetHeight,
+    closings = NEVER,
+    onShare,
+    typed = NEVER,
+    first,
+    hours
+  }: Props = $props();
 
   const uid = $props.id();
 
@@ -78,7 +90,7 @@
           </div>
           <PlaceActions {place} />
           {@render first?.()}
-          <PlaceSections {place} {address} {onCopy} {vibrate} />
+          <PlaceSections {place} {address} {onCopy} {vibrate} {hours} />
         </Floating>
       </section>
     </BottomSheet>

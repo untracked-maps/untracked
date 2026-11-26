@@ -13,6 +13,7 @@ type FakeZone = {
   readonly id: string;
   readonly city: string;
   readonly country: string;
+  readonly timeZone: string;
   readonly locale: readonly LocaleDefinition[];
   readonly bounds: {
     readonly west: number;

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { Then, type World } from '@cucumber/cucumber';
-import { expectsHours } from './domain/expects-hours';
+import { expectsHours } from '../../domain/expects-hours';
 import type { PlaceSheet, SheetPlace } from './domain/open-place';
 import { localNameOf, textOf } from './domain/place-text';
 import { preciseTypeOf } from './domain/precise-type';

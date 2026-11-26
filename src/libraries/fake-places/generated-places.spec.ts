@@ -7,6 +7,7 @@ const SAINT_MALO: FakeZone = {
   id: 'fake-saint-malo',
   city: 'Saint-Malo',
   country: 'FR',
+  timeZone: 'Europe/Paris',
   locale: [fr, base],
   bounds: { west: -2.04, south: 48.62, east: -1.95, north: 48.66 },
   postcodes: ['35400'],

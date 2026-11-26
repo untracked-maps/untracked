@@ -181,6 +181,9 @@ importers:
       minisearch:
         specifier: 7.2.0
         version: 7.2.0
+      opening_hours:
+        specifier: 3.15.0
+        version: 3.15.0(typescript@6.0.3)
       rxjs:
         specifier: 7.8.2
         version: 7.8.2
@@ -3924,6 +3927,14 @@ packages:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
 
+  i18next@26.7.2:
+    resolution: {integrity: sha512-RsOY3BeaCDdkk52NeJSFAXELQ2rQXBO/tOub6L8ue2ICPfR/FRDWDOfEDg4xMPd1SqO5goVYQ6i72qWEUB/PPw==}
+    peerDependencies:
+      typescript: ^5 || ^6 || ^7
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
@@ -4912,6 +4923,10 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
+  opening_hours@3.15.0:
+    resolution: {integrity: sha512-gSPN1YSLCcS4H4YL3Pc/0QRgoafuIhasQ44bM0U+62TABoEyIEeP9AuAIGSGHd9AWycq1eBwxbNfgkiCpx8bCQ==}
+    engines: {node: '>=14'}
+
   ora@5.4.1:
     resolution: {integrity: sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==}
     engines: {node: '>=10'}
@@ -5589,6 +5604,9 @@ packages:
 
   stubborn-utils@1.0.2:
     resolution: {integrity: sha512-zOh9jPYI+xrNOyisSelgym4tolKTJCQd5GBhK0+0xJvcYDcwlOoxF/rnFKQ2KRZknXSG9jWAp66fwP6AxN9STg==}
+
+  suncalc@2.1.4:
+    resolution: {integrity: sha512-V7oSdbSezigEpbqnNWKujDlZaE/QA/0w5IbP/vXX+eIF+EtiE8e9BkSapsOFZc84jJkI3QlklYTWtMqzj9tZQg==}
 
   super-regex@1.1.0:
     resolution: {integrity: sha512-WHkws2ZflZe41zj6AolvvmaTrWds/VuyeYr9iPVv/oQeaIoVxMKaushfFWpOGDT+GuBrM/sVqF8KUCYQlSSTdQ==}
@@ -9760,6 +9778,10 @@ snapshots:
 
   human-signals@8.0.1: {}
 
+  i18next@26.7.2(typescript@6.0.3):
+    optionalDependencies:
+      typescript: 6.0.3
+
   iconv-lite@0.4.24:
     dependencies:
       safer-buffer: 2.1.2
@@ -10688,6 +10710,13 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
+  opening_hours@3.15.0(typescript@6.0.3):
+    dependencies:
+      i18next: 26.7.2(typescript@6.0.3)
+      suncalc: 2.1.4
+    transitivePeerDependencies:
+      - typescript
+
   ora@5.4.1:
     dependencies:
       bl: 4.1.0
@@ -11548,6 +11577,8 @@ snapshots:
       stubborn-utils: 1.0.2
 
   stubborn-utils@1.0.2: {}
+
+  suncalc@2.1.4: {}
 
   super-regex@1.1.0:
     dependencies:
