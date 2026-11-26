@@ -16,7 +16,7 @@ const LOS_ANGELES: Where = {
 const at = (iso: string): number => Date.parse(iso);
 
 const read = (value: string, where: Where = PARIS): OsmOpeningHours => {
-  const hours = readOpeningHours(value, where, at('2026-11-24T12:00:00Z'));
+  const hours = readOpeningHours(value, where);
   if (hours === undefined) {
     throw new Error(`${value} should be readable`);
   }
@@ -27,45 +27,35 @@ const statusOf = (value: string, iso: string, where: Where = PARIS): OpeningStat
 
 describe('reading opening hours', () => {
   it.each(['Mo-Fr 09:00-19:00', '24/7', 'Mo-Sa 10:00-19:00; PH off', 'Mo-Su 18:00-02:00', 'off'])('reads %s', (value) => {
-    expect(readOpeningHours(value, PARIS, at('2026-11-24T12:00:00Z'))).toBeDefined();
+    expect(readOpeningHours(value, PARIS)).toBeDefined();
   });
 
   it.each(['9h-18h sauf dimanche', 'tlj 10h-19h', 'Mo-Fr 09:00-18:00 et Sa matin'])('cannot read %s', (value) => {
-    expect(readOpeningHours(value, PARIS, at('2026-11-24T12:00:00Z'))).toBeUndefined();
+    expect(readOpeningHours(value, PARIS)).toBeUndefined();
   });
 
   it('cannot read public holidays of a country the library does not know', () => {
     expect(
-      readOpeningHours(
-        'Mo-Fr 09:00-18:00; PH off',
-        { ...PARIS, country: { code: 'ZZ', region: 'Nowhere' } },
-        at('2026-11-24T12:00:00Z')
-      )
+      readOpeningHours('Mo-Fr 09:00-18:00; PH off', { ...PARIS, country: { code: 'ZZ', region: 'Nowhere' } })
     ).toBeUndefined();
   });
 
   it('cannot read public holidays of a place without country', () => {
-    expect(
-      readOpeningHours('Mo-Fr 09:00-18:00; PH off', { coordinates: PARIS.coordinates }, at('2026-11-24T12:00:00Z'))
-    ).toBeUndefined();
+    expect(readOpeningHours('Mo-Fr 09:00-18:00; PH off', { coordinates: PARIS.coordinates })).toBeUndefined();
   });
 
   it('reads school holidays of a region the library knows', () => {
-    expect(readOpeningHours('Mo-Fr 09:00-18:00; SH off', PARIS, at('2026-11-24T12:00:00Z'))).toBeDefined();
+    expect(readOpeningHours('Mo-Fr 09:00-18:00; SH off', PARIS)).toBeDefined();
   });
 
   it('cannot read school holidays of a region the library does not know', () => {
     expect(
-      readOpeningHours(
-        'Mo-Fr 09:00-18:00; SH off',
-        { ...PARIS, country: { code: 'FR', region: 'Nowhere' } },
-        at('2026-11-24T12:00:00Z')
-      )
+      readOpeningHours('Mo-Fr 09:00-18:00; SH off', { ...PARIS, country: { code: 'FR', region: 'Nowhere' } })
     ).toBeUndefined();
   });
 
   it('reads hours without public holidays of a place without country', () => {
-    expect(readOpeningHours('Mo-Fr 09:00-18:00', { coordinates: PARIS.coordinates }, at('2026-11-24T12:00:00Z'))).toBeDefined();
+    expect(readOpeningHours('Mo-Fr 09:00-18:00', { coordinates: PARIS.coordinates })).toBeDefined();
   });
 });
 

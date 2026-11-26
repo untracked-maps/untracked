@@ -19,7 +19,7 @@ const WHERE: Where = {
 const SHOP: HoursPlace = { id: 'shop', kind: 'bakery', openingHours: 'Mo-Sa 07:00-20:00', where: WHERE };
 
 const reader = (readable: boolean): HoursReader => ({
-  readOpeningHours: (value, where, time) => (readable ? readOpeningHours(value, where, time) : undefined),
+  readOpeningHours: (value, where) => (readable ? readOpeningHours(value, where) : undefined),
   statusAt: (_, time) => ({ state: time === START ? 'open' : 'closed' }),
   weekAt: () => []
 });

@@ -71,12 +71,6 @@ const locationOf = ({ coordinates, country }: Where): Location | undefined =>
         address: { [COUNTRY_CODE]: country.code.toLowerCase(), state: country.region }
       };
 
-const evaluated = (value: string, location: Location | undefined, now: Date): OpeningHours => {
-  const hours = new OpeningHours(value, location);
-  hours.getState(now);
-  return hours;
-};
-
 const attempted = (read: () => OpeningHours): OpeningHours | undefined => {
   try {
     return read();
@@ -85,9 +79,8 @@ const attempted = (read: () => OpeningHours): OpeningHours | undefined => {
   }
 };
 
-const readOpeningHours = (value: string, where: Where, time: number): OsmOpeningHours | undefined => {
-  const now = wallClockOf(time, where.timeZone);
-  const hours = attempted(() => evaluated(value, locationOf(where), now));
+const readOpeningHours = (value: string, where: Where): OsmOpeningHours | undefined => {
+  const hours = attempted(() => new OpeningHours(value, locationOf(where)));
   return hours === undefined ? undefined : { [READ]: hours, timeZone: where.timeZone };
 };
 

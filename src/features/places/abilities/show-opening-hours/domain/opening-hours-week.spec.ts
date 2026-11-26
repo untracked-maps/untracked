@@ -14,7 +14,7 @@ const VANCOUVER: Where = {
 };
 
 const weekOfPlace = (value: string, iso: string, where: Where = PARIS): readonly WeekDay[] => {
-  const hours = readOpeningHours(value, where, Date.parse(iso));
+  const hours = readOpeningHours(value, where);
   return hours === undefined ? [] : weekAt(hours, Date.parse(iso));
 };
 

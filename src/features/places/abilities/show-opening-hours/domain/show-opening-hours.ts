@@ -1,4 +1,4 @@
-import { catchError, distinctUntilChanged, map, type Observable, of, shareReplay, startWith, switchMap, take } from 'rxjs';
+import { catchError, distinctUntilChanged, map, type Observable, of, shareReplay, startWith, switchMap } from 'rxjs';
 import { expectsHours } from '../../../domain/expects-hours';
 import type { OpeningStatus, OsmOpeningHours, WeekDay, Where } from './opening-hours';
 
@@ -10,7 +10,7 @@ type HoursPlace = {
 };
 
 type HoursReader = {
-  readonly readOpeningHours: (value: string, where: Where, time: number) => OsmOpeningHours | undefined;
+  readonly readOpeningHours: (value: string, where: Where) => OsmOpeningHours | undefined;
   readonly statusAt: (hours: OsmOpeningHours, time: number) => OpeningStatus;
   readonly weekAt: (hours: OsmOpeningHours, time: number) => readonly WeekDay[];
 };
@@ -53,12 +53,10 @@ const knownHours = (reader: HoursReader, hours: OsmOpeningHours, time: Observabl
 
 const readHours =
   (place: HoursPlace, value: string, time: Observable<number>) =>
-  (reader: HoursReader): Observable<HoursView> =>
-    time.pipe(
-      take(1),
-      map((now) => reader.readOpeningHours(value, place.where, now)),
-      switchMap((hours) => (hours === undefined ? of(UNREADABLE) : knownHours(reader, hours, time)))
-    );
+  (reader: HoursReader): Observable<HoursView> => {
+    const hours = reader.readOpeningHours(value, place.where);
+    return hours === undefined ? of(UNREADABLE) : knownHours(reader, hours, time);
+  };
 
 const hoursOf =
   ({ loadHoursReader }: ShowOpeningHoursPorts, time: Observable<number>) =>
