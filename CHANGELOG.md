@@ -1,3 +1,10 @@
+## [1.27.1](https://github.com/untracked-maps/untracked/compare/v1.27.0...v1.27.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* write the departures of a station in the time zone of its city ([#115](https://github.com/untracked-maps/untracked/issues/115)) ([b3b75a0](https://github.com/untracked-maps/untracked/commit/b3b75a00a9b97a6be48dade7b80a5b393e21f53d)), closes [#114](https://github.com/untracked-maps/untracked/issues/114)
+
 # [1.27.0](https://github.com/untracked-maps/untracked/compare/v1.26.1...v1.27.0) (2026-11-26)
 
 
