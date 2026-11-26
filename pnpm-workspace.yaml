@@ -16,4 +16,4 @@ peerDependencyRules:
   allowedVersions:
     "@puppeteer/browsers>proxy-agent": "6"
 overrides:
-  "typed-rest-client>qs": 6.16.2
+  "typed-rest-client>qs": 6.17.1
