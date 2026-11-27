@@ -69,7 +69,6 @@
     Array.from(touches, (touch) => ({ x: touch.clientX, y: touch.clientY }));
 
   const touched = (event: Touching): void => {
-    event.stopPropagation();
     gestures.next({
       kind: 'touched',
       points: pointsOf(event.touches),
@@ -78,15 +77,9 @@
     });
   };
 
-  const moved = (event: TouchEvent): void => {
-    event.stopPropagation();
-    gestures.next({ kind: 'moved', points: pointsOf(event.touches) });
-  };
+  const moved = (event: TouchEvent): void => gestures.next({ kind: 'moved', points: pointsOf(event.touches) });
 
-  const released = (event: TouchEvent): void => {
-    event.stopPropagation();
-    gestures.next({ kind: 'released', points: pointsOf(event.touches) });
-  };
+  const released = (event: TouchEvent): void => gestures.next({ kind: 'released', points: pointsOf(event.touches) });
 
   const keyed = (event: KeyboardEvent): void => {
     const step = STEPS.get(event.key);

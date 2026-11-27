@@ -113,18 +113,6 @@ describe('touching the full-screen photos', () => {
 
     await expect.poll(() => drawn('--zoom')).toBe('1');
   });
-
-  it.each(['touchstart', 'touchmove', 'touchend', 'touchcancel'])('keeps a %s from the sheet below', async (type) => {
-    const reached: string[] = [];
-    await viewerShown();
-    Reflect.set(document.body, `on${type}`, () => {
-      reached.push(type);
-    });
-    finger(type, [200, 300]);
-    Reflect.set(document.body, `on${type}`, null);
-
-    expect(reached).toEqual([]);
-  });
 });
 
 describe('the keys of the full-screen photos', () => {
