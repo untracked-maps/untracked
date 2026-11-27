@@ -160,7 +160,7 @@ const released = (gesture: PhotoGesture, points: readonly Point[]): PhotoGesture
   if (gesture.hold.kind === 'dropping') {
     return { ...gesture, hold: NO_HOLD, closing: gesture.drop > CLOSING_DROP, drop: 0 };
   }
-  if (gesture.hold.kind === 'pinching' && point !== undefined) {
+  if (point !== undefined) {
     return { ...gesture, hold: { kind: 'panning', from: point, pan: gesture.pan } };
   }
   return { ...gesture, hold: NO_HOLD };
@@ -174,8 +174,10 @@ const nextGesture = (gesture: PhotoGesture, event: GestureEvent): PhotoGesture =
       return moved(gesture, event.points);
     case 'released':
       return released(gesture, event.points);
-    default:
+    case 'reset':
       return { ...RESTING, size: gesture.size };
+    default:
+      return gesture;
   }
 };
 

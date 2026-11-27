@@ -1,5 +1,4 @@
 import { Subject } from 'rxjs';
-import { on } from 'svelte/events';
 import { describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
@@ -91,6 +90,21 @@ describe('touching the full-screen photos', () => {
     await expect.poll(() => getComputedStyle(currentPhoto()).transitionDuration).toBe('0s');
   });
 
+  it('keeps a zoomed photo from scrolling', async () => {
+    await viewerShown();
+    fingered(['touchstart', [150, 300], [250, 300]], ['touchmove', [100, 300], [300, 300]]);
+
+    await expect.poll(() => getComputedStyle(dialog().querySelector('.track') ?? document.body).touchAction).toBe('none');
+  });
+
+  it('forgets the zoom of a photo left', async () => {
+    await viewerShown();
+    fingered(['touchstart', [150, 300], [250, 300]], ['touchmove', [100, 300], [300, 300]], ['touchend']);
+    await page.getByRole('button', { name: 'Next photo' }).click();
+
+    await expect.poll(() => drawn('--zoom')).toBe('1');
+  });
+
   it('forgets the zoom when closed', async () => {
     const opening = await viewerShown();
     fingered(['touchstart', [150, 300], [250, 300]], ['touchmove', [100, 300], [300, 300]]);
@@ -103,10 +117,11 @@ describe('touching the full-screen photos', () => {
   it.each(['touchstart', 'touchmove', 'touchend', 'touchcancel'])('keeps a %s from the sheet below', async (type) => {
     const reached: string[] = [];
     await viewerShown();
-    on(document.body, type, () => {
+    Reflect.set(document.body, `on${type}`, () => {
       reached.push(type);
     });
     finger(type, [200, 300]);
+    Reflect.set(document.body, `on${type}`, null);
 
     expect(reached).toEqual([]);
   });

@@ -101,7 +101,8 @@ describe('zooming a photo', () => {
 describe('moving a zoomed photo', () => {
   it.each([
     ['with the finger', [...ZOOMED, touch(1000, [200, 400]), move([150, 420])], [-50, 20]],
-    ['within the screen sideways', [...ZOOMED, touch(1000, [200, 400]), move([-900, 400])], [-300, 0]],
+    ['within the screen to the left', [...ZOOMED, touch(1000, [200, 400]), move([-900, 400])], [-300, 0]],
+    ['within the screen to the right', [...ZOOMED, touch(1000, [200, 400]), move([1300, 400])], [300, 0]],
     ['within the screen down', [...ZOOMED, touch(1000, [200, 400]), move([200, 2000])], [0, 600]],
     ['within the screen up', [...ZOOMED, touch(1000, [200, 400]), move([200, -2000])], [0, -600]],
     ['where it stays once released', [...ZOOMED, touch(1000, [200, 400]), move([150, 420]), release()], [-50, 20]],
@@ -134,6 +135,11 @@ describe('a photo gesture', () => {
     expect(await gestureAfter([touch(0, [100, 100]), move([200, 100]), move([100, 300])])).toEqual(
       await gestureAfter([touch(0, [100, 100]), move([200, 100])])
     );
+  });
+
+  it('ignores an event it does not know', async () => {
+    const unknown: GestureEvent = JSON.parse('{"kind":"waved"}');
+    expect(await gestureAfter([...ZOOMED, unknown])).toEqual(await gestureAfter(ZOOMED));
   });
 
   it('starts at rest', async () => {
