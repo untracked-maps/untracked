@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fakePlaces } from './fake-places';
+import { fakePictures, fakePlaces } from './fake-places';
 import type { FakeZone } from './fake-zone';
 import { PARIS } from './zones/paris/paris';
 
@@ -34,5 +34,17 @@ describe('fake places', () => {
 
   it('give each place its own id', () => {
     expect(new Set(fakePlaces(ZONE).map(({ id }) => id)).size).toBe(fakePlaces(ZONE).length);
+  });
+});
+
+describe('fake pictures', () => {
+  it('are those the places name in their key panoramax', () => {
+    expect(fakePictures(ZONE).map(({ id }) => id)).toEqual(
+      fakePlaces(ZONE).flatMap(({ tags }) => (tags?.['panoramax'] === undefined ? [] : [tags['panoramax']]))
+    );
+  });
+
+  it('start with the landmarks chosen by hand', () => {
+    expect(fakePictures(ZONE)[0]?.id).toBe('centre-pompidou');
   });
 });

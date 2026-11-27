@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { FakePlace } from '../../fake-place';
 import PHOTO_COUNTS from './landmark-photos.json' with { type: 'json' };
+import STREET_VIEWS from './landmark-street-views.json' with { type: 'json' };
 import { landmarks } from './landmarks';
 import LANDMARKS_FILE from './landmarks.json' with { type: 'json' };
 
@@ -173,5 +174,23 @@ describe('the photos of the landmarks', () => {
 
   it('are given only to landmarks of the file', () => {
     expect(Object.keys(PHOTO_COUNTS).filter((id) => !LANDMARKS_FILE.some((landmark) => landmark.id === id))).toEqual([]);
+  });
+});
+
+describe('the street views of the landmarks', () => {
+  it('are named after the landmark for the Café de Flore', () => {
+    expect(tagsOf('cafe-de-flore')?.['panoramax']).toBe('cafe-de-flore');
+  });
+
+  it('are none for the Eiffel Tower', () => {
+    expect(tagsOf('tour-eiffel')?.['panoramax']).toBeUndefined();
+  });
+
+  it('keep the photos of the landmark', () => {
+    expect(tagsOf('grand-cafe-du-palais')?.['image']).toBe('photos/cafe-01.svg');
+  });
+
+  it('are given only to landmarks of the file', () => {
+    expect(STREET_VIEWS.filter((id) => !LANDMARKS_FILE.some((landmark) => landmark.id === id))).toEqual([]);
   });
 });

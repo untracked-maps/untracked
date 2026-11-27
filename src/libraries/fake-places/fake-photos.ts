@@ -51,4 +51,4 @@ const fakePhotos = (faker: Faker, { kind }: Pick<FakePlace, 'kind'>): FakeTags =
 
 const photosByHand = (kind: FakePlace['kind'], count: number): FakeTags => imageOf(kind, shadesFrom(0, count));
 
-export { fakePhotos, PHOTO_FAMILIES, PHOTO_FILES, type PhotoFamily, photosByHand, SHADES };
+export { fakePhotos, PHOTO_FAMILIES, PHOTO_FILES, type PhotoFamily, photoFile, photosByHand, SHADES };

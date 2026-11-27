@@ -1,0 +1,79 @@
+.viewer-frame {
+  --drop: 0;
+  --fade: 1;
+  box-sizing: border-box;
+  inline-size: 100vw;
+  max-inline-size: none;
+  block-size: 100dvh;
+  max-block-size: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  color: rgb(255 255 255);
+  background: rgb(0 0 0);
+  border: 0;
+}
+
+.viewer-frame::backdrop {
+  background: rgb(0 0 0);
+}
+
+.viewer-top {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 1;
+  padding: 1.0625rem 4rem 2rem 1rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  pointer-events: none;
+  background: linear-gradient(rgb(0 0 0 / 0.55), transparent);
+}
+
+.viewer-round {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  padding: 0;
+  color: rgb(255 255 255);
+  cursor: pointer;
+  background: rgb(255 255 255 / 0.16);
+  border: 0;
+  border-radius: 50%;
+}
+
+.viewer-round svg {
+  inline-size: 1.375rem;
+  block-size: 1.375rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.viewer-round:focus-visible {
+  outline: 2px solid rgb(255 255 255);
+  outline-offset: 2px;
+}
+
+.viewer-close {
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.75rem;
+}
+
+.viewer-credit {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  padding: 2rem 1rem calc(1rem + env(safe-area-inset-bottom));
+  margin: 0;
+  font-size: 0.78125rem;
+  color: rgb(255 255 255 / 0.85);
+  pointer-events: none;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.6));
+}
