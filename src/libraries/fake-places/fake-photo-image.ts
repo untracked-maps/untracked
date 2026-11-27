@@ -67,4 +67,4 @@ const fakePhotoImage = ({ colour, pictogram }: Drawing, shade: number): string =
   ].join('');
 };
 
-export { fakePhotoImage, photoFileOf };
+export { type Drawing, fakePhotoImage, photoFileOf, shaded };

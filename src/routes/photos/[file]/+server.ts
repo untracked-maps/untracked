@@ -1,21 +1,12 @@
-import { error } from '@sveltejs/kit';
 import { drawingOf } from '#features/places/ui/components/place-drawings';
-import { fakePhotoImage, photoFileOf } from '#libraries/fake-places/fake-photo-image';
-import { PHOTO_FILES } from '#libraries/fake-places/fake-photos';
+import { FAKE_IMAGE_ENTRIES, fakeImageFile } from '#libraries/fake-places/fake-image-file';
+import { fakePhotoImage } from '#libraries/fake-places/fake-photo-image';
 import type { EntryGenerator, RequestHandler } from './$types';
 
-const NOT_FOUND = 404;
+const fileOf = fakeImageFile(fakePhotoImage, drawingOf);
 
 export const prerender: boolean = true;
 
-export const entries: EntryGenerator = () => PHOTO_FILES.map((file) => ({ file }));
+export const entries: EntryGenerator = () => FAKE_IMAGE_ENTRIES;
 
-export const GET: RequestHandler = ({ params }) => {
-  const photo = photoFileOf(params.file);
-  if (photo === undefined) {
-    error(NOT_FOUND);
-  }
-  return new Response(fakePhotoImage(drawingOf(photo.family), photo.shade), {
-    headers: { 'content-type': 'image/svg+xml' }
-  });
-};
+export const GET: RequestHandler = ({ params }) => fileOf(params.file);

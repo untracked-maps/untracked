@@ -4,8 +4,10 @@
   import { type Closable, closedWhenAsked, followed, NEVER_ASKED, toggleTold } from '#libraries/design/closable';
   import CloseIcon from '#libraries/design/close-icon.svelte';
   import '#libraries/design/tokens.css';
+  import { touchPoints } from '../../../../ui/components/swipe-down';
+  import '../../../../ui/components/viewer-frame.css';
   import type { Photos } from '../../domain/show-photos';
-  import { fadeOf, type GestureEvent, isZoomed, type PhotoGesture, type Point, photoGesture } from './photo-gesture';
+  import { fadeOf, type GestureEvent, isZoomed, type PhotoGesture, photoGesture } from './photo-gesture';
 
   type Props = {
     readonly photos: Photos;
@@ -65,21 +67,18 @@
     scrolls.next(Math.round(scrollLeft / clientWidth));
   };
 
-  const pointsOf = (touches: TouchList): readonly Point[] =>
-    Array.from(touches, (touch) => ({ x: touch.clientX, y: touch.clientY }));
-
   const touched = (event: Touching): void => {
     gestures.next({
       kind: 'touched',
-      points: pointsOf(event.touches),
+      points: touchPoints(event.touches),
       time: event.timeStamp,
       size: { width: event.currentTarget.clientWidth, height: event.currentTarget.clientHeight }
     });
   };
 
-  const moved = (event: TouchEvent): void => gestures.next({ kind: 'moved', points: pointsOf(event.touches) });
+  const moved = (event: TouchEvent): void => gestures.next({ kind: 'moved', points: touchPoints(event.touches) });
 
-  const released = (event: TouchEvent): void => gestures.next({ kind: 'released', points: pointsOf(event.touches) });
+  const released = (event: TouchEvent): void => gestures.next({ kind: 'released', points: touchPoints(event.touches) });
 
   const keyed = (event: KeyboardEvent): void => {
     const step = STEPS.get(event.key);
@@ -113,7 +112,7 @@
 
 <dialog
   id="{uid}-viewer"
-  class={['viewer', isZoomed($gesture) && 'zoomed', $gesture.hold.kind === 'dropping' && 'dropping']}
+  class={['viewer', 'viewer-frame', isZoomed($gesture) && 'zoomed', $gesture.hold.kind === 'dropping' && 'dropping']}
   aria-label={m.place_photos({ nom: name })}
   closedby="any"
   onbeforetoggle={toggled}
@@ -126,8 +125,14 @@
   {@attach closedWhenAsked(closings, closed)}
   {@attach drawn($gesture)}
 >
-  <p class="count">{m.place_photos_count({ rang: $shown + 1, nombre: photos.length })}</p>
-  <button type="button" class="round close" aria-label={m.place_photos_close()} commandfor="{uid}-viewer" command="close">
+  <p class="viewer-top">{m.place_photos_count({ rang: $shown + 1, nombre: photos.length })}</p>
+  <button
+    type="button"
+    class="viewer-round viewer-close"
+    aria-label={m.place_photos_close()}
+    commandfor="{uid}-viewer"
+    command="close"
+  >
     <CloseIcon />
   </button>
   <ul class="track" onscroll={scrolled} {@attach movedBy(moves)}>
@@ -140,7 +145,7 @@
   {#if $shown > 0}
     <button
       type="button"
-      class="round arrow previous"
+      class="viewer-round arrow previous"
       aria-label={m.place_photos_previous()}
       onclick={(): void => stepped($shown - 1)}
     >
@@ -148,11 +153,16 @@
     </button>
   {/if}
   {#if $shown < photos.length - 1}
-    <button type="button" class="round arrow next" aria-label={m.place_photos_next()} onclick={(): void => stepped($shown + 1)}>
+    <button
+      type="button"
+      class="viewer-round arrow next"
+      aria-label={m.place_photos_next()}
+      onclick={(): void => stepped($shown + 1)}
+    >
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" /></svg>
     </button>
   {/if}
-  <p class="credit">{m.place_photos_credit()}</p>
+  <p class="viewer-credit">{m.place_photos_credit()}</p>
 </dialog>
 
 <style>
@@ -160,23 +170,6 @@
     --zoom: 1;
     --pan-x: 0;
     --pan-y: 0;
-    --drop: 0;
-    --fade: 1;
-    box-sizing: border-box;
-    inline-size: 100vw;
-    max-inline-size: none;
-    block-size: 100dvh;
-    max-block-size: none;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    color: rgb(255 255 255);
-    background: rgb(0 0 0);
-    border: 0;
-  }
-
-  .viewer::backdrop {
-    background: rgb(0 0 0);
   }
 
   .track {
@@ -230,54 +223,6 @@
     transition: none;
   }
 
-  .count {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline: 0;
-    z-index: 1;
-    padding: 1.0625rem 1rem 2rem;
-    margin: 0;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    pointer-events: none;
-    background: linear-gradient(rgb(0 0 0 / 0.55), transparent);
-  }
-
-  .round {
-    position: absolute;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    padding: 0;
-    color: rgb(255 255 255);
-    cursor: pointer;
-    background: rgb(255 255 255 / 0.16);
-    border: 0;
-    border-radius: 50%;
-  }
-
-  .round :global(svg) {
-    inline-size: 1.375rem;
-    block-size: 1.375rem;
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 2.2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .round:focus-visible {
-    outline: 2px solid rgb(255 255 255);
-    outline-offset: 2px;
-  }
-
-  .close {
-    inset-block-start: 0.5rem;
-    inset-inline-end: 0.75rem;
-  }
-
   .arrow {
     inset-block-start: calc(50% - 1.375rem);
   }
@@ -288,18 +233,6 @@
 
   .next {
     inset-inline-end: 0.75rem;
-  }
-
-  .credit {
-    position: absolute;
-    inset-block-end: 0;
-    inset-inline: 0;
-    padding: 2rem 1rem calc(1rem + env(safe-area-inset-bottom));
-    margin: 0;
-    font-size: 0.78125rem;
-    color: rgb(255 255 255 / 0.85);
-    pointer-events: none;
-    background: linear-gradient(transparent, rgb(0 0 0 / 0.6));
   }
 
   @media (hover: hover) {

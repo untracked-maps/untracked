@@ -45,6 +45,7 @@
   import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
   import { stationExitsOverlay } from '#features/places/abilities/show-station/ui/components/station-exits-overlay';
   import StationSections from '#features/places/abilities/show-station/ui/components/station-sections.svelte';
+  import StreetView from '#features/places/abilities/show-street-view/ui/components/street-view.svelte';
   import { touchedMapOverlay } from '#features/places/abilities/touch-the-map/ui/components/touched-map-overlay';
   import WelcomeCard from '#features/privacy/abilities/welcome-visitor/ui/components/welcome-card.svelte';
   import { districtOutlineLayers } from '#features/search/abilities/open-district/ui/components/district-outline';
@@ -330,6 +331,12 @@
       />
     </div>
     <div class="credit">
+      <StreetView
+        view={data.streetView}
+        sheetHeight={data.sheetHeights.tallest}
+        source={photoSource}
+        closable={data.closing.of('photo viewer')}
+      />
       <MapCredit>
         <SatelliteCredit basemap={layers.basemap.kept()} />
         <TransitLinesCredit shown={layers.transitLinesShown} />
@@ -448,6 +455,8 @@
   }
 
   .afloat {
+    position: relative;
+    z-index: 3;
     display: grid;
     visibility: var(--floats);
     gap: var(--space-3);
@@ -477,7 +486,10 @@
 
   .credit {
     display: flex;
+    flex-direction: column;
     grid-area: credit;
+    gap: var(--space-3);
+    align-items: flex-start;
     margin-block-end: calc(-1 * (var(--control-size) + var(--space-3)));
   }
 

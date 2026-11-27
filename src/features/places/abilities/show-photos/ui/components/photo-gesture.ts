@@ -1,4 +1,5 @@
 import { type Observable, scan, shareReplay, startWith } from 'rxjs';
+import { closesAfter, dropOf, fadeAfter, swipeOf } from '../../../../ui/components/swipe-down';
 
 type Point = {
   readonly x: number;
@@ -33,16 +34,6 @@ type GestureEvent =
   | { readonly kind: 'moved'; readonly points: readonly Point[] }
   | { readonly kind: 'released'; readonly points: readonly Point[] }
   | { readonly kind: 'reset' };
-
-const DECIDING_DISTANCE = 12;
-
-const MORE_VERTICAL = 1.3;
-
-const CLOSING_DROP = 110;
-
-const FADE_DROP = 500;
-
-const FAINTEST = 0.3;
 
 const DOUBLE_TOUCH = 280;
 
@@ -105,14 +96,14 @@ const touched = (gesture: PhotoGesture, points: readonly Point[], time: number, 
 };
 
 const decided = (gesture: PhotoGesture, from: Point, point: Point): PhotoGesture => {
-  const dx = point.x - from.x;
-  const dy = point.y - from.y;
-  if (Math.max(Math.abs(dx), Math.abs(dy)) <= DECIDING_DISTANCE) {
-    return gesture;
+  switch (swipeOf(from, point)) {
+    case 'dropping':
+      return { ...gesture, hold: { kind: 'dropping', from }, drop: dropOf(from, point) };
+    case 'scrolling':
+      return { ...gesture, hold: { kind: 'scrolling' } };
+    default:
+      return gesture;
   }
-  return dy > MORE_VERTICAL * Math.abs(dx)
-    ? { ...gesture, hold: { kind: 'dropping', from }, drop: dy }
-    : { ...gesture, hold: { kind: 'scrolling' } };
 };
 
 const pinched = (
@@ -138,7 +129,7 @@ const moved = (gesture: PhotoGesture, points: readonly Point[]): PhotoGesture =>
     case 'undecided':
       return decided(gesture, hold.from, point);
     case 'dropping':
-      return { ...gesture, drop: Math.max(0, point.y - hold.from.y) };
+      return { ...gesture, drop: dropOf(hold.from, point) };
     case 'pinching':
       return pinched(gesture, hold, points);
     case 'panning':
@@ -158,7 +149,7 @@ const moved = (gesture: PhotoGesture, points: readonly Point[]): PhotoGesture =>
 const released = (gesture: PhotoGesture, points: readonly Point[]): PhotoGesture => {
   const [point] = points;
   if (gesture.hold.kind === 'dropping') {
-    return { ...gesture, hold: NO_HOLD, closing: gesture.drop > CLOSING_DROP, drop: 0 };
+    return { ...gesture, hold: NO_HOLD, closing: closesAfter(gesture.drop), drop: 0 };
   }
   if (point !== undefined) {
     return { ...gesture, hold: { kind: 'panning', from: point, pan: gesture.pan } };
@@ -184,8 +175,8 @@ const nextGesture = (gesture: PhotoGesture, event: GestureEvent): PhotoGesture =
 const photoGesture = (events: Observable<GestureEvent>): Observable<PhotoGesture> =>
   events.pipe(scan(nextGesture, RESTING), startWith(RESTING), shareReplay(1));
 
-const fadeOf = ({ drop }: PhotoGesture): number => Math.max(FAINTEST, 1 - drop / FADE_DROP);
+const fadeOf = ({ drop }: PhotoGesture): number => fadeAfter(drop);
 
 const isZoomed = ({ scale }: PhotoGesture): boolean => scale > 1;
 
-export { fadeOf, type GestureEvent, isZoomed, type PhotoGesture, type Point, photoGesture };
+export { fadeOf, type GestureEvent, isZoomed, type PhotoGesture, photoGesture };

@@ -1,6 +1,8 @@
 import { photosByHand } from '../../fake-photos';
 import { type FakePlace, isFakePlaceKind } from '../../fake-place';
+import { streetViewByHand } from '../../fake-street-views';
 import PHOTO_COUNTS from './landmark-photos.json' with { type: 'json' };
+import STREET_VIEWS from './landmark-street-views.json' with { type: 'json' };
 import TEXTS_IN_ENGLISH from './landmark-texts/en.json' with { type: 'json' };
 import TEXTS_IN_FRENCH from './landmark-texts/fr.json' with { type: 'json' };
 import LANDMARKS_FILE from './landmarks.json' with { type: 'json' };
@@ -36,6 +38,12 @@ const photographed = (landmark: FakePlace): FakePlace => {
   return count === undefined ? landmark : { ...landmark, tags: { ...landmark.tags, ...photosByHand(landmark.kind, count) } };
 };
 
-const landmarks = (): readonly FakePlace[] => LANDMARKS_FILE.filter(isOfKnownKind).map(told).map(photographed);
+const VIEWED: ReadonlySet<string> = new Set(STREET_VIEWS);
+
+const streetViewed = (landmark: FakePlace): FakePlace =>
+  VIEWED.has(landmark.id) ? { ...landmark, tags: { ...landmark.tags, ...streetViewByHand(landmark.id) } } : landmark;
+
+const landmarks = (): readonly FakePlace[] =>
+  LANDMARKS_FILE.filter(isOfKnownKind).map(told).map(photographed).map(streetViewed);
 
 export { landmarks };
