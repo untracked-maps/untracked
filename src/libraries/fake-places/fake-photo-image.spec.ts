@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { fakePhotoImage, photoFileOf } from './fake-photo-image';
 
+const CLOSED = /\/><\/svg>$/u;
+
 const SIZED = /^<svg [^>]*viewBox="0 0 800 600" width="800" height="600">/u;
 
 const DRAWING = { colour: '#808080', pictogram: 'M0 0h32v32H0z' };
@@ -33,6 +35,18 @@ describe('the shade of a fake photo', () => {
     expect(fakePhotoImage(DRAWING, 12)).toContain('fill="#a6a6a6"');
   });
 
+  it('goes from dark to light through the twelve shades', () => {
+    expect(fakePhotoImage(DRAWING, 4)).toContain('fill="#6f6f6f"');
+  });
+
+  it('darkens each channel apart', () => {
+    expect(fakePhotoImage({ ...DRAWING, colour: '#ff0080' }, 1)).toContain('#b3005a');
+  });
+
+  it('writes each channel with two digits', () => {
+    expect(fakePhotoImage({ ...DRAWING, colour: '#000000' }, 1)).toContain('fill="#000000"');
+  });
+
   it('keeps each channel apart', () => {
     expect(fakePhotoImage({ ...DRAWING, colour: '#ff0080' }, 12)).toContain('fill="#ff4da6"');
   });
@@ -49,6 +63,10 @@ describe('a fake photo', () => {
 
   it('draws the pictogram of its family in white', () => {
     expect(fakePhotoImage(DRAWING, 12)).toContain('<path d="M0 0h32v32H0z" fill="#ffffff" fill-opacity="0.92"');
+  });
+
+  it('ends with the pictogram', () => {
+    expect(fakePhotoImage(DRAWING, 12)).toMatch(CLOSED);
   });
 
   it('draws the pictogram 240 pixels wide, in the middle', () => {

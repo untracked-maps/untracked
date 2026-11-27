@@ -1,12 +1,9 @@
 import { of, Subject } from 'rxjs';
-import { on } from 'svelte/events';
 import { describe, expect, it } from 'vitest';
 import { commands, page, userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
 import { type Closable, NEVER_ASKED } from '#libraries/design/closable';
 import PhotoStrip from './photo-strip.svelte';
-
-type At = readonly [x: number, y: number];
 
 const NAME = 'Café de Flore';
 
@@ -25,17 +22,6 @@ const openedAt = async (rank: number, closable: Closable = NEVER_ASKED): Promise
   await page.getByRole('button', { name: `Photo ${rank} of 3 of ${NAME}` }).click();
   await expect.element(page.getByRole('dialog')).toBeVisible();
 };
-
-const finger = (type: string, ...points: readonly At[]): boolean => {
-  const target = viewer();
-  const touches = points.map(([clientX, clientY], identifier) => new Touch({ identifier, target, clientX, clientY }));
-  return target.dispatchEvent(new TouchEvent(type, { bubbles: true, touches }));
-};
-
-const fingered = (...steps: readonly (readonly [string, ...At[]])[]): readonly boolean[] =>
-  steps.map(([type, ...points]) => finger(type, ...points));
-
-const drawn = (property: string): string => getComputedStyle(viewer()).getPropertyValue(property);
 
 describe('the full-screen photos of a place', () => {
   it('count the photo shown', async () => {
@@ -128,72 +114,5 @@ describe('going from photo to photo', () => {
     await page.getByRole('button', { name: 'Next photo' }).click();
 
     await expect.element(page.getByText('2 / 3')).toBeVisible();
-  });
-});
-
-describe('touching the full-screen photos', () => {
-  it('closes them when swiped down past 110 px', async () => {
-    await openedAt(1);
-    fingered(['touchstart', [200, 300]], ['touchmove', [200, 320]], ['touchmove', [200, 450]], ['touchend']);
-
-    await expect.element(page.getByRole('dialog')).not.toBeInTheDocument();
-  });
-
-  it.each([
-    [
-      'fades the photo swiped down',
-      '--fade',
-      '0.5',
-      [
-        ['touchstart', [200, 300]],
-        ['touchmove', [200, 550]]
-      ]
-    ],
-    ['zooms a photo touched twice', '--zoom', '2.5', [['touchstart', [200, 300]], ['touchend'], ['touchstart', [200, 300]]]],
-    [
-      'zooms a photo pinched',
-      '--zoom',
-      '2',
-      [
-        ['touchstart', [150, 300], [250, 300]],
-        ['touchmove', [100, 300], [300, 300]]
-      ]
-    ],
-    [
-      'moves a zoomed photo with the finger',
-      '--pan-x',
-      '-20px',
-      [
-        ['touchstart', [150, 300], [250, 300]],
-        ['touchmove', [100, 300], [300, 300]],
-        ['touchend', [300, 300]],
-        ['touchmove', [280, 300]]
-      ]
-    ]
-  ] as const)('%s', async (_, property, value, steps) => {
-    await openedAt(1);
-    fingered(...steps);
-
-    await expect.poll(() => drawn(property)).toBe(value);
-  });
-
-  it('forgets the zoom when closed', async () => {
-    await openedAt(1);
-    fingered(['touchstart', [150, 300], [250, 300]], ['touchmove', [100, 300], [300, 300]]);
-    await page.getByRole('button', { name: 'Close' }).click();
-    await page.getByRole('button', { name: `Photo 1 of 3 of ${NAME}` }).click();
-
-    await expect.poll(() => drawn('--zoom')).toBe('1');
-  });
-
-  it('keeps its touches from the sheet below', async () => {
-    const reached: string[] = [];
-    await openedAt(1);
-    on(document.body, 'touchstart', () => {
-      reached.push('body');
-    });
-    finger('touchstart', [200, 300]);
-
-    expect(reached).toEqual([]);
   });
 });

@@ -46,7 +46,7 @@ const shadesFrom = (first: number, count: number): readonly number[] =>
 
 const fakePhotos = (faker: Faker, { kind }: Pick<FakePlace, 'kind'>): FakeTags =>
   faker.datatype.boolean({ probability: SHARE_WITH_PHOTOS })
-    ? imageOf(kind, shadesFrom(faker.number.int({ min: 0, max: SHADES - 1 }), faker.number.int({ min: 1, max: MOST_PHOTOS })))
+    ? imageOf(kind, shadesFrom(faker.number.int(SHADES), faker.number.int({ min: 1, max: MOST_PHOTOS })))
     : {};
 
 const photosByHand = (kind: FakePlace['kind'], count: number): FakeTags => imageOf(kind, shadesFrom(0, count));

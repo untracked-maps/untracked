@@ -1,7 +1,7 @@
 <script lang="ts">
   import { distinctUntilChanged, filter, map, merge, type Observable, Subject, shareReplay, startWith } from 'rxjs';
   import { m } from '#i18n/messages';
-  import { type Closable, closedWhenAsked, NEVER_ASKED, toggleTold } from '#libraries/design/closable';
+  import { type Closable, closedWhenAsked, followed, NEVER_ASKED, toggleTold } from '#libraries/design/closable';
   import CloseIcon from '#libraries/design/close-icon.svelte';
   import '#libraries/design/tokens.css';
   import type { Photos } from '../../domain/show-photos';
@@ -40,28 +40,18 @@
 
   const gesture = $derived(photoGesture(merge(gestures, shown.pipe(map((): GestureEvent => ({ kind: 'reset' }))))));
 
-  const behaviour = (): ScrollBehavior => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth');
+  const stepped = (index: number): void => moves.next({ index, scrolling: 'auto' });
 
-  const stepped = (index: number): void => moves.next({ index, scrolling: behaviour() });
+  const opensAt = (openings: Observable<number>): ((dialog: HTMLDialogElement) => () => void) =>
+    followed(openings, (dialog: HTMLDialogElement, index: number) => {
+      dialog.showModal();
+      moves.next({ index, scrolling: 'instant' });
+    });
 
-  const opensAt =
-    (openings: Observable<number>) =>
-    (dialog: HTMLDialogElement): (() => void) => {
-      const subscription = openings.subscribe((index) => {
-        dialog.showModal();
-        moves.next({ index, scrolling: 'instant' });
-      });
-      return (): void => subscription.unsubscribe();
-    };
-
-  const movedBy =
-    (wanted: Observable<Move>) =>
-    (track: HTMLElement): (() => void) => {
-      const subscription = wanted.subscribe(({ index, scrolling }) =>
-        track.scrollTo({ left: index * track.clientWidth, behavior: scrolling })
-      );
-      return (): void => subscription.unsubscribe();
-    };
+  const movedBy = (wanted: Observable<Move>): ((track: HTMLElement) => () => void) =>
+    followed(wanted, (track: HTMLElement, { index, scrolling }: Move) =>
+      track.scrollTo({ left: index * track.clientWidth, behavior: scrolling })
+    );
 
   const closed = (dialog: HTMLDialogElement): void => dialog.close();
 
@@ -102,7 +92,7 @@
     const step = STEPS.get(event.key);
     if (step !== undefined) {
       event.preventDefault();
-      stepped(Math.min(photos.length - 1, Math.max(0, $shown + step)));
+      stepped($shown + step);
     }
   };
 
@@ -202,6 +192,7 @@
     padding: 0;
     margin: 0;
     overflow-x: auto;
+    scroll-behavior: smooth;
     overscroll-behavior: contain;
     touch-action: pan-x;
     list-style: none;
@@ -331,6 +322,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .track {
+      scroll-behavior: auto;
+    }
+
     img {
       transition: none;
     }

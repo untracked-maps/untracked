@@ -121,7 +121,7 @@ const pinched = (
   points: readonly Point[]
 ): PhotoGesture => {
   const distance = distanceOf(points);
-  if (distance === 0 || hold.distance === 0) {
+  if (hold.distance === 0) {
     return gesture;
   }
   const scale = between((hold.scale * distance) / hold.distance, 1, LARGEST_ZOOM);
@@ -160,10 +160,10 @@ const released = (gesture: PhotoGesture, points: readonly Point[]): PhotoGesture
   if (gesture.hold.kind === 'dropping') {
     return { ...gesture, hold: NO_HOLD, closing: gesture.drop > CLOSING_DROP, drop: 0 };
   }
-  if (gesture.hold.kind === 'pinching' && point !== undefined && gesture.scale > 1) {
+  if (gesture.hold.kind === 'pinching' && point !== undefined) {
     return { ...gesture, hold: { kind: 'panning', from: point, pan: gesture.pan } };
   }
-  return { ...gesture, hold: NO_HOLD, pan: gesture.scale > 1 ? gesture.pan : ORIGIN };
+  return { ...gesture, hold: NO_HOLD };
 };
 
 const nextGesture = (gesture: PhotoGesture, event: GestureEvent): PhotoGesture => {

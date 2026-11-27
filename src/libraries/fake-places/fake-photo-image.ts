@@ -32,7 +32,7 @@ const CHANNEL_STARTS = [RED_AT, GREEN_AT, BLUE_AT];
 
 const CHANNEL = 255;
 
-const FILE_NAME = /^(?<family>[a-z]+)-(?<shade>\d{2})\.svg$/u;
+const FILE_NAME = /(?<family>[a-z]+)-(?<shade>\d{2})\.svg/u;
 
 const KNOWN_FILES: ReadonlySet<string> = new Set(PHOTO_FILES);
 
@@ -47,7 +47,7 @@ const photoFileOf = (file: string): PhotoFile | undefined => {
 const mixOf = (shade: number): number => STRONGEST_MIX * ((2 * (shade - 1)) / (SHADES - 1) - 1);
 
 const channelMixed = (channel: number, mix: number): number =>
-  Math.round(mix < 0 ? channel * (1 + mix) : channel + (CHANNEL - channel) * mix);
+  Math.round((channel + (CHANNEL - channel) * Math.max(mix, 0)) * (1 + Math.min(mix, 0)));
 
 const shaded = (colour: string, shade: number): string => {
   const mix = mixOf(shade);

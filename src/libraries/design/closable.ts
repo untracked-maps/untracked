@@ -12,11 +12,16 @@ const toggleTold =
   ({ newState }: Pick<ToggleEvent, 'newState'>): void =>
     onToggle(newState === 'open');
 
-const closedWhenAsked =
-  <Element>(closings: Observable<unknown>, close: (element: Element) => void) =>
+const followed =
+  <Element, Value>(values: Observable<Value>, act: (element: Element, value: Value) => void) =>
   (element: Element): (() => void) => {
-    const subscription = closings.subscribe(() => close(element));
+    const subscription = values.subscribe((value) => act(element, value));
     return (): void => subscription.unsubscribe();
   };
 
-export { type Closable, closedWhenAsked, NEVER_ASKED, toggleTold };
+const closedWhenAsked = <Element>(
+  closings: Observable<unknown>,
+  close: (element: Element) => void
+): ((element: Element) => () => void) => followed(closings, (element: Element) => close(element));
+
+export { type Closable, closedWhenAsked, followed, NEVER_ASKED, toggleTold };

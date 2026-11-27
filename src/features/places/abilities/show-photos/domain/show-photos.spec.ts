@@ -24,6 +24,10 @@ describe('the photos of a place', () => {
     expect(await photosShown({ id: 'cafe', tags: { name: 'Chez Paul' } })).toEqual([]);
   });
 
+  it('may be in a folder of a folder', async () => {
+    expect(await photosShown(placeTagged('photos/paris/cafe-01.svg'))).toEqual(['photos/paris/cafe-01.svg']);
+  });
+
   it('are none without tags', async () => {
     expect(await photosShown({ id: 'cafe' })).toEqual([]);
   });
@@ -48,7 +52,9 @@ describe('the photos of a place', () => {
     ['a folder only', 'photos'],
     ['a climb out of the site', 'photos/../secret.svg'],
     ['a capital letter', 'Photos/cafe-01.svg'],
-    ['something after the name', 'photos/cafe-01.svg?x']
+    ['something after the name', 'photos/cafe-01.svg?x'],
+    ['a file without its kind', 'photos/cafe-01'],
+    ['a name with two dots', 'photos/cafe.01.svg']
   ])('leave out a photo of %s', async (_, path) => {
     expect(await photosShown(placeTagged(path))).toEqual([]);
   });
@@ -68,6 +74,11 @@ describe('the photos shown', () => {
       [],
       ['photos/cafe-01.svg']
     ]);
+  });
+
+  it('are shown once for two places with the same two photos', async () => {
+    const both = 'photos/cafe-01.svg;photos/cafe-02.svg';
+    expect(await everyShowing(placeTagged(both), placeTagged(both))).toHaveLength(2);
   });
 
   it('are shown again for a place with other photos', async () => {

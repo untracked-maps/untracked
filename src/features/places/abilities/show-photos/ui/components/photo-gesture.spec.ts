@@ -75,6 +75,11 @@ describe('zooming a photo', () => {
     ['by pinching it no less than its size', [touch(0, [100, 400], [300, 400]), move([190, 400], [210, 400])], 1],
     ['by pinching it from the zoom it had', [...ZOOMED, touch(1000, [100, 400], [200, 400]), move([80, 400], [220, 400])], 3.5],
     ['only once the second finger moves', [touch(0, [100, 400], [200, 400]), move([100, 400])], 1],
+    [
+      'back to its size with the fingers on one point',
+      [...ZOOMED, touch(1000, [100, 400], [200, 400]), move([150, 400], [150, 400])],
+      1
+    ],
     ['not with two fingers on one point', [touch(0, [100, 400], [100, 400]), move([50, 400], [250, 400])], 1],
     [
       'not with a pinch between two touches',
@@ -97,7 +102,8 @@ describe('moving a zoomed photo', () => {
   it.each([
     ['with the finger', [...ZOOMED, touch(1000, [200, 400]), move([150, 420])], [-50, 20]],
     ['within the screen sideways', [...ZOOMED, touch(1000, [200, 400]), move([-900, 400])], [-300, 0]],
-    ['within the screen up and down', [...ZOOMED, touch(1000, [200, 400]), move([200, 2000])], [0, 600]],
+    ['within the screen down', [...ZOOMED, touch(1000, [200, 400]), move([200, 2000])], [0, 600]],
+    ['within the screen up', [...ZOOMED, touch(1000, [200, 400]), move([200, -2000])], [0, -600]],
     ['where it stays once released', [...ZOOMED, touch(1000, [200, 400]), move([150, 420]), release()], [-50, 20]],
     [
       'back to the middle once zoomed out',

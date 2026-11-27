@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-import { closedWhenAsked, NEVER_ASKED, toggleTold } from './closable';
+import { closedWhenAsked, followed, NEVER_ASKED, toggleTold } from './closable';
 
 const closedAfter = (asks: number, stopBefore = false): readonly string[] => {
   const closed: string[] = [];
@@ -26,6 +26,19 @@ describe('an element closed when asked', () => {
 
   it('is no longer asked once it has gone', () => {
     expect(closedAfter(1, true)).toEqual([]);
+  });
+});
+
+describe('an element that follows values', () => {
+  it('is given each value with the element', () => {
+    const seen: string[] = [];
+    const values = new Subject<number>();
+    followed(values, (element: string, value: number) => {
+      seen.push(`${element} ${value}`);
+    })('the track');
+    values.next(2);
+
+    expect(seen).toEqual(['the track 2']);
   });
 });
 
