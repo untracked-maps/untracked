@@ -34,7 +34,8 @@ const config: SizeLimitConfig = [
     limit: '200 kB',
     gzip: true
   },
-  { name: 'The places file', path: ['build/data/places.json'], limit: '120 kB', gzip: true }
+  { name: 'The places file', path: ['build/data/places.json'], limit: '90 kB', gzip: true },
+  { name: 'The details of the places', path: ['build/data/place-details.json'], limit: '70 kB', gzip: true }
 ];
 
 export default config;

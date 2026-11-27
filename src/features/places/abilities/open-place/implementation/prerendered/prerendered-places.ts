@@ -1,7 +1,12 @@
 import { defer, map, type Observable } from 'rxjs';
 import type { LoadPlaces, PostalAddress, SheetPlace } from '../../domain/open-place';
 
-type FetchFile = (url: string) => Promise<Response>;
+type FetchFile = () => Promise<Response>;
+
+type PlaceFiles = {
+  readonly places: FetchFile;
+  readonly details: FetchFile;
+};
 
 type Fields = Readonly<Record<string, unknown>>;
 
@@ -60,18 +65,36 @@ const placeOf = (value: unknown): readonly SheetPlace[] => {
     : [];
 };
 
-const contentOf = async (response: Response): Promise<unknown> => {
-  if (!response.ok) {
-    throw new Error(`The places file answered ${response.status}.`);
-  }
-  return await response.json();
-};
+const contentOf =
+  (name: string) =>
+  async (response: Response): Promise<unknown> => {
+    if (!response.ok) {
+      throw new Error(`The ${name} file answered ${response.status}.`);
+    }
+    return await response.json();
+  };
 
-const placesIn = (file: unknown): readonly SheetPlace[] => (Array.isArray(file) ? file.flatMap(placeOf) : []);
+const DETAIL_FIELDS = ['phone', 'website', 'menu', 'instagram', 'facebook', 'tags'] as const;
+
+const detailFieldsOf = (value: Fields): Fields =>
+  Object.fromEntries(DETAIL_FIELDS.flatMap((key) => (key in value ? [[key, value[key]]] : [])));
+
+const detailsById = (file: unknown): ReadonlyMap<unknown, Fields> =>
+  new Map(Array.isArray(file) ? file.filter(isFields).map((details) => [details['id'], detailFieldsOf(details)]) : []);
+
+const joined =
+  (details: ReadonlyMap<unknown, Fields>) =>
+  (value: unknown): unknown =>
+    isFields(value) ? { ...value, ...details.get(value['id']) } : value;
+
+const placesIn = ([places, details]: readonly [unknown, unknown]): readonly SheetPlace[] =>
+  Array.isArray(places) ? places.map(joined(detailsById(details))).flatMap(placeOf) : [];
 
 const prerenderedPlaces =
-  (fetchFile: FetchFile, url: string): LoadPlaces =>
+  (files: PlaceFiles): LoadPlaces =>
   (): Observable<readonly SheetPlace[]> =>
-    defer(async () => contentOf(await fetchFile(url))).pipe(map(placesIn));
+    defer(async () =>
+      Promise.all([files.places().then(contentOf('places')), files.details().then(contentOf('details'))] as const)
+    ).pipe(map(placesIn));
 
 export { prerenderedPlaces };

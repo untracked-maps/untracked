@@ -65,7 +65,12 @@ const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, clo
   const opened = new Subject<Opening>();
   const closed = new Subject<void>();
   return {
-    sheet: openPlace({ loadPlaces: prerenderedPlacesOfSheet(fetchPlaces, resolve('/data/places.json')) })({ opened, closed }),
+    sheet: openPlace({
+      loadPlaces: prerenderedPlacesOfSheet({
+        places: fetchPlaces,
+        details: async () => fetchFile(resolve('/data/place-details.json'))
+      })
+    })({ opened, closed }),
     open: (opening): void => {
       closeOthers();
       opened.next(opening);
