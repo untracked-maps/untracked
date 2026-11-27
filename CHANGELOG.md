@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/untracked-maps/untracked/compare/v1.28.2...v1.29.0) (2026-11-27)
+
+
+### Features
+
+* show the photos of a place in a strip and in full screen ([#124](https://github.com/untracked-maps/untracked/issues/124)) ([e971f6a](https://github.com/untracked-maps/untracked/commit/e971f6a50689f1aa5d560f4c10452d6d3726b46e))
+
 ## [1.28.2](https://github.com/untracked-maps/untracked/compare/v1.28.1...v1.28.2) (2026-11-27)
 
 
