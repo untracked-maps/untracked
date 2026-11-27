@@ -1,3 +1,10 @@
+## [1.28.2](https://github.com/untracked-maps/untracked/compare/v1.28.1...v1.28.2) (2026-11-27)
+
+
+### Performance Improvements
+
+* split the details of the places from the places file ([#122](https://github.com/untracked-maps/untracked/issues/122)) ([4a81426](https://github.com/untracked-maps/untracked/commit/4a81426062e7005fca2897f780f7607c64f438dd))
+
 ## [1.28.1](https://github.com/untracked-maps/untracked/compare/v1.28.0...v1.28.1) (2026-11-26)
 
 
