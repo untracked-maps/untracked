@@ -35,10 +35,7 @@ const moved = (gesture: StreetGesture, [point]: readonly Point[]): StreetGesture
   return { ...gesture, swipe: next, drop: next === 'dropping' ? dropOf(from, point) : 0 };
 };
 
-const released = ({ swipe, drop }: StreetGesture): StreetGesture => ({
-  ...RESTING,
-  closing: swipe === 'dropping' && closesAfter(drop)
-});
+const released = ({ drop }: StreetGesture): StreetGesture => ({ ...RESTING, closing: closesAfter(drop) });
 
 const nextGesture = (gesture: StreetGesture, event: StreetGestureEvent): StreetGesture => {
   switch (event.kind) {

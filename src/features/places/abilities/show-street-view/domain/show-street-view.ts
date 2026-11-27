@@ -68,7 +68,10 @@ const bearingFrom = (from: Coordinates, to: Coordinates): number => {
   );
 };
 
-const turnFraction = (angle: number): number => (((angle / DEGREES_PER_TURN + HALF) % 1) + 1) % 1;
+const relative = (angle: number): number =>
+  (((angle % DEGREES_PER_TURN) + DEGREES_PER_TURN + DEGREES_PER_HALF_TURN) % DEGREES_PER_TURN) - DEGREES_PER_HALF_TURN;
+
+const turnFraction = (angle: number): number => HALF + relative(angle) / DEGREES_PER_TURN;
 
 const facingOf = ({ camera, azimuth }: Picture, place: Coordinates): number =>
   turnFraction(bearingFrom(camera, place) - azimuth);

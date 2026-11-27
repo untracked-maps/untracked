@@ -12,7 +12,7 @@ const fieldsOf = (value: unknown, key: string): Fields => {
   return isFields(field) ? field : {};
 };
 
-const isNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+const isNumber = (value: unknown): value is number => Number.isFinite(value);
 
 const pictureIn = (item: unknown): Picture => {
   const position = fieldsOf(item, 'geometry')['coordinates'];

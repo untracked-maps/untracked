@@ -66,6 +66,10 @@ describe('a finger lifted from the street view', () => {
     expect((await gestureAfter(touchedAt(100, 100), at(100, 210), RELEASED)).closing).toBe(false);
   });
 
+  it('leaves it open after a scroll that also goes 115 px down', async () => {
+    expect((await gestureAfter(touchedAt(100, 100), at(300, 215), RELEASED)).closing).toBe(false);
+  });
+
   it('leaves it open after a long scroll', async () => {
     expect((await gestureAfter(touchedAt(100, 100), at(400, 100), RELEASED)).closing).toBe(false);
   });

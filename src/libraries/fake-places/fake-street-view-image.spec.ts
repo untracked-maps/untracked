@@ -63,6 +63,10 @@ describe('the street of a fake street view', () => {
     expect(fakeStreetViewImage(DRAWING, 1)).toContain('scale(4.375)');
   });
 
+  it('puts nothing between its shapes', () => {
+    expect(fakeStreetViewImage(DRAWING, 1)).toContain('fill="#cfe3f2"/><rect x="-125"');
+  });
+
   it('draws the pavement', () => {
     expect(fakeStreetViewImage(DRAWING, 1)).toContain('<rect y="640" width="2000" height="360" fill="#a9a9a9"/>');
   });

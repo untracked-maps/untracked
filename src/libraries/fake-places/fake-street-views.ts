@@ -36,6 +36,8 @@ const DEGREES_PER_HALF_TURN = 180;
 
 const DEGREES_PER_TURN = 360;
 
+const LAST_BEARING = 359;
+
 const CAMERA_DECIMALS = 6;
 
 const STREET_VIEW_BOX = { west: 2.224, south: 48.815, east: 2.47, north: 48.902 };
@@ -65,7 +67,7 @@ const rounded = (value: number): number => Number(value.toFixed(CAMERA_DECIMALS)
 
 const cameraOf = (faker: Faker, place: FakePlace): FakePicture => {
   const metres = faker.number.float({ min: NEAREST_METRES, max: FARTHEST_METRES });
-  const from = faker.number.int({ min: 0, max: DEGREES_PER_TURN - 1 });
+  const from = faker.number.int({ min: 0, max: LAST_BEARING });
   const { longitude, latitude } = place.coordinates;
   return {
     id: place.id,
