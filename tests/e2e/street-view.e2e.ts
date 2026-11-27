@@ -24,6 +24,16 @@ const streetViewOpened = async (page: Page): Promise<void> => {
   await streetView(page).waitFor();
 };
 
+const onTheThumbnail = (marker: HTMLElement): boolean => {
+  const thumb = document.querySelector('.thumb')?.getBoundingClientRect() ?? new DOMRect();
+  const mark = marker.getBoundingClientRect();
+  marker.style.setProperty(
+    'translate',
+    `${thumb.x + (thumb.width - mark.width) / 2 - mark.x}px ${thumb.y + (thumb.height - mark.height) / 2 - mark.y}px`
+  );
+  return document.elementFromPoint(thumb.x + thumb.width / 2, thumb.y + thumb.height / 2)?.closest('.thumb') !== null;
+};
+
 const offCentre = (pano: HTMLElement): number =>
   Math.abs(pano.scrollLeft + pano.clientWidth / 2 - pano.scrollWidth / 2) / pano.scrollWidth;
 
@@ -59,6 +69,13 @@ test.describe('the shop front of a place', () => {
     await floreSheet(page).getByRole('button', { name: 'Close the sheet' }).click();
 
     await expect(thumbnail(page)).toBeHidden();
+  });
+
+  test('stays above the marker of the opened place', async ({ page }) => {
+    await floreOpened(page);
+    await thumbnail(page).waitFor();
+
+    expect(await page.locator('.open-place-mark').evaluate(onTheThumbnail)).toBe(true);
   });
 
   test('keeps the map accessible', async ({ page }) => {

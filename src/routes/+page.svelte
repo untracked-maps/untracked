@@ -455,6 +455,8 @@
   }
 
   .afloat {
+    position: relative;
+    z-index: 3;
     display: grid;
     visibility: var(--floats);
     gap: var(--space-3);
