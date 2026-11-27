@@ -1,4 +1,6 @@
+import { photosByHand } from '../../fake-photos';
 import { type FakePlace, isFakePlaceKind } from '../../fake-place';
+import PHOTO_COUNTS from './landmark-photos.json' with { type: 'json' };
 import TEXTS_IN_ENGLISH from './landmark-texts/en.json' with { type: 'json' };
 import TEXTS_IN_FRENCH from './landmark-texts/fr.json' with { type: 'json' };
 import LANDMARKS_FILE from './landmarks.json' with { type: 'json' };
@@ -27,6 +29,13 @@ const told = (landmark: FakePlace): FakePlace => {
   return Object.keys(texts).length === 0 ? landmark : { ...landmark, tags: { ...landmark.tags, ...texts } };
 };
 
-const landmarks = (): readonly FakePlace[] => LANDMARKS_FILE.filter(isOfKnownKind).map(told);
+const PHOTOS: Readonly<Partial<Record<string, number>>> = PHOTO_COUNTS;
+
+const photographed = (landmark: FakePlace): FakePlace => {
+  const count = PHOTOS[landmark.id];
+  return count === undefined ? landmark : { ...landmark, tags: { ...landmark.tags, ...photosByHand(landmark.kind, count) } };
+};
+
+const landmarks = (): readonly FakePlace[] => LANDMARKS_FILE.filter(isOfKnownKind).map(told).map(photographed);
 
 export { landmarks };

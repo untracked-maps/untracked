@@ -18,6 +18,7 @@ import { prerenderedPlaces as prerenderedPlacesOfSheet } from '#features/places/
 import { addressCopying } from '#features/places/abilities/open-place/ui/components/address-copying';
 import { shareSheet } from '#features/places/abilities/share-link/implementation/browser/share-sheet';
 import { linkSharing } from '#features/places/abilities/share-link/ui/components/link-sharing';
+import type { Photos } from '#features/places/abilities/show-photos/domain/show-photos';
 import { type PlaceDot, showPlaces } from '#features/places/abilities/show-places/domain/show-places';
 import { prerenderedPlaces as prerenderedPlacesOnMap } from '#features/places/abilities/show-places/implementation/prerendered/prerendered-places';
 import { findAddress } from '#features/search/abilities/find-address/domain/find-address';
@@ -35,6 +36,7 @@ import type { PageLoad } from './$types';
 import { type Districts, districtSheets } from './districts';
 import { type HomeStation, homeStation } from './home-station';
 import { type PlaceHours, placeHours, type Zone } from './opening-hours';
+import { placePhotos } from './place-photos';
 import { type Chosen, chosenOpened, type Spots, spotsInspected } from './spots';
 
 type MapLayers = {
@@ -120,6 +122,7 @@ type Loaded = {
   readonly position: Located;
   readonly zone: Zone;
   readonly hours: PlaceHours;
+  readonly photos: Observable<Photos>;
   readonly layers: MapLayers;
   readonly search: SearchSources;
   readonly notices: Notices;
@@ -158,9 +161,10 @@ const placesShownBeside = (fetchPlaces: () => Promise<Response>, places: PlaceSh
   return (zoom$) => shownOnMap(zoom$, openId);
 };
 
-const sheetSections = (sheet: Observable<PlaceSheet>, zone: Zone): Pick<Loaded, 'station' | 'hours'> => ({
+const sheetSections = (sheet: Observable<PlaceSheet>, zone: Zone): Pick<Loaded, 'station' | 'hours' | 'photos'> => ({
   station: homeStation(sheet),
-  hours: placeHours(sheet, zone)
+  hours: placeHours(sheet, zone),
+  photos: placePhotos(sheet)
 });
 
 const othersClosed = (dismissed: Subject<void>, districts: Districts) => (): void => {

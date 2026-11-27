@@ -48,7 +48,8 @@ const NOT_GOOD_TO_KNOW: ReadonlySet<string> = new Set([
   'check_date',
   'check_date:opening_hours',
   'wheelchair',
-  'fee'
+  'fee',
+  'image'
 ]);
 
 const tagsOf = ({ tags }: FakePlace): readonly (readonly [string, string])[] =>

@@ -107,6 +107,20 @@
 - When the visitor presses Escape
 - Then the "spot" is still open
 
+### Scenario: The photos in full screen close before the map menu
+
+- Given the visitor has opened the "map menu"
+- And the visitor has opened the "photo viewer"
+- When the visitor presses Escape
+- Then the "map menu" is still open
+
+### Scenario: The photos in full screen close after the "About" window
+
+- Given the visitor has opened the "photo viewer"
+- And the visitor has opened the "about"
+- When the visitor presses Escape
+- Then the "photo viewer" is still open
+
 ### Scenario: The window opened from a place closes before its sheet
 
 - Given the visitor has opened the "place"

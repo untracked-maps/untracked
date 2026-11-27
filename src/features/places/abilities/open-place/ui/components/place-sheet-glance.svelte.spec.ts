@@ -9,6 +9,10 @@ const FRESHNESS = createRawSnippet(() => ({ render: (): string => '<p data-part=
 
 const GLANCE = createRawSnippet(() => ({ render: (): string => '<div data-part="glance">At a glance</div>' }));
 
+const PHOTOS = createRawSnippet((name: () => string) => ({
+  render: (): string => `<ul data-part="photos" aria-label="Photos of ${name()}"></ul>`
+}));
+
 const STATION = createRawSnippet(() => ({ render: (): string => '<section data-part="station"></section>' }));
 
 const shown = async (): Promise<void> => {
@@ -29,6 +33,7 @@ const shown = async (): Promise<void> => {
     vibrate: (): void => undefined,
     freshness: FRESHNESS,
     glance: GLANCE,
+    photos: PHOTOS,
     first: STATION
   });
 };
@@ -43,9 +48,17 @@ const partOf = (element: Element): string => {
 const order = (): readonly string[] => [...document.querySelectorAll('h2, [data-part], [data-sheet-actions]')].map(partOf);
 
 describe('the glance at a place in its sheet', () => {
-  it('puts the freshness under the name, the actions next, then the strip, before the rest', async () => {
+  it('puts the freshness under the name, the actions next, then the strip and the photos, before the rest', async () => {
     await shown();
 
-    await expect.poll(order).toEqual(['name', 'freshness', 'actions', 'glance', 'station']);
+    await expect.poll(order).toEqual(['name', 'freshness', 'actions', 'glance', 'photos', 'station']);
+  });
+
+  it('names the photos after the place', async () => {
+    await shown();
+
+    await expect
+      .poll(() => document.querySelector('[data-part="photos"]')?.getAttribute('aria-label'))
+      .toBe('Photos of Boulangerie du Coin');
   });
 });

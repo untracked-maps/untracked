@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { FakePlace } from '../../fake-place';
+import PHOTO_COUNTS from './landmark-photos.json' with { type: 'json' };
 import { landmarks } from './landmarks';
 import LANDMARKS_FILE from './landmarks.json' with { type: 'json' };
 
@@ -148,5 +149,29 @@ describe('what the landmarks tell about themselves', () => {
 
   it('is a cathedral where people worship for Notre-Dame', () => {
     expect(tagsOf('notre-dame-de-paris')).toMatchObject({ amenity: 'place_of_worship', building: 'cathedral' });
+  });
+});
+
+const photosOf = (landmark: string): readonly string[] => tagsOf(landmark)?.['image']?.split(';') ?? [];
+
+describe('the photos of the landmarks', () => {
+  it('are twelve for the Eiffel Tower', () => {
+    expect(photosOf('tour-eiffel')).toHaveLength(12);
+  });
+
+  it('are drawn in the colours of the family of the place', () => {
+    expect(photosOf('musee-rodin')[0]).toBe('photos/culture-01.svg');
+  });
+
+  it('are one for the Grand Café du Palais', () => {
+    expect(photosOf('grand-cafe-du-palais')).toEqual(['photos/cafe-01.svg']);
+  });
+
+  it('are none for a car park', () => {
+    expect(photosOf('parking-tour-eiffel')).toEqual([]);
+  });
+
+  it('are given only to landmarks of the file', () => {
+    expect(Object.keys(PHOTO_COUNTS).filter((id) => !LANDMARKS_FILE.some((landmark) => landmark.id === id))).toEqual([]);
   });
 });
