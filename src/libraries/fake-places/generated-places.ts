@@ -1,6 +1,7 @@
 import { Faker } from '@faker-js/faker';
 import { fakeFreshness } from './fake-freshness';
 import { fakeHours } from './fake-hours';
+import { fakePhotos } from './fake-photos';
 import { ADDED_KINDS, type DrawnKind, type FakePlace, type FakePostalAddress, type GeneratedKind } from './fake-place';
 import { fakeReach } from './fake-reach';
 import { fakeTags } from './fake-tags';
@@ -19,7 +20,9 @@ const HOURS_SEED = 1936;
 
 const FRESHNESS_SEED = 1946;
 
-const ADDED_SEEDS = { places: 1944, reach: 1958, tags: 1968, hours: 1981, freshness: 1989 };
+const PHOTOS_SEED = 1959;
+
+const ADDED_SEEDS = { places: 1944, reach: 1958, tags: 1968, hours: 1981, freshness: 1989, photos: 1998 };
 
 const PLACES_PER_ADDED_KIND = 6;
 
@@ -77,6 +80,7 @@ type Fakers = {
   readonly tags: Faker;
   readonly hours: Faker;
   readonly freshness: Faker;
+  readonly photos: Faker;
 };
 
 const idOf = (zone: FakeZone, index: number): string => `${zone.id}-${String(index + 1).padStart(ID_DIGITS, '0')}`;
@@ -101,7 +105,8 @@ const tagsOf = (fakers: Fakers, kind: GeneratedKind): Pick<FakePlace, 'tags'> =>
   const tags = {
     ...fakeTags(fakers.tags, { kind }).tags,
     ...fakeHours(fakers.hours, { kind }),
-    ...fakeFreshness(fakers.freshness, { kind })
+    ...fakeFreshness(fakers.freshness, { kind }),
+    ...fakePhotos(fakers.photos, { kind })
   };
   return Object.keys(tags).length === 0 ? {} : { tags };
 };
@@ -135,6 +140,7 @@ const fakersOf = (
     readonly tags: number;
     readonly hours: number;
     readonly freshness: number;
+    readonly photos: number;
   }
 ): Fakers => ({
   faker: new Faker({ locale: [...zone.locale], seed: seeds.places }),
@@ -142,7 +148,8 @@ const fakersOf = (
   reach: new Faker({ locale: [...zone.locale], seed: seeds.reach }),
   tags: new Faker({ locale: [...zone.locale], seed: seeds.tags }),
   hours: new Faker({ locale: [...zone.locale], seed: seeds.hours }),
-  freshness: new Faker({ locale: [...zone.locale], seed: seeds.freshness })
+  freshness: new Faker({ locale: [...zone.locale], seed: seeds.freshness }),
+  photos: new Faker({ locale: [...zone.locale], seed: seeds.photos })
 });
 
 const generatedPlaces = (zone: FakeZone, count: number): readonly FakePlace[] => {
@@ -151,7 +158,8 @@ const generatedPlaces = (zone: FakeZone, count: number): readonly FakePlace[] =>
     reach: REACH_SEED,
     tags: TAGS_SEED,
     hours: HOURS_SEED,
-    freshness: FRESHNESS_SEED
+    freshness: FRESHNESS_SEED,
+    photos: PHOTOS_SEED
   });
   const place = placeOf(fakers, zone);
   return Array.from({ length: count }, (_, index) => place(fakers.faker.helpers.weightedArrayElement(KIND_WEIGHTS), index));

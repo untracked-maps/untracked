@@ -40,6 +40,7 @@
   import PlaceSheetCard from '#features/places/abilities/open-place/ui/components/place-sheet.svelte';
   import OpeningHours from '#features/places/abilities/show-opening-hours/ui/components/opening-hours.svelte';
   import OpeningStatus from '#features/places/abilities/show-opening-hours/ui/components/opening-status.svelte';
+  import PhotoStrip from '#features/places/abilities/show-photos/ui/components/photo-strip.svelte';
   import { placeDotAt } from '#features/places/abilities/show-places/ui/components/place-dot-at';
   import { placeDotsOverlay } from '#features/places/abilities/show-places/ui/components/place-dots-overlay';
   import { stationExitsOverlay } from '#features/places/abilities/show-station/ui/components/station-exits-overlay';
@@ -76,6 +77,7 @@
   import type { PageProps } from './$types';
   import { locating } from './locating';
   import { placeGlance } from './place-glance';
+  import { photoSource } from './place-photos';
   import { welcomed } from './welcome';
 
   const { data }: PageProps = $props();
@@ -255,6 +257,9 @@
           <OpeningStatus hours={data.hours.view} />
         {/snippet}
       </PlaceGlance>
+    {/snippet}
+    {#snippet photos(name: string)}
+      <PhotoStrip photos={data.photos} {name} source={photoSource} closable={data.closing.of('photo viewer')} />
     {/snippet}
   </PlaceSheetCard>
   <SpotCard

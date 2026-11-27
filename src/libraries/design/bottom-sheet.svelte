@@ -78,9 +78,11 @@
     return observer.disconnect.bind(observer);
   };
 
+  const inWindow = (target: EventTarget | null): boolean => target instanceof Element && target.closest('dialog') !== null;
+
   const touched = (event: Touching): void => {
     const [touch, second] = event.touches;
-    if (touch !== undefined && second === undefined) {
+    if (touch !== undefined && second === undefined && !inWindow(event.target)) {
       events.next(
         sheetTouched(touch, {
           time: event.timeStamp,

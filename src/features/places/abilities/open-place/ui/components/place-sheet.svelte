@@ -28,6 +28,7 @@
     readonly hours?: Snippet;
     readonly freshness?: Snippet;
     readonly glance?: Snippet;
+    readonly photos?: Snippet<[name: string]>;
     readonly onShare?: (shared: {
       readonly title: string;
       readonly at: SheetPlace['coordinates'];
@@ -47,7 +48,8 @@
     first,
     hours,
     freshness,
-    glance
+    glance,
+    photos
   }: Props = $props();
 
   const uid = $props.id();
@@ -95,6 +97,7 @@
           </div>
           <PlaceActions {place} />
           {@render glance?.()}
+          {@render photos?.(place.name)}
           {@render first?.()}
           <PlaceSections {place} {address} {onCopy} {vibrate} {hours} />
         </Floating>

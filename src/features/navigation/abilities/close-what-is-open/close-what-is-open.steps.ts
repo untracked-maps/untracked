@@ -19,6 +19,7 @@ type Visit = {
 
 const ELEMENTS: Readonly<Record<string, Closable>> = {
   about: 'about',
+  'photo viewer': 'photo viewer',
   'map menu': 'map menu',
   'place window': 'place window',
   spot: 'spot',

@@ -22,7 +22,10 @@ describe('the fake Paris', () => {
         },
         website: 'https://www.pharmacie-vincent.example',
         facebook: `${FACEBOOK}/PharmacieVincent`,
-        tags: Object.fromEntries([['opening_hours', 'Mo-Fr 08:30-19:30; Sa 09:00-19:00']]),
+        tags: Object.fromEntries([
+          ['opening_hours', 'Mo-Fr 08:30-19:30; Sa 09:00-19:00'],
+          ['image', 'photos/health-01.svg;photos/health-02.svg;photos/health-03.svg;photos/health-04.svg']
+        ]),
         coordinates: { longitude: 2.325_07, latitude: 48.850_07 },
         fame: 0
       }

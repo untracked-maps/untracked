@@ -109,8 +109,10 @@ const shownOnMap = (isMonument: boolean, fame: number): Pick<FakePlaceOnMap, 'mi
     ? { minzoom: minzoomOf(EARLIEST_ZOOM.monument, fame), rank: MOST_FAME - fame }
     : { minzoom: minzoomOf(EARLIEST_ZOOM.other, fame), rank: RANKS_OF_MONUMENTS + MOST_FAME - fame };
 
+const familyOf = (kind: FakePlace['kind']): FakeFamily | undefined => FAMILIES[kind];
+
 const onMap = (place: FakePlace): FakePlaceOnMap => {
-  const family = FAMILIES[place.kind];
+  const family = familyOf(place.kind);
   return {
     ...place,
     ...(family === undefined ? {} : { family }),
@@ -118,4 +120,4 @@ const onMap = (place: FakePlace): FakePlaceOnMap => {
   };
 };
 
-export { type FakePlaceOnMap, onMap };
+export { type FakeFamily, type FakePlaceOnMap, familyOf, onMap };
