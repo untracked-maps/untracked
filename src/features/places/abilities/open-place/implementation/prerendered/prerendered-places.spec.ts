@@ -48,8 +48,18 @@ const FLORE: SheetPlace = {
   coordinates: { longitude: 2.332_63, latitude: 48.854_04 }
 };
 
+const answering =
+  (body: unknown, status = 200) =>
+  (): Promise<Response> =>
+    Promise.resolve(Response.json(body, { status }));
+
+const placesJoined = (places: unknown, details: unknown, status = 200): Promise<readonly SheetPlace[]> =>
+  firstValueFrom(prerenderedPlaces({ places: answering(places), details: answering(details, status) })());
+
 const placesServed = (body: unknown, status = 200): Promise<readonly SheetPlace[]> =>
-  firstValueFrom(prerenderedPlaces(() => Promise.resolve(Response.json(body, { status })), '/data/places.json')());
+  firstValueFrom(prerenderedPlaces({ places: answering(body, status), details: answering([]) })());
+
+const { phone, website, menu, instagram, facebook, ...PROCOPE_LISTED } = PROCOPE;
 
 const INVALID_PLACES: readonly (readonly [string, unknown])[] = [
   ['a value that is not an object', 'Sakura'],
@@ -134,5 +144,40 @@ describe('prerendered places of the sheet', () => {
 
   it('fails when the file cannot be served', async () => {
     await expect(placesServed([], 500)).rejects.toThrow('The places file answered 500.');
+  });
+});
+
+describe('details of the sheet joined to the places', () => {
+  it('joins the details of a place by its id', async () => {
+    expect(await placesJoined([PROCOPE_LISTED], [{ id: 'procope', phone, website, menu, instagram, facebook }])).toEqual([
+      PROCOPE
+    ]);
+  });
+
+  it('joins the tags of a place by its id', async () => {
+    expect(await placesJoined([{ ...FLORE, tags: undefined }], [{ id: 'flore', tags: FLORE.tags }])).toEqual([FLORE]);
+  });
+  it('keeps the details of the places file that the details file does not give', async () => {
+    expect(await placesJoined([PROCOPE], [{ id: 'procope' }])).toEqual([PROCOPE]);
+  });
+
+  it('leaves the details of another place out', async () => {
+    expect(await placesJoined([VERT_GALANT], [{ id: 'procope', phone }])).toEqual([VERT_GALANT]);
+  });
+
+  it('keeps the name of the places file over one in the details', async () => {
+    expect(await placesJoined([VERT_GALANT], [{ id: 'vert-galant', name: 'Another name' }])).toEqual([VERT_GALANT]);
+  });
+
+  it('reads the places without details from a details file that is not a list', async () => {
+    expect(await placesJoined([VERT_GALANT], { 'vert-galant': { phone } })).toEqual([VERT_GALANT]);
+  });
+
+  it('leaves out details that are not an object', async () => {
+    expect(await placesJoined([VERT_GALANT], ['vert-galant'])).toEqual([VERT_GALANT]);
+  });
+
+  it('fails when the details file cannot be served', async () => {
+    await expect(placesJoined([VERT_GALANT], [], 500)).rejects.toThrow('The details file answered 500.');
   });
 });
