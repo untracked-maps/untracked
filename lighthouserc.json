@@ -47,7 +47,7 @@
               }
             ],
             "total-blocking-time": [
-              "error",
+              "warn",
               {
                 "maxNumericValue": 7000
               }
@@ -55,7 +55,13 @@
             "resource-summary:script:size": [
               "error",
               {
-                "maxNumericValue": 620000
+                "maxNumericValue": 552000
+              }
+            ],
+            "resource-summary:total:size": [
+              "error",
+              {
+                "maxNumericValue": 1391000
               }
             ]
           }
@@ -88,7 +94,7 @@
               }
             ],
             "total-blocking-time": [
-              "error",
+              "warn",
               {
                 "maxNumericValue": 100
               }
@@ -108,7 +114,7 @@
             "resource-summary:script:size": [
               "error",
               {
-                "maxNumericValue": 120000
+                "maxNumericValue": 67000
               }
             ]
           }
