@@ -42,3 +42,7 @@ While working, run the fast checks on what you touch: `pnpm check`, Biome, and `
 ## Decisions
 
 When a change picks a library, a protocol or a rule, or sets aside a plausible alternative, record it as a new ADR in `docs/adr`, numbered after the last one.
+
+Never wait for the maintainer: an open question goes to an issue labelled `question` and the work goes on; a rule change is justified in its commit and reported by an issue, as the [contributing guide](CONTRIBUTING.md#questions-and-rule-changes) says.
+
+Keep the rebuild plan, #46, up to date: tick a step's box once its pull request is merged into `main`, with the numbers of its issue, its pull request and its ADR.
