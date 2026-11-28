@@ -7,7 +7,7 @@
     ".github/actions/*",
     ".github/workflows",
     ".vscode",
-    "docs/adr",
+    "docs/decisions",
     "messages",
     "project.inlang",
     "static",

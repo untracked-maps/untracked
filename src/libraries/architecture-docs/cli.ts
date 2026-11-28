@@ -17,7 +17,7 @@ writeFileSync(
     folders: toFolders(foldersLint),
     links: [
       { href: 'features.html', label: 'Features and their scenarios' },
-      { href: 'https://github.com/untracked-maps/untracked/tree/main/docs/adr', label: 'Architecture decision records' }
+      { href: 'https://github.com/untracked-maps/untracked/tree/main/docs/decisions', label: 'Architecture decisions' }
     ]
   })
 );

@@ -57,12 +57,19 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
-      - id: adr-numbers
-        name: one ADR per number
-        entry: pnpm lint:adr
+      - id: decisions-format
+        name: MADR format of the decisions
+        entry: mdbook-lint lint --config docs/decisions/.mdbook-lint.toml
+        language: rust
+        additional_dependencies: ["cli:mdbook-lint:0.16.2"]
+        files: ^docs/decisions/[0-9]{4}-.*[.]md$
+        require_serial: true
+      - id: decisions-markdown
+        name: Markdown of the decisions
+        entry: pnpm lint:decisions
         language: system
         pass_filenames: false
-        files: ^docs/adr/
+        files: ^docs/decisions/
       - id: no-generated-code-in-src
         name: no generated code in src
         entry: pnpm lint:generated

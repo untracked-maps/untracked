@@ -22,7 +22,7 @@ The report stays private between you and the maintainers while it is assessed, i
 
 ## Scope
 
-Untracked Maps is a static site that runs in the browser and promises not to track its visitors ([ADR-018](docs/adr/ADR-018-security-checks.md)). In scope:
+Untracked Maps is a static site that runs in the browser and promises not to track its visitors ([0018](docs/decisions/0018-the-browser-talks-only-to-declared-services.md), [0019](docs/decisions/0019-a-strict-content-security-policy-built-from-hashes.md)). In scope:
 
 - running code in a visitor's browser that the site did not ship, such as cross-site scripting, or bypassing its Content Security Policy;
 - any data about a visitor leaving the browser for a destination the site does not declare;
