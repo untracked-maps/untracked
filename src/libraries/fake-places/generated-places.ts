@@ -103,7 +103,7 @@ const fameOf = (faker: Faker): number =>
 
 const tagsOf = (fakers: Fakers, kind: GeneratedKind): Pick<FakePlace, 'tags'> => {
   const tags = {
-    ...fakeTags(fakers.tags, { kind }).tags,
+    ...fakeTags(fakers.tags, { kind }),
     ...fakeHours(fakers.hours, { kind }),
     ...fakeFreshness(fakers.freshness, { kind }),
     ...fakePhotos(fakers.photos, { kind })
