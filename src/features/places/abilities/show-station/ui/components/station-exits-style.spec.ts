@@ -54,6 +54,10 @@ describe('the exits drawn on the map', () => {
     );
   });
 
+  it('are drawn in sea green', () => {
+    expect(stationExitsLayers[0]?.paint).toHaveProperty(['circle-color'], '#2E8B57');
+  });
+
   it('are numbered from zoom 15.5', () => {
     expect(stationExitsLayers[1]?.minzoom).toBe(15.5);
   });

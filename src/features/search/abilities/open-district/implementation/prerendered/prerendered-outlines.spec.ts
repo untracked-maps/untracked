@@ -10,6 +10,13 @@ const RING = [
   [2.35, 48.85]
 ];
 
+const HOLE = [
+  [2.355, 48.855],
+  [2.36, 48.86],
+  [2.365, 48.855],
+  [2.355, 48.855]
+];
+
 const MARAIS_FEATURE = {
   type: 'Feature',
   properties: { name: 'Le Marais', postalCode: '75004', addressLocality: 'Paris' },
@@ -39,17 +46,26 @@ const outlinesServed = (body: unknown): Promise<readonly KnownOutline[]> =>
 
 const INVALID_FEATURES: readonly (readonly [string, unknown])[] = [
   ['a value that is not an object', 'Le Marais'],
+  ['a value that is null', null],
   ['no properties', { ...MARAIS_FEATURE, properties: undefined }],
   ['no name', { ...MARAIS_FEATURE, properties: { postalCode: '75004' } }],
   ['no postcode', { ...MARAIS_FEATURE, properties: { name: 'Le Marais' } }],
   ['no geometry', { ...MARAIS_FEATURE, geometry: undefined }],
   ['a geometry that is not a polygon', { ...MARAIS_FEATURE, geometry: { type: 'Point', coordinates: [2.36, 48.86] } }],
+  [
+    'a geometry of lines shaped like a polygon',
+    { ...MARAIS_FEATURE, geometry: { type: 'MultiLineString', coordinates: [RING] } }
+  ],
   ['a polygon without a ring', { ...MARAIS_FEATURE, geometry: { type: 'Polygon', coordinates: [] } }],
   ['a ring that is not a list', { ...MARAIS_FEATURE, geometry: { type: 'Polygon', coordinates: ['ring'] } }],
   ['a position that is not a list', { ...MARAIS_FEATURE, geometry: { type: 'Polygon', coordinates: [[...RING, 'here']] } }],
   [
     'a position that is not made of numbers',
     { ...MARAIS_FEATURE, geometry: { type: 'Polygon', coordinates: [[...RING, ['2.3', 48.8]]] } }
+  ],
+  [
+    'a position whose latitude is not a number',
+    { ...MARAIS_FEATURE, geometry: { type: 'Polygon', coordinates: [[...RING, [2.3, '48.8']]] } }
   ]
 ];
 
@@ -64,6 +80,16 @@ describe('prerendered outlines', () => {
 
   it('read no district from a file that is not a feature collection', async () => {
     expect(await outlinesServed([MARAIS_FEATURE])).toEqual([]);
+  });
+
+  it('read only the outer ring of a district with a hole', async () => {
+    expect(
+      await outlinesServed(collectionOf([{ ...MARAIS_FEATURE, geometry: { type: 'Polygon', coordinates: [RING, HOLE] } }]))
+    ).toEqual([MARAIS]);
+  });
+
+  it('read no district from a single feature', async () => {
+    expect(await outlinesServed({ type: 'Feature', features: [MARAIS_FEATURE] })).toEqual([]);
   });
 
   it('read no district from a collection without features', async () => {

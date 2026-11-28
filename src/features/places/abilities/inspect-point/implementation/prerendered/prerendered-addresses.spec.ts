@@ -50,6 +50,7 @@ const addressesServed = (body: unknown): Promise<readonly KnownAddress[]> =>
 
 const INVALID_ADDRESSES: readonly (readonly [string, unknown])[] = [
   ['a value that is not an object', 'Rue de Rivoli'],
+  ['a value that is null', null],
   ['no street', ELEVENTH_IN_FILE],
   ['a street that is not text', { ...RIVOLI_IN_FILE, street: 1 }],
   ['a house number that is not text', { ...RIVOLI_IN_FILE, houseNumber: 40 }],

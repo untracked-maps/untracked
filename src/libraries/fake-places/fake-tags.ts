@@ -140,9 +140,7 @@ const tagsBy =
   ({ kinds, share, values }: TagRule): readonly FakeTags[] =>
     kinds.includes(kind) && faker.datatype.boolean({ probability: share }) ? [faker.helpers.weightedArrayElement(values)] : [];
 
-const fakeTags = (faker: Faker, { kind }: Pick<FakePlace, 'kind'>): Pick<FakePlace, 'tags'> => {
-  const tags: FakeTags = Object.fromEntries(RULES.flatMap(tagsBy(faker, kind)).flatMap(Object.entries));
-  return Object.keys(tags).length === 0 ? {} : { tags };
-};
+const fakeTags = (faker: Faker, { kind }: Pick<FakePlace, 'kind'>): FakeTags =>
+  Object.fromEntries(RULES.flatMap(tagsBy(faker, kind)).flatMap(Object.entries));
 
 export { fakeTags };

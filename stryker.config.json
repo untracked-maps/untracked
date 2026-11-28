@@ -3,17 +3,26 @@
   "packageManager": "pnpm",
   "testRunner": "vitest",
   "vitest": {
-    "configFile": "vite.config.ts"
+    "configFile": "vitest.mutation.config.ts"
   },
   "mutate": [
-    "src/features/**/*.{ts,svelte}",
-    "src/libraries/**/*.{ts,svelte}",
+    "src/{configuration,features,libraries}/**/*.ts",
     "!**/*.spec.ts",
     "!**/*.steps.ts",
-    "!**/index.ts",
     "!src/features/map/abilities/show-map/implementation/openfreemap/style/{boundaries,buildings,colours,fonts,house-numbers,land,pedestrian,places,rail,road-names,roads,sprite,sprite-icons,stations,tiles,water}.ts",
     "!src/features/map/abilities/show-transit-lines/ui/components/transit-lines-style.ts",
-    "!src/libraries/*/cli.ts"
+    "!src/libraries/*/cli.ts",
+    "!src/features/map/abilities/locate-me/ui/components/position-overlay.ts",
+    "!src/features/map/abilities/show-map/ui/components/{framing,zoom}-overlay.ts",
+    "!src/features/map/ui/components/layers-on-map.ts",
+    "!src/features/places/abilities/inspect-point/ui/components/inspected-spot-overlay.ts",
+    "!src/features/places/abilities/open-place/ui/components/open-place-overlay.ts",
+    "!src/features/places/abilities/show-photos/ui/components/photo-loaded.ts",
+    "!src/features/places/abilities/show-places/ui/components/{place-dot-at,place-dots-on-map}.ts",
+    "!src/features/places/abilities/show-station/ui/components/station-exits-on-map.ts",
+    "!src/features/places/abilities/touch-the-map/ui/components/touched-map-overlay.ts",
+    "!src/features/search/abilities/search-by-type/ui/components/kind-places-pins.ts",
+    "!src/libraries/design/{long-press,map-covers}.ts"
   ],
   "reporters": ["clear-text", "progress", "html"],
   "thresholds": {

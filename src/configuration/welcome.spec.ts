@@ -9,4 +9,8 @@ describe('welcome before the first paint', () => {
   it('marks the page as welcomed for the stylesheet', () => {
     expect(WELCOME_BEFORE_FIRST_PAINT).toContain("document.documentElement.dataset.welcomed = ''");
   });
+
+  it('keeps the acknowledgement under the same key from one version to the next', () => {
+    expect(WELCOME_STORAGE_KEY).toBe('untracked-maps.welcome.acknowledged');
+  });
 });

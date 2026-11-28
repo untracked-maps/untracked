@@ -54,4 +54,12 @@ describe('the fake Paris', () => {
   it('has the twenty postcodes of Paris', () => {
     expect(PARIS.postcodes).toEqual(PARIS.districts.map(({ postcode }) => postcode));
   });
+
+  it('lies in Île-de-France', () => {
+    expect(PARIS.region).toBe('Île-de-France');
+  });
+
+  it('tells the time of Paris', () => {
+    expect(PARIS.timeZone).toBe('Europe/Paris');
+  });
 });
