@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/untracked-maps/untracked/compare/v1.29.0...v1.30.0) (2026-11-28)
+
+
+### Features
+
+* show the shop front of a place and its street view ([#125](https://github.com/untracked-maps/untracked/issues/125)) ([20fdd20](https://github.com/untracked-maps/untracked/commit/20fdd202d194e5d9a939c525974d2837194231e1))
+
 # [1.29.0](https://github.com/untracked-maps/untracked/compare/v1.28.2...v1.29.0) (2026-11-27)
 
 
