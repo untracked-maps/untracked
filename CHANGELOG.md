@@ -1,3 +1,10 @@
+## [1.30.1](https://github.com/untracked-maps/untracked/compare/v1.30.0...v1.30.1) (2026-11-28)
+
+
+### Bug Fixes
+
+* serve the LGPL notice of the opening-hours library ([#166](https://github.com/untracked-maps/untracked/issues/166)) ([c04e491](https://github.com/untracked-maps/untracked/commit/c04e4919bca98b709062aa005fc35d7bb9814fa3))
+
 # [1.30.0](https://github.com/untracked-maps/untracked/compare/v1.29.0...v1.30.0) (2026-11-28)
 
 
