@@ -136,6 +136,7 @@
   "place_glance_wheelchair_yes": "Yes",
   "place_missing": "Place not found",
   "place_missing_why": "This place cannot be found: it may have closed, or the link is incomplete.",
+  "place_out_of_area": "This place is outside the cities covered by our detailed data: only the information of the map is shown.",
   "place_photo": "Photo {rang} of {nombre} of {nom}",
   "place_photos": "Photos of {nom}",
   "place_photos_close": "Close",

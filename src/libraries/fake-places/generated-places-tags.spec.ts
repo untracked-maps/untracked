@@ -14,7 +14,8 @@ const BORDEAUX: FakeZone = {
   postcodes: ['33000', '33100', '33200', '33300', '33800'],
   bounds: { west: -0.64, south: 44.81, east: -0.53, north: 44.9 },
   districts: [],
-  landmarks: []
+  landmarks: [],
+  beyond: []
 };
 
 const PLACES = generatedPlaces(BORDEAUX, 800);

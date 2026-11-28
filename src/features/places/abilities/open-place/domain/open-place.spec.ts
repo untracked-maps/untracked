@@ -1,7 +1,10 @@
 import { type Observable, of, take, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
+import type { Area } from '../../../domain/coverage';
 import { copyAddress, type Opening, openPlace, type PlaceSheet, placesOpenedAt, type SheetPlace } from './open-place';
+
+const EVERYWHERE: readonly Area[] = [{ west: -180, south: -90, east: 180, north: 90 }];
 
 const FLORE: SheetPlace = {
   id: 'flore',
@@ -35,7 +38,7 @@ type Marbles = {
 const scheduler = (): TestScheduler => new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted));
 
 const sheetOf = (run: Run, marbles: Marbles): Observable<PlaceSheet> =>
-  openPlace({ loadPlaces: () => run.cold(marbles.places ?? 'p', { p: [FLORE, LUIGI], q: [] }) })({
+  openPlace({ loadPlaces: () => run.cold(marbles.places ?? 'p', { p: [FLORE, LUIGI], q: [] }), areas: EVERYWHERE })({
     opened: run.cold(marbles.opened, OPENINGS),
     closed: run.cold(marbles.closed ?? '', { x: undefined })
   });
@@ -97,7 +100,7 @@ describe('the places of the sheet', () => {
     scheduler().run((run: Run) => {
       const places$ = run.cold('p', { p: [FLORE] });
       run.expectObservable(
-        openPlace({ loadPlaces: () => places$ })({ opened: run.cold('-ff', OPENINGS), closed: run.cold('') })
+        openPlace({ loadPlaces: () => places$, areas: EVERYWHERE })({ opened: run.cold('-ff', OPENINGS), closed: run.cold('') })
       );
       run.expectSubscriptions(places$.subscriptions).toBe('-(^!)');
     });
@@ -107,7 +110,7 @@ describe('the places of the sheet', () => {
     scheduler().run((run: Run) => {
       const places$ = run.cold('p', { p: [FLORE] });
       run.expectObservable(
-        openPlace({ loadPlaces: () => places$ })({ opened: run.cold('--f', OPENINGS), closed: run.cold('') })
+        openPlace({ loadPlaces: () => places$, areas: EVERYWHERE })({ opened: run.cold('--f', OPENINGS), closed: run.cold('') })
       );
       run.expectSubscriptions(places$.subscriptions).toBe('--(^!)');
     });
@@ -117,7 +120,7 @@ describe('the places of the sheet', () => {
     scheduler().run((run: Run) => {
       run
         .expectObservable(
-          openPlace({ loadPlaces: () => throwError(() => new Error('The places file answered 500.')) })({
+          openPlace({ loadPlaces: () => throwError(() => new Error('The places file answered 500.')), areas: EVERYWHERE })({
             opened: run.cold('-f', OPENINGS),
             closed: run.cold('')
           })

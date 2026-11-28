@@ -32,6 +32,7 @@ import { fetchedOnce } from '#libraries/fetched-once/fetched-once';
 import { browser } from '$app/env';
 import { resolve } from '$app/paths';
 import type { PageLoad } from './$types';
+import { type CoveredPlaces, coveredLoad } from './covered-places';
 import { type Districts, districtSheets } from './districts';
 import type { Zone } from './opening-hours';
 import { type SheetSections, sheetSections } from './sheet-sections';
@@ -61,7 +62,7 @@ type PlaceSheets = {
   readonly vibrate: (milliseconds: number) => void;
 };
 
-const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, closeOthers: () => void): PlaceSheets => {
+const placeSheets = ({ fetchPlaces, areas }: CoveredPlaces, notices: Notices, closeOthers: () => void): PlaceSheets => {
   const opened = new Subject<Opening>();
   const closed = new Subject<void>();
   return {
@@ -69,7 +70,8 @@ const placeSheets = (fetchPlaces: () => Promise<Response>, notices: Notices, clo
       loadPlaces: prerenderedPlacesOfSheet({
         places: fetchPlaces,
         details: async () => fetchFile(resolve('/data/place-details.json'))
-      })
+      }),
+      areas
     })({ opened, closed }),
     open: (opening): void => {
       closeOthers();
@@ -105,13 +107,13 @@ const sharedLinks = (places: PlaceSheets, spots: Spots, notices: Notices): Links
   };
 };
 
-const searchSources = (fetchPlaces: () => Promise<Response>): SearchSources => {
+const searchSources = ({ fetchPlaces, areas }: CoveredPlaces): SearchSources => {
   const withAddresses = findAddress({
     loadAddresses: prerenderedAddressBook(fetchFile, resolve('/data/addresses.json')),
     indexAddresses: lazyAddressBook
   });
   return {
-    loadPlaces: prerenderedPlaces(fetchPlaces, resolve('/data/places.json')),
+    loadPlaces: coveredLoad(areas, prerenderedPlaces(fetchPlaces, resolve('/data/places.json'))),
     indexPlaces: (places) => withAddresses(miniSearchIndex(places))
   };
 };
@@ -150,9 +152,11 @@ const mapLayers = (colourScheme: Observable<ColourScheme>): MapLayers => {
   };
 };
 
-const placesShownBeside = (fetchPlaces: () => Promise<Response>, places: PlaceSheets): Loaded['placesShown'] => {
+const placesShownBeside = ({ fetchPlaces, areas }: CoveredPlaces, places: PlaceSheets): Loaded['placesShown'] => {
   const openId = places.sheet.pipe(map((sheet) => (sheet.status === 'open' ? sheet.place.id : undefined)));
-  const shownOnMap = showPlaces({ loadPlaces: prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')) });
+  const shownOnMap = showPlaces({
+    loadPlaces: coveredLoad(areas, prerenderedPlacesOnMap(fetchPlaces, resolve('/data/places.json')))
+  });
   return (zoom$) => shownOnMap(zoom$, openId);
 };
 
@@ -163,15 +167,15 @@ const othersClosed = (dismissed: Subject<void>, districts: Districts) => (): voi
 
 export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
   const { theme } = await parent();
-  const fetchPlaces = fetchedOnce(fetchFile, resolve('/data/places.json'));
+  const covered: CoveredPlaces = { fetchPlaces: fetchedOnce(fetchFile, resolve('/data/places.json')), areas: data.areas };
   const notices = noticeBoard();
   const dismissed = new Subject<void>();
   const districts = districtSheets(fetchFile, resolve('/data/districts.json'));
-  const places = placeSheets(fetchPlaces, notices, othersClosed(dismissed, districts));
+  const places = placeSheets(covered, notices, othersClosed(dismissed, districts));
   const spots = spotsInspected({ places, districts, dismissed }, fetchFile, resolve('/data/addresses.json'));
   return {
     ...data,
-    search: searchSources(fetchPlaces),
+    search: searchSources(covered),
     notices,
     sheetHeights: tallestSheet(),
     places,
@@ -180,7 +184,7 @@ export const load: PageLoad = async ({ data, parent }): Promise<Loaded> => {
     districts,
     openChosen: chosenOpened({ places, districts, spots }),
     links: sharedLinks(places, spots, notices),
-    placesShown: placesShownBeside(fetchPlaces, places),
+    placesShown: placesShownBeside(covered, places),
     layers: mapLayers(theme.colourScheme)
   };
 };

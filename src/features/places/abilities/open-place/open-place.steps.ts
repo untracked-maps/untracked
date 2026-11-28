@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
 import { type DataTable, Given, Then, When, type World } from '@cucumber/cucumber';
 import { type Observable, of, Subject, share, throwError } from 'rxjs';
+import type { Area } from '../../domain/coverage';
 import { copyAddress, type Opening, openPlace, type PlaceSheet, placesOpenedAt, type SheetPlace } from './domain/open-place';
 
 type Row = Readonly<Partial<Record<string, string>>>;
 
 type OpenPlaceWorld = World & {
   places: Observable<readonly SheetPlace[]>;
+  areas: readonly Area[];
   copyRefused: boolean;
   opened: Subject<Opening>;
   closed: Subject<void>;
@@ -15,6 +17,8 @@ type OpenPlaceWorld = World & {
   copied: string;
   shownOnMap: SheetPlace['coordinates'][];
 };
+
+const EARTH: Area = { west: -180, south: -90, east: 180, north: 90 };
 
 const filled = (value: string | undefined): string | undefined => (value === '' ? undefined : value);
 
@@ -54,9 +58,10 @@ const sheetStarted = (world: OpenPlaceWorld): void => {
   world.opened = new Subject<Opening>();
   world.closed = new Subject<void>();
   world.shownOnMap = [];
-  const sheet$ = openPlace({ loadPlaces: () => world.places ?? of([]) })({ opened: world.opened, closed: world.closed }).pipe(
-    share()
-  );
+  const sheet$ = openPlace({ loadPlaces: () => world.places ?? of([]), areas: world.areas ?? [EARTH] })({
+    opened: world.opened,
+    closed: world.closed
+  }).pipe(share());
   placesOpenedAt(sheet$).subscribe((at) => {
     world.shownOnMap.push(at);
   });

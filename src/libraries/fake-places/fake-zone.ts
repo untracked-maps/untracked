@@ -3,6 +3,8 @@ import type { FakePlace } from './fake-place';
 
 type FakeCoordinates = FakePlace['coordinates'];
 
+type FakePlaceBeyond = Pick<FakePlace, 'id' | 'name' | 'kind' | 'coordinates' | 'fame'>;
+
 type FakeDistrictOfZone = {
   readonly name: string;
   readonly postcode: string;
@@ -24,7 +26,8 @@ type FakeZone = {
   };
   readonly postcodes: readonly string[];
   readonly landmarks: readonly FakePlace[];
+  readonly beyond: readonly FakePlaceBeyond[];
   readonly districts: readonly FakeDistrictOfZone[];
 };
 
-export type { FakeDistrictOfZone, FakeZone };
+export type { FakeDistrictOfZone, FakePlaceBeyond, FakeZone };

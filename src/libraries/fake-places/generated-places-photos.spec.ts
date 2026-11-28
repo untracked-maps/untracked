@@ -15,7 +15,8 @@ const LILLE: FakeZone = {
   postcodes: ['59000', '59160', '59260', '59777', '59800'],
   bounds: { west: 2.97, south: 50.6, east: 3.13, north: 50.67 },
   districts: [],
-  landmarks: []
+  landmarks: [],
+  beyond: []
 };
 
 const PLACES: readonly FakePlace[] = [...generatedPlaces(LILLE, 1500), ...addedPlaces(LILLE, 1500)];

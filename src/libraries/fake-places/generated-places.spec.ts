@@ -13,6 +13,7 @@ const SAINT_MALO: FakeZone = {
   bounds: { west: -2.04, south: 48.62, east: -1.95, north: 48.66 },
   postcodes: ['35400'],
   landmarks: [],
+  beyond: [],
   districts: []
 };
 

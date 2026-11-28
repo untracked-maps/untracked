@@ -1,0 +1,16 @@
+[
+  {
+    "id": "chateau-de-versailles",
+    "name": "Château de Versailles",
+    "kind": "attraction",
+    "coordinates": { "longitude": 2.12036, "latitude": 48.80485 },
+    "fame": 95
+  },
+  {
+    "id": "basilique-de-saint-denis",
+    "name": "Basilique de Saint-Denis",
+    "kind": "place-of-worship",
+    "coordinates": { "longitude": 2.35972, "latitude": 48.93556 },
+    "fame": 80
+  }
+]

@@ -140,6 +140,44 @@
 - When the visitor opens "flore" from a link at 48.85404, 2.33263
 - Then the place is missing, at 48.85404, 2.33263
 
+## Rule: A place outside the cities covered says that only what the map knows is shown
+
+> The detailed data covers a few cities, each one a box: west, south, east,
+> north. A place outside every box still opens, with what the places file
+> holds; its sheet says that it is out of the cities covered.
+
+### Background:
+
+- Given the detailed data covers the box "2.22,48.81,2.47,48.91"
+- And these places to open
+  | id         | name                  | kind     | latitude | longitude |
+  | ---------- | --------------------- | -------- | -------- | --------- |
+  | flore      | Café de Flore         | cafe     | 48.85404 | 2.33263   |
+  | edge       | Café du Coin          | cafe     | 48.91    | 2.47      |
+  | versailles | Château de Versailles | monument | 48.80485 | 2.12036   |
+
+### Scenario: A place inside the city is covered
+
+- When the visitor opens "flore" from a link at 48.85404, 2.33263
+- Then the sheet does not say the place is out of the cities covered
+
+### Scenario: A place on the edge of the city is covered
+
+- When the visitor opens "edge" from a link at 48.91, 2.47
+- Then the sheet does not say the place is out of the cities covered
+
+### Scenario: A place outside the city opens and says it is out of the cities covered
+
+- When the visitor opens "versailles" from a link at 48.80485, 2.12036
+- Then the sheet of "Château de Versailles" is open
+- And the sheet says the place is out of the cities covered
+
+### Scenario: No city is covered
+
+- Given the detailed data covers no city
+- When the visitor opens "flore" from a link at 48.85404, 2.33263
+- Then the sheet says the place is out of the cities covered
+
 ## Rule: The sheet opens only once the places are there
 
 ### Scenario: The places cannot be loaded

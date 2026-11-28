@@ -16,7 +16,8 @@ const LYON: FakeZone = {
   postcodes: ['69001', '69002', '69003'],
   bounds: { west: 4.79, south: 45.71, east: 4.9, north: 45.8 },
   districts: [],
-  landmarks: []
+  landmarks: [],
+  beyond: []
 };
 
 const PLACES = generatedPlaces(LYON, 800);

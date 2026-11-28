@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fakePictures, fakePlaces } from './fake-places';
+import { fakePictures, fakePlaces, fakePlacesBeyond } from './fake-places';
 import type { FakeZone } from './fake-zone';
 import { PARIS } from './zones/paris/paris';
 
@@ -34,6 +34,24 @@ describe('fake places', () => {
 
   it('give each place its own id', () => {
     expect(new Set(fakePlaces(ZONE).map(({ id }) => id)).size).toBe(fakePlaces(ZONE).length);
+  });
+});
+
+describe('fake places beyond the zone', () => {
+  it('are the places beyond the zone, in their order', () => {
+    expect(fakePlacesBeyond(ZONE).map(({ id }) => id)).toEqual(PARIS.beyond.map(({ id }) => id));
+  });
+
+  it('get their family', () => {
+    expect(fakePlacesBeyond(ZONE)[0]?.family).toBe('sight');
+  });
+
+  it('get the zoom they show from', () => {
+    expect(fakePlacesBeyond(ZONE)[0]?.minzoom).toBe(11.75);
+  });
+
+  it('share no id with the places of the zone', () => {
+    expect(fakePlacesBeyond(ZONE).filter(({ id }) => fakePlaces(ZONE).some((place) => place.id === id))).toEqual([]);
   });
 });
 
