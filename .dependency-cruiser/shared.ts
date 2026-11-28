@@ -4,7 +4,8 @@ export const ENTRY_POINTS: string[] = [
   '^src/routes/',
   '^src/hooks(?:[.]server)?[.]ts$',
   '^src/libraries/[^/]+/cli[.]ts$',
-  '^[^/]+[.]config[.]ts$'
+  '^[^/]+[.]config[.]ts$',
+  '^[.]size-limit[.]ts$'
 ];
 
 export const DOMAIN_PACKAGES: readonly string[] = ['rxjs', 'colorjs.io', 'opening_hours'];

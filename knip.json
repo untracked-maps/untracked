@@ -3,5 +3,5 @@
   "ignoreBinaries": ["dot"],
   "ignoreDependencies": ["@inlang/plugin-message-format", "inter-ui", "svelte"],
   "entry": ["src/routes/**/+*.{svelte,ts}!"],
-  "project": ["src/**/*.{ts,svelte}!", "!src/libraries/{architecture-docs,base-path,cucumber-usage,i18n}/**!"]
+  "project": ["src/**/*.{ts,svelte}!", "!src/libraries/{architecture-docs,base-path,chunk-loading,cucumber-usage,i18n}/**!"]
 }

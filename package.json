@@ -26,7 +26,7 @@
     "docs:build": "tsx src/libraries/architecture-docs/cli.ts build/docs && depcruise src --include-only '^src' --output-type archi | dot -T svg -o build/docs/dependencies.svg && NODE_OPTIONS='--import tsx' cucumber-js --format html:build/docs/features.html",
     "lint": "biome ci --error-on-warnings",
     "lint:adr": "! ls docs/adr | grep -oE '^ADR-[0-9]+' | sort | uniq -d | grep .",
-    "lint:architecture": "depcruise src vite.config.ts playwright.config.ts && folderslint $(git ls-files --cached --others --exclude-standard | sed \"s|^|$PWD/|\")",
+    "lint:architecture": "depcruise src vite.config.ts playwright.config.ts .size-limit.ts && folderslint $(git ls-files --cached --others --exclude-standard | sed \"s|^|$PWD/|\")",
     "lint:commit": "commitlint --from origin/main",
     "lint:duplication": "jscpd",
     "lint:fix": "biome check --write",

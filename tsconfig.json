@@ -18,5 +18,13 @@
     "checkJs": false,
     "declaration": true
   },
-  "include": ["src", "tests", "*.config.ts", "vitest.browser-setup.ts", ".dependency-cruiser.ts", ".dependency-cruiser"]
+  "include": [
+    "src",
+    "tests",
+    "*.config.ts",
+    ".size-limit.ts",
+    "vitest.browser-setup.ts",
+    ".dependency-cruiser.ts",
+    ".dependency-cruiser"
+  ]
 }
