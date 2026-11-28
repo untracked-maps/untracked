@@ -41,7 +41,7 @@ The setup and the checks reach these hosts; allow them rather than install anyth
 
 ### In Claude Code's cloud sessions
 
-`.claude/cloud-session.sh` runs at the start of each cloud session: it puts Node.js 24 in front of the image's Node.js 22, for the whole session, then runs the setup. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com`, `releases.astral.sh`, `cdn.playwright.dev` and `playwright.download.prss.microsoft.com` to the allowed domains, and give this setup script, which installs Node.js 24 in `/opt/node24` after checking its checksum:
+`.claude/cloud-session.sh` runs at the start of each cloud session: it puts Node.js 24 in front of the image's Node.js 22, for the whole session, then runs the setup. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com`, `releases.astral.sh`, `cdn.playwright.dev`, `playwright.download.prss.microsoft.com` and `tiles.openfreemap.org` to the allowed domains, and give this setup script, which installs Node.js 24 in `/opt/node24` after checking its checksum:
 
 ```bash
 cd /tmp
@@ -58,8 +58,6 @@ tar -xJf "$FILE" -C /opt/node24 --strip-components=1
 Name this environment `untracked`, and check at the start of each session that it runs there: a session can start on another environment, such as `Default`, whose network refuses the hosts above.
 
 If a hook still fails to install, report the host the session refused: it belongs in the list above.
-
-`pnpm test:lighthouse:quick` fails on `/` in a cloud session, while `/privacy` passes: the allowed domains above leave out `tiles.openfreemap.org`, so the map is audited without its basemap. Say so in the pull request, and rely on the audit CI runs.
 
 ## Run it
 
