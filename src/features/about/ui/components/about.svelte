@@ -5,10 +5,12 @@
 
   type Props = {
     readonly privacyHref: string;
+    readonly licenseTextsHref: string;
+    readonly deliveredSourceHref: string;
     readonly languages: Snippet;
   };
 
-  const { privacyHref, languages }: Props = $props();
+  const { privacyHref, licenseTextsHref, deliveredSourceHref, languages }: Props = $props();
 </script>
 
 <section>
@@ -53,6 +55,14 @@
         <span>Île-de-France Mobilités</span>
         <small>{m.about_idfm()}</small>
       </a>
+    </li>
+    <li class="item">
+      <span>{m.about_opening_hours_license()}</span>
+      <small class="links">
+        <a href={licenseTextsHref} data-sveltekit-reload>{m.about_license_texts()}</a>
+        ·
+        <a href={deliveredSourceHref} rel="external">{m.about_delivered_source()}</a>
+      </small>
     </li>
   </ul>
 </section>
@@ -117,6 +127,10 @@
   small {
     font-size: var(--font-size-meta);
     color: var(--text-muted);
+  }
+
+  .links a {
+    color: var(--accent);
   }
 
   .credits {

@@ -20,6 +20,7 @@ const sha256 = (text: string): `sha256-${string}` => `sha256-${createHash('sha25
 const basePath = process.env['BASE_PATH'] ?? '';
 const locales: Locales = JSON.parse(readFileSync('./project.inlang/settings.json', 'utf8'));
 const urlPatterns = localeUrlPatterns(basePath, locales);
+const { version }: { readonly version: string } = JSON.parse(readFileSync('./package.json', 'utf8'));
 const OUTSIDE_THE_PAGE = -1;
 
 const parkPointer: BrowserCommand<[]> = async ({ page }) => {
@@ -37,6 +38,7 @@ const config: ViteUserConfig = defineConfig({
         runes: ({ filename }) => (filename.split(PATH_SEPARATOR).includes('node_modules') ? undefined : true)
       },
       adapter: adapter(),
+      version: { name: version },
       paths: { relative: false, base: kitBasePath(basePath) },
       csp: {
         mode: 'hash',
