@@ -1,6 +1,6 @@
 import type { Manifest } from 'vite';
 import { describe, expect, it } from 'vitest';
-import { onDemandChunks, startUpChunks } from './chunk-loading';
+import { missingChunks, onDemandChunks, startUpChunks } from './chunk-loading';
 
 const manifest: Manifest = {
   'app.js': { file: 'entry/app.js', isEntry: true, imports: ['_runtime.js'], dynamicImports: ['search.ts'] },
@@ -39,6 +39,22 @@ describe('chunks loaded on demand', () => {
       onDemandChunks({
         'app.js': { file: 'entry/app.js', isEntry: true, imports: ['_map.js'], dynamicImports: ['_map.js'] },
         '_map.js': { file: 'chunks/map.js' }
+      })
+    ).toEqual([]);
+  });
+});
+
+describe('chunks missing from the manifest', () => {
+  it('are the imports that the manifest does not describe', () => {
+    expect(missingChunks(manifest)).toEqual(['_lost.js']);
+  });
+
+  it('are none in a manifest that describes every import', () => {
+    expect(
+      missingChunks({
+        'app.js': { file: 'entry/app.js', isEntry: true, imports: ['_map.js'], dynamicImports: ['search.ts'] },
+        '_map.js': { file: 'chunks/map.js' },
+        'search.ts': { file: 'chunks/search.js' }
       })
     ).toEqual([]);
   });

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import type { SizeLimitConfig } from 'size-limit';
 import type { Manifest } from 'vite';
-import { onDemandChunks, startUpChunks } from '#libraries/chunk-loading/chunk-loading';
+import { missingChunks, onDemandChunks, startUpChunks } from '#libraries/chunk-loading/chunk-loading';
 
 const BUILD = 'build';
 
@@ -43,7 +43,15 @@ const heaviestFileUnder = (folder: string): string => {
   return others.reduce(heavier, first).path;
 };
 
-const manifest: Manifest = JSON.parse(readFileSync(VITE_MANIFEST, 'utf8'));
+const everyChunkDescribed = (read: Manifest): Manifest => {
+  const missing = missingChunks(read);
+  if (missing.length > 0) {
+    throw new Error(`${VITE_MANIFEST} does not describe ${missing.join(', ')}: no cap would count them`);
+  }
+  return read;
+};
+
+const manifest: Manifest = everyChunkDescribed(JSON.parse(readFileSync(VITE_MANIFEST, 'utf8')));
 
 const inBuild = (file: string): string => `${BUILD}/${file}`;
 

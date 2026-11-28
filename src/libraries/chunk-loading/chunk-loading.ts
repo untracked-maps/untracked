@@ -4,7 +4,9 @@ type Imports = (chunk: ManifestChunk) => readonly string[];
 
 const staticImports: Imports = (chunk) => chunk.imports ?? [];
 
-const everyImport: Imports = (chunk) => [...(chunk.imports ?? []), ...(chunk.dynamicImports ?? [])];
+const dynamicImports: Imports = (chunk) => chunk.dynamicImports ?? [];
+
+const everyImport: Imports = (chunk) => [...staticImports(chunk), ...dynamicImports(chunk)];
 
 const importsOf =
   (manifest: Manifest, imports: Imports) =>
@@ -44,4 +46,7 @@ const onDemandChunks = (manifest: Manifest): readonly string[] => {
   );
 };
 
-export { onDemandChunks, startUpChunks };
+const missingChunks = (manifest: Manifest): readonly string[] =>
+  [...reachedFromEntries(manifest, everyImport)].filter((key) => manifest[key] === undefined);
+
+export { missingChunks, onDemandChunks, startUpChunks };
