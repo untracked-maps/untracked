@@ -45,11 +45,16 @@ const SHEETS: Readonly<Record<string, DistrictSheet>> = {
 type Run = Parameters<Parameters<TestScheduler['run']>[0]>[0];
 
 const expectSheets = (
-  marbles: { readonly opened: string; readonly closed?: string; readonly outlines?: string },
+  marbles: {
+    readonly opened: string;
+    readonly closed?: string;
+    readonly outlines?: string;
+    readonly known?: readonly KnownOutline[];
+  },
   expected: string
 ): void =>
   new TestScheduler((actual, wanted) => expect(actual).toEqual(wanted)).run((run: Run) => {
-    const sheet$ = openDistrict({ loadOutlines: () => run.cold(marbles.outlines ?? '(k|)', { k: KNOWN }) })({
+    const sheet$ = openDistrict({ loadOutlines: () => run.cold(marbles.outlines ?? '(k|)', { k: marbles.known ?? KNOWN }) })({
       opened: run.cold(marbles.opened, { m: MARAIS, b: BATIGNOLLES }),
       closed: run.cold(marbles.closed ?? '', { x: undefined })
     });
@@ -69,6 +74,14 @@ describe('open district', () => {
     expectSheets({ opened: '-b' }, 'cb');
   });
 
+  it('opens a district without an outline when only another district of the same name is known', () => {
+    expectSheets({ opened: '-m', known: [{ name: 'Le Marais', postalCode: '75003', outline: MARAIS_OUTLINE }] }, 'ce');
+  });
+
+  it('opens a district without an outline when only another district of the same postcode is known', () => {
+    expectSheets({ opened: '-m', known: [{ name: 'Île Saint-Louis', postalCode: '75004', outline: MARAIS_OUTLINE }] }, 'ce');
+  });
+
   it('waits for the outlines before opening', () => {
     expectSheets({ opened: '-m', outlines: '--(k|)' }, 'c--m');
   });
@@ -84,7 +97,9 @@ describe('open district', () => {
   it('moves to the last district chosen', () => {
     expectSheets({ opened: '-mb' }, 'cmb');
   });
+});
 
+describe('open district, its sources', () => {
   it('loads the outlines once for several districts', () => {
     const loads: string[] = [];
     const opened = new Subject<District>();
@@ -98,6 +113,15 @@ describe('open district', () => {
     opened.next(BATIGNOLLES);
 
     expect(loads).toEqual(['loaded']);
+  });
+
+  it('stops listening to the districts chosen once nobody watches the sheet', () => {
+    const opened = new Subject<District>();
+    openDistrict({ loadOutlines: () => of(KNOWN) })({ opened, closed: of() })
+      .subscribe()
+      .unsubscribe();
+
+    expect(opened.observed).toBe(false);
   });
 
   it('loads the outlines again after a failure', () => {

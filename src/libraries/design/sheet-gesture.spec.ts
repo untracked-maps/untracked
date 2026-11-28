@@ -1,7 +1,18 @@
 import { from, lastValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { describe, expect, it } from 'vitest';
-import { type Sheet, type SheetEvent, sheetClosed, sheetHeight, sheetOf } from './sheet-gesture';
+import {
+  type Sheet,
+  type SheetEvent,
+  sheetClosed,
+  sheetHeight,
+  sheetMeasured,
+  sheetMoved,
+  sheetOf,
+  sheetOpened,
+  sheetReleased,
+  sheetTouched
+} from './sheet-gesture';
 import type { SheetHeights, SheetStop } from './sheet-heights';
 
 const TALL: SheetHeights = { peek: 150, half: 388, full: 780 };
@@ -90,5 +101,34 @@ describe('the closing of a sheet', () => {
 
       expectObservable(sheetClosed(sheet$)).toBe('-- 180ms (c|)', { c: Closing });
     });
+  });
+});
+
+describe('the events of a sheet', () => {
+  it('tell the heights measured', () => {
+    expect(sheetMeasured(TALL)).toEqual({ kind: 'measured', heights: TALL });
+  });
+
+  it('tell the stop the sheet opens at', () => {
+    expect(sheetOpened('half')).toEqual({ kind: 'opened', stop: 'half' });
+  });
+
+  it('tell where and when the finger touches the sheet', () => {
+    expect(sheetTouched({ clientX: 10, clientY: 400 }, { time: 1000, sideways: false, scrolled: true })).toEqual({
+      kind: 'touched',
+      x: 10,
+      y: 400,
+      time: 1000,
+      sideways: false,
+      scrolled: true
+    });
+  });
+
+  it('tell where the finger moves', () => {
+    expect(sheetMoved({ clientX: 12, clientY: 380 })).toEqual({ kind: 'moved', x: 12, y: 380 });
+  });
+
+  it('tell when the finger lets go and whether the sheet may close', () => {
+    expect(sheetReleased(1200, true)).toEqual({ kind: 'released', time: 1200, closable: true });
   });
 });

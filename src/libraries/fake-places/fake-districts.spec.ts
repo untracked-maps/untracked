@@ -14,6 +14,15 @@ const TWO_DISTRICTS: FakeZone = {
 
 const ONE_DISTRICT: FakeZone = { ...TWO_DISTRICTS, districts: TWO_DISTRICTS.districts.slice(0, 1) };
 
+const ALONG_A_PARALLEL: FakeZone = {
+  ...TWO_DISTRICTS,
+  districts: [
+    { name: 'Intra-Muros', postcode: '35400', coordinates: { longitude: -2.025, latitude: 48.649 } },
+    { name: 'Paramé', postcode: '35400', coordinates: { longitude: -2.005, latitude: 48.649 } },
+    { name: 'Rothéneuf', postcode: '35400', coordinates: { longitude: -1.925, latitude: 48.649 } }
+  ]
+};
+
 const DISTRICTS = fakeDistricts(TWO_DISTRICTS);
 
 const [INTRA_MUROS] = DISTRICTS.features;
@@ -61,5 +70,17 @@ describe('fake districts', () => {
 
   it('round the positions to five decimals', () => {
     expect(RING[0]).toEqual([-2.025, 48.6535]);
+  });
+});
+
+describe('the outline of a fake district', () => {
+  it('stops short of the nearest neighbour along a parallel, the distance shortened by the latitude along a parallel, shortened by the latitude', () => {
+    expect(Math.max(...latitudesOf(fakeDistricts(ALONG_A_PARALLEL).features[0]?.geometry.coordinates[0] ?? []))).toBe(
+      48.654_95
+    );
+  });
+
+  it('has its corner at a quarter turn due east of the centre', () => {
+    expect(fakeDistricts(ONE_DISTRICT).features[0]?.geometry.coordinates[0]?.[4]).toEqual([-2.0182, 48.649]);
   });
 });
