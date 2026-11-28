@@ -19,7 +19,7 @@ jobs:
   release:
     name: Release
     needs: checks
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -49,7 +49,7 @@ jobs:
     name: Build the site
     needs: release
     if: needs.release.outputs.version != ''
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       contents: write
@@ -81,7 +81,7 @@ jobs:
   deploy:
     name: Deploy
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       pages: write
