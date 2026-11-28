@@ -213,14 +213,17 @@ jobs:
           ACCEPT_LANG: ${{ matrix.accept-lang }}
       - name: Report the measures of each run
         if: always()
-        run: >-
-          jq -r '[.requestedUrl,
-          (.audits["total-blocking-time"].numericValue | round),
-          ([.audits["long-tasks"].details.items[]?.duration] | max // 0 | round),
-          (.audits["largest-contentful-paint"].numericValue | round),
-          .categories.performance.score,
-          (.environment.benchmarkIndex | round)] | @tsv' .lighthouseci/lhr-*.json
-          | tee -a "$GITHUB_STEP_SUMMARY"
+        run: |
+          {
+            echo '| Page | Total Blocking Time (ms) | Longest task (ms) | LCP (ms) | Performance | Benchmark index |'
+            echo '| --- | ---: | ---: | ---: | ---: | ---: |'
+            jq -r '[.requestedUrl,
+            (.audits["total-blocking-time"].numericValue | round),
+            ([.audits["long-tasks"].details.items[]?.duration] | max // 0 | round),
+            (.audits["largest-contentful-paint"].numericValue | round),
+            .categories.performance.score,
+            (.environment.benchmarkIndex | round)] | map(tostring) | "| " + join(" | ") + " |"' .lighthouseci/lhr-*.json
+          } | tee -a "$GITHUB_STEP_SUMMARY"
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
