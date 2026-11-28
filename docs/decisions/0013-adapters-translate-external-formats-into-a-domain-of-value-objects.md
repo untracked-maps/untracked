@@ -45,7 +45,7 @@ An adapter checks everything it reads, against the official schema of its format
 
 ### Current state and target
 
-Several domains read raw OpenStreetMap tags as a record of text, one renames contact keys into flat fields, and adapters check only part of what they read, field by field and by hand. One branded value object and many discriminated unions already exist. Target, tracked by #160 and a dedicated issue.
+Several domains read raw OpenStreetMap tags as a record of text, one renames contact keys into flat fields, and adapters check only part of what they read, field by field and by hand. One branded value object and many discriminated unions already exist. Target, tracked by #170 and #160.
 
 ### Consequences
 
