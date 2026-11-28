@@ -12,6 +12,7 @@ const LYON: FakeZone = {
   districts: [],
   id: 'fake-lyon',
   landmarks: [],
+  beyond: [],
   locale: [fr, base],
   postcodes: ['69001', '69002', '69003']
 };

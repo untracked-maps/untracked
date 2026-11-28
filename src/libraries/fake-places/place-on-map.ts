@@ -15,11 +15,13 @@ type FakeFamily =
   | 'stay'
   | 'train';
 
-type FakePlaceOnMap = FakePlace & {
+type ShownOnMap = {
   readonly family?: FakeFamily;
   readonly minzoom: number;
   readonly rank: number;
 };
+
+type FakePlaceOnMap = FakePlace & ShownOnMap;
 
 const FAMILIES: Readonly<Record<FakePlace['kind'], FakeFamily | undefined>> = {
   restaurant: 'food',
@@ -104,14 +106,14 @@ const stepsBefore = (earliest: number): number => (LATEST_ZOOM - earliest) / ZOO
 const minzoomOf = (earliest: number, fame: number): number =>
   LATEST_ZOOM - Math.round((fame / MOST_FAME) * stepsBefore(earliest)) * ZOOM_STEP;
 
-const shownOnMap = (isMonument: boolean, fame: number): Pick<FakePlaceOnMap, 'minzoom' | 'rank'> =>
+const shownOnMap = (isMonument: boolean, fame: number): Pick<ShownOnMap, 'minzoom' | 'rank'> =>
   isMonument
     ? { minzoom: minzoomOf(EARLIEST_ZOOM.monument, fame), rank: MOST_FAME - fame }
     : { minzoom: minzoomOf(EARLIEST_ZOOM.other, fame), rank: RANKS_OF_MONUMENTS + MOST_FAME - fame };
 
 const familyOf = (kind: FakePlace['kind']): FakeFamily | undefined => FAMILIES[kind];
 
-const onMap = (place: FakePlace): FakePlaceOnMap => {
+const onMap = <Place extends Pick<FakePlace, 'kind' | 'fame'>>(place: Place): Place & ShownOnMap => {
   const family = familyOf(place.kind);
   return {
     ...place,
@@ -120,4 +122,4 @@ const onMap = (place: FakePlace): FakePlaceOnMap => {
   };
 };
 
-export { type FakeFamily, type FakePlaceOnMap, familyOf, onMap };
+export { type FakeFamily, type FakePlaceOnMap, familyOf, onMap, type ShownOnMap };

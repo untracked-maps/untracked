@@ -136,6 +136,7 @@
   "place_glance_wheelchair_yes": "Oui",
   "place_missing": "Lieu introuvable",
   "place_missing_why": "Ce lieu est introuvable : il a peut-être fermé, ou le lien est incomplet.",
+  "place_out_of_area": "Ce lieu est hors des villes couvertes par nos données détaillées : seules les infos de la carte sont affichées.",
   "place_photo": "Photo {rang} sur {nombre} de {nom}",
   "place_photos": "Photos de {nom}",
   "place_photos_close": "Fermer",

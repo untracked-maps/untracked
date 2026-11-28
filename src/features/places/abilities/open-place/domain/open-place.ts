@@ -15,6 +15,7 @@ import {
   switchMap,
   take
 } from 'rxjs';
+import { type Area, isCovered } from '../../../domain/coverage';
 import type { Tags } from './good-to-know';
 
 type Coordinates = {
@@ -56,13 +57,14 @@ type Opening = {
 
 type PlaceSheet =
   | { readonly status: 'closed' }
-  | { readonly status: 'open'; readonly place: SheetPlace; readonly from: Origin }
+  | { readonly status: 'open'; readonly place: SheetPlace; readonly from: Origin; readonly outOfArea?: true }
   | { readonly status: 'missing'; readonly at?: Coordinates };
 
 type LoadPlaces = () => Observable<readonly SheetPlace[]>;
 
 type OpenPlacePorts = {
   readonly loadPlaces: LoadPlaces;
+  readonly areas: readonly Area[];
 };
 
 type OpenPlaceInputs = {
@@ -99,21 +101,26 @@ const notFound = ({ from, at }: Opening): PlaceSheet => {
   return at === undefined ? { status: 'missing' } : { status: 'missing', at };
 };
 
+const sheetOfPlace =
+  (areas: readonly Area[], from: Origin) =>
+  (place: SheetPlace): PlaceSheet =>
+    isCovered(areas)(place.coordinates) ? { status: 'open', place, from } : { status: 'open', place, from, outOfArea: true };
+
 const sheetOf =
-  (opening: Opening) =>
+  (areas: readonly Area[], opening: Opening) =>
   (places: readonly SheetPlace[]): PlaceSheet => {
     const place = places.find((known) => known.id === opening.id);
-    return place === undefined ? notFound(opening) : { status: 'open', place, from: opening.from };
+    return place === undefined ? notFound(opening) : sheetOfPlace(areas, opening.from)(place);
   };
 
-const openPlace = ({ loadPlaces }: OpenPlacePorts): ((inputs: OpenPlaceInputs) => Observable<PlaceSheet>) => {
+const openPlace = ({ loadPlaces, areas }: OpenPlacePorts): ((inputs: OpenPlaceInputs) => Observable<PlaceSheet>) => {
   const places$ = defer(loadPlaces).pipe(
     take(1),
     catchError(() => of<readonly SheetPlace[]>([])),
     shareReplay(1)
   );
   return ({ opened, closed }: OpenPlaceInputs): Observable<PlaceSheet> =>
-    merge(opened.pipe(map((opening) => places$.pipe(map(sheetOf(opening))))), closed.pipe(map(() => of(CLOSED)))).pipe(
+    merge(opened.pipe(map((opening) => places$.pipe(map(sheetOf(areas, opening))))), closed.pipe(map(() => of(CLOSED)))).pipe(
       switchMap((sheet) => sheet),
       startWith(CLOSED),
       shareReplay({ bufferSize: 1, refCount: true })

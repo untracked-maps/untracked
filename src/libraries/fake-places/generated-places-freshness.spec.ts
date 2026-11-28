@@ -14,7 +14,8 @@ const NANTES: FakeZone = {
   postcodes: ['44000', '44100', '44200', '44300'],
   bounds: { west: -1.62, south: 47.18, east: -1.48, north: 47.26 },
   districts: [],
-  landmarks: []
+  landmarks: [],
+  beyond: []
 };
 
 const PLACES: readonly FakePlace[] = [...generatedPlaces(NANTES, 1200), ...addedPlaces(NANTES, 1200)];

@@ -100,6 +100,9 @@
           {@render photos?.(place.name)}
           {@render first?.()}
           <PlaceSections {place} {address} {onCopy} {vibrate} {hours} />
+          {#if $sheet.status === 'open' && $sheet.outOfArea === true}
+            <p class="contrib">{m.place_out_of_area()}</p>
+          {/if}
         </Floating>
       </section>
     </BottomSheet>
@@ -174,6 +177,13 @@
   hgroup .why {
     margin-block-start: var(--space-1);
     text-wrap: pretty;
+  }
+
+  .contrib {
+    margin: 0.875rem 0 3.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--text-muted);
   }
 
   .close {
