@@ -41,7 +41,7 @@ The setup and the checks reach these hosts; allow them rather than install anyth
 
 ### In Claude Code's cloud sessions
 
-`.claude/cloud-session.sh` runs at the start of each cloud session: it puts Node.js 24 in front of the image's Node.js 22, for the whole session, then runs the setup. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com`, `releases.astral.sh`, `cdn.playwright.dev` and `playwright.download.prss.microsoft.com` to the allowed domains, and give this setup script, which installs Node.js 24 in `/opt/node24` after checking its checksum:
+`.claude/cloud-session.sh` runs at the start of each cloud session: it puts Node.js 24 in front of the image's Node.js 22, for the whole session, then runs the setup. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com`, `releases.astral.sh`, `cdn.playwright.dev`, `playwright.download.prss.microsoft.com` and `tiles.openfreemap.org` to the allowed domains, and give this setup script, which installs Node.js 24 in `/opt/node24` after checking its checksum:
 
 ```bash
 cd /tmp
@@ -58,8 +58,6 @@ tar -xJf "$FILE" -C /opt/node24 --strip-components=1
 Name this environment `untracked`, and check at the start of each session that it runs there: a session can start on another environment, such as `Default`, whose network refuses the hosts above.
 
 If a hook still fails to install, report the host the session refused: it belongs in the list above.
-
-`pnpm test:lighthouse:quick` fails on `/` in a cloud session, while `/privacy` passes: the allowed domains above leave out `tiles.openfreemap.org`, so the map is audited without its basemap. Say so in the pull request, and rely on the audit CI runs.
 
 ## Run it
 
@@ -121,14 +119,21 @@ Work on a branch named after the change's [Conventional Commits](https://www.con
 3. Put every text shown in `messages/`, in every language.
 4. When the change picks a library, a protocol or a rule, or sets aside a plausible alternative, record it in an ADR in [`docs/adr`](docs/adr). Shape the data after a standard, as [ADR-043](docs/adr/ADR-043-standards-first-and-their-libraries-in-the-domain.md) orders them.
 5. While working, run the fast checks on what you touch: the types, Biome and Vitest. Once the change is done, run every check: `pnpm exec prek run --all-files --hook-stage pre-push`, then `pnpm test:e2e`, `pnpm test:mutation:incremental` and `pnpm test:lighthouse:quick`. When one fails, fix it, rerun that one, then all of them once more.
-6. Open a pull request against `main`. Every job of the `Checks` and `Security` workflows must be green: `main` requires them.
+6. Open a pull request against `main`, titled as a Conventional Commit. Every job of the `Checks`, `Security` and `Pull request title` workflows must be green: `main` requires them.
 
-Use whatever tools you like, AI included. You are responsible for what you submit and must understand it; the same checks and the same review apply, whatever helped write it.
+Use whatever tools you like, AI included. You are responsible for what you submit and must understand it; the same checks apply, whatever helped write it.
+
+## Questions and rule changes
+
+Nothing waits for the maintainer's review: a pull request that respects the rules is merged once its checks are green, and the maintainer reads it afterwards.
+
+- A question that the rules do not answer goes to an issue labelled `question`; the work goes on meanwhile.
+- A change to a rule or a setting of the repository, such as a check, a linter, the architecture's constraints or an instruction of `AGENTS.md` or of this guide, is justified in its commit message and reported by an issue, which the maintainer reviews afterwards.
 
 ## Merging
 
 Pull requests are merged with GitHub's « Squash and merge » button, once every required check is green. `main` requires the branch to be up to date: when `main` has moved on, bring the branch up to date with « Update with rebase », or rebase it locally and push it with `--force-with-lease`, which keeps the history linear.
 
-The squash commit takes the pull request's title, or the commit's when the branch has only one, and the messages of the branch's commits, not its description: a line that must reach `main`, such as a trailer, goes in a commit of the branch.
+The squash commit takes the pull request's title, or the commit's when the branch has only one, and the messages of the branch's commits, not its description: a line that must reach `main`, such as the `Requested-by` trailer, goes in a commit of the branch.
 
 A merge to `main` that carries a `feat` or `fix` commit releases a new version and publishes the app and its documentation to GitHub Pages.
