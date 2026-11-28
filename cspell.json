@@ -4,7 +4,7 @@
   "language": "fr",
   "import": ["@cspell/dict-fr-fr/cspell-ext.json"],
   "files": ["messages/fr.json"],
-  "ignoreRegExpList": ["^\\s*\"[$a-z_]+\":", "https?://\\S+"],
+  "ignoreRegExpList": ["^\\s*\"[$a-z_]+\":", "https?://\\S+", "\\bopening_hours\\b"],
   "words": [
     "coworking",
     "Coworking",

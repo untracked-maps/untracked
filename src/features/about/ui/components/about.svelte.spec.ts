@@ -9,7 +9,12 @@ const languages = createRawSnippet(() => ({ render: (): string => '<nav aria-lab
 const EVERY_SOURCE =
   /\(ODbL\) · OpenFreeMap · © OpenMapTiles · Orthophotos © IGN – BD ORTHO®, Géoplateforme · Transit lines © Île-de-France Mobilités \(Licence Ouverte 2[.]0\) · Bike lanes from OpenStreetMap \(January 2024\), served by IGN/u;
 
-const props = { privacyHref: '/privacy', languages };
+const props = {
+  privacyHref: '/privacy',
+  licenseTextsHref: '/licenses/LGPL-3.0-only.txt',
+  deliveredSourceHref: 'https://github.com/untracked-maps/untracked/tree/v1.2.3',
+  languages
+};
 
 describe('about', () => {
   it('says what Untracked Maps keeps about the visitor', async () => {
@@ -74,6 +79,34 @@ describe('about sources and help', () => {
     await expect
       .element(page.getByRole('link', { name: 'Open source code' }))
       .toHaveAttribute('href', 'https://github.com/untracked-maps/untracked');
+  });
+});
+
+describe('about the opening hours library', () => {
+  it('says the opening hours are read by a library under the LGPL', async () => {
+    await render(About, props);
+
+    await expect
+      .element(
+        page.getByText('Opening hours are read by opening_hours, © the opening_hours.js contributors, under the LGPL 3.0')
+      )
+      .toBeVisible();
+  });
+
+  it('leads to the texts of the licences', async () => {
+    await render(About, props);
+
+    await expect
+      .element(page.getByRole('link', { name: 'License texts' }))
+      .toHaveAttribute('href', '/licenses/LGPL-3.0-only.txt');
+  });
+
+  it('leads to the source code of the delivered version', async () => {
+    await render(About, props);
+
+    await expect
+      .element(page.getByRole('link', { name: 'Source code', exact: true }))
+      .toHaveAttribute('href', 'https://github.com/untracked-maps/untracked/tree/v1.2.3');
   });
 });
 

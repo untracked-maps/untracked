@@ -7,6 +7,7 @@
   import '#libraries/design/global.css';
   import InfoIcon from '#libraries/design/info-icon.svelte';
   import SegmentedLinks from '#libraries/design/segmented-links.svelte';
+  import { version } from '$app/env';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import type { LayoutProps } from './$types';
@@ -51,7 +52,11 @@
       {#snippet icon()}
         <InfoIcon />
       {/snippet}
-      <About privacyHref={localizeHref(resolve('/(content)/privacy'))}>
+      <About
+        privacyHref={localizeHref(resolve('/(content)/privacy'))}
+        licenseTextsHref={resolve('/licenses/[file]', { file: 'LGPL-3.0-only.txt' })}
+        deliveredSourceHref={`https://github.com/untracked-maps/untracked/tree/v${version}`}
+      >
         {#snippet languages()}
           <SegmentedLinks label={m.language_switcher_label()} links={languageLinks} reload />
         {/snippet}

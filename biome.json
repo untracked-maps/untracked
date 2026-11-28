@@ -661,7 +661,7 @@
       }
     },
     {
-      "includes": ["src/libraries/map-glyphs/**"],
+      "includes": ["src/libraries/map-glyphs/**", "src/libraries/license-texts/**"],
       "linter": {
         "rules": {
           "correctness": {
