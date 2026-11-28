@@ -1,6 +1,6 @@
 # Contributing guide
 
-Thank you for wanting to improve Untracked Maps. This guide explains how to get the project, run it locally and propose a change. Why the project is built the way it is lives in the [architecture decision records](docs/adr), and the rules the code and the tests follow in [`AGENTS.md`](AGENTS.md).
+Thank you for wanting to improve Untracked Maps. This guide explains how to get the project, run it locally and propose a change. Why the project is built the way it is lives in the [architecture decisions](docs/decisions), and the rules the code and the tests follow in [`AGENTS.md`](AGENTS.md).
 
 ## Prerequisites
 
@@ -37,11 +37,12 @@ The setup and the checks reach these hosts; allow them rather than install anyth
 | `releases.astral.sh`, `pypi.org`, `files.pythonhosted.org`                                                                                | uv and Python, for zizmor and typos |
 | `cdn.playwright.dev`, `playwright.download.prss.microsoft.com`                                                                            | Playwright's Chromium               |
 | `nodejs.org`                                                                                                                              | Node.js 24, where it is missing     |
+| `static.rust-lang.org`, `index.crates.io`, `static.crates.io`                                                                             | Rust, for mdbook-lint               |
 | `tiles.openfreemap.org`                                                                                                                   | the basemap, for Lighthouse         |
 
 ### In Claude Code's cloud sessions
 
-`.claude/cloud-session.sh` runs at the start of each cloud session: it puts Node.js 24 in front of the image's Node.js 22, for the whole session, then runs the setup. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com`, `releases.astral.sh`, `cdn.playwright.dev`, `playwright.download.prss.microsoft.com` and `tiles.openfreemap.org` to the allowed domains, and give this setup script, which installs Node.js 24 in `/opt/node24` after checking its checksum:
+`.claude/cloud-session.sh` runs at the start of each cloud session: it puts Node.js 24 in front of the image's Node.js 22, for the whole session, then runs the setup. In the environment's settings, set the network access to **Limited** with **Allow package managers**, add `go.dev`, `dl.google.com`, `releases.astral.sh`, `cdn.playwright.dev`, `playwright.download.prss.microsoft.com`, `static.rust-lang.org`, `index.crates.io`, `static.crates.io` and `tiles.openfreemap.org` to the allowed domains, and give this setup script, which installs Node.js 24 in `/opt/node24` after checking its checksum:
 
 ```bash
 cd /tmp
@@ -116,8 +117,8 @@ Work on a branch named after the change's [Conventional Commits](https://www.con
 
 1. Before a large change, open an [issue](https://github.com/untracked-maps/untracked/issues) to talk about it first.
 2. Write the tests first, then the code, following [`AGENTS.md`](AGENTS.md).
-3. Put every text shown in `messages/`, in every language.
-4. When the change picks a library, a protocol or a rule, or sets aside a plausible alternative, record it in an ADR in [`docs/adr`](docs/adr). Shape the data after a standard, as [ADR-043](docs/adr/ADR-043-standards-first-and-their-libraries-in-the-domain.md) orders them.
+3. Put every text shown in `messages/`, in every language. French text follows French typography, for example a narrow no-break space before `!`.
+4. When the change takes an architecture decision, as [the rules of the decisions](docs/decisions/README.md) define it, record it as a new decision in [`docs/decisions`](docs/decisions).
 5. While working, run the fast checks on what you touch: the types, Biome and Vitest. Once the change is done, run every check: `pnpm exec prek run --all-files --hook-stage pre-push`, then `pnpm test:e2e`, `pnpm test:mutation:incremental` and `pnpm test:lighthouse:quick`. When one fails, fix it, rerun that one, then all of them once more.
 6. Open a pull request against `main`, titled as a Conventional Commit. Every job of the `Checks`, `Security` and `Pull request title` workflows must be green: `main` requires them.
 
@@ -129,6 +130,11 @@ Nothing waits for the maintainer's review: a pull request that respects the rule
 
 - A question that the rules do not answer goes to an issue labelled `question`; the work goes on meanwhile.
 - A change to a rule or a setting of the repository, such as a check, a linter, the architecture's constraints or an instruction of `AGENTS.md` or of this guide, is justified in its commit message and reported by an issue, which the maintainer reviews afterwards.
+
+## Weight and audits
+
+- A size cap is raised only with a justification in the pull request that raises it.
+- A Lighthouse audit is never rerun to make it pass: the job fails on a second attempt. A failure is fixed in a new commit, and a budget is revised from the measures of the CI runner, whose reports are kept for seven days.
 
 ## Merging
 

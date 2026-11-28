@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!project.inlang/cache", "!CHANGELOG.md"]
+    "includes": ["**", "!project.inlang/cache", "!CHANGELOG.md", "!docs/decisions"]
   },
   "formatter": {
     "enabled": true,
@@ -195,7 +195,7 @@
                   "pinia",
                   "@ngrx/*"
                 ],
-                "message": "No store: abilities expose RxJS streams (ADR-007)."
+                "message": "No store: abilities expose RxJS streams (decision 0009)."
               },
               {
                 "group": ["lodash", "lodash/*", "lodash-es", "lodash-es/*", "lodash.*", "underscore", "underscore/*"],

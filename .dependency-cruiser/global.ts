@@ -72,7 +72,7 @@ export const FORBIDDEN_GLOBAL: IForbiddenRuleType[] = [
   {
     name: 'address-formatter-in-presenters-only',
     severity: 'error',
-    comment: "Only a presenter writes an address in its country's format, with OpenCage's templates (ADR-042).",
+    comment: "Only a presenter writes an address in its country's format, with OpenCage's templates (decision 0007).",
     from: { pathNot: ['[.]presenter[.]ts$', '[.]d[.]ts$'] },
     to: { path: 'node_modules/@fragaria/address-formatter/' }
   },

@@ -54,7 +54,7 @@ Every release is published to GitHub Pages, with its documentation under `/docs`
 
 - **Architecture**: the dependency graph, the dependency rules and the allowed folders, generated from the code at each release, under [`/docs`](https://untracked-maps.github.io/untracked/docs/) of the site.
 - **Features**: the scenarios of every ability, generated from the Gherkin files at each release, under [`/docs/features.html`](https://untracked-maps.github.io/untracked/docs/features.html) of the site.
-- **Decisions**: the [architecture decision records](docs/adr) explain why the project is built the way it is.
+- **Decisions**: the [architecture decisions](docs/decisions) explain why the project is built the way it is.
 - **Security**: the [security policy](SECURITY.md) explains how to report a vulnerability privately.
 - **Rules of the code**: [`AGENTS.md`](AGENTS.md) lists the rules the code and the tests follow, for people as much as for coding agents.
 
@@ -67,7 +67,7 @@ Every release is published to GitHub Pages, with its documentation under `/docs`
 - [messages](messages): the texts of the interface, one file per language.
 - [static](static): files served as they are, such as the icon.
 - [tests/e2e](tests/e2e): end-to-end tests, run with [Playwright](https://playwright.dev) on the built site.
-- [docs/adr](docs/adr): the architecture decision records.
+- [docs/decisions](docs/decisions): the architecture decisions.
 - [.github](.github): the workflows that check, release and publish the app.
 
 ## 🤗 Contributing
