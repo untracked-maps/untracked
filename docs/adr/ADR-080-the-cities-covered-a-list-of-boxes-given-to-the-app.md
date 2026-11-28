@@ -1,4 +1,4 @@
-# ADR-078 — The cities covered, a list of boxes given to the app
+# ADR-080 — The cities covered, a list of boxes given to the app
 
 **Date**: 2026-11-28
 **Status**: proposed
